@@ -1,0 +1,34 @@
+%nTimes = 110; %11 hours per day, 5 days a week, divided in 30 minute splits
+
+nDays = 10;
+dayDuration = 22;
+
+labRooms = 2;
+classRooms = 2;
+pcRooms = 3;
+
+nEvents = 15;
+
+preassignedEventStart = [0,0,1,5,10,15,20,25,30,35,40,45,0,0,50];
+
+eventDuration = [4,4,4,4,4,2,2,4,4,4,4,4,3,4,4];
+
+eventExclusions = [|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+|false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,|];
+
+needsLabRoom = [true, true, false, false, true, false, false, false, false, true, false, false, false, true, false];
+needsClassRoom = [false, false, true, true, false, false, false, true, true, false, true, true, true, false, true];
+needsPcRoom = [false, false, false, false, false, true, true, false, false, false, false, false, false, false, false];
