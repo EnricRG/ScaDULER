@@ -64,14 +64,14 @@ array[Events] of int: eventDuration;
 array[Events, Events] of bool: eventExclusions;
 
 % Type of the room every Event needs.
-%array[Events] of roomTypes: roomTypeNeeded;
-% Alternative
 array[Events] of bool: needsLabRoom;
 array[Events] of bool: needsClassRoom;
 array[Events] of bool: needsPcRoom;
 
-%Some events can have preassigned start times
+% Some events can have preassigned start times
 array[Events] of var 0..nTimes: preassignedEventStart; %If value is set to 0, it means it has no preassigned time.
+
+% Some events have to be
 
 %%%% Model variables
 array[Events] of var Times: eventStart;
