@@ -37,7 +37,7 @@ set of int: Days = 1..nDays;
 
 int: dayDuration; %Duration of a day in time slots.
 
-int: nTimes = dayDuration*nDays + 1; %Number of time slots.
+int: nTimes = dayDuration*nDays; %Number of time slots.
 set of int: Times = 1..nTimes; 
 
 %%% Resources
@@ -53,7 +53,6 @@ set of int: Times = 1..nTimes;
 int: labRooms;    %Type 1
 int: classRooms;  %Type 2
 int: pcRooms;     %Type 3
-enum roomTypes = {labRoom, classRoom, pcRoom}; % Types of room.
 
 %%% Events 
 int: nEvents; % Number of events (classes) 
@@ -82,24 +81,13 @@ array[Events] of var Times: eventStart;
 
 %%% Auxiliary variables
 
-% Boolean value that indicates if an Event is running at a certain Time.
-% This includes the edge case at the beginning, so if an event of 
-% duration 4 starts at time 7, this event will be running at times
-% 7,8,9 and 10.
-% eventsAtTime[t,e] means that Event e is running at Time t.
-%array[Times, Events] of var bool: eventsAtTime;
+% EMPTY SPACE HERE
 
 %%%% Constraints
 
 %%% Auxiliary variable constraints
 
-% REDUNDANT CONSTRAINT
-% Event e starts at Time t if eventStart[e] == t
-%constraint forall(t in Times, e in Events) ( (eventStart[e] = t) -> eventsAtTime[t,e] );
-
-% During an event, eventsAtTime[times,e] must be true.
-%constraint forall(e in Events, t in eventStart[e]..(eventStart[e]+eventDuration[e]) where t<=nTimes) ( eventsAtTime[t,e] );
-%constraint forall(t in Times, e in Events) ( within(t, eventStart[e], eventStart[e]+eventDuration[e]-1) -> eventsAtTime[t,e] );
+% EMPTY SPACE HERE
 
 %%% Hard constraints
 
@@ -108,17 +96,12 @@ array[Events] of var Times: eventStart;
 
 % If two events are mutually exclusive, they cannot run in parallel.
 % Optimisations made: only explore upper triangle matrix from exclusion matrix.
-%constraint forall(e1 in Events, e2 in e1+1..nEvents, t in Times) 
-%  ( eventExclusions[e1,e2] -> not (eventsAtTime[t,e1] /\ eventsAtTime[t,e2]) );
-
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
   ( eventExclusions[e1,e2] -> not concurrent(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
 
-%Faster if a lot of events are mutually exclusive
-/*
-constraint forall(t in Times, e1 in Events, e2 in e1+1..nEvents) 
-  ( not eventExclusions[e1,e2] \/ not (eventsAtTime[t,e1] /\ eventsAtTime[t,e2]) );
-*/
+%Faster if a lot of events are mutually exclusive (far from reality)
+%constraint forall(t in Times, e1 in Events, e2 in e1+1..nEvents) 
+%  ( not eventExclusions[e1,e2] \/ not (eventsAtTime[t,e1] /\ eventsAtTime[t,e2]) );
 
 % For every Time t, the resource requirements are not exceeded.
 % Optimizable: All Events are checked even when they not use the resource.
@@ -130,7 +113,7 @@ constraint cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
 % An Event cannot run between day transitions.
 % Optimisation to be made: precompute days of events.
 array[Events] of var Days: dayOfEvent; %Auxiliar variable that determines in which day the event is running. 
-constraint forall(e in Events) (dayOfEvent[e] = ((eventStart[e] - 1) div dayDuration) + 1); %NOT WORKING
+constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDuration ) + 1);
 
 %es pot fer millor
 constraint forall(e in Events) (not across_days(eventStart[e], eventDuration[e], dayOfEvent[e], dayDuration));
