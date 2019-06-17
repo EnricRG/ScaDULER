@@ -71,7 +71,12 @@ array[Events] of bool: needsPcRoom;
 % Some events can have preassigned start times
 array[Events] of var 0..nTimes: preassignedEventStart; %If value is set to 0, it means it has no preassigned time.
 
-% Some events have to be
+% Some events have to run later than others.
+int: nPrecedences;
+set of int: Precedences = 1..nPrecedences;
+
+array[Precedences] of Events: predecessors;
+array[Precedences] of Events: successors;
 
 %%%% Model variables
 array[Events] of var Times: eventStart;
@@ -89,12 +94,16 @@ array[Events] of var Times: eventStart;
 %%% Hard constraints
 
 %Preassigned times
-%constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
+constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
 
 % If two events are mutually exclusive, they cannot run in parallel.
 % Optimisations made: only explore upper triangle matrix from exclusion matrix.
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
   ( eventExclusions[e1,e2] -> not concurrent(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
+
+% If an event has to precede another, its start time has to be smaller.
+constraint forall(prec in Precedences) 
+  ( (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1) < eventStart[successors[prec]] );
 
 %Faster if a lot of events are mutually exclusive (far from reality)
 %constraint forall(t in Times, e1 in Events, e2 in e1+1..nEvents) 
