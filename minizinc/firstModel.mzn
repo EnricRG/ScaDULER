@@ -19,9 +19,6 @@ predicate no_overlap(var int: start0, var int: duration0,
 predicate concurrent(var int: e1_start, var int: e1_dur, var int: e2_start, var int: e2_dur) =
   not no_overlap(e1_start, e1_dur, e2_start, e2_dur);
 
-predicate across_days(var int: start, var int: duration, var int: day, var int: day_duration) =
-  within(start+duration-1, start, day*day_duration); % Subtracting 1 because the start time also has to be counted.
-
 %%%% Instance parameters
 %%  Parameters to be filled before the scheduling process can start.
 
@@ -92,7 +89,7 @@ array[Events] of var Times: eventStart;
 %%% Hard constraints
 
 %Preassigned times
-%constraint forall(e in Events) (preassignedEventStart[e] != 0 -> eventStart[e] = preassignedEventStart[e]);
+%constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
 
 % If two events are mutually exclusive, they cannot run in parallel.
 % Optimisations made: only explore upper triangle matrix from exclusion matrix.
@@ -115,10 +112,12 @@ constraint cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
 array[Events] of var Days: dayOfEvent; %Auxiliar variable that determines in which day the event is running. 
 constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDuration ) + 1);
 
-%es pot fer millor
-constraint forall(e in Events) (not across_days(eventStart[e], eventDuration[e], dayOfEvent[e], dayDuration));
-%constraint forall(e in Events) (eventsAtTime[dayOfEvent[e]*dayDuration, e] -> not (eventsAtTime[dayOfEvent[e]*dayDuration+1, e]));
-%constraint forall(d in Days, e in Events) (eventsAtTime[d*dayDuration, e] -> not (eventsAtTime[d*dayDuration+1, e]));
+%The event runs entirely on the day it starts.
+constraint forall(e in Events) ( within(eventStart[e]+eventDuration[e]-1, eventStart[e], dayOfEvent[e]*dayDuration) );
+
+
+
+%%%% Solve
 
 solve :: int_search(eventStart, first_fail, indomain_min, complete)
   satisfy;
