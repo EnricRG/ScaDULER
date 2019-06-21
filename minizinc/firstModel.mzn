@@ -16,9 +16,6 @@ predicate no_overlap(var int: start0, var int: duration0,
                      var int: start1, var int: duration1) =
   start0 + duration0 <= start1 \/ start1 + duration1 <= start0;
 
-predicate concurrent(var int: e1_start, var int: e1_dur, var int: e2_start, var int: e2_dur) =
-  not no_overlap(e1_start, e1_dur, e2_start, e2_dur);
-
 %%%% Instance parameters
 %%  Parameters to be filled before the scheduling process can start.
 
@@ -100,7 +97,7 @@ constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[
 % If two events are mutually exclusive, they cannot run in parallel.
 % Optimisations made: only explore upper triangle matrix from exclusion matrix.
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
-  ( eventExclusions[e1,e2] -> not concurrent(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
+  ( eventExclusions[e1,e2] -> no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
 
 % If an event has to precede another, its start time has to be smaller.
 constraint forall(prec in Precedences) 
