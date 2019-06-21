@@ -19,32 +19,6 @@ predicate no_overlap(var int: start0, var int: duration0,
 predicate concurrent(var int: e1_start, var int: e1_dur, var int: e2_start, var int: e2_dur) =
   not no_overlap(e1_start, e1_dur, e2_start, e2_dur);
 
-
-
-predicate custom_cumulative(array[int] of var int: s,
-                     array[int] of var int: d,
-                     array[int] of var int: r, 
-                     array[int] of var int: b) =
-   assert(index_set(s) == index_set(d) /\ 
-          index_set(s) == index_set(r),
-     "cumulative: the array arguments must have identical index sets",
-   assert(lb_array(d) >= 0 /\ lb_array(r) >= 0,
-     "cumulative: durations and resource usages must be non-negative",
-           let { 
-               set of int: times =
-                 lb_array(s) ..
-                 max([ ub(s[i]) + ub(d[i]) | i in index_set(s) ]) 
-               } 
-           in
-              forall( t in times ) (
-                 b[t] >= sum( i in index_set(s) ) (
-                    bool2int( s[i] <= t /\ t < s[i] + d[i] ) * r[i]
-                 )
-              )
-       )
-   );
-
-
 %%%% Instance parameters
 %%  Parameters to be filled before the scheduling process can start.
 
@@ -120,40 +94,34 @@ array[Events] of var Times: eventStart;
 
 %%% Hard constraints
 
+%Events cannot run out of time slots' range
+constraint forall(e in Events) ((eventStart[e] + eventDuration [e] - 1) <= nTimes);
+
 %Preassigned times
 constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
+
+% If an event has to precede another, its start time has to be smaller.
+constraint forall(prec in Precedences) 
+  ( (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1) < eventStart[successors[prec]] );
 
 % If two events are mutually exclusive, they cannot run in parallel.
 % Optimisations made: only explore upper triangle matrix from exclusion matrix.
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
   ( eventExclusions[e1,e2] -> not concurrent(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
 
-% If an event has to precede another, its start time has to be smaller.
-constraint forall(prec in Precedences) 
-  ( (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1) < eventStart[successors[prec]] );
-
 %Faster if a lot of events are mutually exclusive (far from reality)
 %constraint forall(t in Times, e1 in Events, e2 in e1+1..nEvents) 
 %  ( not eventExclusions[e1,e2] \/ not (eventsAtTime[t,e1] /\ eventsAtTime[t,e2]) );
 
 % For every Time t, the resource requirements are not exceeded.
-% Optimizable: All Events are checked even when they not use the resource.
-%              I wanted to exploit global constraints.
-/*constraint cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
-constraint cumulative(eventStart, eventDuration, needsClassRoom, classRooms);
-constraint cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
-*/
-/*
-constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsLabRoom[e])) <= labRooms[t] );
+constraint forall( t in Times ) ( labRooms[t] >= sum( e in Events where needsLabRoom[e] ) 
+  (bool2int(within(t,eventStart[e],eventStart[e]+eventDuration[e]-1))) );
 
-constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsClassRoom[e])) <= classRooms[t] );
+constraint forall( t in Times ) ( classRooms[t] >= sum( e in Events where needsClassRoom[e] ) 
+  (bool2int(within(t,eventStart[e],eventStart[e]+eventDuration[e]-1))) );
 
-constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsPcRoom[e])) <= pcRooms[t] );
-*/
-
-constraint custom_cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
-constraint custom_cumulative(eventStart, eventDuration, needsClassRoom, classRooms);
-constraint custom_cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
+constraint forall( t in Times ) ( pcRooms[t] >= sum( e in Events where needsPcRoom[e] ) 
+  (bool2int(within(t,eventStart[e],eventStart[e]+eventDuration[e]-1))) );
 
 % An Event cannot run between day transitions.
 % Optimisation to be made: precompute days of events.
