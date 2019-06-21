@@ -47,6 +47,7 @@ set of int: Times = 1..nTimes;
 %array[Teachers] of set of Events: canPerform;
 
 %% Rooms
+% Number of available rooms at each time slot.
 int: labRooms;    %Type 1
 int: classRooms;  %Type 2
 int: pcRooms;     %Type 3
@@ -116,6 +117,13 @@ constraint cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
 constraint cumulative(eventStart, eventDuration, needsClassRoom, classRooms);
 constraint cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
 
+/*
+constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsLabRoom[e])) <= labRooms[t] );
+
+constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsClassRoom[e])) <= classRooms[t] );
+
+constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsPcRoom[e])) <= pcRooms[t] );
+*/
 % An Event cannot run between day transitions.
 % Optimisation to be made: precompute days of events.
 array[Events] of var Days: dayOfEvent; %Auxiliar variable that determines in which day the event is running. 
