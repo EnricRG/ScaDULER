@@ -19,6 +19,32 @@ predicate no_overlap(var int: start0, var int: duration0,
 predicate concurrent(var int: e1_start, var int: e1_dur, var int: e2_start, var int: e2_dur) =
   not no_overlap(e1_start, e1_dur, e2_start, e2_dur);
 
+
+
+predicate custom_cumulative(array[int] of var int: s,
+                     array[int] of var int: d,
+                     array[int] of var int: r, 
+                     array[int] of var int: b) =
+   assert(index_set(s) == index_set(d) /\ 
+          index_set(s) == index_set(r),
+     "cumulative: the array arguments must have identical index sets",
+   assert(lb_array(d) >= 0 /\ lb_array(r) >= 0,
+     "cumulative: durations and resource usages must be non-negative",
+           let { 
+               set of int: times =
+                 lb_array(s) ..
+                 max([ ub(s[i]) + ub(d[i]) | i in index_set(s) ]) 
+               } 
+           in
+              forall( t in times ) (
+                 b[t] >= sum( i in index_set(s) ) (
+                    bool2int( s[i] <= t /\ t < s[i] + d[i] ) * r[i]
+                 )
+              )
+       )
+   );
+
+
 %%%% Instance parameters
 %%  Parameters to be filled before the scheduling process can start.
 
@@ -48,9 +74,9 @@ set of int: Times = 1..nTimes;
 
 %% Rooms
 % Number of available rooms at each time slot.
-int: labRooms;    %Type 1
-int: classRooms;  %Type 2
-int: pcRooms;     %Type 3
+array[Times] of int: labRooms;    %Type 1
+array[Times] of int: classRooms;  %Type 2
+array[Times] of int: pcRooms;     %Type 3
 
 %%% Events 
 int: nEvents; % Number of events (classes) 
@@ -113,10 +139,10 @@ constraint forall(prec in Precedences)
 % For every Time t, the resource requirements are not exceeded.
 % Optimizable: All Events are checked even when they not use the resource.
 %              I wanted to exploit global constraints.
-constraint cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
+/*constraint cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
 constraint cumulative(eventStart, eventDuration, needsClassRoom, classRooms);
 constraint cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
-
+*/
 /*
 constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsLabRoom[e])) <= labRooms[t] );
 
@@ -124,6 +150,11 @@ constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eve
 
 constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsPcRoom[e])) <= pcRooms[t] );
 */
+
+constraint custom_cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
+constraint custom_cumulative(eventStart, eventDuration, needsClassRoom, classRooms);
+constraint custom_cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
+
 % An Event cannot run between day transitions.
 % Optimisation to be made: precompute days of events.
 array[Events] of var Days: dayOfEvent; %Auxiliar variable that determines in which day the event is running. 
