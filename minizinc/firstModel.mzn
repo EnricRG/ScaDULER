@@ -138,7 +138,7 @@ constraint forall(e in Events) ( within(eventStart[e]+eventDuration[e]-1, eventS
 
 
 
-%%%% Solve
+%%%% Solve 
 
 solve :: int_search(eventStart, first_fail, indomain_min, complete)
   satisfy;
