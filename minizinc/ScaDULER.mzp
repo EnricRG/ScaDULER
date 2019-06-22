@@ -1,0 +1,18 @@
+{
+    "builtinSolverConfigs": [
+    ],
+    "openFiles": [
+        "firstModel.mzn",
+        "1er_s1.dzn"
+    ],
+    "openTab": 0,
+    "projectFiles": [
+        "1er_s1.dzn",
+        "firstModel.mzn"
+    ],
+    "projectSolverConfigs": [
+    ],
+    "selectedBuiltinConfigId": "org.gecode.gecode",
+    "selectedBuiltinConfigVersion": "6.1.0",
+    "version": 105
+}
