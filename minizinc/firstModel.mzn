@@ -75,7 +75,17 @@ set of int: Precedences = 1..nPrecedences;
 
 array[Precedences] of Events: predecessors;
 array[Precedences] of Events: successors;
+array[Precedences] of bool: strictPrecedence;
 
+% Hour precedences and successions
+
+int: nThresholds;
+set of int: Thresholds = 1..nThresholds;
+/*
+array[Events] of set of Thresholds: eventThresholds;
+array[Thresholds] of Times: thresholdStart;
+array[Thresholds] of Times: thresholdEnd;
+*/
 %%%% Model variables
 array[Events] of var Times: eventStart;
 
@@ -97,10 +107,36 @@ constraint forall(e in Events) ((eventStart[e] + eventDuration [e] - 1) <= nTime
 %Preassigned times
 constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
 
-% If an event has to precede another, its start time has to be smaller.
-constraint forall(prec in Precedences) 
-  ( (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1) < eventStart[successors[prec]] );
+% If an event has to precede another, its start time has to be smaller or equal depending if it's an strict precedence or not.
+/*constraint forall(prec in Precedences) 
+  ((strictPrecedence[prec] -> (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1) < eventStart[successors[prec]]) /\
+  ( not strictPrecedence[prec] -> (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1) < eventStart[successors[prec]] + eventDuration[successors[prec]] - 1));
+*/
 
+constraint forall(prec in Precedences)
+  (if strictPrecedence[prec] then 
+    eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1 < eventStart[successors[prec]]
+  else
+    eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1 < eventStart[successors[prec]] + eventDuration[successors[prec]] - 1
+  endif);
+
+%Concrete time precedences and successions
+/*
+constraint forall(tr in Thresholds)
+  (if beforeThreshold[tr] then
+    if strictThreshold[tr] then 
+      eventStart[thresholdEvent[tr]] < thresholdTime[tr] 
+    else 
+      eventStart[thresholdEvent[tr]] <= thresholdTime[tr] 
+    endif
+  else
+    if strictThreshold[tr] then 
+      eventStart[thresholdEvent[tr]] > thresholdTime[tr] 
+    else 
+      eventStart[thresholdEvent[tr]] >= thresholdTime[tr] 
+    endif
+  endif);
+*/
 % If two events are mutually exclusive, they cannot run in parallel.
 % Optimisations made: only explore upper triangle matrix from exclusion matrix.
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
