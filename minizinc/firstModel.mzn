@@ -146,28 +146,35 @@ constraint forall( t in Times ) ( pcRooms[t] >= sum( e in Events where needsPcRo
   (bool2int(within(t,eventStart[e],eventStart[e]+eventDuration[e]-1))) );
 */
 
+%Now useless
+/*
+array[LabRoomsTimeGroups, Events] of var bool: needsLabRoomInTimeGroup;
+array[ClassRoomsTimeGroups, Events] of var bool: needsClassRoomInTimeGroup;
+array[PcRoomsTimeGroups, Events] of var bool: needsPcRoomInTimeGroup;
+*/
+
 %WARNING: durations maybe should be durations - 1 (because first time slot also counts)
 constraint forall(lab_tg in LabRoomsTimeGroups)
   (cumulative(
-    [eventStart[e] | e in Events where not no_overlap(eventStart[e],eventDuration[e],labTimeGroupsStart[lab_tg],labTimeGroupsDuration[lab_tg])],
+    eventStart,
     eventDuration,
-    needsLabRoom,
+    [needsLabRoom[e] /\ not no_overlap(eventStart[e],eventDuration[e],labTimeGroupsStart[lab_tg],labTimeGroupsDuration[lab_tg]) | e in Events],
     labRooms[lab_tg]
   ));
-  
+
 constraint forall(class_tg in ClassRoomsTimeGroups)
   (cumulative(
-    [eventStart[e] | e in Events where not no_overlap(eventStart[e],eventDuration[e],classTimeGroupsStart[class_tg],classTimeGroupsDuration[class_tg])],
+    eventStart,
     eventDuration,
-    needsClassRoom,
+    [needsClassRoom[e] /\ not no_overlap(eventStart[e],eventDuration[e],classTimeGroupsStart[class_tg],classTimeGroupsDuration[class_tg]) | e in Events],
     classRooms[class_tg]
   ));
-  
+
 constraint forall(pc_tg in PcRoomsTimeGroups)
   (cumulative(
-    [eventStart[e] | e in Events where not no_overlap(eventStart[e],eventDuration[e],pcTimeGroupsStart[pc_tg],pcTimeGroupsDuration[pc_tg])],
+    eventStart,
     eventDuration,
-    needsPcRoom,
+    [needsPcRoom[e] /\ not no_overlap(eventStart[e],eventDuration[e],pcTimeGroupsStart[pc_tg],pcTimeGroupsDuration[pc_tg]) | e in Events],
     pcRooms[pc_tg]
   ));
 
