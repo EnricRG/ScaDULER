@@ -48,10 +48,32 @@ set of int: Times = 1..nTimes;
 
 %% Rooms
 % Number of available rooms at each time slot.
+
+int: nLabRoomsTimeGroups;
+int: nClassRoomsTimeGroups;
+int: nPcRoomsTimeGroups;
+
+set of int: LabRoomsTimeGroups = 1..nLabRoomsTimeGroups;
+set of int: ClassRoomsTimeGroups = 1..nClassRoomsTimeGroups;
+set of int: PcRoomsTimeGroups = 1..nPcRoomsTimeGroups;
+
+array[LabRoomsTimeGroups] of Times: labTimeGroupsStart; %first in-group time slot
+array[LabRoomsTimeGroups] of Times: labTimeGroupsDuration;
+array[LabRoomsTimeGroups] of int: labRooms;
+
+array[ClassRoomsTimeGroups] of Times: classTimeGroupsStart; %first in-group time slot
+array[ClassRoomsTimeGroups] of Times: classTimeGroupsDuration;
+array[ClassRoomsTimeGroups] of int: classRooms;
+
+array[PcRoomsTimeGroups] of Times: pcTimeGroupsStart; %first in-group time slot
+array[PcRoomsTimeGroups] of Times: pcTimeGroupsDuration;
+array[PcRoomsTimeGroups] of int: pcRooms;
+
+/*
 array[Times] of int: labRooms;    %Type 1
 array[Times] of int: classRooms;  %Type 2
 array[Times] of int: pcRooms;     %Type 3
-
+*/
 %%% Events 
 int: nEvents; % Number of events (classes) 
 set of int: Events = 1..nEvents;
@@ -114,7 +136,7 @@ constraint forall(e1 in Events, e2 in e1+1..nEvents)
 %  ( not eventExclusions[e1,e2] \/ not (eventsAtTime[t,e1] /\ eventsAtTime[t,e2]) );
 
 % For every Time t, the resource requirements are not exceeded.
-constraint forall( t in Times ) ( labRooms[t] >= sum( e in Events where needsLabRoom[e] ) 
+/*constraint forall( t in Times ) ( labRooms[t] >= sum( e in Events where needsLabRoom[e] ) 
   (bool2int(within(t,eventStart[e],eventStart[e]+eventDuration[e]-1))) );
 
 constraint forall( t in Times ) ( classRooms[t] >= sum( e in Events where needsClassRoom[e] ) 
@@ -122,6 +144,32 @@ constraint forall( t in Times ) ( classRooms[t] >= sum( e in Events where needsC
 
 constraint forall( t in Times ) ( pcRooms[t] >= sum( e in Events where needsPcRoom[e] ) 
   (bool2int(within(t,eventStart[e],eventStart[e]+eventDuration[e]-1))) );
+*/
+
+%WARNING: durations maybe should be durations - 1 (because first time slot also counts)
+constraint forall(lab_tg in LabRoomsTimeGroups)
+  (cumulative(
+    [eventStart[e] | e in Events where not no_overlap(eventStart[e],eventDuration[e],labTimeGroupsStart[lab_tg],labTimeGroupsDuration[lab_tg])],
+    eventDuration,
+    needsLabRoom,
+    labRooms[lab_tg]
+  ));
+  
+constraint forall(class_tg in ClassRoomsTimeGroups)
+  (cumulative(
+    [eventStart[e] | e in Events where not no_overlap(eventStart[e],eventDuration[e],classTimeGroupsStart[class_tg],classTimeGroupsDuration[class_tg])],
+    eventDuration,
+    needsClassRoom,
+    classRooms[class_tg]
+  ));
+  
+constraint forall(pc_tg in PcRoomsTimeGroups)
+  (cumulative(
+    [eventStart[e] | e in Events where not no_overlap(eventStart[e],eventDuration[e],pcTimeGroupsStart[pc_tg],pcTimeGroupsDuration[pc_tg])],
+    eventDuration,
+    needsPcRoom,
+    pcRooms[pc_tg]
+  ));
 
 % An Event cannot run between day transitions.
 % Optimisation to be made: precompute days of events.
