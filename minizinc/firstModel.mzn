@@ -119,10 +119,10 @@ constraint forall(e in Events) ((eventStart[e] + eventDuration [e] - 1) <= nTime
 %Preassigned times
 constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
 
-% If an event has to precede another, its start time has to be smaller.
+% If an event has to precede another, its end time has to be smaller than the start time of the other event.
 constraint forall(prec in Precedences) 
-  ( (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1) < eventStart[successors[prec]] );
-
+  (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1 < eventStart[successors[prec]]);
+  
 % If two events are mutually exclusive, they cannot run in parallel.
 % Optimisations made: only explore upper triangle matrix from exclusion matrix.
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
