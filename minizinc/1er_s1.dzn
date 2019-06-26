@@ -80,7 +80,6 @@ nPrecedences = 10; %inventat
 
 predecessors = [6,6,6,6,7,8,10,15,20,21]; %inventat
 successors = [9,10,11,12,13,16,11,18,24,27]; %inventat
-strictPrecedence = [false,false,false,false,false,false,false,false,false,false]; %inventat
 
 needsLabRoom = [false,false,false,false,false,
   false, true,false,false, true,false,false,
