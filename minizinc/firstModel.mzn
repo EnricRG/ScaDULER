@@ -50,7 +50,8 @@ int: classRooms;  %Type 2
 int: pcRooms;     %Type 3
 
 %%% Events 
-int: nEvents; % Number of events (classes) 
+int: nEvents; % Number of events (classes)
+%int: nAuxEvents; % Number of
 set of int: Events = 1..nEvents;
 
 % For each Event we know its duration in time slots.
@@ -63,12 +64,12 @@ array[Events] of int: eventDuration;
 array[Events] of set of Events: eventExclusions;
 
 % Type of the room every Event needs.
-array[Events] of bool: needsLabRoom;
-array[Events] of bool: needsClassRoom;
-array[Events] of bool: needsPcRoom;
+array[Events] of int: needsLabRoom;
+array[Events] of int: needsClassRoom;
+array[Events] of int: needsPcRoom;
 
 % Some events can have preassigned start times
-array[Events] of var 0..nTimes: preassignedEventStart; %If value is set to 0, it means it has no preassigned time.
+array[Events] of 0..nTimes: preassignedEventStart; %If value is set to 0, it means it has no preassigned time.
 
 % Some events have to run later than others.
 int: nPrecedences;
