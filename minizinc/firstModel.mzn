@@ -16,9 +16,6 @@ predicate no_overlap(var int: start0, var int: duration0,
                      var int: start1, var int: duration1) =
   start0 + duration0 <= start1 \/ start1 + duration1 <= start0;
 
-predicate concurrent(var int: e1_start, var int: e1_dur, var int: e2_start, var int: e2_dur) =
-  not no_overlap(e1_start, e1_dur, e2_start, e2_dur);
-
 %%%% Instance parameters
 %%  Parameters to be filled before the scheduling process can start.
 
