@@ -63,7 +63,7 @@ array[Events] of int: eventDuration;
 % not concerning a resource clash.
 % eventExlusions[e1,e2] means that both events cannot run in parallel for external reasons.
 %array[Events, Events] of bool: eventExclusions;
-array[Events] of var set of Events: eventExclusions;
+array[Events] of set of Events: eventExclusions;
 
 % Type of the room every Event needs.
 array[Events] of bool: needsLabRoom;
@@ -104,7 +104,8 @@ constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[
   ( eventExclusions[e1,e2] -> not concurrent(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
 */
 
-constraint forall(e1 in Events, e2 in eventExclusions[e1]) (not concurrent(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
+constraint forall(e1 in Events, e2 in eventExclusions[e1]) 
+  (no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
 
 % If an event has to precede another, its start time has to be smaller.
 constraint forall(prec in Precedences) 
