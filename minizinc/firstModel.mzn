@@ -16,6 +16,9 @@ predicate no_overlap(var int: start0, var int: duration0,
                      var int: start1, var int: duration1) =
   start0 + duration0 <= start1 \/ start1 + duration1 <= start0;
 
+predicate concurrent(var int: e1_start, var int: e1_dur, var int: e2_start, var int: e2_dur) =
+  not no_overlap(e1_start, e1_dur, e2_start, e2_dur);
+
 %%%% Instance parameters
 %%  Parameters to be filled before the scheduling process can start.
 
@@ -59,7 +62,8 @@ array[Events] of int: eventDuration;
 % Array containing which events cannot run in parallel for reasons
 % not concerning a resource clash.
 % eventExlusions[e1,e2] means that both events cannot run in parallel for external reasons.
-array[Events, Events] of bool: eventExclusions;
+%array[Events, Events] of bool: eventExclusions;
+array[Events] of set of Events: eventExclusions;
 
 % Type of the room every Event needs.
 array[Events] of bool: needsLabRoom;
@@ -91,9 +95,6 @@ array[Events] of var Times: eventStart;
 
 %%% Hard constraints
 
-%Events cannot run out of time slots' range
-constraint forall(e in Events) ((eventStart[e] + eventDuration [e] - 1) <= nTimes);
-
 %Preassigned times
 constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
 
@@ -103,12 +104,16 @@ constraint forall(prec in Precedences)
   
 % If two events are mutually exclusive, they cannot run in parallel.
 % Optimisations made: only explore upper triangle matrix from exclusion matrix.
+/*
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
   ( eventExclusions[e1,e2] -> no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
 
 %Faster if a lot of events are mutually exclusive (far from reality)
 %constraint forall(t in Times, e1 in Events, e2 in e1+1..nEvents) 
 %  ( not eventExclusions[e1,e2] \/ not (eventsAtTime[t,e1] /\ eventsAtTime[t,e2]) );
+*/
+constraint forall(e1 in Events, e2 in eventExclusions[e1]) 
+  (no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
 
 % For every Time t, the resource requirements are not exceeded.
 constraint cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
@@ -125,7 +130,7 @@ constraint forall(e in Events) ( within(eventStart[e]+eventDuration[e]-1, eventS
 
 
 
-%%%% Solve
+%%%% Solve 
 
 solve :: int_search(eventStart, first_fail, indomain_min, complete)
   satisfy;
