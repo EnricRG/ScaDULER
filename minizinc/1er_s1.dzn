@@ -8,12 +8,10 @@ pcRooms = 5;
 nEvents = 51; %46 + 5 breaks
 
 %first events are auxiliar breaks
-preassignedEventStart = [13,26,39,52,65,
-  0,0,0,0,0,0,0,
-  0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+nPreassignedEvents = 5;
+
+preassignedEventNumbers = [1,2,3,4,5];
+preassignedEventStarts = [13,26,39,52,65];
 
 eventDuration = [2,2,2,2,2,
   4,4,4,4,4,4,4,
@@ -58,16 +56,6 @@ eventExclusions = [
 
 %Day 5
 {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
-
-
-/*
-eventExclusions = [{},{},{},{},{},
-{},{},{},{},{},{},{},
-{},{},{},{},{},{},
-{},{},{},{},{},{},{},{},{},
-{},{},{},{},{},{},
-{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
-*/
 
 nPrecedences = 10; %inventat
 

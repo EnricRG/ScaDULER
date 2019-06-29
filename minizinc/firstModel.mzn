@@ -69,7 +69,11 @@ array[Events] of int: needsClassRoom;
 array[Events] of int: needsPcRoom;
 
 % Some events can have preassigned start times
-array[Events] of 0..nTimes: preassignedEventStart; %If value is set to 0, it means it has no preassigned time.
+int: nPreassignedEvents;
+set of int: PreassignedEvents = 1..nPreassignedEvents;
+
+array[PreassignedEvents] of Events: preassignedEventNumbers;
+array[PreassignedEvents] of Times: preassignedEventStarts;
 
 % Some events have to run later than others.
 int: nPrecedences;
@@ -94,7 +98,8 @@ array[Events] of var Times: eventStart;
 %%% Hard constraints
 
 %Preassigned times
-constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
+constraint forall(p in PreassignedEvents) 
+  (eventStart[preassignedEventNumbers[p]] = preassignedEventStarts[p]);
 
 % If an event has to precede another, its end time has to be smaller than the start time of the other event.
 constraint forall(prec in Precedences) 
