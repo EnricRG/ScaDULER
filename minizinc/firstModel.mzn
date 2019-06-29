@@ -1,7 +1,7 @@
 %%%% Description
 %  This model aims to represent a two week schedule for a 
 %  general university degree at Universitat de Girona
-%  based on the High School Timetabling problem and from
+%  based on the High School Timetabling problem seen from
 %  a scheduling perspective.
 
 include "globals.mzn";
@@ -106,15 +106,6 @@ constraint forall(prec in Precedences)
   (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1 < eventStart[successors[prec]]);
   
 % If two events are mutually exclusive, they cannot run in parallel.
-% Optimisations made: only explore upper triangle matrix from exclusion matrix.
-/*
-constraint forall(e1 in Events, e2 in e1+1..nEvents) 
-  ( eventExclusions[e1,e2] -> no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
-
-%Faster if a lot of events are mutually exclusive (far from reality)
-%constraint forall(t in Times, e1 in Events, e2 in e1+1..nEvents) 
-%  ( not eventExclusions[e1,e2] \/ not (eventsAtTime[t,e1] /\ eventsAtTime[t,e2]) );
-*/
 constraint forall(e1 in Events, e2 in eventExclusions[e1]) 
   (no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
 
@@ -124,7 +115,6 @@ constraint cumulative(eventStart, eventDuration, needsClassRoom, classRooms);
 constraint cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
 
 % An Event cannot run between day transitions.
-% Optimisation to be made: precompute days of events.
 array[Events] of var Days: dayOfEvent; %Auxiliar variable that determines in which day the event is running. 
 constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDuration ) + 1);
 
