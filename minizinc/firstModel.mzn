@@ -26,13 +26,15 @@ predicate no_overlap(var int: start0, var int: duration0,
 %  and there are no distinctions between days or weeks.
 %  This will be modeled by constraints.
 
-int: nDays; %Number of days for the schedule.
+int: nDays = 5; %Number of days for the schedule.
 set of int: Days = 1..nDays;
 
 int: dayDuration; %Duration of a day in time slots.
 
 int: nTimes = dayDuration*nDays; %Number of time slots.
 set of int: Times = 1..nTimes; 
+
+enum WEEK = {A,B,W}; %A week, B week or weekly event
 
 %%% Resources
 %  Resources used by Events at a certain Time.
@@ -56,6 +58,8 @@ set of int: Events = 1..nEvents;
 
 % For each Event we know its duration in time slots.
 array[Events] of int: eventDuration;
+
+array[Events] of WEEK: eventWeek;
 
 % Array containing which events cannot run in parallel for reasons
 % not concerning a resource clash.
@@ -87,6 +91,8 @@ array[Events] of var Times: eventStart;
 
 %%% Auxiliary variables
 
+
+
 % EMPTY SPACE HERE
 
 %%%% Constraints
@@ -110,9 +116,16 @@ constraint forall(e1 in Events, e2 in eventExclusions[e1])
   (no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
 
 % For every Time t, the resource requirements are not exceeded.
-constraint cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
-constraint cumulative(eventStart, eventDuration, needsClassRoom, classRooms);
-constraint cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
+% Optimizable: reduce event array instead of resource requirements array
+
+%A week
+constraint cumulative(eventStart, eventDuration, [needsLabRoom[e]*(eventWeek[e]!=B) | e in Events], labRooms);
+constraint cumulative(eventStart, eventDuration, [needsClassRoom[e]*(eventWeek[e]!=B) | e in Events], classRooms);
+constraint cumulative(eventStart, eventDuration, [needsPcRoom[e]*(eventWeek[e]!=B) | e in Events], pcRooms);
+%B week
+constraint cumulative(eventStart, eventDuration, [needsLabRoom[e]*(eventWeek[e]!=A) | e in Events], labRooms);
+constraint cumulative(eventStart, eventDuration, [needsClassRoom[e]*(eventWeek[e]!=A) | e in Events], classRooms);
+constraint cumulative(eventStart, eventDuration, [needsPcRoom[e]*(eventWeek[e]!=A) | e in Events], pcRooms);
 
 % An Event cannot run between day transitions.
 array[Events] of var Days: dayOfEvent; %Auxiliar variable that determines in which day the event is running. 
