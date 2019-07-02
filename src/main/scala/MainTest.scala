@@ -1,13 +1,16 @@
 object MainTest extends App{
-  override def main(args: Array[String]): Unit = {
-    var x = new EventData(3)
-    val y = new EventData(5)
 
-    println(x.event_number, " ", y.event_number)
+    val TimeSlotDuration = 30 //This shouldn't be here
 
-    x.event_number = 2;
-    y.event_number = 4;
+    override def main(args: Array[String]): Unit = {
+        val nEvents = 51
 
-    println(x.event_number, " ", y.event_number)
-  }
+        val labRooms = 1
+        val classRooms = 3
+        val pcRooms = 5
+
+        val events = List(
+          new EventData(1, time_slots = 2)
+        )
+    }
 }
