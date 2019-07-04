@@ -1,59 +1,70 @@
-class MiniZincInstanceSolver extends InstanceSolver{
+import scala.sys.process.Process
 
+object MiniZincConstants {
     val MiniZincCommandLineDataOption = "-D"
     val EqualsSign = "="
     val SemiColon = ";"
+}
 
-    case class MiniZincInstanceData(dayDuration: Int,
-                                    labRooms: Int, classRooms: Int, pcRooms: Int,
-                                    nEvents: Int, nPreassignedEvents: Int,
-                                    preassignedEventNum: List[Int], preassignedEventStart: List[Int],
-                                    eventDuration: List[Int], eventWeek: List[String], eventExclusions: List[List[Boolean]],
-                                    nPrecedences: Int, predecessors: List[Int], successors: List[Int],
-                                    needsLabRoom: List[Int], needsClassRoom: List[Int], needsPcRoom: List[Int]){
+case class MiniZincInstanceData(dayDuration: Int,
+                                labRooms: Int, classRooms: Int, pcRooms: Int,
+                                nEvents: Int, nPreassignedEvents: Int,
+                                preassignedEventNum: List[Int], preassignedEventStart: List[Int],
+                                eventDuration: List[Int], eventWeek: List[String], eventExclusions: List[List[Boolean]],
+                                nPrecedences: Int, predecessors: List[Int], successors: List[Int],
+                                needsLabRoom: List[Int], needsClassRoom: List[Int], needsPcRoom: List[Int]){
 
-        def this(instance: InstanceData) =
-            this(instance.dayDuration,
-                instance.labRooms, instance.classRooms, instance.pcRooms,
-                instance.events.length, instance.preassignedEvents.length,
-                instance.preassignedEvents.map(_.num), instance.preassignedEvents.map(_.relativeStart),
-                instance.events.map(_.duration), instance.events.map(_.week),
-                for(e1 <- instance.events) yield for(e2 <- instance.events) yield e1.incompatibilities.contains(e2),
-                instance.precedences.length, instance.precedences.map(_._1.num), instance.precedences.map(_._2.num),
-                instance.events.map(_.lab_rooms_needed), instance.events.map(_.class_rooms_needed), instance.events.map(_.pc_rooms_needed))
+    def this(instance: InstanceData) =
+        this(instance.dayDuration,
+            instance.labRooms, instance.classRooms, instance.pcRooms,
+            instance.events.length, instance.preassignedEvents.length,
+            instance.preassignedEvents.map(_.num), instance.preassignedEvents.map(_.relativeStart),
+            instance.events.map(_.duration), instance.events.map(_.week),
+            for(e1 <- instance.events) yield for(e2 <- instance.events) yield e1.incompatibilities.contains(e2),
+            instance.precedences.length, instance.precedences.map(_._1.num), instance.precedences.map(_._2.num),
+            instance.events.map(_.labRoomsNeeded), instance.events.map(_.classRoomsNeeded), instance.events.map(_.pcRoomsNeeded))
 
-        def toCommandLine(): String = {
+    def toCommandLine: String = {
 
-            MiniZincCommandLineDataOption +
-            "\"" +
-            "dayDuration=" + dayDuration + SemiColon +
-            "labRooms=" + labRooms + SemiColon +
-            "classRooms=" + classRooms + SemiColon +
-            "pcRooms=" + pcRooms + SemiColon +
-            "nEvents=" + nEvents + SemiColon +
-            "nPreassignedEvents=" + nPreassignedEvents + SemiColon +
-            "PreassignedEventNumbers=" + preassignedEventNum.mkString("[", ",", "]") + SemiColon +
-            "PreassignedEventStarts=" + preassignedEventStart.mkString("[", ",", "]") + SemiColon +
-            "eventDuration=" + eventDuration.mkString("[", ",", "]") + SemiColon +
-            "eventWeek=" + eventWeek.mkString("[", ",", "]") + SemiColon +
-            "eventExclusions" + eventExclusions.map(_.mkString(",")).mkString("[", "|", "]") + SemiColon + //This is wrong, one | missing at the end
-            "nPrecedences=" + nPrecedences + SemiColon +
-            "predecessors=" + predecessors.mkString("[", ",", "]") + SemiColon +
-            "successors=" + successors.mkString("[", ",", "]") + SemiColon +
-            "needsLabRoom=" + needsLabRoom.mkString("[", ",", "]") + SemiColon +
-            "needsClassRoom=" + needsClassRoom.mkString("[", ",", "]") + SemiColon +
-            "needsPcRoom=" + needsPcRoom.mkString("[", ",", "]") + SemiColon +
-            "\""
-        }
-
-        def toDZNFile(): Unit = ???
+        MiniZincConstants.MiniZincCommandLineDataOption +
+          "\"" +
+          "dayDuration=" + dayDuration + MiniZincConstants.SemiColon +
+          "labRooms=" + labRooms + MiniZincConstants.SemiColon +
+          "classRooms=" + classRooms + MiniZincConstants.SemiColon +
+          "pcRooms=" + pcRooms + MiniZincConstants.SemiColon +
+          "nEvents=" + nEvents + MiniZincConstants.SemiColon +
+          "nPreassignedEvents=" + nPreassignedEvents + MiniZincConstants.SemiColon +
+          "preassignedEventNumbers=" + preassignedEventNum.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "preassignedEventStarts=" + preassignedEventStart.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "eventDuration=" + eventDuration.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "eventWeek=" + eventWeek.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "eventExclusions=" + eventExclusions.map(_.mkString(",")).mkString("[|", "|", "|]") + MiniZincConstants.SemiColon + //This is wrong, one | missing at the end
+          "nPrecedences=" + nPrecedences + MiniZincConstants.SemiColon +
+          "predecessors=" + predecessors.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "successors=" + successors.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "needsLabRoom=" + needsLabRoom.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "needsClassRoom=" + needsClassRoom.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "needsPcRoom=" + needsPcRoom.mkString("[", ",", "]") + MiniZincConstants.SemiColon +
+          "\""
     }
 
-    def init(instance: InstanceData): Unit = {
+    def toDZNFile: Unit = ???
+}
 
+class MiniZincInstanceSolver(val instance: MiniZincInstanceData) extends InstanceSolver{
+
+    def provisionalSolve = {
+
+        val minizinc_call = "./bin/minizinc/minizinc --solver Chuffed minizinc/firstModel_bmee.mzn " + instance.toCommandLine
+
+        //val minizinc_call = "./bin/minizinc/minizinc"
+
+        val minizinc_process = Process(minizinc_call)
+
+        minizinc_process.lineStream.toList
     }
 
-    def solve(): EventSchedule = ???
+    def solve: EventSchedule = ???
 
-    def optimize(): EventSchedule = ???
+    def optimize: EventSchedule = solve
 }

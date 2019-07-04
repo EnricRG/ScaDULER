@@ -10,8 +10,8 @@ object Weeks{
 class EventData(val num: Int, val start: LocalTime = null, val end: LocalTime = null,
                 val relativeStart: Int = 0, time_slots: Int = 0, val week: String = Weeks.EveryWeek,
                 val name: String = null, val description: String = null,
-                val lab_rooms_needed: Int = 0, val class_rooms_needed: Int = 0, val pc_rooms_needed: Int = 0,
-                val incompatibilities: List[EventData] = null) {
+                val labRoomsNeeded: Int = 0, val classRoomsNeeded: Int = 0, val pcRoomsNeeded: Int = 0,
+                val incompatibilities: List[EventData] = List()) {
 
 
     //Maybe this si unnecessary.
