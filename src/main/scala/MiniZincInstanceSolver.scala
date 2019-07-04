@@ -55,7 +55,7 @@ class MiniZincInstanceSolver(val instance: MiniZincInstanceData) extends Instanc
 
     def provisionalSolve = {
 
-        val minizinc_call = "./bin/minizinc/minizinc --solver Chuffed minizinc/firstModel_bmee.mzn " + instance.toCommandLine
+        val minizinc_call = "./bin/minizinc/minizinc -s --compiler-statistics --solver Chuffed minizinc/firstModel_bmee.mzn " + instance.toCommandLine
 
         //val minizinc_call = "./bin/minizinc/minizinc"
 
