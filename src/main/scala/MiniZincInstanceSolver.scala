@@ -1,7 +1,10 @@
 import scala.sys.process.Process
 
 object MiniZincConstants {
-    val MiniZincCommandLineDataOption = "-D"
+    val MiniZincPath = "./bin/minizinc/minizinc"
+    val CommandLineStatisticsOption = "-s --compiler-statistics"
+    val CommandLineDataOption = "-D"
+    val ChuffedSolver = "--solver Chuffed"
     val EqualsSign = "="
     val SemiColon = ";"
 }
@@ -26,7 +29,7 @@ case class MiniZincInstanceData(dayDuration: Int,
 
     def toCommandLine: String = {
 
-        MiniZincConstants.MiniZincCommandLineDataOption +
+        MiniZincConstants.CommandLineDataOption +
           "\"" +
           "dayDuration=" + dayDuration + MiniZincConstants.SemiColon +
           "labRooms=" + labRooms + MiniZincConstants.SemiColon +
@@ -53,11 +56,17 @@ case class MiniZincInstanceData(dayDuration: Int,
 
 class MiniZincInstanceSolver(val instance: MiniZincInstanceData) extends InstanceSolver{
 
+
+
     def provisionalSolve = {
 
-        val minizinc_call = "./bin/minizinc/minizinc -s --compiler-statistics --solver Chuffed minizinc/firstModel_bmee.mzn " + instance.toCommandLine
+        val minizinc_call = MiniZincConstants.MiniZincPath + " " +
+                            MiniZincConstants.CommandLineStatisticsOption + " " +
+                            MiniZincConstants.ChuffedSolver + " " +
+                            " minizinc/firstModel_bmee.mzn " +
+                            instance.toCommandLine
 
-        //val minizinc_call = "./bin/minizinc/minizinc"
+        println(minizinc_call)
 
         val minizinc_process = Process(minizinc_call)
 
