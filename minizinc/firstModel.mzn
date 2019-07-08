@@ -1,7 +1,7 @@
 %%%% Description
 %  This model aims to represent a two week schedule for a 
 %  general university degree at Universitat de Girona
-%  based on the High School Timetabling problem and from
+%  based on the High School Timetabling problem seen from
 %  a scheduling perspective.
 
 include "globals.mzn";
@@ -16,9 +16,6 @@ predicate no_overlap(var int: start0, var int: duration0,
                      var int: start1, var int: duration1) =
   start0 + duration0 <= start1 \/ start1 + duration1 <= start0;
 
-predicate concurrent(var int: e1_start, var int: e1_dur, var int: e2_start, var int: e2_dur) =
-  not no_overlap(e1_start, e1_dur, e2_start, e2_dur);
-
 %%%% Instance parameters
 %%  Parameters to be filled before the scheduling process can start.
 
@@ -29,13 +26,15 @@ predicate concurrent(var int: e1_start, var int: e1_dur, var int: e2_start, var 
 %  and there are no distinctions between days or weeks.
 %  This will be modeled by constraints.
 
-int: nDays; %Number of days for the schedule.
+int: nDays = 5; %Number of days for the schedule.
 set of int: Days = 1..nDays;
 
 int: dayDuration; %Duration of a day in time slots.
 
 int: nTimes = dayDuration*nDays; %Number of time slots.
 set of int: Times = 1..nTimes; 
+
+enum WEEK = {A,B,W}; %A week, B week or weekly event
 
 %%% Resources
 %  Resources used by Events at a certain Time.
@@ -53,24 +52,32 @@ int: classRooms;  %Type 2
 int: pcRooms;     %Type 3
 
 %%% Events 
-int: nEvents; % Number of events (classes) 
+int: nEvents; % Number of events (classes)
+%int: nAuxEvents; % Number of
 set of int: Events = 1..nEvents;
 
 % For each Event we know its duration in time slots.
 array[Events] of int: eventDuration;
 
+array[Events] of WEEK: eventWeek;
+
 % Array containing which events cannot run in parallel for reasons
 % not concerning a resource clash.
 % eventExlusions[e1,e2] means that both events cannot run in parallel for external reasons.
-array[Events, Events] of bool: eventExclusions;
+%array[Events, Events] of bool: eventExclusions;
+array[Events] of set of Events: eventExclusions;
 
 % Type of the room every Event needs.
-array[Events] of bool: needsLabRoom;
-array[Events] of bool: needsClassRoom;
-array[Events] of bool: needsPcRoom;
+array[Events] of int: needsLabRoom;
+array[Events] of int: needsClassRoom;
+array[Events] of int: needsPcRoom;
 
 % Some events can have preassigned start times
-array[Events] of var 0..nTimes: preassignedEventStart; %If value is set to 0, it means it has no preassigned time.
+int: nPreassignedEvents;
+set of int: PreassignedEvents = 1..nPreassignedEvents;
+
+array[PreassignedEvents] of Events: preassignedEventNumbers;
+array[PreassignedEvents] of Times: preassignedEventStarts;
 
 % Some events have to run later than others.
 int: nPrecedences;
@@ -84,6 +91,8 @@ array[Events] of var Times: eventStart;
 
 %%% Auxiliary variables
 
+
+
 % EMPTY SPACE HERE
 
 %%%% Constraints
@@ -95,37 +104,30 @@ array[Events] of var Times: eventStart;
 %%% Hard constraints
 
 %Preassigned times
-constraint forall(e in Events) ( (preassignedEventStart[e] != 0) -> (eventStart[e] = preassignedEventStart[e]) );
+constraint forall(p in PreassignedEvents) 
+  (eventStart[preassignedEventNumbers[p]] = preassignedEventStarts[p]);
 
-% If two events are mutually exclusive, they cannot run in parallel.
-% Optimisations made: only explore upper triangle matrix from exclusion matrix.
-constraint forall(e1 in Events, e2 in e1+1..nEvents) 
-  ( eventExclusions[e1,e2] -> not concurrent(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
-
-% If an event has to precede another, its start time has to be smaller.
+% If an event has to precede another, its end time has to be smaller than the start time of the other event.
 constraint forall(prec in Precedences) 
-  ( (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1) < eventStart[successors[prec]] );
-
-%Faster if a lot of events are mutually exclusive (far from reality)
-%constraint forall(t in Times, e1 in Events, e2 in e1+1..nEvents) 
-%  ( not eventExclusions[e1,e2] \/ not (eventsAtTime[t,e1] /\ eventsAtTime[t,e2]) );
+  (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1 < eventStart[successors[prec]]);
+  
+% If two events are mutually exclusive, they cannot run in parallel.
+constraint forall(e1 in Events, e2 in eventExclusions[e1]) 
+  (no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
 
 % For every Time t, the resource requirements are not exceeded.
-% Optimizable: All Events are checked even when they not use the resource.
-%              I wanted to exploit global constraints.
-constraint cumulative(eventStart, eventDuration, needsLabRoom, labRooms);
-constraint cumulative(eventStart, eventDuration, needsClassRoom, classRooms);
-constraint cumulative(eventStart, eventDuration, needsPcRoom, pcRooms);
+% Optimizable: reduce event array instead of resource requirements array
 
-/*
-constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsLabRoom[e])) <= labRooms[t] );
+%A week
+constraint cumulative(eventStart, eventDuration, [needsLabRoom[e]*(eventWeek[e]!=B) | e in Events], labRooms);
+constraint cumulative(eventStart, eventDuration, [needsClassRoom[e]*(eventWeek[e]!=B) | e in Events], classRooms);
+constraint cumulative(eventStart, eventDuration, [needsPcRoom[e]*(eventWeek[e]!=B) | e in Events], pcRooms);
+%B week
+constraint cumulative(eventStart, eventDuration, [needsLabRoom[e]*(eventWeek[e]!=A) | e in Events], labRooms);
+constraint cumulative(eventStart, eventDuration, [needsClassRoom[e]*(eventWeek[e]!=A) | e in Events], classRooms);
+constraint cumulative(eventStart, eventDuration, [needsPcRoom[e]*(eventWeek[e]!=A) | e in Events], pcRooms);
 
-constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsClassRoom[e])) <= classRooms[t] );
-
-constraint forall(t in Times) ( sum(e in Events where within(t,eventStart[e],eventStart[e]+eventDuration[e]-1)) (bool2int(needsPcRoom[e])) <= pcRooms[t] );
-*/
 % An Event cannot run between day transitions.
-% Optimisation to be made: precompute days of events.
 array[Events] of var Days: dayOfEvent; %Auxiliar variable that determines in which day the event is running. 
 constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDuration ) + 1);
 
@@ -134,7 +136,7 @@ constraint forall(e in Events) ( within(eventStart[e]+eventDuration[e]-1, eventS
 
 
 
-%%%% Solve
+%%%% Solve 
 
 solve :: int_search(eventStart, first_fail, indomain_min, complete)
   satisfy;
