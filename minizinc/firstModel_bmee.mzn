@@ -112,8 +112,6 @@ constraint forall(prec in Precedences)
   (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1 < eventStart[successors[prec]]);
   
 % If two events are mutually exclusive, they cannot run in parallel.
-%constraint forall(e1 in Events, e2 in eventExclusions[e1]) 
-%  (no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
   ( eventExclusions[e1,e2] -> no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
 
@@ -137,7 +135,19 @@ constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDurat
 %The event runs entirely on the day it starts.
 constraint forall(e in Events) ( within(eventStart[e]+eventDuration[e]-1, eventStart[e], dayOfEvent[e]*dayDuration) );
 
+%%%Play Zone
 
+%Implied constraint: two events cannot start at the same time if they're mutually exclusive.
+%Performance boost: not rellevant at 10.000 solution benchamrk
+%constraint forall(e in Events) (alldifferent([eventStart[x] | x in Events where eventExclusions[e,x]]));
+%Another way of doing it:
+%constraint forall(e in Events, ee = [e2 | e2 in Events where eventExclusions[e,e2]]) 
+%  (alldifferent([eventStart[x] | x in ee]));
+
+%Constraint improvement: event exclusions using disjunctive predicate
+%Performance boost: slighly better (4%) in 10.000 solution benchmark.
+%constraint forall(e in Events, ee = [e2 | e2 in Events where eventExclusions[e,e2]])
+%  (disjunctive([eventStart[ea] | ea in ee], [eventDuration[ea] | ea in ee]));
 
 %%%% Solve 
 
