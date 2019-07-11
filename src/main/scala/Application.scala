@@ -1,6 +1,14 @@
-object MainTest extends App{
+import akka.actor.{ActorSystem, Props}
+import akka.pattern.ask
+import akka.util.Timeout
+import scala.concurrent.duration._
+
+import scala.concurrent.Await
+
+object Application extends App{
 
     val TimeSlotDuration = 30 //This shouldn't be here
+    var Language: Language = DefaultLanguage
 
     override def main(args: Array[String]): Unit = {
 
@@ -63,16 +71,16 @@ object MainTest extends App{
             new EventData(29, time_slots = 2, classRoomsNeeded = 1),
 
             //Day 5
-            new EventData(30, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
-            new EventData(31, time_slots = 4, week = Weeks.AWeek, pcRoomsNeeded = 1),
+            new EventData(30, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+            new EventData(31, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
             new EventData(32, time_slots = 4, labRoomsNeeded = 1),
-            new EventData(33, time_slots = 4, week = Weeks.AWeek, pcRoomsNeeded = 1),
-            new EventData(34, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
-            new EventData(35, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
-            new EventData(36, time_slots = 4, week = Weeks.AWeek, pcRoomsNeeded = 1),
+            new EventData(33, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+            new EventData(34, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+            new EventData(35, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+            new EventData(36, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
             new EventData(37, time_slots = 4, pcRoomsNeeded = 1),
-            new EventData(38, time_slots = 4, week = Weeks.AWeek, pcRoomsNeeded = 1),
-            new EventData(39, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
+            new EventData(38, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+            new EventData(39, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
             new EventData(40, time_slots = 4, labRoomsNeeded = 1),
             new EventData(41, time_slots = 4, pcRoomsNeeded = 1),
             new EventData(42, time_slots = 4, labRoomsNeeded = 1),
@@ -82,10 +90,10 @@ object MainTest extends App{
             new EventData(45, time_slots = 2, classRoomsNeeded = 1),
             new EventData(46, time_slots = 4, labRoomsNeeded = 1),
             new EventData(47, time_slots = 4, pcRoomsNeeded = 1),
-            new EventData(48, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
-            new EventData(49, time_slots = 4, week = Weeks.AWeek, pcRoomsNeeded = 1),
-            new EventData(50, time_slots = 4, week = Weeks.AWeek, pcRoomsNeeded = 1),
-            new EventData(51, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
+            new EventData(48, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+            new EventData(49, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+            new EventData(50, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+            new EventData(51, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
 
             //Second Course
 
@@ -93,12 +101,12 @@ object MainTest extends App{
             new EventData(52, time_slots = 4, classRoomsNeeded = 1),
             new EventData(53, time_slots = 4, pcRoomsNeeded = 1),
             new EventData(54, time_slots = 4, pcRoomsNeeded = 1),
-            new EventData(55, time_slots = 4, week = Weeks.BWeek, labRoomsNeeded = 1),
+            new EventData(55, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
 
             //Day 2
             new EventData(56, time_slots = 4, pcRoomsNeeded = 1),
-            new EventData(57, time_slots = 4, week = Weeks.AWeek, labRoomsNeeded = 1),
-            new EventData(58, time_slots = 4, week = Weeks.BWeek, labRoomsNeeded = 1),
+            new EventData(57, time_slots = 4, week = AWeek, labRoomsNeeded = 1),
+            new EventData(58, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
             new EventData(59, time_slots = 4, classRoomsNeeded = 1),
             new EventData(60, time_slots = 4, classRoomsNeeded = 1),
 
@@ -107,15 +115,15 @@ object MainTest extends App{
             //Day 3
             new EventData(62, time_slots = 4, classRoomsNeeded = 1),
             new EventData(63, time_slots = 4, classRoomsNeeded = 1),
-            new EventData(64, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
+            new EventData(64, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
             new EventData(65, time_slots = 4, pcRoomsNeeded = 1),
-            new EventData(66, time_slots = 4, week = Weeks.AWeek, labRoomsNeeded = 1),
-            new EventData(67, time_slots = 4, week = Weeks.BWeek, labRoomsNeeded = 1),
+            new EventData(66, time_slots = 4, week = AWeek, labRoomsNeeded = 1),
+            new EventData(67, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
 /*
             //Day 4
             new EventData(68, time_slots = 4, pcRoomsNeeded = 1),
-            new EventData(69, time_slots = 4, week = Weeks.AWeek, pcRoomsNeeded = 1),
-            new EventData(70, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
+            new EventData(69, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+            new EventData(70, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
             new EventData(71, time_slots = 4, pcRoomsNeeded = 1),
             new EventData(72, time_slots = 4, pcRoomsNeeded = 1),
             new EventData(73, time_slots = 4, pcRoomsNeeded = 1),
@@ -123,10 +131,10 @@ object MainTest extends App{
             //Day 5
             new EventData(74, time_slots = 4, classRoomsNeeded = 1),
             new EventData(75, time_slots = 2, classRoomsNeeded = 1),
-            new EventData(76, time_slots = 4, week = Weeks.AWeek, pcRoomsNeeded = 1),
-            new EventData(77, time_slots = 4, week = Weeks.BWeek, pcRoomsNeeded = 1),
-            new EventData(78, time_slots = 4, week = Weeks.AWeek, classRoomsNeeded = 1),
-            new EventData(79, time_slots = 4, week = Weeks.BWeek, classRoomsNeeded = 1),
+            new EventData(76, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+            new EventData(77, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+            new EventData(78, time_slots = 4, week = AWeek, classRoomsNeeded = 1),
+            new EventData(79, time_slots = 4, week = BWeek, classRoomsNeeded = 1),
             new EventData(80, time_slots = 4, classRoomsNeeded = 1),
             new EventData(81, time_slots = 2, classRoomsNeeded = 1),
 
@@ -176,9 +184,17 @@ object MainTest extends App{
 
         val instance_data = new InstanceData(22, labRooms, classRooms, pcRooms, nEvents, events, preassignedEvents, precedences)
 
-        val minizinc_solver = new MiniZincInstanceSolver(new MiniZincInstanceData(instance_data))
+        val system = ActorSystem("System")
 
-        for(line <- minizinc_solver.provisionalSolve) println(line)
+        val minizinc_solver = system.actorOf(Props[MiniZincInstanceSolver])
+
+        implicit val timeout = Timeout(10 seconds)
+
+        val awaited_response = minizinc_solver ? instance_data
+
+        val result: List[String] = Await.result(awaited_response, timeout.duration).asInstanceOf[List[String]]
+
+        for(line <- result) println(line)
 
     }
 }

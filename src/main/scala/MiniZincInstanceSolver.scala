@@ -1,3 +1,4 @@
+import scala.collection.mutable
 import scala.sys.process.Process
 
 object MiniZincConstants {
@@ -22,7 +23,7 @@ case class MiniZincInstanceData(dayDuration: Int,
             instance.labRooms, instance.classRooms, instance.pcRooms,
             instance.events.length, instance.preassignedEvents.length,
             instance.preassignedEvents.map(_.num), instance.preassignedEvents.map(_.relativeStart),
-            instance.events.map(_.duration), instance.events.map(_.week),
+            instance.events.map(_.duration), instance.events.map(_.week.toString),
             for(e1 <- instance.events) yield for(e2 <- instance.events) yield e1.incompatibilities.contains(e2),
             instance.precedences.length, instance.precedences.map(_._1.num), instance.precedences.map(_._2.num),
             instance.events.map(_.labRoomsNeeded), instance.events.map(_.classRoomsNeeded), instance.events.map(_.pcRoomsNeeded))
@@ -54,11 +55,15 @@ case class MiniZincInstanceData(dayDuration: Int,
     def toDZNFile: Unit = ???
 }
 
-class MiniZincInstanceSolver(val instance: MiniZincInstanceData) extends InstanceSolver{
+class MiniZincInstanceSolver extends InstanceSolver{
 
+    def receive = {
+        case data: InstanceData => sender ! provisionalSolve(new MiniZincInstanceData(data))
+        case data: MiniZincInstanceData => sender ! provisionalSolve(data)
+        case _ => List("ERROR")
+    }
 
-
-    def provisionalSolve = {
+    def provisionalSolve(instance: MiniZincInstanceData) = {
 
         val minizinc_call = MiniZincConstants.MiniZincPath + " " +
                             MiniZincConstants.CommandLineStatisticsOption + " " +
