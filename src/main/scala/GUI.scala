@@ -1,22 +1,24 @@
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 
-object RESOLUTION {
-  val x = 1280
-  val y = 720
-}
+case class Resolution(x: Int = 1280, y: Int = 720)
 
 object GUI extends App {
 
-  val gui = new JFXApp {
-    stage = new JFXApp.PrimaryStage{
-      title = "Window"
-      scene = new Scene(RESOLUTION.x, RESOLUTION.y){
+  def gui = {
+    val resolution = Resolution()
 
+    val gui = new JFXApp {
+
+      stage = new JFXApp.PrimaryStage {
+        title = "Window"
+        scene = new Scene(resolution.x, resolution.y) {
+
+        }
       }
     }
-  }
 
-  gui.main(args)
-  //override def main(args: Array[String]): Unit = gui.main(args)
+    gui.main(args)
+    //override def main(args: Array[String]): Unit = gui.main(args)
+  }
 }

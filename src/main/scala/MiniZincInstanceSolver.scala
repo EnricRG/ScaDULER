@@ -1,4 +1,3 @@
-import scala.collection.mutable
 import scala.sys.process.Process
 
 object MiniZincConstants {
