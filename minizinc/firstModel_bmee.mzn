@@ -64,8 +64,8 @@ array[Events] of WEEK: eventWeek;
 % Array containing which events cannot run in parallel for reasons
 % not concerning a resource clash.
 % eventExlusions[e1,e2] means that both events cannot run in parallel for external reasons.
-%array[Events, Events] of bool: eventExclusions;
-array[Events] of set of Events: eventExclusions;
+array[Events, Events] of bool: eventExclusions;
+%array[Events] of set of Events: eventExclusions;
 
 % Type of the room every Event needs.
 array[Events] of int: needsLabRoom;
@@ -112,8 +112,11 @@ constraint forall(prec in Precedences)
   (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1 < eventStart[successors[prec]]);
   
 % If two events are mutually exclusive, they cannot run in parallel.
-constraint forall(e1 in Events, e2 in eventExclusions[e1]) 
-  (no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
+%constraint forall(e1 in Events, e2 in eventExclusions[e1]) 
+%  (no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]));
+constraint forall(e1 in Events, e2 in e1+1..nEvents) 
+  ( eventExclusions[e1,e2] -> no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
+
 
 % For every Time t, the resource requirements are not exceeded.
 % Optimizable: reduce event array instead of resource requirements array

@@ -3,12 +3,16 @@
     ],
     "openFiles": [
         "firstModel.mzn",
-        "1er_s1.dzn"
+        "1er_s1.dzn",
+        "firstModel_bmee.mzn",
+        "1er_s1_bmee.dzn"
     ],
-    "openTab": 0,
+    "openTab": 2,
     "projectFiles": [
         "1er_s1.dzn",
-        "firstModel.mzn"
+        "1er_s1_bmee.dzn",
+        "firstModel.mzn",
+        "firstModel_bmee.mzn"
     ],
     "projectSolverConfigs": [
     ],
