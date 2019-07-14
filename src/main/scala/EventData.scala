@@ -1,3 +1,5 @@
+//package data
+
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
@@ -12,7 +14,7 @@ class EventData(val num: Int, var start: LocalTime = null, var end: LocalTime = 
     val duration: Int = if (time_slots == 0)
                         if(start == null) 0
                         else if (end == null) 1
-                        else (start.until(end, ChronoUnit.MINUTES)/Application.TimeSlotDuration).toInt
+                        else 0 //(start.until(end, ChronoUnit.MINUTES)/Application.TimeSlotDuration).toInt
                    else time_slots
 
 

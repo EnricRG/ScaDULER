@@ -4,6 +4,8 @@ version := "0.1"
 
 scalaVersion := "2.12.8"
 
+//libraryDependencies += "org.scalafx" %% "scalafx" % "8.0.192-R14"
+
 // Add dependency on ScalaFX library
 libraryDependencies += "org.scalafx" %% "scalafx" % "12.0.1-R17"
 
@@ -22,3 +24,7 @@ libraryDependencies ++= javaFXModules.map( m =>
 
 libraryDependencies +=
   "com.typesafe.akka" %% "akka-actor" % "2.4.20"
+
+//addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+
+//libraryDependencies += "org.scalafx" %% "scalafxml-core-sfx8" % "0.4"

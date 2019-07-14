@@ -1,9 +1,32 @@
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import scala.concurrent.duration._
+import javafx.fxml.FXMLLoader
+import scalafx.application.JFXApp
+import scalafx.scene.{Parent, Scene}
 
+//import gui.EventForm
+
+import scala.concurrent.duration._
 import scala.concurrent.Await
+
+
+object knekro extends App{
+    val knacigui = new JFXApp {
+
+        stage = new JFXApp.PrimaryStage {
+            title = "Knekro makinaci fieraci"
+
+            val fxml = new FXMLLoader(getClass().getResource("/knaci.fxml"))
+            fxml.setController(this)
+            val root : Parent = fxml.load()
+
+            scene = new Scene(root, 777,777)
+        }
+    }
+
+    knacigui.main(args)
+}
 
 object Instance {
     val labRooms = 1
@@ -175,10 +198,18 @@ object Instance {
     def instance1 = InstanceData(22, labRooms, classRooms, pcRooms, nEvents, events, preassignedEvents, precedences)
 }
 
-object Application extends App{
+object test extends App{
+    override def main(args: Array[String]): Unit ={
+        val event = EventForm.promptForm(1)
+
+        println(event.toString)
+    }
+}
+
+object MainApp extends App{
 
     val TimeSlotDuration = 30 //This shouldn't be here
-    var Language: Language = DefaultLanguage
+
 
     override def main(args: Array[String]): Unit = {
 
@@ -186,7 +217,7 @@ object Application extends App{
         // Instance 1: 1er_s1 (2019-2020)
         //
 
-        GUI.gui
+        //gui.GUI.gui
 
         val system = ActorSystem("System")
 
