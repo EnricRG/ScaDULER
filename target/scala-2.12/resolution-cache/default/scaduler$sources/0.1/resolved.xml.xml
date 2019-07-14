@@ -4,7 +4,11 @@
 		module="scaduler$sources"
 		revision="0.1"
 		status="integration"
+<<<<<<< Updated upstream
 		publication="20190619094108"
+=======
+		publication="20190621094806"
+>>>>>>> Stashed changes
 	/>
 	<configurations>
 		<conf name="compile" visibility="public" description=""/>

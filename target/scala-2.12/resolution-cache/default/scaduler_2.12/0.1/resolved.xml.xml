@@ -4,7 +4,11 @@
 		module="scaduler_2.12"
 		revision="0.1"
 		status="integration"
+<<<<<<< Updated upstream
 		publication="20190619094101"
+=======
+		publication="20190621083315"
+>>>>>>> Stashed changes
 	>
 		<description>
 		ScaDULER
