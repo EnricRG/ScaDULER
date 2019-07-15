@@ -10,24 +10,6 @@ import scalafx.scene.{Parent, Scene}
 import scala.concurrent.duration._
 import scala.concurrent.Await
 
-
-object knekro extends App{
-    val knacigui = new JFXApp {
-
-        stage = new JFXApp.PrimaryStage {
-            title = "Knekro makinaci fieraci"
-
-            val fxml = new FXMLLoader(getClass().getResource("/knaci.fxml"))
-            fxml.setController(this)
-            val root : Parent = fxml.load()
-
-            scene = new Scene(root, 777,777)
-        }
-    }
-
-    knacigui.main(args)
-}
-
 object Instance {
     val labRooms = 1
     val classRooms = 2
