@@ -7,4 +7,6 @@ object AppSettings {
   var eventFormFieldStep = 10
   var eventFormTextFieldHeight = 25
   var eventFormTextFieldWidth = 400
+  var eventFormDescriptionWidth = 500
+  var eventFormDescriptionHeight = 300
 }
