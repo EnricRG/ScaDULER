@@ -5,7 +5,9 @@
 import javafx.event.ActionEvent
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
+import scalafx.geometry.HPos
 import scalafx.geometry.Pos.{Center, TopCenter}
+import scalafx.scene.control.Label
 import scalafx.scene.layout.{ColumnConstraints, GridPane}
 //import scalafx.event.ActionEvent
 import scalafx.scene.Scene
@@ -28,6 +30,7 @@ object EventForm {
                 title = AppSettings.Language.getItem("eventForm_windowTitle")
                 fill = Color.WhiteSmoke
 
+                val eventNameTag = new Label { text = AppSettings.Language.getItem("eventForm_eventName") + ":"}
                 val eventNameField = new TextField{
                     promptText = AppSettings.Language.getItem("eventForm_eventName")
                     prefColumnCount = AppSettings.eventFormSettings.nameColumnWidth
@@ -53,8 +56,9 @@ object EventForm {
                     onAction = (e: ActionEvent) => eventDescriptionField.setWrapText(selected.apply)
                 }
 
-                val column1 = new ColumnConstraints{ percentWidth = 29; fillWidth = false}
-                val column2 = new ColumnConstraints{ percentWidth = 69; fillWidth = false}
+                val column0 = new ColumnConstraints{ percentWidth = 1; fillWidth = false; halignment = HPos.Center}
+                val column1 = new ColumnConstraints{ percentWidth = 29; fillWidth = false; halignment = HPos.Center}
+                val column2 = new ColumnConstraints{ percentWidth = 69; fillWidth = false; halignment = HPos.Center}
 
                 val grid = new GridPane{
                     hgap = 10
@@ -63,6 +67,7 @@ object EventForm {
 
                 grid.columnConstraints = List(column1, column2)
 
+                grid.add(eventNameTag, 0, 1)
                 grid.add(wrapDescription, 0, 3)
 
                 grid.add(eventNameField, 1, 1)
