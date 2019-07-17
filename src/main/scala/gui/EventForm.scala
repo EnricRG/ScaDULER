@@ -5,6 +5,7 @@
 import javafx.event.ActionEvent
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
+import scalafx.geometry.Pos.{Center, TopCenter}
 import scalafx.scene.layout.{ColumnConstraints, GridPane}
 //import scalafx.event.ActionEvent
 import scalafx.scene.Scene
@@ -21,52 +22,39 @@ object EventForm {
         val startY = 10
 
         stage = new PrimaryStage {
-            width = AppSettings.eventFormWidth
-            height = AppSettings.eventFormHeight
+            width = AppSettings.eventFormSettings.width
+            height = AppSettings.eventFormSettings.height
             scene = new Scene {
+                title = AppSettings.Language.getItem("eventForm_windowTitle")
                 fill = Color.WhiteSmoke
 
                 val eventNameField = new TextField{
-                    layoutX = startX
-                    layoutY = startY
                     promptText = AppSettings.Language.getItem("eventForm_eventName")
-                    prefWidth = AppSettings.eventFormTextFieldWidth
-                    prefHeight = AppSettings.eventFormTextFieldHeight
+                    prefColumnCount = AppSettings.eventFormSettings.nameColumnWidth
                     focusTraversable = false
                 }
 
                 val eventShortNameField = new TextField{
-                    layoutX = eventNameField.layoutX.apply
-                    layoutY = eventNameField.layoutY.apply + eventNameField.prefHeight.apply + AppSettings.eventFormFieldStep
                     promptText = AppSettings.Language.getItem("eventForm_eventShortName")
-                    prefHeight = AppSettings.eventFormTextFieldHeight
+                    prefColumnCount = AppSettings.eventFormSettings.shortNameColumnWidth
                     focusTraversable = false
                 }
 
                 val eventDescriptionField = new TextArea{
-                    layoutX = eventNameField.layoutX.apply
-                    layoutY = eventShortNameField.layoutY.apply + eventShortNameField.prefHeight.apply + AppSettings.eventFormFieldStep
                     promptText = AppSettings.Language.getItem("eventForm_eventDescription")
-                    //prefHeight = AppSettings.eventFormTextFieldHeight
-                    wrapText = true
+                    wrapText = false
                     focusTraversable = false
                 }
 
                 val wrapDescription = new CheckBox {
-                    layoutX = eventDescriptionField.layoutX.apply + eventDescriptionField.getWidth/2
-                    layoutY = eventDescriptionField.layoutY.apply + 10 + eventDescriptionField.getHeight
+                    text = AppSettings.Language.getItem("eventForm_wrapDescription")
+                    alignment = Center
                     focusTraversable = false
-
                     onAction = (e: ActionEvent) => eventDescriptionField.setWrapText(selected.apply)
                 }
 
-                val column1 = new ColumnConstraints{
-                    percentWidth = 29
-                }
-
-                val column2 = new ColumnConstraints{
-                    percentWidth = 69
-                }
+                val column1 = new ColumnConstraints{ percentWidth = 29; fillWidth = false}
+                val column2 = new ColumnConstraints{ percentWidth = 69; fillWidth = false}
 
                 val grid = new GridPane{
                     hgap = 10

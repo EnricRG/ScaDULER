@@ -11,8 +11,10 @@ class Language(val items: Map[String,String]) {
 
 object DefaultLanguage extends Language {
     override val items = Map(
+        "eventForm_windowTitle" -> "New Event",
         "eventForm_eventName" -> "Event name",
         "eventForm_eventShortName" -> "Event name abbreviation",
         "eventForm_eventDescription" -> "Event description",
+        "eventForm_wrapDescription" -> "Wrap text on corners",
     )
 }
