@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="363.0" prefWidth="600.0" spacing="4.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <SplitPane dividerPositions="0.6287625418060201" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="296.0" prefWidth="596.0">
+         <items>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="289.0" prefWidth="373.0">
+               <children>
+                  <VBox alignment="CENTER_LEFT" fillWidth="false" layoutX="-1.0" layoutY="-1.0" prefHeight="286.0" prefWidth="374.0" spacing="3.0">
+                     <children>
+                        <HBox prefHeight="0.0" prefWidth="200.0" />
+                        <Label text="Event Name:" />
+                        <TextField prefColumnCount="25" />
+                        <Label text="Event Shortname:" />
+                        <TextField prefColumnCount="10" />
+                        <Label text="Event Description:" />
+                        <TextArea prefHeight="196.0" prefWidth="409.0" />
+                        <HBox alignment="TOP_CENTER" prefHeight="36.0" prefWidth="372.0">
+                           <children>
+                              <CheckBox alignment="CENTER" mnemonicParsing="false" text="Wrap Text" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets left="5.0" right="3.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="294.0" prefWidth="63.0">
+               <children>
+                  <VBox prefHeight="294.0" prefWidth="219.0">
+                     <children>
+                        <VBox prefHeight="215.0" prefWidth="220.0" spacing="4.0">
+                           <children>
+                              <HBox prefHeight="0.0" prefWidth="219.0" />
+                              <Label text="Room type:" />
+                              <HBox prefHeight="27.0" prefWidth="219.0">
+                                 <children>
+                                    <ComboBox prefWidth="150.0" />
+                                 </children>
+                              </HBox>
+                              <Label text="Start Time:" />
+                              <HBox prefHeight="14.0" prefWidth="219.0">
+                                 <children>
+                                    <ComboBox prefHeight="25.0" prefWidth="40.0" />
+                                    <Label text=":">
+                                       <padding>
+                                          <Insets top="2.0" />
+                                       </padding>
+                                    </Label>
+                                    <ComboBox prefHeight="25.0" prefWidth="7.0" />
+                                 </children>
+                              </HBox>
+                              <Label text="End Time:" />
+                              <HBox prefHeight="14.0" prefWidth="219.0">
+                                 <children>
+                                    <ComboBox prefHeight="25.0" prefWidth="40.0" />
+                                    <Label text=":">
+                                       <padding>
+                                          <Insets top="2.0" />
+                                       </padding>
+                                    </Label>
+                                    <ComboBox prefHeight="25.0" prefWidth="7.0" />
+                                 </children>
+                              </HBox>
+                              <Label text="Week:" />
+                              <HBox prefHeight="14.0" prefWidth="219.0">
+                                 <children>
+                                    <ComboBox prefWidth="150.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                        </VBox>
+                        <Separator prefWidth="200.0" />
+                        <HBox alignment="CENTER" prefHeight="77.0" prefWidth="219.0">
+                           <children>
+                              <Button mnemonicParsing="false" text="Manage Incompatibilities..." />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </items>
+      </SplitPane>
+      <HBox alignment="TOP_CENTER" prefHeight="38.0" prefWidth="600.0">
+         <children>
+            <Button alignment="TOP_CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="39.0" prefWidth="591.0" text="Create Event">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets top="2.0" />
+               </opaqueInsets>
+            </Button>
+         </children>
+         <opaqueInsets>
+            <Insets top="2.0" />
+         </opaqueInsets>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Label text="Warning: message goes here" />
+         </children>
+      </HBox>
+   </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <padding>
+      <Insets left="4.0" right="4.0" />
+   </padding>
+</VBox>
