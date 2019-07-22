@@ -1,6 +1,6 @@
 
 
-object ClassRooms{
+object Classrooms{
     val roomTypes = List(LabRoom, ClassRoom, PcRoom)
     val stringRoomTypes = roomTypes.map(_.toString)
 }

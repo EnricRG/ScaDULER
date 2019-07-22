@@ -99,7 +99,7 @@ object EventForm/*(nEvents: Int)*/ {
 
             val roomTypeTag = new Label{ text = AppSettings.Language.getItem("eventForm_roomType") }
             val roomTypeSelector = new HBox {
-                children = new ComboBox(ClassRooms.stringRoomTypes)
+                children = new ComboBox(Classrooms.stringRoomTypes)
             }
 
             val startTimeTag = new Label { text = AppSettings.Language.getItem("eventForm_startTime") }
