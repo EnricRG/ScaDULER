@@ -22,7 +22,7 @@ case class MiniZincInstanceData(dayDuration: Int,
             instance.labRooms, instance.classRooms, instance.pcRooms,
             instance.events.length, instance.preassignedEvents.length,
             instance.preassignedEvents.map(_.num), instance.preassignedEvents.map(_.relativeStart),
-            instance.events.map(_.duration), instance.events.map(_.week.toString),
+            instance.events.map(_.duration), instance.events.map(_.week.toShortString),
             for(e1 <- instance.events) yield for(e2 <- instance.events) yield e1.incompatibilities.contains(e2),
             instance.precedences.length, instance.precedences.map(_._1.num), instance.precedences.map(_._2.num),
             instance.events.map(_.labRoomsNeeded), instance.events.map(_.classRoomsNeeded), instance.events.map(_.pcRoomsNeeded))
