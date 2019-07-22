@@ -2,86 +2,194 @@
 
 //import data.EventData
 
-import javafx.event.ActionEvent
+import javafx.event.{ActionEvent, EventHandler}
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
-import scalafx.geometry.HPos
-import scalafx.geometry.Pos.{Center, TopCenter}
-import scalafx.scene.control.Label
-import scalafx.scene.layout.{ColumnConstraints, GridPane}
-//import scalafx.event.ActionEvent
+import scalafx.geometry.Insets
+import scalafx.geometry.Orientation.Horizontal
+import scalafx.geometry.Pos.{BaselineCenter, Center}
 import scalafx.scene.Scene
-import scalafx.scene.control.{CheckBox, TextArea, TextField}
+import scalafx.scene.control._
+import scalafx.scene.layout.Priority.Always
+import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.paint.Color
 
+class FormWarning(val message: String) extends Warning(message)
 
-object EventForm {
-    def promptForm(n_events: Int): Option[EventData] = {
+object EventForm/*(nEvents: Int)*/ {
 
-    val prompt: JFXApp = new JFXApp {
+    //var event: EventData = new EventData(nEvents)
 
-        val startX = 20
-        val startY = 10
+    var warning: Option[Warning] = None
 
-        stage = new PrimaryStage {
-            width = AppSettings.eventFormSettings.width
-            height = AppSettings.eventFormSettings.height
-            scene = new Scene {
-                title = AppSettings.Language.getItem("eventForm_windowTitle")
-                fill = Color.WhiteSmoke
+    private def manageIncompatibilities = {}
 
-                val eventNameTag = new Label { text = AppSettings.Language.getItem("eventForm_eventName") + ":"}
-                val eventNameField = new TextField{
-                    promptText = AppSettings.Language.getItem("eventForm_eventName")
-                    prefColumnCount = AppSettings.eventFormSettings.nameColumnWidth
-                    focusTraversable = false
-                }
+    private def leftSplit = new VBox{
 
-                val eventShortNameField = new TextField{
-                    promptText = AppSettings.Language.getItem("eventForm_eventShortName")
-                    prefColumnCount = AppSettings.eventFormSettings.shortNameColumnWidth
-                    focusTraversable = false
-                }
+        spacing = AppSettings.eventFormSettings.fieldSpacing
+        padding = Insets(2,2,4,2)
 
-                val eventDescriptionField = new TextArea{
-                    promptText = AppSettings.Language.getItem("eventForm_eventDescription")
-                    wrapText = false
-                    focusTraversable = false
-                }
+        val eventNameTag = new Label { text = AppSettings.Language.getItem("eventForm_eventName") + ":"}
+        val eventNameField = new TextField{
+            maxWidth = AppSettings.eventFormSettings.nameFieldWidth
+            promptText = AppSettings.Language.getItem("eventForm_eventNameHelp")
+        }
 
-                val wrapDescription = new CheckBox {
-                    text = AppSettings.Language.getItem("eventForm_wrapDescription")
-                    alignment = Center
-                    focusTraversable = false
-                    onAction = (e: ActionEvent) => eventDescriptionField.setWrapText(selected.apply)
-                }
+        val eventShortNameTag = new Label { text = AppSettings.Language.getItem("eventForm_eventShortName") + ":"}
+        val eventShortNameField = new TextField{
+            maxWidth = AppSettings.eventFormSettings.shortNameFieldWidth
+            promptText = AppSettings.Language.getItem("eventForm_eventShortNameHelp")
+        }
 
-                val column0 = new ColumnConstraints{ percentWidth = 1; fillWidth = false; halignment = HPos.Center}
-                val column1 = new ColumnConstraints{ percentWidth = 29; fillWidth = false; halignment = HPos.Center}
-                val column2 = new ColumnConstraints{ percentWidth = 69; fillWidth = false; halignment = HPos.Center}
+        val eventDescriptionTag = new Label { text = AppSettings.Language.getItem("eventForm_eventDescription") + ":"}
+        val eventDescriptionField = new TextArea{
+            promptText = AppSettings.Language.getItem("eventForm_eventDescriptionHelp")
+            wrapText = false
+        }
 
-                val grid = new GridPane{
-                    hgap = 10
-                    vgap = 10
-                }
-
-                grid.columnConstraints = List(column1, column2)
-
-                grid.add(eventNameTag, 0, 1)
-                grid.add(wrapDescription, 0, 3)
-
-                grid.add(eventNameField, 1, 1)
-                grid.add(eventShortNameField, 1, 2)
-                grid.add(eventDescriptionField, 1, 3)
-
-                root = grid
-                //content = List(eventName, eventShortName, eventDescription, wrapDescription)
+        val wrapDescription = new HBox {
+            alignment = Center
+            children = new CheckBox {
+                text = AppSettings.Language.getItem("eventForm_wrapDescription")
+                alignment = Center
+                fillWidth = true
+                onAction = (e: ActionEvent) => eventDescriptionField.setWrapText(selected.apply)
             }
+        }
+
+        children = List(eventNameTag, eventNameField, eventShortNameTag, eventShortNameField, eventDescriptionTag, eventDescriptionField, wrapDescription)
+    }
+
+    private def rightSplit = new VBox{
+
+        private def timeSelector(daySelectorBehavior: EventHandler[ActionEvent],
+                                 hourSelectorBehavior: EventHandler[ActionEvent],
+                                 minuteSelectorBehavior: EventHandler[ActionEvent]) = new HBox{
+
+            val daySelector = new ComboBox(Days.dayIntList){
+                promptText = AppSettings.Language.getItem("eventForm_day")
+                onAction = daySelectorBehavior
+            }
+
+            val dayHourSeparator = new Label{ text = AppSettings.timeSeparatorSymbol }
+
+            val hourSelector = new ComboBox(){
+                this.promptText = AppSettings.Language.getItem("eventForm_hour")
+                onAction = hourSelectorBehavior
+            }
+
+            val hourMinuteSeparator = new Label{ text = AppSettings.timeSeparatorSymbol }
+
+            val minuteSelector = new ComboBox(Minutes.minuteStringList){
+                this.promptText = AppSettings.Language.getItem("eventForm_minutes")
+                onAction = minuteSelectorBehavior
+            }
+
+            children = List(daySelector, dayHourSeparator, hourSelector, hourMinuteSeparator, minuteSelector)
+        }
+
+        fillWidth = true
+        spacing = AppSettings.eventFormSettings.fieldSpacing
+        padding = Insets(2,2,4,2)
+
+        val eventPropertiesPane = new VBox {
+
+            spacing = AppSettings.eventFormSettings.fieldSpacing
+            padding = Insets(0,0,10,0)
+
+            val roomTypeTag = new Label{ text = AppSettings.Language.getItem("eventForm_roomType") }
+            val roomTypeSelector = new HBox {
+                children = new ComboBox(ClassRooms.stringRoomTypes)
+            }
+
+            val startTimeTag = new Label { text = AppSettings.Language.getItem("eventForm_startTime") }
+            val startTimeField = timeSelector(
+                (e: ActionEvent) => {},
+                (e: ActionEvent) => {},
+                (e: ActionEvent) => {},
+            )
+
+            val endTimeTag = new Label { text = AppSettings.Language.getItem("eventForm_endTime")}
+            val endTimeField = timeSelector(
+                (e: ActionEvent) => {},
+                (e: ActionEvent) => {},
+                (e: ActionEvent) => {},
+            )
+
+            val weekTag = new Label { text = AppSettings.Language.getItem("eventForm_week")}
+            val weekSelector = new HBox{
+                children = new ComboBox(Weeks.weekStringList)
+            }
+
+            children = List(roomTypeTag, roomTypeSelector, startTimeTag, startTimeField, endTimeTag, endTimeField, weekTag, weekSelector)
+        }
+
+        val separator = new Separator{
+            orientation = Horizontal
+        }
+
+        val incompatibilitiesButton = new VBox{
+            maxWidth = Double.MaxValue
+            maxHeight = Double.MaxValue
+            alignment = BaselineCenter
+
+            children = new Button{
+                text = AppSettings.Language.getItem("eventForm_manageIncompatibilities")
+                alignment = BaselineCenter
+                onAction = (e: ActionEvent) => manageIncompatibilities
+            }
+        }
+
+        children = List(eventPropertiesPane, separator, incompatibilitiesButton)
+    }
+
+    private def splitView = {
+        new SplitPane {
+            orientation = Horizontal
+            dividerPositions = 0.65
+            items.addAll(leftSplit,rightSplit)
         }
     }
 
-    prompt.main(Array())
-
-    Some(new EventData(n_events))
+    private def confirmationButton = new HBox {
+        children = new Button{
+            maxWidth = Double.MaxValue
+            hgrow = Always
+            text = AppSettings.Language.getItem("eventForm_confirmationButton")
+            style = "-fx-font-size: 20px;"
+        }
     }
+
+    private def warningPanel = new Label{
+        visible = true
+        style = "-fx-font-style: italic;"
+        text = "Warning: this functionality is not finished."
+    }
+
+    def promptForm(n_events: Int): Option[EventData] = {
+
+        val prompt: JFXApp = new JFXApp {
+
+            stage = new PrimaryStage {
+                width = AppSettings.eventFormSettings.width
+                height = AppSettings.eventFormSettings.height
+                scene = new Scene{
+                    title = AppSettings.Language.getItem("eventForm_windowTitle")
+                    fill = Color.WhiteSmoke
+                    root = new VBox{
+                        fillWidth = true
+                        spacing = 4
+                        padding = Insets(4,4,4,4)
+                        children = List(splitView,confirmationButton,warningPanel)
+                    }
+                }
+            }
+
+        }
+
+        prompt.main(Array())
+
+        Some(new EventData(n_events))
+    }
+
 }
