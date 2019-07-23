@@ -163,7 +163,7 @@ object EventForm/*(nEvents: Int)*/ {
     private def warningPanel = new Label{
         visible = true
         style = "-fx-font-style: italic;"
-        text = "Warning: this functionality is not finished."
+        text = "Warning: this functionality is not finished yet."
     }
 
     def promptForm(n_events: Int): Option[EventData] = {
