@@ -1,4 +1,6 @@
+package misc
 
+import app.AppSettings
 
 object Classrooms{
     val roomTypes = List(LabRoom, ClassRoom, PcRoom)

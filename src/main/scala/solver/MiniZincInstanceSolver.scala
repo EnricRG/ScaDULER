@@ -1,3 +1,7 @@
+package solver
+
+import model.{EventSchedule, InstanceData}
+
 import scala.sys.process.Process
 
 object MiniZincConstants {

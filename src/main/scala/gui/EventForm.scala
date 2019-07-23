@@ -1,8 +1,10 @@
-//package gui
+package gui
 
-//import data.EventData
-
+import app.AppSettings
+import control.Warning
 import javafx.event.{ActionEvent, EventHandler}
+import misc.{Classrooms, Days, Minutes, Weeks}
+import model.EventData
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Insets
@@ -18,7 +20,7 @@ class FormWarning(val message: String) extends Warning(message)
 
 object EventForm/*(nEvents: Int)*/ {
 
-    //var event: EventData = new EventData(nEvents)
+    //var event: model.EventData = new model.EventData(nEvents)
 
     var warning: Option[Warning] = None
 

@@ -1,3 +1,5 @@
+package app
+
 object AppSettings {
 
     var Language: Language = DefaultLanguage

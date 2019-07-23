@@ -1,14 +1,17 @@
+package app
+
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import javafx.fxml.FXMLLoader
-import scalafx.application.JFXApp
-import scalafx.scene.{Parent, Scene}
+import gui.EventForm
+import misc.Weeks._
+import model.{EventData, InstanceData}
+import solver.MiniZincInstanceSolver
 
 //import gui.EventForm
 
-import scala.concurrent.duration._
 import scala.concurrent.Await
+import scala.concurrent.duration._
 
 object Instance {
     val labRooms = 1
@@ -17,11 +20,11 @@ object Instance {
 
     val events = List(
         //Breaks
-        /*new EventData(1, time_slots = 2, relativeStart = 9),
-        new EventData(2, time_slots = 2, relativeStart = 31),
-        new EventData(3, time_slots = 2, relativeStart = 53),
-        new EventData(4, time_slots = 2, relativeStart = 75),
-        new EventData(5, time_slots = 2, relativeStart = 97),*/
+        /*new model.EventData(1, time_slots = 2, relativeStart = 9),
+        new model.EventData(2, time_slots = 2, relativeStart = 31),
+        new model.EventData(3, time_slots = 2, relativeStart = 53),
+        new model.EventData(4, time_slots = 2, relativeStart = 75),
+        new model.EventData(5, time_slots = 2, relativeStart = 97),*/
         new EventData(1, time_slots = 4, relativeStart = 9+22*3),
         new EventData(2, time_slots = 2),
         new EventData(3, time_slots = 2),
@@ -30,13 +33,13 @@ object Instance {
 
         //First course
 
-        //Day 1
+        //misc.Day 1
         new EventData(6, time_slots = 4, classRoomsNeeded = 1),
         new EventData(7, time_slots = 4, labRoomsNeeded = 1),
         new EventData(8, time_slots = 4, pcRoomsNeeded = 1),
         new EventData(9, time_slots = 4, pcRoomsNeeded = 1),
 
-        //Day 2
+        //misc.Day 2
         new EventData(10, time_slots = 4, classRoomsNeeded = 1),
         new EventData(11, time_slots = 4, classRoomsNeeded = 1),
 
@@ -45,7 +48,7 @@ object Instance {
         new EventData(14, time_slots = 4, pcRoomsNeeded = 1),
         new EventData(15, time_slots = 4, classRoomsNeeded = 1),
 
-        //Day 3
+        //misc.Day 3
         new EventData(16, time_slots = 4, classRoomsNeeded = 1),
         new EventData(17, time_slots = 2, classRoomsNeeded = 1),
         new EventData(18, time_slots = 2, classRoomsNeeded = 1),
@@ -57,7 +60,7 @@ object Instance {
         new EventData(23, time_slots = 4, classRoomsNeeded = 1),
         new EventData(24, time_slots = 2, classRoomsNeeded = 1),
 
-        //Day 4
+        //misc.Day 4
         new EventData(25, time_slots = 2, classRoomsNeeded = 1),
         new EventData(26, time_slots = 2, classRoomsNeeded = 1),
         new EventData(27, time_slots = 4, classRoomsNeeded = 1),
@@ -65,7 +68,7 @@ object Instance {
         new EventData(28, time_slots = 4, classRoomsNeeded = 1),
         new EventData(29, time_slots = 2, classRoomsNeeded = 1),
 
-        //Day 5
+        //misc.Day 5
         new EventData(30, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
         new EventData(31, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
         new EventData(32, time_slots = 4, labRoomsNeeded = 1),
@@ -90,15 +93,15 @@ object Instance {
         new EventData(50, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
         new EventData(51, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
 
-        //Second Course
+        //Second model.Course
 
-        //Day 1
+        //misc.Day 1
         new EventData(52, time_slots = 4, classRoomsNeeded = 1),
         new EventData(53, time_slots = 4, pcRoomsNeeded = 1),
         new EventData(54, time_slots = 4, pcRoomsNeeded = 1),
         new EventData(55, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
 
-        //Day 2
+        //misc.Day 2
         new EventData(56, time_slots = 4, pcRoomsNeeded = 1),
         new EventData(57, time_slots = 4, week = AWeek, labRoomsNeeded = 1),
         new EventData(58, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
@@ -107,7 +110,7 @@ object Instance {
 
         new EventData(61, time_slots = 4, pcRoomsNeeded = 1),
 
-        //Day 3
+        //misc.Day 3
         new EventData(62, time_slots = 4, classRoomsNeeded = 1),
         new EventData(63, time_slots = 4, classRoomsNeeded = 1),
         new EventData(64, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
@@ -115,25 +118,25 @@ object Instance {
         new EventData(66, time_slots = 4, week = AWeek, labRoomsNeeded = 1),
         new EventData(67, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
         /*
-                    //Day 4
-                    new EventData(68, time_slots = 4, pcRoomsNeeded = 1),
-                    new EventData(69, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
-                    new EventData(70, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
-                    new EventData(71, time_slots = 4, pcRoomsNeeded = 1),
-                    new EventData(72, time_slots = 4, pcRoomsNeeded = 1),
-                    new EventData(73, time_slots = 4, pcRoomsNeeded = 1),
+                    //misc.Day 4
+                    new model.EventData(68, time_slots = 4, pcRoomsNeeded = 1),
+                    new model.EventData(69, time_slots = 4, week = misc.AWeek, pcRoomsNeeded = 1),
+                    new model.EventData(70, time_slots = 4, week = misc.BWeek, pcRoomsNeeded = 1),
+                    new model.EventData(71, time_slots = 4, pcRoomsNeeded = 1),
+                    new model.EventData(72, time_slots = 4, pcRoomsNeeded = 1),
+                    new model.EventData(73, time_slots = 4, pcRoomsNeeded = 1),
 
-                    //Day 5
-                    new EventData(74, time_slots = 4, classRoomsNeeded = 1),
-                    new EventData(75, time_slots = 2, classRoomsNeeded = 1),
-                    new EventData(76, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
-                    new EventData(77, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
-                    new EventData(78, time_slots = 4, week = AWeek, classRoomsNeeded = 1),
-                    new EventData(79, time_slots = 4, week = BWeek, classRoomsNeeded = 1),
-                    new EventData(80, time_slots = 4, classRoomsNeeded = 1),
-                    new EventData(81, time_slots = 2, classRoomsNeeded = 1),
+                    //misc.Day 5
+                    new model.EventData(74, time_slots = 4, classRoomsNeeded = 1),
+                    new model.EventData(75, time_slots = 2, classRoomsNeeded = 1),
+                    new model.EventData(76, time_slots = 4, week = misc.AWeek, pcRoomsNeeded = 1),
+                    new model.EventData(77, time_slots = 4, week = misc.BWeek, pcRoomsNeeded = 1),
+                    new model.EventData(78, time_slots = 4, week = misc.AWeek, classRoomsNeeded = 1),
+                    new model.EventData(79, time_slots = 4, week = misc.BWeek, classRoomsNeeded = 1),
+                    new model.EventData(80, time_slots = 4, classRoomsNeeded = 1),
+                    new model.EventData(81, time_slots = 2, classRoomsNeeded = 1),
 
-                    new EventData(82, time_slots = 4, pcRoomsNeeded = 1),*/
+                    new model.EventData(82, time_slots = 4, pcRoomsNeeded = 1),*/
     )
 
     val nEvents = 67
@@ -196,7 +199,7 @@ object MainApp extends App{
     override def main(args: Array[String]): Unit = {
 
         //
-        // Instance 1: 1er_s1 (2019-2020)
+        // app.Instance 1: 1er_s1 (2019-2020)
         //
 
         //gui.GUI.gui

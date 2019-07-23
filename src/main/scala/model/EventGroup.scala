@@ -1,3 +1,5 @@
+package model
+
 abstract class EventGroup
 
 case object MorningGroup extends EventGroup

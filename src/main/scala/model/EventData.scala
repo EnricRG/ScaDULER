@@ -1,7 +1,8 @@
-//package data
+package model
 
 import java.time.LocalTime
-import java.time.temporal.ChronoUnit
+
+import misc.Weeks._
 
 class EventData(val num: Int, var start: LocalTime = null, var end: LocalTime = null,
                 var relativeStart: Int = 0, time_slots: Int = 0, var week: Week = EveryWeek,

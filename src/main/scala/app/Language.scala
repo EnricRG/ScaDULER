@@ -1,3 +1,5 @@
+package app
+
 
 class Language(val items: Map[String,String]) {
 
