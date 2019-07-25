@@ -4,7 +4,6 @@ import app.AppSettings
 
 object Classrooms{
     val roomTypes = List(LabRoom, ClassRoom, PcRoom)
-    val stringRoomTypes = roomTypes.map(_.toString)
 }
 
 sealed abstract class ClassRoom

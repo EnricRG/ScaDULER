@@ -5,6 +5,8 @@ object AppSettings {
     var Language: Language = DefaultLanguage
 
     var timeSeparatorSymbol = ":"
+    var dayStart: Int = 8
+    var dayEnd: Int = 19
 
     object eventFormSettings {
         var width = 640

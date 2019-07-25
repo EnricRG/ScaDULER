@@ -4,8 +4,7 @@ import app.AppSettings
 
 object Days {
     val dayList: List[Day] = List(Day1,Day2,Day3,Day4,Day5)
-    def dayStringList: List[String] = dayList.map(_.toString)
-    def dayIntList: List[Int] = dayList.map(_.toInt)
+    def dayNumberList: List[Int] = dayList.map(_.toInt)
 }
 
 sealed abstract class Day{

@@ -25,7 +25,6 @@ object Weeks{
     }
 
     def weekList: List[Week] = List(EveryWeek,AWeek,BWeek)
-    def weekStringList = weekList.map(_.toString)
 }
 
 

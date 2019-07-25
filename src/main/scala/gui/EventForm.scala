@@ -3,7 +3,7 @@ package gui
 import app.AppSettings
 import control.Warning
 import javafx.event.{ActionEvent, EventHandler}
-import misc.{Classrooms, Days, Minutes, Weeks}
+import misc.{Classrooms, Days, Hours, Minutes, Weeks}
 import model.EventData
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
@@ -68,21 +68,21 @@ object EventForm/*(nEvents: Int)*/ {
                                  hourSelectorBehavior: EventHandler[ActionEvent],
                                  minuteSelectorBehavior: EventHandler[ActionEvent]) = new HBox{
 
-            val daySelector = new ComboBox(Days.dayIntList){
+            val daySelector = new ComboBox(Days.dayNumberList){
                 promptText = AppSettings.Language.getItem("eventForm_day")
                 onAction = daySelectorBehavior
             }
 
             val dayHourSeparator = new Label{ text = AppSettings.timeSeparatorSymbol }
 
-            val hourSelector = new ComboBox(){
+            val hourSelector = new ComboBox(Hours.hourList){
                 this.promptText = AppSettings.Language.getItem("eventForm_hour")
                 onAction = hourSelectorBehavior
             }
 
             val hourMinuteSeparator = new Label{ text = AppSettings.timeSeparatorSymbol }
 
-            val minuteSelector = new ComboBox(Minutes.minuteStringList){
+            val minuteSelector = new ComboBox(Minutes.minuteList){
                 this.promptText = AppSettings.Language.getItem("eventForm_minutes")
                 onAction = minuteSelectorBehavior
             }
@@ -101,7 +101,7 @@ object EventForm/*(nEvents: Int)*/ {
 
             val roomTypeTag = new Label{ text = AppSettings.Language.getItem("eventForm_roomType") }
             val roomTypeSelector = new HBox {
-                children = new ComboBox(Classrooms.stringRoomTypes)
+                children = new ComboBox(Classrooms.roomTypes)
             }
 
             val startTimeTag = new Label { text = AppSettings.Language.getItem("eventForm_startTime") }
@@ -120,7 +120,7 @@ object EventForm/*(nEvents: Int)*/ {
 
             val weekTag = new Label { text = AppSettings.Language.getItem("eventForm_week")}
             val weekSelector = new HBox{
-                children = new ComboBox(Weeks.weekStringList)
+                children = new ComboBox(Weeks.weekList)
             }
 
             children = List(roomTypeTag, roomTypeSelector, startTimeTag, startTimeField, endTimeTag, endTimeField, weekTag, weekSelector)
