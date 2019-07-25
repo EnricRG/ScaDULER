@@ -58,7 +58,7 @@
                   </StackPane>
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-border-style: solid inside; -fx-border-color: lightgray;">
                <children>
                   <Button mnemonicParsing="false" prefHeight="72.0" prefWidth="89.0" text="New Event" />
                   <Button mnemonicParsing="false" prefHeight="73.0" prefWidth="90.0" text="New Subject" />
@@ -113,6 +113,9 @@
                </children>
             </AnchorPane>
         </content>
+         <BorderPane.margin>
+            <Insets top="5.0" />
+         </BorderPane.margin>
       </ScrollPane>
    </right>
    <left>
@@ -120,6 +123,9 @@
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
         </content>
+         <BorderPane.margin>
+            <Insets top="5.0" />
+         </BorderPane.margin>
       </ScrollPane>
    </left>
 </BorderPane>
