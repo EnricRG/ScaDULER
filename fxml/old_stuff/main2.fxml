@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.stage.Stage?>
+
+<Stage xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <scene>
+        <Scene>
+            <AnchorPane prefHeight="200" prefWidth="200">
+            <children>
+               <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0">
+                  <top>
+                     <VBox alignment="TOP_CENTER" maxHeight="100.0" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+                        <children>
+                           <HBox prefHeight="37.0" prefWidth="1280.0">
+                              <children>
+                                 <StackPane alignment="TOP_LEFT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                    <children>
+                                       <MenuBar fx:id="menuBar">
+                                          <menus>
+                                             <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
+                                                <items>
+                                                   <MenuItem mnemonicParsing="false" text="Save" />
+                                                   <MenuItem mnemonicParsing="false" text="Save as..." />
+                                                   <MenuItem mnemonicParsing="false" text="Close" />
+                                                </items>
+                                             </Menu>
+                                             <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
+                                                <items>
+                                                   <MenuItem mnemonicParsing="false" text="Delete" />
+                                                </items>
+                                             </Menu>
+                                             <Menu fx:id="settingsMenu" mnemonicParsing="false" text="Settings">
+                                                <items>
+                                                   <MenuItem mnemonicParsing="false" text="About" />
+                                                </items>
+                                             </Menu>
+                                             <Menu fx:id="helpMenu1" mnemonicParsing="false" text="Help">
+                                                <items>
+                                                   <MenuItem mnemonicParsing="false" text="About" />
+                                                </items>
+                                             </Menu>
+                                          </menus>
+                                       </MenuBar>
+                                       <HBox alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" StackPane.alignment="TOP_RIGHT">
+                                          <children>
+                                             <ToggleButton alignment="TOP_LEFT" mnemonicParsing="false" text="Events" />
+                                             <ToggleButton alignment="TOP_LEFT" mnemonicParsing="false" text="Subjects" />
+                                          </children>
+                                          <opaqueInsets>
+                                             <Insets right="20.0" />
+                                          </opaqueInsets>
+                                       </HBox>
+                                    </children>
+                                 </StackPane>
+                              </children>
+                           </HBox>
+                           <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-border-style: solid inside; -fx-border-color: lightgray;">
+                              <children>
+                                 <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="New Event" HBox.hgrow="ALWAYS" />
+                                 <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="New Subject" />
+                                 <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="New Course" />
+                                 <Separator maxHeight="1.7976931348623157E308" orientation="VERTICAL">
+                                    <HBox.margin>
+                                       <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                       <Insets left="3.0" />
+                                    </padding>
+                                 </Separator>
+                                 <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Manage&#10;Unfinished&#10;Events" textAlignment="CENTER" wrapText="true" />
+                                 <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Manage&#10;Subjects" textAlignment="CENTER" wrapText="true" />
+                                 <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Manage&#10;Courses" textAlignment="CENTER" wrapText="true" />
+                                 <Separator maxHeight="1.7976931348623157E308" orientation="VERTICAL">
+                                    <padding>
+                                       <Insets left="3.0" />
+                                    </padding>
+                                 </Separator>
+                              </children>
+                           </HBox>
+                        </children>
+                        <opaqueInsets>
+                           <Insets />
+                        </opaqueInsets>
+                     </VBox>
+                  </top>
+                  <center>
+                     <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                        <tabs>
+                           <Tab text="General">
+                              <content>
+                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                           </Tab>
+                           <Tab text="1er">
+                              <content>
+                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                           </Tab>
+                           <Tab text="2on">
+                              <content>
+                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                           </Tab>
+                        </tabs>
+                        <padding>
+                           <Insets top="5.0" />
+                        </padding>
+                     </TabPane>
+                  </center>
+                  <right>
+                     <ScrollPane hbarPolicy="NEVER" prefHeight="624.0" prefWidth="263.0" BorderPane.alignment="CENTER">
+                        <content>
+                           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="621.0" prefWidth="261.0">
+                              <children>
+                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                    <children>
+                                       <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="256.0" promptText="Enter Event name" />
+                                       <ListView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                    </children>
+                                 </VBox>
+                              </children>
+                           </AnchorPane>
+                        </content>
+                        <BorderPane.margin>
+                           <Insets top="5.0" />
+                        </BorderPane.margin>
+                     </ScrollPane>
+                  </right>
+                  <left>
+                     <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                        <content>
+                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                        </content>
+                        <BorderPane.margin>
+                           <Insets top="5.0" />
+                        </BorderPane.margin>
+                     </ScrollPane>
+                  </left>
+               </BorderPane>
+            </children></AnchorPane>
+        </Scene>
+    </scene>
+</Stage>
