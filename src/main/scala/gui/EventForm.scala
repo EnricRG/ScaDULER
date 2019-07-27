@@ -1,9 +1,8 @@
 package gui
 
 import app.AppSettings
-import control.Warning
 import javafx.event.{ActionEvent, EventHandler}
-import misc.{Classrooms, Days, Hours, Minutes, Weeks}
+import misc.{Classrooms, Days, Hours, Minutes, Warning, Weeks}
 import model.EventData
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
@@ -15,6 +14,7 @@ import scalafx.scene.control._
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.paint.Color
+import scalafx.stage.Stage
 
 class FormWarning(val message: String) extends Warning(message)
 
@@ -170,26 +170,22 @@ object EventForm/*(nEvents: Int)*/ {
 
     def promptForm(n_events: Int): Option[EventData] = {
 
-        val prompt: JFXApp = new JFXApp {
-
-            stage = new PrimaryStage {
-                width = AppSettings.eventFormSettings.width
-                height = AppSettings.eventFormSettings.height
-                scene = new Scene{
-                    title = AppSettings.Language.getItem("eventForm_windowTitle")
-                    fill = Color.WhiteSmoke
-                    root = new VBox{
-                        fillWidth = true
-                        spacing = 4
-                        padding = Insets(4,4,4,4)
-                        children = List(splitView,confirmationButton,warningPanel)
-                    }
+        val stage = new Stage {
+            width = AppSettings.eventFormSettings.width
+            height = AppSettings.eventFormSettings.height
+            scene = new Scene{
+                title = AppSettings.Language.getItem("eventForm_windowTitle")
+                fill = Color.WhiteSmoke
+                root = new VBox{
+                    fillWidth = true
+                    spacing = 4
+                    padding = Insets(4,4,4,4)
+                    children = List(splitView,confirmationButton,warningPanel)
                 }
             }
-
         }
 
-        prompt.main(Array())
+        stage.show
 
         Some(new EventData(n_events))
     }

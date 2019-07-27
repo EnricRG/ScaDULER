@@ -2,6 +2,8 @@ package app
 
 object AppSettings {
 
+    val applicationTitle = "ScaDULER v0.1"
+
     var Language: Language = DefaultLanguage
 
     var timeSeparatorSymbol = ":"

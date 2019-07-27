@@ -185,9 +185,7 @@ object Instance {
 
 object test extends App{
     override def main(args: Array[String]): Unit ={
-        val event = EventForm.promptForm(1)
-
-        println(event.toString)
+        MainInterface.main(args)
     }
 }
 

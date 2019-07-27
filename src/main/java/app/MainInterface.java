@@ -1,4 +1,4 @@
-package gui;
+package app;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 
@@ -19,13 +20,17 @@ public class MainInterface extends Application{
     @Override
     public void start(Stage stage) throws Exception {
 
-        URL url = new File("fxml/main3.fxml").toURI().toURL();
-        System.out.println(url);
-        Parent root = FXMLLoader.load(url);
+        try {
+            URL url = new File("fxml/main_border_pane.fxml").toURI().toURL();
+            Parent root = FXMLLoader.load(url);
 
-        stage.setTitle("FXML Welcome");
-        stage.setScene(new Scene(root));
-        stage.show();
+            stage.setTitle(AppSettings.applicationTitle());
+            stage.setScene(new Scene(root));
+            stage.show();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 }

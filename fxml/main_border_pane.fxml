@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.MainController">
    <top>
       <VBox alignment="TOP_CENTER" maxHeight="100.0" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <children>
@@ -147,11 +147,11 @@
                         </Label>
                         <HBox maxHeight="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <ToggleButton fx:id="viewButtons_eventList" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Event List" textAlignment="CENTER">
+                              <ToggleButton fx:id="viewButtons_eventList" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" selected="true" text="Event List" textAlignment="CENTER">
                                  <font>
                                     <Font size="14.0" />
                                  </font></ToggleButton>
-                              <ToggleButton fx:id="viewButtons_unfinishedEventList" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="86.0" text="Unfinished&#10;Event List" textAlignment="CENTER">
+                              <ToggleButton fx:id="viewButtons_unfinishedEventsList" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="86.0" text="Unfinished&#10;Event List" textAlignment="CENTER">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

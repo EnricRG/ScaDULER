@@ -1,4 +1,4 @@
-package control
+package misc
 
 import app.AppSettings
 
