@@ -6,7 +6,10 @@ import akka.util.Timeout
 import gui.EventForm
 import misc.Weeks._
 import model.{EventData, InstanceData}
+import service.AppDatabase
 import solver.MiniZincInstanceSolver
+
+import scala.concurrent.Future.never
 
 //import gui.EventForm
 
@@ -189,11 +192,16 @@ object test extends App{
     }
 }
 
-object MainApp extends App{
+object MainApp extends App {
 
-    val TimeSlotDuration = 30 //This shouldn't be here
+    val database = new AppDatabase
 
+    override def main(args: Array[String]): Unit = {
+        MainInterface.main(Array())
+    }
+}
 
+/*
     override def main(args: Array[String]): Unit = {
 
         //
@@ -218,4 +226,6 @@ object MainApp extends App{
         system.terminate
 
     }
+
 }
+*/

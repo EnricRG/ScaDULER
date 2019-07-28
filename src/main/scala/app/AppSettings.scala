@@ -3,6 +3,7 @@ package app
 object AppSettings {
 
     val applicationTitle = "ScaDULER v0.1"
+    val TimeSlotDuration = 30
 
     var Language: Language = DefaultLanguage
 
