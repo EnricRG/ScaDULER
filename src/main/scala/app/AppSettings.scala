@@ -1,5 +1,11 @@
 package app
 
+object FXMLPaths {
+    val MainInterface: String = "src/main/fxml/main_border_pane.fxml"
+    val UnassignedEvent: String = "src/main/fxml/unassigned_event_box.fxml"
+    val Course: String = "src/main/fxml/course_grid.fxml"
+}
+
 object AppSettings {
 
     val applicationTitle = "ScaDULER v0.1"

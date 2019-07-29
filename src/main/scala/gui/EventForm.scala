@@ -3,7 +3,7 @@ package gui
 import app.AppSettings
 import javafx.event.{ActionEvent, EventHandler}
 import misc.{Classrooms, Days, Hours, Minutes, Warning, Weeks}
-import model.EventData
+import model.Event
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Insets
@@ -168,7 +168,7 @@ object EventForm/*(nEvents: Int)*/ {
         text = "Warning: this functionality is not finished yet."
     }
 
-    def promptForm(n_events: Int): Option[EventData] = {
+    def promptForm(n_events: Int): Option[Event] = {
 
         val stage = new Stage {
             width = AppSettings.eventFormSettings.width
@@ -187,7 +187,7 @@ object EventForm/*(nEvents: Int)*/ {
 
         stage.show
 
-        Some(new EventData(n_events))
+        Some(new Event(n_events))
     }
 
 }

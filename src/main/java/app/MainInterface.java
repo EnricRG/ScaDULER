@@ -7,11 +7,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 
-public class MainInterface extends Application{
+public class MainInterface extends javafx.application.Application{
 
     public static void main(String[] args) {
         Application.launch(MainInterface.class, args);
@@ -19,18 +18,12 @@ public class MainInterface extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
+        URL url = new File(FXMLPaths.MainInterface()).toURI().toURL();
+        Parent root = FXMLLoader.load(url);
 
-        try {
-            URL url = new File("fxml/main_border_pane.fxml").toURI().toURL();
-            Parent root = FXMLLoader.load(url);
-
-            stage.setTitle(AppSettings.applicationTitle());
-            stage.setScene(new Scene(root));
-            stage.show();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
+        stage.setTitle(AppSettings.applicationTitle());
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
 }

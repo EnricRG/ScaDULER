@@ -49,6 +49,8 @@ object DefaultLanguage extends Language {
 
         "rightPane_eventSearch" -> "Enter Event name",
 
+        "course" -> "Course",
+
         "labRoom" -> "Lab Room",
         "classRoom" -> "Class Room",
         "pcRoom" -> "PC Room",

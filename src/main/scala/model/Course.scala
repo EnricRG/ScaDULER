@@ -1,5 +1,5 @@
 package model
 
-class Course {
+class Course(val name: String) {
 
 }

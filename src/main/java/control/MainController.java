@@ -1,18 +1,30 @@
 package control;
 
 import app.AppSettings;
+import app.FXMLPaths;
+import factory.CourseViewFactory;
 import gui.EventForm;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import model.Course;
+import view.DraggableVBox;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
     /** Main application interface element */
+    public StackPane mainStackPane;
+
     public BorderPane mainBorderPane;
 
     /** Menu bar container */
@@ -72,12 +84,67 @@ public class MainController implements Initializable {
     public VBox rightPane;
     public TextField rightPane_eventSearch;
     public ScrollPane rightPane_scrollPane;
-    public ListView rightPane_eventList;
+    public VBox rightPane_VBox;
+
+
+    private boolean tabClosingEnabledFlag = false;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // Setting text depending on the language chosen //
+        setLanguageTags();
+
+        // Setting button behaviour //
+        setButtonActions();
+
+        // Setting course view behavior //
+        configureCoursePane();
+
+        Parent event1;
+
+        try{
+            event1 = FXMLLoader.load(new File(FXMLPaths.UnassignedEvent()).toURI().toURL());
+        } catch (Exception e){
+            e.printStackTrace();
+            event1 = new VBox();
+        }
+
+        rightPane_VBox.getChildren().add(new DraggableVBox((VBox) event1,this));
+
+        rightPane_VBox.setOnDragEntered(dragEvent -> {
+            System.out.println("Right Pane Drag Entered");
+        });
+
+        rightPane_VBox.setOnDragDropped(dragEvent -> {
+            Node unassignedEvent = null;
+            try {
+                unassignedEvent = (Node) dragEvent.getGestureSource();
+            } catch (ClassCastException cce){
+                cce.printStackTrace();
+            }
+
+            if(unassignedEvent != null) rightPane_VBox.getChildren().add(unassignedEvent);
+        });
+
+    }
+
+    private void configureCoursePane() {
+        addCourseTab();
+
+        //set new tab behavior
+        courseTabs_addTab.setOnSelectionChanged(event -> {
+            addCourseTab();
+            event.consume();
+        });
+    }
+
+    private void setButtonActions() {
+        addButtons_event.setOnAction(actionEvent -> EventForm.promptForm(1));
+    }
+
+    private void setLanguageTags() {
+
         menuBar_fileMenu.setText(AppSettings.Language().getItem("fileMenu"));
         fileMenu_save.setText(AppSettings.Language().getItem("fileMenu_save"));
         fileMenu_saveAs.setText(AppSettings.Language().getItem("fileMenu_saveAs"));
@@ -112,8 +179,62 @@ public class MainController implements Initializable {
         runButtons_stop.setText(AppSettings.Language().getItem("runButtons_stop"));
 
         rightPane_eventSearch.setPromptText(AppSettings.Language().getItem("rightPane_eventSearch"));
+    }
 
-        // Setting button behaviour //
-        addButtons_event.setOnAction(actionEvent -> EventForm.promptForm(1));
+    public void addCourseTab(){
+        //TODO: this has to prompt a screen to create a course.
+        Course c = new Course(AppSettings.Language().getItem("course") + courseTabs.getTabs().size());
+        addCourseTab(c);
+    }
+
+    public void addCourseTab(Course c){
+
+        //create course grid.
+        Node courseTabContent = null;
+
+        try{
+            courseTabContent = CourseViewFactory.newCourseViewFromFXML(this);
+        } catch (IOException e){
+            //Improvable:
+            e.printStackTrace();
+        }
+
+        //create tab with course grid if possible. If not, create empty tab.
+        final Tab newTab = courseTabContent == null ? new Tab(c.name()) : new Tab(c.name(), courseTabContent);
+
+        //Setting tab properties.
+        //newTab.setClosable(true); //This is done by default.
+
+        //Setting on close action. If only one tab is open, it cannot be closed.
+        newTab.setOnCloseRequest(event -> {
+            TabPane tab_pane = newTab.getTabPane();
+            System.out.println(tab_pane.getTabs().size());
+            if(tab_pane.getTabs().size() < 3){ //If there's only one tab left (not including creation tab).
+                disableTabClosing();
+            }
+        });
+
+        //TODO: Find a bug somewhere that allows the last tab to be closed.
+
+        //Add tab at the end and select it.
+        courseTabs.getTabs().add(courseTabs.getTabs().size()-1, newTab);
+        courseTabs.getSelectionModel().select(courseTabs.getTabs().size() - 2);
+
+        enableTabClosing();
+    }
+
+    private void disableTabClosing() {
+        for(Tab t: courseTabs.getTabs()){
+            t.setClosable(false);
+        }
+        tabClosingEnabledFlag = false;
+    }
+
+    private void enableTabClosing() {
+        for(Tab t: courseTabs.getTabs()){
+            t.setClosable(true);
+        }
+        courseTabs_addTab.setClosable(false); //This could be done inside the for loop, but I wanted to avoid an if statement there.
+        tabClosingEnabledFlag = true;
     }
 }
