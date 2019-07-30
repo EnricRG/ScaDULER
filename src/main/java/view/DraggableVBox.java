@@ -21,12 +21,6 @@ class EventView extends VBox{
     }
 }
 
-class DragEvent extends EventView{
-    public DragEvent(EventView ev, Event e, MainController mc){
-        super(ev,e);
-    }
-}
-
 public class DraggableVBox extends VBox {
 
     private double mouseX ;

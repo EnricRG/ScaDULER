@@ -24,6 +24,10 @@ public class CourseController implements Initializable {
     public TitledPane friday;
 
     public VBox mondayContent;
+    public VBox tuesdayContent;
+    public VBox wednesdayContent;
+    public VBox thursdayContent;
+    public VBox fridayContent;
 
     private MainController mc;
 
@@ -59,11 +63,11 @@ public class CourseController implements Initializable {
         thursday.setOnDragOver(enableDragging());
         friday.setOnDragOver(enableDragging());
 
-        monday.setOnDragDropped(unassignedEventHandling());
-        tuesday.setOnDragDropped(unassignedEventHandling());
-        wednesday.setOnDragDropped(unassignedEventHandling());
-        thursday.setOnDragDropped(unassignedEventHandling());
-        friday.setOnDragDropped(unassignedEventHandling());
+        monday.setOnDragDropped(unassignedEventHandling(mondayContent));
+        tuesday.setOnDragDropped(unassignedEventHandling(tuesdayContent));
+        wednesday.setOnDragDropped(unassignedEventHandling(wednesdayContent));
+        thursday.setOnDragDropped(unassignedEventHandling(thursdayContent));
+        friday.setOnDragDropped(unassignedEventHandling(fridayContent));
     }
 
     private EventHandler<? super DragEvent> enableDragging() {
@@ -73,8 +77,11 @@ public class CourseController implements Initializable {
         };
     }
 
-    private EventHandler<? super DragEvent> unassignedEventHandling() {
-        return dragEvent -> {
+    private EventHandler<? super DragEvent> unassignedEventHandling(VBox target) {
+        return dragEvent -> mc.moveUnassignedEvent((Node) dragEvent.getGestureSource(), mc.rightPane_VBox ,target);
+
+        /*{
+
 
 
             Node unassignedEvent = null;
@@ -100,7 +107,7 @@ public class CourseController implements Initializable {
             //unassignedEvent.toBack();
             //unassignedEvent.setManaged(true);
 
-        };
+        };*/
     }
 
 

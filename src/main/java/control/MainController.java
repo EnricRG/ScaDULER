@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -113,10 +114,15 @@ public class MainController implements Initializable {
         rightPane_VBox.getChildren().add(new DraggableVBox((VBox) event1,this));
 
         rightPane_VBox.setOnDragEntered(dragEvent -> {
-            System.out.println("Right Pane Drag Entered");
+            System.out.println("Right Pane VBOX Drag Entered");
         });
 
-        rightPane_VBox.setOnDragDropped(dragEvent -> {
+        rightPane_scrollPane.setOnDragOver(dragEvent -> {
+            System.out.println("Right Pane Drag Entered");
+            dragEvent.acceptTransferModes(TransferMode.ANY);
+        });
+
+        rightPane_scrollPane.setOnDragDropped(dragEvent -> {
             Node unassignedEvent = null;
             try {
                 unassignedEvent = (Node) dragEvent.getGestureSource();
@@ -124,7 +130,9 @@ public class MainController implements Initializable {
                 cce.printStackTrace();
             }
 
-            if(unassignedEvent != null) rightPane_VBox.getChildren().add(unassignedEvent);
+            if(unassignedEvent != null) {
+                moveUnassignedEvent((Node) dragEvent.getGestureSource(), (VBox) ((Node) (dragEvent.getGestureSource())).getParent(), rightPane_VBox);
+            }
         });
 
     }
@@ -236,5 +244,12 @@ public class MainController implements Initializable {
         }
         courseTabs_addTab.setClosable(false); //This could be done inside the for loop, but I wanted to avoid an if statement there.
         tabClosingEnabledFlag = true;
+    }
+
+    public void moveUnassignedEvent(Node gestureSource, VBox sourceParent, VBox target) {
+        if(gestureSource != target ){
+            sourceParent.getChildren().remove(gestureSource);
+            target.getChildren().add(gestureSource);
+        }
     }
 }
