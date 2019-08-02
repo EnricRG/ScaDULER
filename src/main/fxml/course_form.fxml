@@ -24,7 +24,7 @@
       <VBox alignment="TOP_CENTER" spacing="5.0">
          <children>
             <Label fx:id="courseDescriptionTag" text="Course description (Optional): " />
-            <TextArea fx:id="courseDescriptionField" maxHeight="-Infinity" maxWidth="-Infinity" />
+            <TextArea fx:id="courseDescriptionField" maxHeight="-Infinity" maxWidth="-Infinity" promptText="Enter a course description" />
             <CheckBox fx:id="descriptionWrapCheckBox" alignment="CENTER" mnemonicParsing="false" text="Wrap Text" />
          </children>
       </VBox>
