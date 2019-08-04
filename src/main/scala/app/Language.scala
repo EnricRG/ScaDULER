@@ -47,9 +47,28 @@ object DefaultLanguage extends Language {
         "runButtons_optimize" -> "Optimize",
         "runButtons_stop" -> "Stop",
 
+        "optional_tag" -> "(Optional)",
+
         "rightPane_eventSearch" -> "Enter Event name",
 
+        "form_wrapDescription" -> "Wrap text on corners",
+
         "course" -> "Course",
+        "course_emptyDescription" -> "This course has no description",
+
+        "courseForm_createCourseTitle" -> "Create new Course",
+        "courseForm_courseNameTagText" -> "Course name:",
+        "courseForm_courseNameFieldText" -> "Full Course name",
+        "courseForm_courseQuarterTagText" -> "Quarter",
+        "courseForm_courseDescriptionTagText" -> "Course description",
+        "courseForm_courseDescriptionFieldText" -> "Enter a course description",
+        "courseForm_manageCourseResourcesButtonText" -> "Manage Course Resources...",
+        "courseForm_manageCourseResourcesInfo" -> "Create the resources available for this course",
+        "courseForm_createCourseButtonText" -> "Create Course",
+        "courseForm_modifyCourseButtonText" -> "Modify Course",
+
+        "firstQuarter" -> "First Quarter",
+        "secondQuarter" -> "Second Quarter",
 
         "labRoom" -> "Lab Room",
         "classRoom" -> "Class Room",
@@ -69,7 +88,6 @@ object DefaultLanguage extends Language {
         "eventForm_eventShortNameHelp" -> "Event name abbreviation",
         "eventForm_eventDescription" -> "Event description",
         "eventForm_eventDescriptionHelp" -> "Detailed Event description",
-        "eventForm_wrapDescription" -> "Wrap text on corners",
         "eventForm_roomType" -> "Room Type",
         "eventForm_startTime" -> "Start Time",
         "eventForm_endTime" -> "End Time",
@@ -81,5 +99,7 @@ object DefaultLanguage extends Language {
         "eventForm_manageIncompatibilities" -> "Manage Incompatibilities...",
 
         "warning" -> "Warning",
+        "warning_courseNameCannotBeEmpty" -> "Course name cannot be empty.",
+        "warning_courseQuarterCannotBeEmpty" -> "Course quarter cannot be empty.",
     )
 }
