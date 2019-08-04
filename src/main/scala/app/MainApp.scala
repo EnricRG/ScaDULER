@@ -3,7 +3,6 @@ package app
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import gui.EventForm
 import misc.Weeks._
 import model.{Event, InstanceData}
 import service.AppDatabase
@@ -194,7 +193,7 @@ object test extends App{
 
 object MainApp extends App {
 
-    val database = new AppDatabase
+    lazy val database = new AppDatabase
 
     override def main(args: Array[String]): Unit = {
         MainInterface.main(Array())
