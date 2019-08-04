@@ -13,26 +13,26 @@ sealed abstract class Day{
 }
 
 case object Day1 extends Day{
-    override def toString = AppSettings.Language.getItem("day1")
+    override def toString = AppSettings.language.getItem("day1")
     override def toInt = 1
 }
 
 case object Day2 extends Day{
-    override def toString = AppSettings.Language.getItem("day2")
+    override def toString = AppSettings.language.getItem("day2")
     override def toInt = 2
 }
 
 case object Day3 extends Day{
-    override def toString = AppSettings.Language.getItem("day3")
+    override def toString = AppSettings.language.getItem("day3")
     override def toInt = 3
 }
 
 case object Day4 extends Day{
-    override def toString = AppSettings.Language.getItem("day4")
+    override def toString = AppSettings.language.getItem("day4")
     override def toInt = 4
 }
 
 case object Day5 extends Day{
-    override def toString = AppSettings.Language.getItem("day5")
+    override def toString = AppSettings.language.getItem("day5")
     override def toInt = 5
 }
