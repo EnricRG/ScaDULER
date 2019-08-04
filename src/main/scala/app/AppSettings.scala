@@ -3,15 +3,16 @@ package app
 object FXMLPaths {
     val MainInterface: String = "src/main/fxml/main_border_pane.fxml"
     val UnassignedEvent: String = "src/main/fxml/unassigned_event_box.fxml"
-    val Course: String = "src/main/fxml/course_grid.fxml"
+    val CoursePanel: String = "src/main/fxml/course_grid.fxml"
+    val CourseForm: String = "src/main/fxml/course_form.fxml"
 }
 
 object AppSettings {
 
-    val applicationTitle = "ScaDULER v0.1"
-    val TimeSlotDuration = 30
+    final val applicationTitle = "ScaDULER v0.1"
+    final val TimeSlotDuration = 30
 
-    var Language: Language = DefaultLanguage
+    var language: Language = DefaultLanguage
 
     var timeSeparatorSymbol = ":"
     var dayStart: Int = 8

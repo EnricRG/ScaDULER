@@ -10,18 +10,18 @@ object Weeks{
     }
 
     case object AWeek extends Week{
-        override def toString = AppSettings.Language.getItem("aWeek")
-        override def toShortString: String = AppSettings.Language.getItem("shortAWeek")
+        override def toString = AppSettings.language.getItem("aWeek")
+        override def toShortString: String = AppSettings.language.getItem("shortAWeek")
     }
 
     case object BWeek extends Week{
-        override def toString = AppSettings.Language.getItem("bWeek")
-        override def toShortString: String = AppSettings.Language.getItem("shortBWeek")
+        override def toString = AppSettings.language.getItem("bWeek")
+        override def toShortString: String = AppSettings.language.getItem("shortBWeek")
     }
 
     case object EveryWeek extends Week{
-        override def toString = AppSettings.Language.getItem("everyWeek")
-        override def toShortString: String = AppSettings.Language.getItem("shortEveryWeek")
+        override def toString = AppSettings.language.getItem("everyWeek")
+        override def toShortString: String = AppSettings.language.getItem("shortEveryWeek")
     }
 
     def weekList: List[Week] = List(EveryWeek,AWeek,BWeek)
