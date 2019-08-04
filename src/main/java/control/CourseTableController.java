@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class CourseController implements Initializable {
+public class CourseTableController implements Initializable {
 
     public GridPane gridPane;
 
