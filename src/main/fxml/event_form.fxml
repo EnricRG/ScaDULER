@@ -6,150 +6,114 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="363.0" prefWidth="600.0" spacing="4.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <SplitPane dividerPositions="0.6287625418060201" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="296.0" prefWidth="596.0">
-         <items>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="289.0" prefWidth="373.0">
+      <HBox>
+         <children>
+            <VBox alignment="CENTER_LEFT" fillWidth="false" spacing="3.0">
                <children>
-                  <VBox alignment="CENTER_LEFT" fillWidth="false" layoutX="-1.0" layoutY="-1.0" prefHeight="286.0" prefWidth="374.0" spacing="3.0">
+                  <Label fx:id="eventNameTag" text="Event Name:" />
+                  <TextField fx:id="eventNameField" prefColumnCount="25" promptText="Full Event name" />
+                  <Label fx:id="eventShortNameTag" text="Event Short Name (optional):" />
+                  <TextField fx:id="eventShortNameField" prefColumnCount="10" promptText="Name abbreviation" />
+                  <Label fx:id="eventDescriptionTag" text="Event Description (optional):" />
+                  <VBox spacing="2.0">
                      <children>
-                        <HBox prefHeight="0.0" prefWidth="200.0" />
-                        <Label text="Event Name:" />
-                        <TextField prefColumnCount="25" />
-                        <Label text="Event Shortname:" />
-                        <TextField prefColumnCount="10" />
-                        <Label text="Event Description:" />
-                        <TextArea prefHeight="196.0" prefWidth="409.0" />
-                        <HBox alignment="TOP_CENTER" prefHeight="36.0" prefWidth="372.0">
-                           <children>
-                              <CheckBox alignment="CENTER" mnemonicParsing="false" text="Wrap Text" />
-                           </children>
-                        </HBox>
+                        <TextArea fx:id="eventDescriptionField" prefHeight="150.0" prefWidth="400.0" promptText="Write a description about this event" />
+                        <CheckBox fx:id="wrapEventDescriptionCheckbox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Wrap Text" />
                      </children>
-                     <padding>
-                        <Insets left="5.0" right="3.0" />
-                     </padding>
                   </VBox>
                </children>
-            </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="294.0" prefWidth="63.0">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="7.0" top="5.0" />
+               </HBox.margin>
+            </VBox>
+            <Separator maxWidth="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefWidth="0.0" HBox.hgrow="NEVER" />
+            <VBox alignment="TOP_CENTER">
                <children>
-                  <VBox prefHeight="294.0" prefWidth="219.0">
+                  <VBox spacing="4.0">
                      <children>
-                        <VBox prefHeight="215.0" prefWidth="220.0" spacing="4.0">
+                        <Label fx:id="eventDurationTag" text="Duration:" />
+                        <ComboBox fx:id="eventDurationBox" prefWidth="100.0" />
+                        <Label fx:id="eventRoomTypeTag" text="Room type:" />
+                        <ComboBox fx:id="eventRoomTypeBox" prefWidth="150.0" />
+                        <Label fx:id="eventWeekTag" text="Week:" />
+                        <ComboBox fx:id="eventWeekBox" prefWidth="150.0" />
+                        <VBox>
                            <children>
-                              <HBox prefHeight="0.0" prefWidth="219.0" />
-                              <Label text="Room type:" />
-                              <HBox prefHeight="27.0" prefWidth="219.0">
+                              <Label fx:id="eventStartTimeTag" text="Start Time (optional):" />
+                              <HBox alignment="CENTER">
                                  <children>
-                                    <ComboBox prefWidth="150.0" />
-                                 </children>
-                              </HBox>
-                              <HBox prefHeight="100.0" prefWidth="200.0">
-                                 <children>
-                                    <VBox prefHeight="106.0" prefWidth="76.0">
-                                       <children>
-                                          <Label text="Day:" />
-                                          <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                                             <children>
-                                                <ComboBox />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </VBox>
-                                    <VBox prefHeight="100.0" prefWidth="137.0" spacing="4.0">
-                                       <children>
-                                          <Label text="Start Time:" />
-                                          <HBox prefHeight="14.0" prefWidth="219.0">
-                                             <children>
-                                                <ComboBox prefHeight="25.0" prefWidth="40.0" />
-                                                <Label text=":">
-                                                   <padding>
-                                                      <Insets top="2.0" />
-                                                   </padding>
-                                                </Label>
-                                                <ComboBox prefHeight="25.0" prefWidth="7.0" />
-                                             </children>
-                                          </HBox>
-                                          <Label text="End Time:" />
-                                          <HBox prefHeight="14.0" prefWidth="219.0">
-                                             <children>
-                                                <ComboBox prefHeight="25.0" prefWidth="40.0" />
-                                                <Label text=":">
-                                                   <padding>
-                                                      <Insets top="2.0" />
-                                                   </padding>
-                                                </Label>
-                                                <ComboBox prefHeight="25.0" prefWidth="7.0" />
-                                             </children>
-                                          </HBox>
-                                       </children>
-                                       <padding>
-                                          <Insets left="4.0" />
-                                       </padding>
-                                    </VBox>
-                                 </children>
-                              </HBox>
-                              <Label text="Week:" />
-                              <HBox prefHeight="14.0" prefWidth="219.0">
-                                 <children>
-                                    <ComboBox prefWidth="150.0" />
+                                    <ComboBox fx:id="eventStartTime_dayBox" promptText="Day" />
+                                    <Label fx:id="eventStartTime_dayHourSeparator" text=":" />
+                                    <ComboBox fx:id="eventStartTime_hourBox" promptText="Hour" />
+                                    <Label fx:id="eventStartTime_hourMinuteSeparator" text=":" />
+                                    <ComboBox fx:id="eventStartTime_minuteBox" promptText="Minutes" />
                                  </children>
                               </HBox>
                            </children>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <padding>
-                              <Insets left="5.0" />
-                           </padding>
                         </VBox>
-                        <Separator prefWidth="200.0" />
-                        <HBox alignment="CENTER" prefHeight="77.0" prefWidth="219.0">
-                           <children>
-                              <Button mnemonicParsing="false" text="Manage Incompatibilities..." />
-                           </children>
-                        </HBox>
                      </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets bottom="7.0" left="5.0" right="5.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <Separator maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" />
+                  <VBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <Button fx:id="manageIncompatibilitiesButton" mnemonicParsing="false" text="Manage Incompatibilities..." />
+                        <Button fx:id="managePrecedencesButton" mnemonicParsing="false" text="Manage precedences..." />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" top="10.0" />
+                     </VBox.margin>
                   </VBox>
                </children>
-            </AnchorPane>
-         </items>
-      </SplitPane>
-      <HBox alignment="TOP_CENTER" prefHeight="38.0" prefWidth="600.0">
+               <HBox.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <Separator prefWidth="200.0">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin></Separator>
+      <VBox alignment="TOP_CENTER" spacing="2.0">
          <children>
-            <Button alignment="TOP_CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="39.0" prefWidth="591.0" text="Create Event">
+            <Label fx:id="formWarningTag" text="Warning: this functionality is not finished yet.">
                <font>
-                  <Font size="18.0" />
+                  <Font name="System Italic" size="12.0" />
                </font>
-               <opaqueInsets>
-                  <Insets top="2.0" />
-               </opaqueInsets>
-            </Button>
+            </Label>
+            <HBox alignment="TOP_CENTER">
+               <children>
+                  <Button fx:id="createEventButton" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Create Event" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets top="2.0" />
+                     </opaqueInsets>
+                  </Button>
+               </children>
+            </HBox>
          </children>
-         <opaqueInsets>
-            <Insets top="2.0" />
-         </opaqueInsets>
-      </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Label text="Warning: message goes here" />
-         </children>
-      </HBox>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </VBox>
    </children>
-   <opaqueInsets>
-      <Insets />
-   </opaqueInsets>
-   <padding>
-      <Insets left="4.0" right="4.0" />
-   </padding>
 </VBox>
