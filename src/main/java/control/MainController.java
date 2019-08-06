@@ -3,17 +3,24 @@ package control;
 import app.AppSettings;
 import app.FXMLPaths;
 import factory.CourseViewFactory;
-import gui.EventForm;
+import factory.ResourceManagerViewFactory;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import model.Course;
+import model.Quarter;
+import scala.Option;
+import scala.collection.mutable.ListBuffer;
 import view.DraggableVBox;
 
 import java.io.File;
@@ -95,7 +102,7 @@ public class MainController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // Setting text depending on the language chosen //
-        setLanguageTags();
+        initializeLanguage();
 
         // Setting button behaviour //
         setButtonActions();
@@ -154,50 +161,107 @@ public class MainController implements Initializable {
     }
 
     private void setButtonActions() {
-        addButtons_event.setOnAction(actionEvent -> EventForm.promptForm(1));
+        addButtons_event.setOnAction(actionEvent -> promptEventForm());
+        addButtons_course.setOnAction(actionEvent -> promptCourseForm());
+        manageButtons_courseResources.setOnAction(actionEvent ->
+                promptResourceManager(manageButtons_courseResources.getScene().getWindow()));
     }
 
-    private void setLanguageTags() {
-
-        menuBar_fileMenu.setText(AppSettings.Language().getItem("fileMenu"));
-        fileMenu_save.setText(AppSettings.Language().getItem("fileMenu_save"));
-        fileMenu_saveAs.setText(AppSettings.Language().getItem("fileMenu_saveAs"));
-        fileMenu_close.setText(AppSettings.Language().getItem("fileMenu_close"));
-
-        menuBar_editMenu.setText(AppSettings.Language().getItem("editMenu"));
-
-        menuBar_settingsMenu.setText(AppSettings.Language().getItem("settingsMenu"));
-        settingsMenu_appSettings.setText(AppSettings.Language().getItem("settingsMenu_appSettings"));
-
-        menuBar_helpMenu.setText(AppSettings.Language().getItem("helpMenu"));
-        helpMenu_about.setText(AppSettings.Language().getItem("helpMenu_about"));
-
-        addButtons_title.setText(AppSettings.Language().getItem("addButtons_title"));
-        addButtons_course.setText(AppSettings.Language().getItem("addButtons_course"));
-        addButtons_subject.setText(AppSettings.Language().getItem("addButtons_subject"));
-        addButtons_event.setText(AppSettings.Language().getItem("addButtons_event"));
-
-        manageButtons_title.setText(AppSettings.Language().getItem("manageButtons_title"));
-        manageButtons_courses.setText(AppSettings.Language().getItem("manageButtons_courses"));
-        manageButtons_subjects.setText(AppSettings.Language().getItem("manageButtons_subjects"));
-        manageButtons_events.setText(AppSettings.Language().getItem("manageButtons_events"));
-        manageButtons_unfinishedEvents.setText(AppSettings.Language().getItem("manageButtons_unfinishedEvents"));
-
-        viewButtons_title.setText(AppSettings.Language().getItem("viewButtons_title"));
-        viewButtons_eventList.setText(AppSettings.Language().getItem("viewButtons_eventList"));
-        viewButtons_unfinishedEventsList.setText(AppSettings.Language().getItem("viewButtons_unfinishedEventsList"));
-
-        runButtons_title.setText(AppSettings.Language().getItem("runButtons_title"));
-        runButtons_solve.setText(AppSettings.Language().getItem("runButtons_solve"));
-        runButtons_optimize.setText(AppSettings.Language().getItem("runButtons_optimize"));
-        runButtons_stop.setText(AppSettings.Language().getItem("runButtons_stop"));
-
-        rightPane_eventSearch.setPromptText(AppSettings.Language().getItem("rightPane_eventSearch"));
+    private void promptEventForm() {
+        //TODO: prompt event form
     }
 
+    private void promptCourseForm() {
+        //TODO: improve coherence adding a FXML factory
+        //TODO: write a separate method to handle this
+        Scene scene;
+        FXMLLoader loader;
+
+        try{
+            loader = new FXMLLoader(new File(FXMLPaths.CourseForm()).toURI().toURL());
+            Parent root = loader.load();
+            scene = new Scene(root);
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+            scene = new Scene(new VBox());
+            loader = new FXMLLoader();
+        }
+
+        Stage prompt = new Stage();
+        prompt.initModality(Modality.WINDOW_MODAL);
+        prompt.initOwner(addButtons_course.getScene().getWindow());
+        prompt.setTitle(AppSettings.language().getItem("courseForm_createCourseTitle"));
+        prompt.setScene(scene);
+
+        CourseFormController cfc = loader.getController();
+        cfc.setMainController(this);
+
+        prompt.show();
+    }
+
+    public void promptResourceManager(Window owner) {
+        Stage prompt = new Stage();
+        Scene scene;
+
+        try{
+            scene = new Scene((Parent) ResourceManagerViewFactory.load());
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+            scene = new Scene(new VBox());
+        }
+
+        prompt.initModality(Modality.WINDOW_MODAL);
+        prompt.initOwner(owner);
+        prompt.setTitle(AppSettings.language().getItem("manageResources_windowTitle"));
+        prompt.setScene(scene);
+
+        prompt.show();
+    }
+
+    private void initializeLanguage() {
+
+        menuBar_fileMenu.setText(AppSettings.language().getItem("fileMenu"));
+        fileMenu_save.setText(AppSettings.language().getItem("fileMenu_save"));
+        fileMenu_saveAs.setText(AppSettings.language().getItem("fileMenu_saveAs"));
+        fileMenu_close.setText(AppSettings.language().getItem("fileMenu_close"));
+
+        menuBar_editMenu.setText(AppSettings.language().getItem("editMenu"));
+
+        menuBar_settingsMenu.setText(AppSettings.language().getItem("settingsMenu"));
+        settingsMenu_appSettings.setText(AppSettings.language().getItem("settingsMenu_appSettings"));
+
+        menuBar_helpMenu.setText(AppSettings.language().getItem("helpMenu"));
+        helpMenu_about.setText(AppSettings.language().getItem("helpMenu_about"));
+
+        addButtons_title.setText(AppSettings.language().getItem("addButtons_title"));
+        addButtons_course.setText(AppSettings.language().getItem("addButtons_course"));
+        addButtons_subject.setText(AppSettings.language().getItem("addButtons_subject"));
+        addButtons_event.setText(AppSettings.language().getItem("addButtons_event"));
+
+        manageButtons_title.setText(AppSettings.language().getItem("manageButtons_title"));
+        manageButtons_courses.setText(AppSettings.language().getItem("manageButtons_courses"));
+        manageButtons_courseResources.setText(AppSettings.language().getItem("manageButtons_courseResources"));
+        manageButtons_subjects.setText(AppSettings.language().getItem("manageButtons_subjects"));
+        manageButtons_events.setText(AppSettings.language().getItem("manageButtons_events"));
+        manageButtons_unfinishedEvents.setText(AppSettings.language().getItem("manageButtons_unfinishedEvents"));
+
+        viewButtons_title.setText(AppSettings.language().getItem("viewButtons_title"));
+        viewButtons_eventList.setText(AppSettings.language().getItem("viewButtons_eventList"));
+        viewButtons_unfinishedEventsList.setText(AppSettings.language().getItem("viewButtons_unfinishedEventsList"));
+
+        runButtons_title.setText(AppSettings.language().getItem("runButtons_title"));
+        runButtons_solve.setText(AppSettings.language().getItem("runButtons_solve"));
+        runButtons_optimize.setText(AppSettings.language().getItem("runButtons_optimize"));
+        runButtons_stop.setText(AppSettings.language().getItem("runButtons_stop"));
+
+        rightPane_eventSearch.setPromptText(AppSettings.language().getItem("rightPane_eventSearch"));
+    }
+
+    //TODO: remove this method, it has only debugging purposes.
     public void addCourseTab(){
-        //TODO: this has to prompt a screen to create a course.
-        Course c = new Course(AppSettings.Language().getItem("course") + courseTabs.getTabs().size());
+        //TODO: decouple course creation and delegate to database.
+        Course c = new Course(AppSettings.language().getItem("course") + courseTabs.getTabs().size(), Option.apply(null),
+        new Quarter(new ListBuffer<>()), new Quarter(new ListBuffer<>()));
         addCourseTab(c);
     }
 
@@ -227,7 +291,7 @@ public class MainController implements Initializable {
             }
         });
 
-        //TODO: Find a bug somewhere that allows the last tab to be closed.
+        //FIXME: Last tab can be closed, and shouldn't.
 
         //Add tab at the end and select it.
         courseTabs.getTabs().add(courseTabs.getTabs().size()-1, newTab);
