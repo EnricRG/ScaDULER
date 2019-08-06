@@ -2,21 +2,22 @@ package control;
 
 import app.AppSettings;
 import app.MainApp;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
+import factory.CourseResourceManagerViewFactory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import misc.Quarters;
 import misc.Warning;
-import model.Course;
 import model.CourseResource;
 import scala.collection.Traversable;
 import scala.collection.mutable.ListBuffer;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -36,32 +37,27 @@ public class CourseFormController implements Initializable {
     public Label formWarningTag;
     public Button createCourseButton;
 
-    //TODO: this shouldn't be implemented here
-    public Label courseQuarterTag;
-    public ComboBox<Quarters.Quarter> courseQuarterSelector;
-
     private StringProperty courseName = new SimpleStringProperty();
-    private Property<Quarters.Quarter> courseQuarter = new SimpleObjectProperty<>();
     private StringProperty courseDescription = new SimpleStringProperty();
-    private Traversable<CourseResource> resources = new ListBuffer<>();
+    private Traversable<CourseResource> firstQuarterResources = new ListBuffer<>();
+    private Traversable<CourseResource> secondQuarterResources = new ListBuffer<>();
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {}
-
-    public void customInit(MainController mc){
-        mainController = mc;
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeContentLanguage();
         bindFieldsToValues();
         initializeWarningSystem();
         bindButtonsToActions();
     }
 
+    MainController getMainController(){ return mainController; } //package private
+    void setMainController(MainController mc){
+        mainController = mc;
+    } //package private
+
     private void initializeContentLanguage() {
         courseNameTag.setText(AppSettings.language().getItem("courseForm_courseNameTagText"));
         courseNameField.setPromptText(AppSettings.language().getItem("courseForm_courseNameFieldText"));
-
-        courseQuarterTag.setText(AppSettings.language().getItem("courseForm_courseQuarterTagText"));
-        courseQuarterSelector.getItems().addAll(Quarters.FirstQuarter$.MODULE$, Quarters.SecondQuarter$.MODULE$);
 
         courseDescriptionTag.setText(AppSettings.language().getItem("courseForm_courseDescriptionTagText") + " " + AppSettings.language().getItem("optional_tag") + ":");
         courseDescriptionField.setPromptText(AppSettings.language().getItem("courseForm_courseDescriptionFieldText"));
@@ -78,8 +74,7 @@ public class CourseFormController implements Initializable {
 
         courseDescription.bind(courseDescriptionField.textProperty());
 
-        courseQuarter.bind(courseQuarterSelector.getSelectionModel().selectedItemProperty());
-
+        //TODO: remove TODO tag below
         //TODO: manage course resources
     }
 
@@ -89,14 +84,34 @@ public class CourseFormController implements Initializable {
     }
 
     private void bindButtonsToActions() {
-        //TODO: bind manage resources button
+        manageCourseResourcesButton.setOnAction(event -> promptCourseResourcesForm());
 
         //add course to database and close the window
         createCourseButton.setOnAction(actionEvent -> {
             if(createCourse()) closeWindow();
+            //TODO: explain why course cannot be created (ie name collision)
         });
 
         descriptionWrapCheckBox.selectedProperty().bindBidirectional(courseDescriptionField.wrapTextProperty());
+    }
+
+    private void promptCourseResourcesForm() {
+        Stage prompt = new Stage();
+        Scene scene;
+
+        try{
+            scene = new Scene((Parent)CourseResourceManagerViewFactory.load(this));
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+            scene = new Scene(new VBox());
+        }
+
+        prompt.initModality(Modality.WINDOW_MODAL);
+        prompt.initOwner(createCourseButton.getScene().getWindow());
+        prompt.setTitle(AppSettings.language().getItem("courseForm_manageCourseResources"));
+        prompt.setScene(scene);
+
+        prompt.show();
     }
 
     private void closeWindow() {
@@ -104,10 +119,15 @@ public class CourseFormController implements Initializable {
     }
 
     private Warning courseCanBeCreated(){
+        //TODO: check this method
+        //TODO: abstract this method with parameters
         if(courseName.getValue().isEmpty())
             return new Warning(AppSettings.language().getItem("warning_courseNameCannotBeEmpty"));
-        else if(courseQuarter.getValue() == null){
-            return new Warning(AppSettings.language().getItem("warning_courseQuarterCannotBeEmpty"));
+        else if(firstQuarterResources.isEmpty()){
+            return new Warning(AppSettings.language().getItem("warning_firstQuarterResourcesCannotBeEmpty"));
+        }
+        else if(secondQuarterResources.isEmpty()){
+            return new Warning(AppSettings.language().getItem("warning_secondQuarterResourcesCannotBeEmpty"));
         }
         else return null;
     }
@@ -116,11 +136,12 @@ public class CourseFormController implements Initializable {
         Warning warning = courseCanBeCreated();
         boolean finished = false;
 
+        //TODO: check if the course is already created
         if(warning == null){ //no warning
             hideWarnings();
             mainController.addCourseTab(
                 MainApp.database().courseDatabase().createCourse( //We know here that courseQuarter value cannot be null
-                    courseName.getValueSafe(), courseDescription.getValueSafe(), courseQuarter.getValue() , resources)
+                    courseName.getValueSafe(), courseDescription.getValueSafe(), firstQuarterResources, secondQuarterResources)
                 );
 
             finished = true;
@@ -140,4 +161,7 @@ public class CourseFormController implements Initializable {
         showWarnings();
     }
 
+    public void updateResources() {
+        //TODO
+    }
 }

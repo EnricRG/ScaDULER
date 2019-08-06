@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class CourseViewFactory {
-    public static Node newCourseViewFromFXML(MainController mc) throws IOException{
+    public static Node load(MainController mc) throws IOException{
 
         FXMLLoader fxmlLoader = new FXMLLoader(new File(FXMLPaths.CoursePanel()).toURI().toURL());
 

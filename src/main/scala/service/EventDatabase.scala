@@ -1,9 +1,10 @@
 package service
 
-class EventDatabaseInitializer{
-
-}
-
 class EventDatabase {
-    def this(eventDBInitializer: EventDatabaseInitializer) = this
+
+    class Initializer{
+
+    }
+
+    def this(initializer: EventDatabase#Initializer) = this
 }

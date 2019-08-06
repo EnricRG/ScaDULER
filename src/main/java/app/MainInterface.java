@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.net.URL;
 
-
 public class MainInterface extends javafx.application.Application{
 
     public static void main(String[] args) {

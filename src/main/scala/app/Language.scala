@@ -14,6 +14,20 @@ class Language(val items: Map[String,String]) {
 object DefaultLanguage extends Language {
     override val items = Map(
 
+        "firstQuarter" -> "First Quarter",
+        "secondQuarter" -> "Second Quarter",
+
+        "labRoom" -> "Lab Room",
+        "classRoom" -> "Class Room",
+        "pcRoom" -> "PC Room",
+
+        "aWeek" -> "A Week",
+        "bWeek" -> "B Week",
+        "everyWeek" -> "Every Week",
+        "shortAWeek" -> "A",
+        "shortBWeek" -> "B",
+        "shortEveryWeek" -> "W",
+
         "fileMenu" -> "File",
         "fileMenu_save" -> "Save",
         "fileMenu_saveAs" -> "Save As...",
@@ -34,6 +48,7 @@ object DefaultLanguage extends Language {
 
         "manageButtons_title" -> "Manage...",
         "manageButtons_courses" -> "Courses",
+        "manageButtons_courseResources" -> "Course Resources",
         "manageButtons_subjects" -> "Subjects",
         "manageButtons_events" -> "Events",
         "manageButtons_unfinishedEvents" -> "Unfinished\nEvents",
@@ -66,20 +81,19 @@ object DefaultLanguage extends Language {
         "courseForm_manageCourseResourcesInfo" -> "Create the resources available for this course",
         "courseForm_createCourseButtonText" -> "Create Course",
         "courseForm_modifyCourseButtonText" -> "Modify Course",
+        "courseForm_manageCourseResources" -> "Manage Course Resources",
 
-        "firstQuarter" -> "First Quarter",
-        "secondQuarter" -> "Second Quarter",
-
-        "labRoom" -> "Lab Room",
-        "classRoom" -> "Class Room",
-        "pcRoom" -> "PC Room",
-
-        "aWeek" -> "A Week",
-        "bWeek" -> "B Week",
-        "everyWeek" -> "Every Week",
-        "shortAWeek" -> "A",
-        "shortBWeek" -> "B",
-        "shortEveryWeek" -> "W",
+        "manageResources_windowTitle" -> "Manage Resources",
+        "manageResources_searchResourceField" -> "search resources",
+        "manageResources_nameColumn" -> "Name",
+        "manageResources_quantityColumn" -> "Quantity",
+        "manageResources_addButton" -> "Add Resource",
+        "manageResources_modifyButton" -> "Modify Resource",
+        "manageResources_deleteButton" -> "Delete Resource",
+        "manageResources_quantityField" -> "quantity",
+        "manageResources_subButton" -> "-1",
+        "manageResources_sumButton" -> "+1",
+        "resourceTable_placeholder" -> "No resources",
 
         "eventForm_windowTitle" -> "New Event",
         "eventForm_eventName" -> "Event name",
@@ -101,5 +115,11 @@ object DefaultLanguage extends Language {
         "warning" -> "Warning",
         "warning_courseNameCannotBeEmpty" -> "Course name cannot be empty.",
         "warning_courseQuarterCannotBeEmpty" -> "Course quarter cannot be empty.",
+        "warning_firstQuarterResourcesCannotBeEmpty" -> "First quarter has no resources.",
+        "warning_secondQuarterResourcesCannotBeEmpty" -> "Second quarter has no resources.",
+        "warning_resourceNameCannotBeEmpty" -> "Resource name cannot be empty.",
+        "warning_resourceQuantityNaN" -> "The quantity is not a number.",
+        "warning_resourceQuantityMin" -> " is lower than the minimum allowed quantity",
+        "warning_resourcesNotSelected" -> "No resource has been selected.",
     )
 }

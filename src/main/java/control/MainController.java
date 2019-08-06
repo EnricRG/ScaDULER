@@ -62,6 +62,7 @@ public class MainController implements Initializable {
     public VBox manageButtons;
     public Label manageButtons_title;
     public Button manageButtons_courses;
+    public Button manageButtons_courseResources;
     public Button manageButtons_subjects;
     public Button manageButtons_events;
     public Button manageButtons_unfinishedEvents;
@@ -140,10 +141,15 @@ public class MainController implements Initializable {
     private void configureCoursePane() {
         addCourseTab();
 
+        //courseTabs.getSelectionModel().select(courseTabs_addTab);
+
         //set new tab behavior
         courseTabs_addTab.setOnSelectionChanged(event -> {
-            addCourseTab();
-            event.consume();
+            //FIXME: when you cancel course creation, tab gets selected and cannot be deselected because there's only 1 tab
+            if(courseTabs_addTab.isSelected()) {
+                promptCourseForm();
+                event.consume();
+            }
         });
     }
 
@@ -201,9 +207,8 @@ public class MainController implements Initializable {
         Node courseTabContent = null;
 
         try{
-            courseTabContent = CourseViewFactory.newCourseViewFromFXML(this);
+            courseTabContent = CourseViewFactory.load(this);
         } catch (IOException e){
-            //Improvable:
             e.printStackTrace();
         }
 
@@ -226,7 +231,7 @@ public class MainController implements Initializable {
 
         //Add tab at the end and select it.
         courseTabs.getTabs().add(courseTabs.getTabs().size()-1, newTab);
-        courseTabs.getSelectionModel().select(courseTabs.getTabs().size() - 2);
+        courseTabs.getSelectionModel().select(newTab);
 
         enableTabClosing();
     }

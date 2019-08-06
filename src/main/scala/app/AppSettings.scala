@@ -5,27 +5,31 @@ object FXMLPaths {
     val UnassignedEvent: String = "src/main/fxml/unassigned_event_box.fxml"
     val CoursePanel: String = "src/main/fxml/course_grid.fxml"
     val CourseForm: String = "src/main/fxml/course_form.fxml"
+    val CourseResourceManagerForm: String = "src/main/fxml/course_resource_manager.fxml"
+    val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
 }
 
 object AppSettings {
 
-    final val applicationTitle = "ScaDULER v0.1"
-    final val TimeSlotDuration = 30
+    final val applicationTitle: String = "ScaDULER v0.1"
+    final val TimeSlotDuration: Int = 30
 
     var language: Language = DefaultLanguage
 
-    var timeSeparatorSymbol = ":"
+    var timeSeparatorSymbol: String = ":"
     var dayStart: Int = 8
     var dayEnd: Int = 19
 
+    var minQuantityPerResource: Int = 1
+
     object eventFormSettings {
-        var width = 640
-        var height = 450
+        var width: Int = 640
+        var height: Int = 450
 
-        var fieldSpacing = 4
+        var fieldSpacing: Int = 4
 
-        var nameFieldWidth = width/2
-        var shortNameFieldWidth = width/4
+        var nameFieldWidth: Int = width/2
+        var shortNameFieldWidth: Int = width/4
 
     }
 }
