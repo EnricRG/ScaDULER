@@ -164,7 +164,7 @@ public class MainController implements Initializable {
         addButtons_event.setOnAction(actionEvent -> promptEventForm());
         addButtons_course.setOnAction(actionEvent -> promptCourseForm());
         manageButtons_courseResources.setOnAction(actionEvent ->
-                promptResourceManager(manageButtons_courseResources.getScene().getWindow()));
+                promptResourceManager(manageButtons_courseResources.getScene().getWindow(), null));
     }
 
     private void promptEventForm() {
@@ -190,7 +190,7 @@ public class MainController implements Initializable {
         Stage prompt = new Stage();
         prompt.initModality(Modality.WINDOW_MODAL);
         prompt.initOwner(addButtons_course.getScene().getWindow());
-        prompt.setTitle(AppSettings.language().getItem("courseForm_createCourseTitle"));
+        prompt.setTitle(AppSettings.language().getItem("courseForm_windowTitle"));
         prompt.setScene(scene);
 
         CourseFormController cfc = loader.getController();
@@ -199,12 +199,12 @@ public class MainController implements Initializable {
         prompt.show();
     }
 
-    public void promptResourceManager(Window owner) {
+    public void promptResourceManager(Window owner, CourseResourceManagerController crmc) {
         Stage prompt = new Stage();
         Scene scene;
 
         try{
-            scene = new Scene((Parent) ResourceManagerViewFactory.load(null));
+            scene = new Scene((Parent) ResourceManagerViewFactory.load());
         } catch (IOException ioe){
             ioe.printStackTrace();
             scene = new Scene(new VBox());
@@ -214,6 +214,7 @@ public class MainController implements Initializable {
         prompt.initOwner(owner);
         prompt.setTitle(AppSettings.language().getItem("manageResources_windowTitle"));
         prompt.setScene(scene);
+        if(crmc != null) prompt.setOnCloseRequest(event -> crmc.updateResources());
 
         prompt.show();
     }
@@ -280,7 +281,7 @@ public class MainController implements Initializable {
         final Tab newTab = courseTabContent == null ? new Tab(c.name()) : new Tab(c.name(), courseTabContent);
 
         //Setting tab properties.
-        //newTab.setClosable(true); //This is done by default.
+        newTab.setClosable(false); //This is done by default.
 
         //Setting on close action. If only one tab is open, it cannot be closed.
         newTab.setOnCloseRequest(event -> {
@@ -305,6 +306,7 @@ public class MainController implements Initializable {
             t.setClosable(false);
         }
         tabClosingEnabledFlag = false;
+        courseTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
     }
 
     private void enableTabClosing() {
@@ -313,6 +315,8 @@ public class MainController implements Initializable {
         }
         courseTabs_addTab.setClosable(false); //This could be done inside the for loop, but I wanted to avoid an if statement there.
         tabClosingEnabledFlag = true;
+
+        courseTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.SELECTED_TAB);
     }
 
     public void moveUnassignedEvent(Node gestureSource, VBox sourceParent, VBox target) {

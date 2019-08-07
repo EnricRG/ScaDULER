@@ -2,52 +2,104 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.CourseResourcesForm">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.CourseResourceManagerController">
    <children>
-      <VBox HBox.hgrow="ALWAYS">
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0">
          <children>
-            <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" side="LEFT" tabClosingPolicy="UNAVAILABLE" tabMinWidth="150.0" VBox.vgrow="ALWAYS">
-              <tabs>
-                <Tab closable="false" text="First Quarter">
-                     <content>
-                        <VBox>
-                           <children>
-                              <ListView />
-                           </children>
-                        </VBox>
-                     </content>
-                </Tab>
-                <Tab closable="false" text="Second Quarter">
-                     <content>
-                        <VBox>
-                           <children>
-                              <ListView />
-                           </children>
-                        </VBox>
-                     </content>
-                </Tab>
-              </tabs>
-            </TabPane>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" side="LEFT" tabClosingPolicy="UNAVAILABLE" tabMinWidth="150.0" VBox.vgrow="ALWAYS">
+                     <tabs>
+                        <Tab fx:id="firstQuarterTab" closable="false" text="First Quarter">
+                           <content>
+                              <VBox>
+                                 <children>
+                                    <TableView fx:id="firstQuarter_resourceTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                       <columns>
+                                          <TableColumn fx:id="firstQuarter_nameColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0" text="Name" />
+                                          <TableColumn fx:id="firstQuarter_quantityColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="-1.0" text="Quantity" />
+                                       </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="secondQuarterTab" closable="false" text="Second Quarter">
+                           <content>
+                              <VBox>
+                                 <children>
+                                    <TableView editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                       <columns>
+                                          <TableColumn editable="false" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="-1.0" text="C1" />
+                                          <TableColumn maxWidth="1.7976931348623157E308" minWidth="50.0" prefWidth="-1.0" text="C2" />
+                                       </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                 </children>
+                              </VBox>
+                           </content>
+                           <content>
+                              <VBox>
+                                 <children>
+                                    <TableView fx:id="secondQuarter_resourceTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                       <columns>
+                                          <TableColumn fx:id="secondQuarter_nameColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0" text="Name" />
+                                          <TableColumn fx:id="secondQuarter_quantityColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="-1.0" text="Quantity" />
+                                       </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <Button fx:id="addButton" mnemonicParsing="false" text="&lt;" />
+                  <TextField fx:id="quantityField" maxWidth="40.0" />
+                  <Button fx:id="removeButton" mnemonicParsing="false" text="&gt;" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" spacing="5.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField fx:id="resourceSearchBox" promptText="Search for resources here" />
+                  <TableView fx:id="generalResourceTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                     <columns>
+                        <TableColumn fx:id="generalResourceTable_nameColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0" text="Name" />
+                        <TableColumn fx:id="generalResourceTable_quantityColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="-1.0" text="Quantity" />
+                     </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+                  <Button fx:id="manageGlobalResources" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Manage Global Resources..." />
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </VBox>
          </children>
-      </VBox>
-      <VBox alignment="CENTER" spacing="5.0" HBox.hgrow="ALWAYS">
-         <children>
-            <TextField promptText="Search for resources here" />
-            <ListView />
-            <Button fx:id="manageGlobalResources" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Manage Global Resources..." />
-         </children>
-         <HBox.margin>
-            <Insets />
-         </HBox.margin></VBox>
+         <padding>
+            <Insets bottom="10.0" right="5.0" top="10.0" />
+         </padding>
+      </HBox>
    </children>
-   <padding>
-      <Insets bottom="10.0" right="5.0" top="10.0" />
-   </padding>
-</HBox>
+</VBox>

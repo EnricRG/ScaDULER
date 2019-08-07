@@ -1,6 +1,6 @@
 package service
 
-import model.{Course, CourseResource, Quarter}
+import model.{Course, CourseResource, Quarter, Resource}
 
 class CourseDatabase extends Database[String,Course]{
 
@@ -11,7 +11,10 @@ class CourseDatabase extends Database[String,Course]{
     //TODO: initialize DB from initializer
     def this(initializer: CourseDatabase#Initializer) = this
 
-    def addCourse(c: Course): Course = addElement(c.name, c)
+    def addCourse(c: Course): Course = {
+        println(c) //TODO remove this
+        addElement(c.name, c)
+    }
 
     //def addCourseBooleanResponse(c: Course): Boolean = c == addCourse(c)
 
@@ -26,10 +29,16 @@ class CourseDatabase extends Database[String,Course]{
 
     //FIXME: useless overload
     def createCourse(name: String, description: Option[String] = None,
-                     firstQuarterResources: Traversable[CourseResource], secondQuarterResources: Traversable[CourseResource]): Course =
-            addCourse(new Course(name, description, Quarter(firstQuarterResources), Quarter(secondQuarterResources)))
+                     firstQuarterResources: Iterable[CourseResource],
+                     secondQuarterResources: Iterable[CourseResource]): Course =
+            addCourse(
+                new Course( name, description,
+                    new Quarter(firstQuarterResources),
+                    new Quarter(secondQuarterResources)
+                )
+            )
 
     def createCourse(name: String, description: String,
-                     firstQuarterResources: Traversable[CourseResource], secondQuarterResources: Traversable[CourseResource]): Course =
+                     firstQuarterResources: Iterable[CourseResource], secondQuarterResources: Iterable[CourseResource]): Course =
             createCourse(name, Some(description), firstQuarterResources, secondQuarterResources)
 }

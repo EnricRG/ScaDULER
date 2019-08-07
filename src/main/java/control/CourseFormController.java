@@ -14,11 +14,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import misc.Warning;
 import model.CourseResource;
-import scala.collection.Traversable;
+import model.Resource;
+import scala.collection.Iterable;
+import scala.collection.JavaConverters;
+import scala.collection.convert.AsScalaConverters;
 import scala.collection.mutable.ListBuffer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class CourseFormController implements Initializable {
@@ -39,8 +44,8 @@ public class CourseFormController implements Initializable {
 
     private StringProperty courseName = new SimpleStringProperty();
     private StringProperty courseDescription = new SimpleStringProperty();
-    private Traversable<CourseResource> firstQuarterResources = new ListBuffer<>();
-    private Traversable<CourseResource> secondQuarterResources = new ListBuffer<>();
+    private List<CourseResource> firstQuarterResources = new ArrayList<>();
+    private List<CourseResource> secondQuarterResources = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -73,9 +78,6 @@ public class CourseFormController implements Initializable {
         courseName.bind(courseNameField.textProperty());
 
         courseDescription.bind(courseDescriptionField.textProperty());
-
-        //TODO: remove TODO tag below
-        //TODO: manage course resources
     }
 
     private void initializeWarningSystem() {
@@ -89,7 +91,6 @@ public class CourseFormController implements Initializable {
         //add course to database and close the window
         createCourseButton.setOnAction(actionEvent -> {
             if(createCourse()) closeWindow();
-            //TODO: explain why course cannot be created (ie name collision)
         });
 
         descriptionWrapCheckBox.selectedProperty().bindBidirectional(courseDescriptionField.wrapTextProperty());
@@ -98,9 +99,9 @@ public class CourseFormController implements Initializable {
     private void promptCourseResourcesForm() {
         Stage prompt = new Stage();
         Scene scene;
-
+        //TODO this is so ugly, abstract pls
         try{
-            scene = new Scene((Parent)CourseResourceManagerViewFactory.load(this));
+            scene = new Scene((Parent)CourseResourceManagerViewFactory.load(this, firstQuarterResources, secondQuarterResources));
         } catch (IOException ioe){
             ioe.printStackTrace();
             scene = new Scene(new VBox());
@@ -108,7 +109,7 @@ public class CourseFormController implements Initializable {
 
         prompt.initModality(Modality.WINDOW_MODAL);
         prompt.initOwner(createCourseButton.getScene().getWindow());
-        prompt.setTitle(AppSettings.language().getItem("courseForm_manageCourseResources"));
+        prompt.setTitle(AppSettings.language().getItem("manageCourseResources_windowTitle"));
         prompt.setScene(scene);
 
         prompt.show();
@@ -118,10 +119,8 @@ public class CourseFormController implements Initializable {
         ((Stage)createCourseButton.getScene().getWindow()).close();
     }
 
-    private Warning courseCanBeCreated(){
-        //TODO: check this method
-        //TODO: abstract this method with parameters
-        if(courseName.getValue().isEmpty())
+    private Warning courseCanBeCreated(String name){
+        if(name.isEmpty())
             return new Warning(AppSettings.language().getItem("warning_courseNameCannotBeEmpty"));
         else if(firstQuarterResources.isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_firstQuarterResourcesCannotBeEmpty"));
@@ -129,19 +128,25 @@ public class CourseFormController implements Initializable {
         else if(secondQuarterResources.isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_secondQuarterResourcesCannotBeEmpty"));
         }
+        else if(!MainApp.database().courseDatabase().getCourse(name).isEmpty()){
+            return new Warning(AppSettings.language().getItem("warning_courseAlreadyExists"));
+        }
         else return null;
     }
 
     private boolean createCourse(){
-        Warning warning = courseCanBeCreated();
+        String name = courseNameField.getText().trim();
+        Warning warning = courseCanBeCreated(name);
         boolean finished = false;
 
-        //TODO: check if the course is already created
         if(warning == null){ //no warning
             hideWarnings();
             mainController.addCourseTab(
                 MainApp.database().courseDatabase().createCourse( //We know here that courseQuarter value cannot be null
-                    courseName.getValueSafe(), courseDescription.getValueSafe(), firstQuarterResources, secondQuarterResources)
+                    courseName.getValueSafe(), courseDescription.getValueSafe(),
+                        JavaConverters.collectionAsScalaIterable(firstQuarterResources),
+                        JavaConverters.collectionAsScalaIterable(secondQuarterResources)
+                    )
                 );
 
             finished = true;
@@ -159,9 +164,5 @@ public class CourseFormController implements Initializable {
     private void popUpWarning(Warning warning) {
         formWarningTag.setText(warning.toString());
         showWarnings();
-    }
-
-    public void updateResources() {
-        //TODO
     }
 }

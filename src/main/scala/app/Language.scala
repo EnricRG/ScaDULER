@@ -71,7 +71,7 @@ object DefaultLanguage extends Language {
         "course" -> "Course",
         "course_emptyDescription" -> "This course has no description",
 
-        "courseForm_createCourseTitle" -> "Create new Course",
+        "courseForm_windowTitle" -> "Create new Course",
         "courseForm_courseNameTagText" -> "Course name:",
         "courseForm_courseNameFieldText" -> "Full Course name",
         "courseForm_courseQuarterTagText" -> "Quarter",
@@ -81,12 +81,13 @@ object DefaultLanguage extends Language {
         "courseForm_manageCourseResourcesInfo" -> "Create the resources available for this course",
         "courseForm_createCourseButtonText" -> "Create Course",
         "courseForm_modifyCourseButtonText" -> "Modify Course",
-        "courseForm_manageCourseResources" -> "Manage Course Resources",
+        "courseForm_manageCourseResources" -> "Manage Course Resources...",
 
         "manageResources_windowTitle" -> "Manage Resources",
         "manageResources_searchResourceField" -> "search resources",
         "manageResources_nameColumn" -> "Name",
         "manageResources_quantityColumn" -> "Quantity",
+        "manageResources_availableQuantityColumn" -> "Available\nQuantity",
         "manageResources_addButton" -> "Add Resource",
         "manageResources_modifyButton" -> "Modify Resource",
         "manageResources_deleteButton" -> "Delete Resource",
@@ -94,6 +95,11 @@ object DefaultLanguage extends Language {
         "manageResources_subButton" -> "-1",
         "manageResources_sumButton" -> "+1",
         "resourceTable_placeholder" -> "No resources",
+
+        "manageCourseResources_windowTitle" -> "Manage Course Resources",
+        "manageCourseResources_firstQuarter" -> "First Quarter",
+        "manageCourseResources_secondQuarter" -> "Second Quarter",
+        "manageCourseResources_manageGlobalResources" -> "Manage Global Resources",
 
         "eventForm_windowTitle" -> "New Event",
         "eventForm_eventName" -> "Event name",
@@ -121,5 +127,6 @@ object DefaultLanguage extends Language {
         "warning_resourceQuantityNaN" -> "The quantity is not a number.",
         "warning_resourceQuantityMin" -> " is lower than the minimum allowed quantity",
         "warning_resourcesNotSelected" -> "No resource has been selected.",
+        "warning_courseAlreadyExists" -> "A Course with this name already exists.",
     )
 }

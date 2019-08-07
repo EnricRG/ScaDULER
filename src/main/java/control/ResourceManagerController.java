@@ -5,11 +5,10 @@ import app.MainApp;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import misc.Warning;
-import model.CourseResource;
+import model.Resource;
 import scala.collection.JavaConverters;
 
 import java.net.URL;
@@ -21,9 +20,9 @@ public class ResourceManagerController implements Initializable {
 
     public TextField searchResourceField;
 
-    public TableView<CourseResource> resourceTable;
-    public TableColumn<CourseResource, String> resourceTable_nameColumn;
-    public TableColumn<CourseResource, Integer> resourceTable_quantityColumn;
+    public TableView<Resource> resourceTable;
+    public TableColumn<Resource, String> resourceTable_nameColumn;
+    public TableColumn<Resource, Integer> resourceTable_quantityColumn;
 
     public Button addResourceButton;
     public TextField resourceNameField;
@@ -35,7 +34,7 @@ public class ResourceManagerController implements Initializable {
 
     public Label warningTag;
 
-    private List<CourseResource> resources = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.database().courseResourceDatabase().getElements()));
+    private List<Resource> resources = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.database().courseResourceDatabase().getElements()));
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -43,11 +42,6 @@ public class ResourceManagerController implements Initializable {
         setupTableView();
         initializeWarningSystem();
         bindActions();
-    }
-
-    //pre: cfc not null
-    public void bindCourseController(CourseFormController cfc) {
-        resourceTable.getScene().getWindow().setOnCloseRequest(event -> cfc.updateResources());
     }
 
     private void initializeContentLanguage() {
@@ -80,7 +74,7 @@ public class ResourceManagerController implements Initializable {
 
     private void bindActions() {
         searchResourceField.setOnKeyTyped(event -> {
-            filterResourceTable(searchResourceField.getText());
+            filterResourceTable(searchResourceField.getText().trim().toLowerCase());
             event.consume();
         });
         addResourceButton.setOnAction(event -> {
@@ -102,23 +96,23 @@ public class ResourceManagerController implements Initializable {
     }
 
     private void incrementByOne() {
-        ObservableList<CourseResource> selection = resourceTable.getSelectionModel().getSelectedItems();
+        ObservableList<Resource> selection = resourceTable.getSelectionModel().getSelectedItems();
         selection.forEach(resource -> resource.incrementQuantity(1));
         updateTableView();
     }
 
     private void decrementByOne() {
-        ObservableList<CourseResource> selection = resourceTable.getSelectionModel().getSelectedItems();
+        ObservableList<Resource> selection = resourceTable.getSelectionModel().getSelectedItems();
         selection.forEach(resource -> resource.decrementQuantity(1));
         updateTableView();
     }
 
     //pre: text not null
     private void filterResourceTable(String text) {
-        ObservableList<CourseResource> filteredResources = FXCollections.observableArrayList(resources);
+        ObservableList<Resource> filteredResources = FXCollections.observableArrayList(resources);
 
         //if search field is not blank, remove all rows that resource's name does not contain fields content as a substring
-        if(!text.isBlank()) filteredResources.removeIf(resource -> !resource.name().toLowerCase().contains(text.toLowerCase()));
+        if(!text.isBlank()) filteredResources.removeIf(resource -> !resource.name().toLowerCase().contains(text));
 
         resourceTable.setItems(filteredResources);
     }
@@ -139,7 +133,7 @@ public class ResourceManagerController implements Initializable {
         if (warning == null) { //if no errors
             hideWarnings(); //no warnings to be shown
             updateCourseInTableView(
-                    MainApp.database().courseResourceDatabase().createCourseResourceOrElseIncrement(name, quantity)
+                    MainApp.database().courseResourceDatabase().createResourceOrElseIncrement(name, quantity)
             );
             clearInputFields();
         }
@@ -156,7 +150,7 @@ public class ResourceManagerController implements Initializable {
     }
 
     //pre: cr not null
-    private void updateCourseInTableView(CourseResource cr) {
+    private void updateCourseInTableView(Resource cr) {
         if(resourceTable.getItems().contains(cr)) updateTableView();
         else {
             resources.add(cr);
@@ -167,7 +161,7 @@ public class ResourceManagerController implements Initializable {
     private void deleteResource() {
         Warning warning = null;
 
-        ObservableList<CourseResource> selection = resourceTable.getSelectionModel().getSelectedItems();
+        ObservableList<Resource> selection = resourceTable.getSelectionModel().getSelectedItems();
 
         warning = resourcesCanBeDeleted(selection);
 
@@ -181,7 +175,7 @@ public class ResourceManagerController implements Initializable {
         else popUpWarning(warning);
     }
 
-    private Warning resourcesCanBeDeleted(ObservableList<CourseResource> selection) {
+    private Warning resourcesCanBeDeleted(ObservableList<Resource> selection) {
         if(selection.isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_resourcesNotSelected"));
         }
