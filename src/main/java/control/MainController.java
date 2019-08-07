@@ -204,7 +204,7 @@ public class MainController implements Initializable {
         Scene scene;
 
         try{
-            scene = new Scene((Parent) ResourceManagerViewFactory.load());
+            scene = new Scene((Parent) ResourceManagerViewFactory.load(null));
         } catch (IOException ioe){
             ioe.printStackTrace();
             scene = new Scene(new VBox());
