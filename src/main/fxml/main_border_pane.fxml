@@ -20,9 +20,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="mainStackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.MainController">
+<StackPane fx:id="mainStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.MainController">
    <children>
-      <BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0">
+      <BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0">
          <top>
             <VBox alignment="TOP_CENTER" maxHeight="100.0" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
                <children>
@@ -223,7 +223,7 @@
             </VBox>
          </top>
          <center>
-            <TabPane fx:id="courseTabs" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <TabPane fx:id="courseTabs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
                <tabs>
                   <Tab fx:id="courseTabs_addTab" closable="false" text="+" />
                </tabs>
@@ -232,18 +232,8 @@
                </BorderPane.margin>
             </TabPane>
          </center>
-         <left>
-            <ScrollPane fx:id="leftPane" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" prefWidth="250.0" BorderPane.alignment="CENTER">
-               <content>
-                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" />
-               </content>
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-            </ScrollPane>
-         </left>
          <right>
-            <VBox fx:id="rightPane" BorderPane.alignment="TOP_CENTER">
+            <VBox fx:id="rightPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="TOP_CENTER">
                <children>
                   <TextField fx:id="rightPane_eventSearch" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="29.0" promptText="Enter Event name">
                      <font>
@@ -254,7 +244,7 @@
                      <content>
                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
-                              <VBox fx:id="rightPane_VBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                              <VBox fx:id="rightPane_VBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" />
                            </children>
                         </AnchorPane>
                      </content>
