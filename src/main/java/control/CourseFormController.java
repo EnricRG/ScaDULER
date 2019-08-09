@@ -1,8 +1,10 @@
 package control;
 
 import app.AppSettings;
+import app.FXMLPaths;
 import app.MainApp;
 import factory.CourseResourceManagerViewFactory;
+import factory.SubjectFormViewFactory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.Initializable;
@@ -97,20 +99,14 @@ public class CourseFormController implements Initializable {
     }
 
     private void promptCourseResourcesForm() {
-        Stage prompt = new Stage();
-        Scene scene;
-        //TODO this is so ugly, abstract pls
-        try{
-            scene = new Scene((Parent)CourseResourceManagerViewFactory.load(this, firstQuarterResources, secondQuarterResources));
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-            scene = new Scene(new VBox());
-        }
-
-        prompt.initModality(Modality.WINDOW_MODAL);
-        prompt.initOwner(createCourseButton.getScene().getWindow());
-        prompt.setTitle(AppSettings.language().getItem("manageCourseResources_windowTitle"));
-        prompt.setScene(scene);
+        Stage prompt = MainController.promptBoundWindow(
+                AppSettings.language().getItem("manageCourseResources_windowTitle"),
+                createCourseButton.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new CourseResourceManagerViewFactory(FXMLPaths.CourseResourceManagerForm(),this,
+                        firstQuarterResources, secondQuarterResources
+                )
+        );
 
         prompt.show();
     }

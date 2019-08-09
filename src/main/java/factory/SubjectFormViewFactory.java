@@ -1,22 +1,24 @@
 package factory;
 
-import app.FXMLPaths;
 import control.MainController;
 import control.SubjectFormController;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
-import java.io.File;
 import java.io.IOException;
 
-public class SubjectFormViewFactory {
-    public static Node load(MainController mc) throws IOException {
+public class SubjectFormViewFactory extends ViewFactory<SubjectFormController>{
 
-        FXMLLoader fxmlLoader = new FXMLLoader(new File(FXMLPaths.SubjectForm()).toURI().toURL());
+    private final MainController mc;
 
-        Node n = fxmlLoader.load();
-        fxmlLoader.<SubjectFormController>getController().setMainController(mc);
+    public SubjectFormViewFactory(String resourcePath, MainController mc) {
+        super(resourcePath);
+        this.mc = mc;
+    }
 
+    @Override
+    public Node load() throws IOException {
+        Node n = super.load(); //controller is only set after successful loading
+        getController().setMainController(mc);
         return n;
     }
 }

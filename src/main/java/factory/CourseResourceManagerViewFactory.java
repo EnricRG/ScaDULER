@@ -11,16 +11,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class CourseResourceManagerViewFactory {
-    public static Node load(CourseFormController cfc, List<CourseResource> fqr, List<CourseResource> sqr) throws IOException {
+public class CourseResourceManagerViewFactory extends ViewFactory<CourseResourceManagerController>{
 
-        FXMLLoader fxmlLoader = new FXMLLoader(new File(FXMLPaths.CourseResourceManagerForm()).toURI().toURL());
+    private final CourseFormController cfc;
+    private final List<CourseResource> fqr; /** First Quarter Resources */
+    private final List<CourseResource> sqr; /** Second Quarter Resources */
 
-        Node n = fxmlLoader.load();
-        CourseResourceManagerController controller = fxmlLoader.getController();
-        controller.setCourseController(cfc);
-        controller.linkResources(fqr,sqr); //pass both quarters' resource lists
+    public CourseResourceManagerViewFactory(String resourcePath, CourseFormController cfc, List<CourseResource> fqr, List<CourseResource> sqr) {
+        super(resourcePath);
+        this.cfc = cfc;
+        this.fqr = fqr;
+        this.sqr = sqr;
+    }
 
+    @Override
+    public Node load() throws IOException {
+        Node n = super.load(); //controller is only set after successful loading
+        getController().setCourseController(cfc);
+        getController().linkResources(fqr,sqr);
         return n;
     }
 }

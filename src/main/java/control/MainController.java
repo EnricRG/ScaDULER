@@ -2,10 +2,7 @@ package control;
 
 import app.AppSettings;
 import app.FXMLPaths;
-import factory.CourseFormViewFactory;
-import factory.CoursePanelViewFactory;
-import factory.ResourceManagerViewFactory;
-import factory.SubjectFormViewFactory;
+import factory.*;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -21,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Course;
 import model.Quarter;
+import scala.App;
 import scala.Option;
 import scala.collection.mutable.ListBuffer;
 import view.DraggableVBox;
@@ -147,95 +145,6 @@ public class MainController implements Initializable {
 
     }
 
-    private void configureCoursePane() {
-        addCourseTab();
-
-        //courseTabs.getSelectionModel().select(courseTabs_addTab);
-
-        //set new tab behavior
-        courseTabs_addTab.setOnSelectionChanged(event -> {
-            //FIXME: when you cancel course creation, tab gets selected and cannot be deselected because there's only 1 tab
-            if(courseTabs_addTab.isSelected()) {
-                promptCourseForm();
-                event.consume();
-            }
-        });
-    }
-
-    private void setButtonActions() {
-        addButtons_course.setOnAction(actionEvent -> promptCourseForm());
-        addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
-        addButtons_event.setOnAction(actionEvent -> promptEventForm());
-        manageButtons_courseResources.setOnAction(actionEvent ->
-                promptResourceManager(manageButtons_courseResources.getScene().getWindow(), null));
-    }
-
-
-
-    private void promptCourseForm() {
-        Scene scene;
-
-        //TODO this code could be abstracted to a factory method
-        try{
-            scene = new Scene((Parent) CourseFormViewFactory.load(this));
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-            scene = new Scene(new VBox());
-        }
-
-        Stage prompt = new Stage();
-        prompt.initModality(Modality.WINDOW_MODAL);
-        prompt.initOwner(addButtons_course.getScene().getWindow());
-        prompt.setTitle(AppSettings.language().getItem("courseForm_windowTitle"));
-        prompt.setScene(scene);
-
-        prompt.show();
-    }
-
-    private void promptSubjectForm(){
-        Scene scene;
-
-        //TODO this code could be abstracted to a factory method
-        try{
-            scene = new Scene((Parent) SubjectFormViewFactory.load(this));
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-            scene = new Scene(new VBox());
-        }
-
-        Stage prompt = new Stage();
-        prompt.initModality(Modality.WINDOW_MODAL);
-        prompt.initOwner(addButtons_subject.getScene().getWindow());
-        prompt.setTitle(AppSettings.language().getItem("subjectForm_windowTitle"));
-        prompt.setScene(scene);
-
-        prompt.show();
-    }
-
-    private void promptEventForm() {
-        //TODO: prompt event form
-    }
-
-    public void promptResourceManager(Window owner, CourseResourceManagerController crmc) {
-        Stage prompt = new Stage();
-        Scene scene;
-
-        try{
-            scene = new Scene((Parent) ResourceManagerViewFactory.load());
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-            scene = new Scene(new VBox());
-        }
-
-        prompt.initModality(Modality.WINDOW_MODAL);
-        prompt.initOwner(owner);
-        prompt.setTitle(AppSettings.language().getItem("manageResources_windowTitle"));
-        prompt.setScene(scene);
-        if(crmc != null) prompt.setOnCloseRequest(event -> crmc.updateResources());
-
-        prompt.show();
-    }
-
     private void initializeLanguage() {
 
         menuBar_fileMenu.setText(AppSettings.language().getItem("fileMenu"));
@@ -273,6 +182,104 @@ public class MainController implements Initializable {
         runButtons_stop.setText(AppSettings.language().getItem("runButtons_stop"));
 
         rightPane_eventSearch.setPromptText(AppSettings.language().getItem("rightPane_eventSearch"));
+    }
+
+    private void configureCoursePane() {
+        addCourseTab();
+
+        //courseTabs.getSelectionModel().select(courseTabs_addTab);
+
+        //set new tab behavior
+        courseTabs_addTab.setOnSelectionChanged(event -> {
+            //FIXME: when you cancel course creation, tab gets selected and cannot be deselected because there's only 1 tab
+            if(courseTabs_addTab.isSelected()) {
+                promptCourseForm();
+                event.consume();
+            }
+        });
+    }
+
+    private void setButtonActions() {
+        addButtons_course.setOnAction(actionEvent -> promptCourseForm());
+        addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
+        addButtons_event.setOnAction(actionEvent -> promptEventForm());
+        manageButtons_courseResources.setOnAction(actionEvent ->
+                promptResourceManager(manageButtons_courseResources.getScene().getWindow(), null));
+        manageButtons_courses.setOnAction(event -> promptCourseManager());
+    }
+
+    //FIXME: unnecessary coupling
+    public static Stage promptBoundWindow(String title, Window owner, Modality modality, ViewFactory viewFactory){
+        Scene scene;
+
+        try{
+            scene = new Scene((Parent) viewFactory.load());
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+            scene = new Scene(new VBox());
+        }
+
+        Stage stage = new Stage();
+
+        stage.initModality(modality);
+        stage.initOwner(owner);
+        stage.setTitle(title);
+        stage.setScene(scene);
+
+        return stage;
+    }
+
+    private void promptCourseForm() {
+        Stage prompt = promptBoundWindow(
+                AppSettings.language().getItem("courseForm_windowTitle"),
+                addButtons_course.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new CourseFormViewFactory(FXMLPaths.CourseForm(), this)
+        );
+
+        prompt.show();
+    }
+
+    private void promptSubjectForm(){
+        Stage prompt = promptBoundWindow(
+                AppSettings.language().getItem("subjectForm_windowTitle"),
+                addButtons_subject.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new SubjectFormViewFactory(FXMLPaths.SubjectForm(), this)
+        );
+
+        prompt.show();
+    }
+
+    private void promptEventForm() {
+        //TODO: prompt event form
+    }
+
+
+
+    private void promptCourseManager(){
+        Stage prompt = promptBoundWindow(
+                AppSettings.language().getItem("courseManager_windowTitle"),
+                manageButtons_courseResources.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory(FXMLPaths.ManageCoursesPanel())
+        );
+
+        prompt.show();
+    }
+
+    void promptResourceManager(Window owner, CourseResourceManagerController crmc) {
+
+        Stage prompt = promptBoundWindow(
+                AppSettings.language().getItem("manageResources_windowTitle"),
+                owner,
+                Modality.WINDOW_MODAL,
+                new ViewFactory(FXMLPaths.ManageResourcesPanel())
+        );
+
+        if(crmc != null) prompt.setOnCloseRequest(event -> crmc.updateResources());
+
+        prompt.show();
     }
 
     //TODO: remove this method, it has only debugging purposes.
