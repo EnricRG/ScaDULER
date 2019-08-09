@@ -3,7 +3,7 @@ package service
 class AppDatabase (eventDBInitializer: Option[EventDatabase#Initializer] = None,
                    subjectDBInitializer: Option[SubjectDatabase#Initializer] = None,
                    courseDBInitializer: Option[CourseDatabase#Initializer] = None,
-                   courseResourceDBInitializer: Option[ResourceDatabase#Initializer] = None) {
+                   resourceDBInitializer: Option[ResourceDatabase#Initializer] = None) {
 
     val eventDatabase: EventDatabase = eventDBInitializer match {
         case Some(eDBi) => new EventDatabase(eDBi)
@@ -20,7 +20,7 @@ class AppDatabase (eventDBInitializer: Option[EventDatabase#Initializer] = None,
         case None => new CourseDatabase
     }
 
-    val courseResourceDatabase: ResourceDatabase = courseResourceDBInitializer match {
+    val resourceDatabase: ResourceDatabase = resourceDBInitializer match {
         case Some(crDBi) => new ResourceDatabase(crDBi)
         case None => new ResourceDatabase
     }

@@ -14,7 +14,6 @@ case class CourseResource(val resource: Resource, var quantity: Int) extends Qua
 
 case class Quarter(var resources: Iterable[CourseResource])
 
-//TODO: Add course resource list
 //TODO: Add course assigned event list
 case class Course(val name: String, var descriptionOption: Option[String] = None,
                   var firstQuarter: Quarter, var secondQuarter: Quarter) {

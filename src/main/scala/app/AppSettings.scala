@@ -7,6 +7,7 @@ object FXMLPaths {
     val CourseForm: String = "src/main/fxml/course_form.fxml"
     val CourseResourceManagerForm: String = "src/main/fxml/course_resource_manager.fxml"
     val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
+    val SubjectForm: String = "src/main/fxml/subject_form.fxml"
 }
 
 object AppSettings {

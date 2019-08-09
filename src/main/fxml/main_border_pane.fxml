@@ -73,7 +73,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="addButtons_subject" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Subject">
+                                    <Button fx:id="addButtons_subject" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Subject">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

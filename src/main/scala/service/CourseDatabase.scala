@@ -2,7 +2,7 @@ package service
 
 import model.{Course, CourseResource, Quarter, Resource}
 
-class CourseDatabase extends Database[String,Course]{
+class CourseDatabase extends Database[Course]{
 
     class Initializer{
         //TODO: initalizer
@@ -11,21 +11,14 @@ class CourseDatabase extends Database[String,Course]{
     //TODO: initialize DB from initializer
     def this(initializer: CourseDatabase#Initializer) = this
 
+    //TODO: update to pure DBID model
     def addCourse(c: Course): Course = {
         println(c) //TODO remove this
-        addElement(c.name, c)
+        val id = addElement(c)
+        getElement(id).get //this should be secure because we just added the course
     }
 
-    //def addCourseBooleanResponse(c: Course): Boolean = c == addCourse(c)
-
-
-    def getCourse(course_name: String): Option[Course] = getElement(course_name)
-
-
-    def getCourseOrElse(course_name: String, c: => Course): Course = getElementOrElse(course_name,c)
-
-
-    def removeCourse(course_name: String): Option[Course] = elements.remove(course_name)
+    def removeCourse(c: Course) = removeElement(c)
 
     //FIXME: useless overload
     def createCourse(name: String, description: Option[String] = None,

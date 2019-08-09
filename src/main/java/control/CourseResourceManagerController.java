@@ -50,7 +50,7 @@ public class CourseResourceManagerController implements Initializable {
     private List<Resource> allResources =
             new ArrayList<>(
                     JavaConverters.asJavaCollection(
-                            MainApp.database().courseResourceDatabase().getElements())
+                            MainApp.database().resourceDatabase().getElements())
             );
 
     @Override
@@ -256,7 +256,7 @@ public class CourseResourceManagerController implements Initializable {
     }
 
     public void updateResources() {
-        allResources = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.database().courseResourceDatabase().getElements()));
+        allResources = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.database().resourceDatabase().getElements()));
         filterResourceTable(resourceSearchBox.getText().trim().toLowerCase());
     }
 }

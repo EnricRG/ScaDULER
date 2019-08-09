@@ -17,9 +17,15 @@ object DefaultLanguage extends Language {
         "firstQuarter" -> "First Quarter",
         "secondQuarter" -> "Second Quarter",
 
+        "theoryEvent" -> "Theory",
+        "labEvent" -> "Laboratory",
+        "computerEvent" -> "Computer",
+
+        //this is obsolete
         "labRoom" -> "Lab Room",
         "classRoom" -> "Class Room",
         "pcRoom" -> "PC Room",
+        //////////////////////
 
         "aWeek" -> "A Week",
         "bWeek" -> "B Week",
@@ -101,6 +107,30 @@ object DefaultLanguage extends Language {
         "manageCourseResources_secondQuarter" -> "Second Quarter",
         "manageCourseResources_manageGlobalResources" -> "Manage Global Resources",
 
+        "subjectForm_windowTitle" -> "Create new Subject",
+        "subjectForm_subjectNameTag" -> "Subject Name:",
+        "subjectForm_subjectNameField" -> "Enter full Subject name",
+        "subjectForm_subjectShortNameTag" -> "Subject Short Name:",
+        "subjectForm_subjectShortNameField" -> "Subject name abbreviation",
+        "subjectForm_subjectDescriptionTag" -> "Subject Description (optional):",
+        "subjectForm_subjectDescriptionField" -> "Write a description about the contents of this subject.",
+        "subjectForm_subjectColorTag" -> "Subject Color:",
+        "subjectForm_subjectColorExplanation" -> "This color will be used to show\na thin frame around\nthe events of the subject",
+        "subjectForm_generateEventsTag" -> "Generate Subject Events:",
+        "subjectForm_eventType" -> "Event type",
+        "subjectForm_numberOfEvents" -> "Number of Events",
+        "subjectForm_generationExampleTag" -> "Generation example: ",
+        "subjectForm_selectResourceTag" -> "Select the resource that these generated events will need:",
+        "subjectForm_resourceSearchBar" -> "filter resources by name",
+        "subjectForm_resourcePlaceholder" -> "No resources",
+        "subjectForm_generateEventsButton" -> "Generate Events",
+        "subjectForm_evenTablePlaceHolder" -> "No Events created yet",
+        "subjectForm_eventTableNameColumn" -> "Name",
+        "subjectForm_eventTableResourceColumn" -> "Resource",
+        "subjectForm_deleteSelectedEventsButton" -> "Delete Selected Events",
+        "subjectForm_deleteAllEventsButton" -> "Delete All Events",
+        "subjectForm_createSubjectButton" -> "Create Subject",
+
         "eventForm_windowTitle" -> "New Event",
         "eventForm_eventName" -> "Event name",
         "eventForm_eventNameHelp" -> "Full Event name",
@@ -128,5 +158,7 @@ object DefaultLanguage extends Language {
         "warning_resourceQuantityMin" -> " is lower than the minimum allowed quantity",
         "warning_resourcesNotSelected" -> "No resource has been selected.",
         "warning_courseAlreadyExists" -> "A Course with this name already exists.",
+        "warning_subjectNameCannotBeEmpty" -> "Subject Name cannot be empty.",
+        "warning_subjectShortNameCannotBeEmpty" -> "Subject Short Name cannot be empty.",
     )
 }

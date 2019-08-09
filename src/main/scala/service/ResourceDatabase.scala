@@ -2,7 +2,7 @@ package service
 
 import model.Resource
 
-class ResourceDatabase extends Database[String,Resource] {
+class ResourceDatabase extends Database[Resource] {
 
     class Initializer{
 
@@ -10,13 +10,17 @@ class ResourceDatabase extends Database[String,Resource] {
 
     def this(initializer: ResourceDatabase#Initializer) = this
 
-    def createResource(c: Resource): Resource = addElement(c.name, c)
+    //TODO: update to pure DBID model
+    def createResource(r: Resource): Resource = {
+        val id = addElement(r)
+        getElement(id).get //this should be secure because we just added the resource
+    }
     def createResource(name: String, quantity: Int): Resource = createResource(new Resource(name, quantity))
 
     def createResourceOrElseIncrement(name: String, quantity: Int): Resource = {
-        val c = new Resource(name, quantity)
-        val c2 = createResource(c)
-        if(c != c2) c2.incrementQuantity(quantity)
-        c2
+        val r = new Resource(name, quantity)
+        val r2 = createResource(r)
+        if(r != r2) r2.incrementQuantity(quantity)
+        r2
     }
 }

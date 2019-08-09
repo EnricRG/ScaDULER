@@ -1,21 +1,17 @@
 package view;
 
-import app.MainInterface;
 import control.MainController;
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
-import model.Event;
+import model.OldEvent;
 
 class EventView extends VBox{
 
-    public Event event;
+    public OldEvent event;
 
-    public EventView(VBox v, Event e){
+    public EventView(VBox v, OldEvent e){
         super(v);
         event = e;
     }

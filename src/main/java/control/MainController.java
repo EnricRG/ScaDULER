@@ -2,8 +2,10 @@ package control;
 
 import app.AppSettings;
 import app.FXMLPaths;
-import factory.CourseViewFactory;
+import factory.CourseFormViewFactory;
+import factory.CoursePanelViewFactory;
 import factory.ResourceManagerViewFactory;
+import factory.SubjectFormViewFactory;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -161,30 +163,24 @@ public class MainController implements Initializable {
     }
 
     private void setButtonActions() {
-        addButtons_event.setOnAction(actionEvent -> promptEventForm());
         addButtons_course.setOnAction(actionEvent -> promptCourseForm());
+        addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
+        addButtons_event.setOnAction(actionEvent -> promptEventForm());
         manageButtons_courseResources.setOnAction(actionEvent ->
                 promptResourceManager(manageButtons_courseResources.getScene().getWindow(), null));
     }
 
-    private void promptEventForm() {
-        //TODO: prompt event form
-    }
+
 
     private void promptCourseForm() {
-        //TODO: improve coherence adding a FXML factory
-        //TODO: write a separate method to handle this
         Scene scene;
-        FXMLLoader loader;
 
+        //TODO this code could be abstracted to a factory method
         try{
-            loader = new FXMLLoader(new File(FXMLPaths.CourseForm()).toURI().toURL());
-            Parent root = loader.load();
-            scene = new Scene(root);
+            scene = new Scene((Parent) CourseFormViewFactory.load(this));
         } catch (IOException ioe){
             ioe.printStackTrace();
             scene = new Scene(new VBox());
-            loader = new FXMLLoader();
         }
 
         Stage prompt = new Stage();
@@ -193,10 +189,31 @@ public class MainController implements Initializable {
         prompt.setTitle(AppSettings.language().getItem("courseForm_windowTitle"));
         prompt.setScene(scene);
 
-        CourseFormController cfc = loader.getController();
-        cfc.setMainController(this);
+        prompt.show();
+    }
+
+    private void promptSubjectForm(){
+        Scene scene;
+
+        //TODO this code could be abstracted to a factory method
+        try{
+            scene = new Scene((Parent) SubjectFormViewFactory.load(this));
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+            scene = new Scene(new VBox());
+        }
+
+        Stage prompt = new Stage();
+        prompt.initModality(Modality.WINDOW_MODAL);
+        prompt.initOwner(addButtons_subject.getScene().getWindow());
+        prompt.setTitle(AppSettings.language().getItem("subjectForm_windowTitle"));
+        prompt.setScene(scene);
 
         prompt.show();
+    }
+
+    private void promptEventForm() {
+        //TODO: prompt event form
     }
 
     public void promptResourceManager(Window owner, CourseResourceManagerController crmc) {
@@ -272,7 +289,7 @@ public class MainController implements Initializable {
         Node courseTabContent = null;
 
         try{
-            courseTabContent = CourseViewFactory.load(this);
+            courseTabContent = CoursePanelViewFactory.load(this);
         } catch (IOException e){
             e.printStackTrace();
         }

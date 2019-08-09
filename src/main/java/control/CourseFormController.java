@@ -55,10 +55,10 @@ public class CourseFormController implements Initializable {
         bindButtonsToActions();
     }
 
-    MainController getMainController(){ return mainController; } //package private
-    void setMainController(MainController mc){
+    public MainController getMainController(){ return mainController; }
+    public void setMainController(MainController mc){
         mainController = mc;
-    } //package private
+    }
 
     private void initializeContentLanguage() {
         courseNameTag.setText(AppSettings.language().getItem("courseForm_courseNameTagText"));
@@ -128,9 +128,9 @@ public class CourseFormController implements Initializable {
         else if(secondQuarterResources.isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_secondQuarterResourcesCannotBeEmpty"));
         }
-        else if(!MainApp.database().courseDatabase().getCourse(name).isEmpty()){
+        /*else if(!MainApp.database().courseDatabase().getCourse(name).isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_courseAlreadyExists"));
-        }
+        }*/
         else return null;
     }
 

@@ -4,7 +4,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import misc.Weeks._
-import model.{Event, InstanceData}
+import model.{OldEvent, InstanceData}
 import service.AppDatabase
 import solver.MiniZincInstanceSolver
 
@@ -27,98 +27,98 @@ object Instance {
         new model.EventData(3, time_slots = 2, relativeStart = 53),
         new model.EventData(4, time_slots = 2, relativeStart = 75),
         new model.EventData(5, time_slots = 2, relativeStart = 97),*/
-        new Event(1, time_slots = 4, relativeStart = 9+22*3),
-        new Event(2, time_slots = 2),
-        new Event(3, time_slots = 2),
-        new Event(4, time_slots = 2),
-        new Event(5, time_slots = 2),
+        new OldEvent(1, time_slots = 4, relativeStart = 9+22*3),
+        new OldEvent(2, time_slots = 2),
+        new OldEvent(3, time_slots = 2),
+        new OldEvent(4, time_slots = 2),
+        new OldEvent(5, time_slots = 2),
 
         //First course
 
         //misc.Day 1
-        new Event(6, time_slots = 4, classRoomsNeeded = 1),
-        new Event(7, time_slots = 4, labRoomsNeeded = 1),
-        new Event(8, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(9, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(6, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(7, time_slots = 4, labRoomsNeeded = 1),
+        new OldEvent(8, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(9, time_slots = 4, pcRoomsNeeded = 1),
 
         //misc.Day 2
-        new Event(10, time_slots = 4, classRoomsNeeded = 1),
-        new Event(11, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(10, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(11, time_slots = 4, classRoomsNeeded = 1),
 
-        new Event(12, time_slots = 4, classRoomsNeeded = 1),
-        new Event(13, time_slots = 4, labRoomsNeeded = 1),
-        new Event(14, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(15, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(12, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(13, time_slots = 4, labRoomsNeeded = 1),
+        new OldEvent(14, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(15, time_slots = 4, classRoomsNeeded = 1),
 
         //misc.Day 3
-        new Event(16, time_slots = 4, classRoomsNeeded = 1),
-        new Event(17, time_slots = 2, classRoomsNeeded = 1),
-        new Event(18, time_slots = 2, classRoomsNeeded = 1),
-        new Event(19, time_slots = 2, classRoomsNeeded = 1),
-        new Event(20, time_slots = 2, classRoomsNeeded = 1),
-        new Event(21, time_slots = 4, labRoomsNeeded = 1),
+        new OldEvent(16, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(17, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(18, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(19, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(20, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(21, time_slots = 4, labRoomsNeeded = 1),
 
-        new Event(22, time_slots = 4, classRoomsNeeded = 1),
-        new Event(23, time_slots = 4, classRoomsNeeded = 1),
-        new Event(24, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(22, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(23, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(24, time_slots = 2, classRoomsNeeded = 1),
 
         //misc.Day 4
-        new Event(25, time_slots = 2, classRoomsNeeded = 1),
-        new Event(26, time_slots = 2, classRoomsNeeded = 1),
-        new Event(27, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(25, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(26, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(27, time_slots = 4, classRoomsNeeded = 1),
 
-        new Event(28, time_slots = 4, classRoomsNeeded = 1),
-        new Event(29, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(28, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(29, time_slots = 2, classRoomsNeeded = 1),
 
         //misc.Day 5
-        new Event(30, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
-        new Event(31, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
-        new Event(32, time_slots = 4, labRoomsNeeded = 1),
-        new Event(33, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
-        new Event(34, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
-        new Event(35, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
-        new Event(36, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
-        new Event(37, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(38, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
-        new Event(39, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
-        new Event(40, time_slots = 4, labRoomsNeeded = 1),
-        new Event(41, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(42, time_slots = 4, labRoomsNeeded = 1),
-        new Event(43, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(30, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+        new OldEvent(31, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+        new OldEvent(32, time_slots = 4, labRoomsNeeded = 1),
+        new OldEvent(33, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+        new OldEvent(34, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+        new OldEvent(35, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+        new OldEvent(36, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+        new OldEvent(37, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(38, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+        new OldEvent(39, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+        new OldEvent(40, time_slots = 4, labRoomsNeeded = 1),
+        new OldEvent(41, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(42, time_slots = 4, labRoomsNeeded = 1),
+        new OldEvent(43, time_slots = 4, pcRoomsNeeded = 1),
 
-        new Event(44, time_slots = 2, classRoomsNeeded = 1),
-        new Event(45, time_slots = 2, classRoomsNeeded = 1),
-        new Event(46, time_slots = 4, labRoomsNeeded = 1),
-        new Event(47, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(48, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
-        new Event(49, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
-        new Event(50, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
-        new Event(51, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+        new OldEvent(44, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(45, time_slots = 2, classRoomsNeeded = 1),
+        new OldEvent(46, time_slots = 4, labRoomsNeeded = 1),
+        new OldEvent(47, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(48, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+        new OldEvent(49, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+        new OldEvent(50, time_slots = 4, week = AWeek, pcRoomsNeeded = 1),
+        new OldEvent(51, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
 
         //Second model.Course
 
         //misc.Day 1
-        new Event(52, time_slots = 4, classRoomsNeeded = 1),
-        new Event(53, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(54, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(55, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
+        new OldEvent(52, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(53, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(54, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(55, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
 
         //misc.Day 2
-        new Event(56, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(57, time_slots = 4, week = AWeek, labRoomsNeeded = 1),
-        new Event(58, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
-        new Event(59, time_slots = 4, classRoomsNeeded = 1),
-        new Event(60, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(56, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(57, time_slots = 4, week = AWeek, labRoomsNeeded = 1),
+        new OldEvent(58, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
+        new OldEvent(59, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(60, time_slots = 4, classRoomsNeeded = 1),
 
-        new Event(61, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(61, time_slots = 4, pcRoomsNeeded = 1),
 
         //misc.Day 3
-        new Event(62, time_slots = 4, classRoomsNeeded = 1),
-        new Event(63, time_slots = 4, classRoomsNeeded = 1),
-        new Event(64, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
-        new Event(65, time_slots = 4, pcRoomsNeeded = 1),
-        new Event(66, time_slots = 4, week = AWeek, labRoomsNeeded = 1),
-        new Event(67, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
+        new OldEvent(62, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(63, time_slots = 4, classRoomsNeeded = 1),
+        new OldEvent(64, time_slots = 4, week = BWeek, pcRoomsNeeded = 1),
+        new OldEvent(65, time_slots = 4, pcRoomsNeeded = 1),
+        new OldEvent(66, time_slots = 4, week = AWeek, labRoomsNeeded = 1),
+        new OldEvent(67, time_slots = 4, week = BWeek, labRoomsNeeded = 1),
         /*
                     //misc.Day 4
                     new model.EventData(68, time_slots = 4, pcRoomsNeeded = 1),
@@ -149,7 +149,7 @@ object Instance {
 
     //Event Exclusions
 
-    def getTheoryIncompatibilities(eventList: List[Event], event: Event) = {
+    def getTheoryIncompatibilities(eventList: List[OldEvent], event: OldEvent) = {
         eventList.filter( _.num != event.num )
     }
 
