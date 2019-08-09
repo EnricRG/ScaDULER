@@ -56,7 +56,7 @@ public class CourseManagerController implements Initializable {
         courseTable_firstQuarterResources.setCellValueFactory(cell -> {
             String s1 = AppSettings.language().getItem("courseTable_totalResourcesTypesWord") + cell.getValue().firstQuarter().resourceTypeCount();
             String s2 = AppSettings.language().getItem("courseTable_totalResourcesWord") + cell.getValue().firstQuarter().resourceAmount();
-            return new SimpleStringProperty(s1 + " " + s2);
+            return new SimpleStringProperty(s1 + "\n" + s2);
         });
         courseTable_secondQuarterResources.setCellValueFactory(cell -> {
             String s1 = AppSettings.language().getItem("courseTable_totalResourcesTypesWord") + cell.getValue().secondQuarter().resourceTypeCount();

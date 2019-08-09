@@ -54,7 +54,7 @@ object DefaultLanguage extends Language {
 
         "manageButtons_title" -> "Manage...",
         "manageButtons_courses" -> "Courses",
-        "manageButtons_courseResources" -> "Course Resources",
+        "manageButtons_resources" -> "Resources",
         "manageButtons_subjects" -> "Subjects",
         "manageButtons_events" -> "Events",
         "manageButtons_unfinishedEvents" -> "Unfinished\nEvents",
@@ -116,7 +116,7 @@ object DefaultLanguage extends Language {
         "subjectForm_subjectDescriptionField" -> "Write a description about the contents of this subject.",
         "subjectForm_subjectColorTag" -> "Subject Color:",
         "subjectForm_subjectColorExplanation" -> "This color will be used to show\na thin frame around\nthe events of the subject",
-        "subjectForm_generateEventsTag" -> "Generate Subject Events:",
+        "subjectForm_generateEventsTag" -> "Generate Subject Events (optional):",
         "subjectForm_eventType" -> "Event type",
         "subjectForm_numberOfEvents" -> "Number of Events",
         "subjectForm_generationExampleTag" -> "Generation example: ",
@@ -160,6 +160,15 @@ object DefaultLanguage extends Language {
         "courseTable_totalResourcesTypesWord" -> "Types: ",
         "courseTable_totalResourcesWord" -> "Total: ",
 
+        "subjectManager_windowTitle" -> "Manage Subjects",
+        "subjectManager_nameColumnHeader" -> "Name",
+        "subjectManager_shortNameColumnHeader" -> "Short Name",
+        "subjectManager_descriptionColumnHeader" -> "Description",
+        "subjectManager_eventCountColumnHeader" -> "Events",
+        "subjectManager_addSubjectButton" -> "Add Subject",
+        "subjectManager_editSubjectButton" -> "Edit Subject",
+        "courseManager_removeSubjectButton" -> "Remove Subject",
+        "subjectTable_placeholder" -> "No subjects",
 
         "warning" -> "Warning",
         "warning_courseNameCannotBeEmpty" -> "Course name cannot be empty.",

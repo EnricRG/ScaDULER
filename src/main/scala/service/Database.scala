@@ -35,14 +35,17 @@ abstract class Database[E] {
         case Some(e: DatabaseElement) => Some(e.apply)
         case None => None
     }
+
+    def getIDs: Iterable[Long] = elements.filter(_._2.isVisible).keys
     def getElements: Iterable[E] = elements.values.filter(_.isVisible).map(_.apply)
 
-    def removeElement(e: E): Option[E] = elements.find(_._2 == e) match {
+    //soft delete
+    def removeElement(e: E): Option[E] = elements.find(_._2.apply == e) match {
         case Some((id,_)) => removeElement(id)
         case None => None
     }
     //hard delete
-    def deleteElement(e: E): Option[E] = elements.find(_._2 == e) match {
+    def deleteElement(e: E): Option[E] = elements.find(_._2.apply == e) match {
         case Some((id,_)) => deleteElement(id)
         case None => None
     }

@@ -17,6 +17,7 @@ class ResourceDatabase extends Database[Resource] {
     }
     def createResource(name: String, quantity: Int): Resource = createResource(new Resource(name, quantity))
 
+    @Deprecated
     def createResourceOrElseIncrement(name: String, quantity: Int): Resource = {
         val r = new Resource(name, quantity)
         val r2 = createResource(r)

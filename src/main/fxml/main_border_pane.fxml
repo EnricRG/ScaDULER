@@ -109,7 +109,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="manageButtons_courseResources" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="86.0" text="Course Resources" textAlignment="CENTER" wrapText="true">
+                                    <Button fx:id="manageButtons_resources" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="86.0" text="Course Resources" textAlignment="CENTER" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -117,7 +117,7 @@
                                           <Insets />
                                        </opaqueInsets>
                                     </Button>
-                                    <Button fx:id="manageButtons_subjects" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Subjects" textAlignment="CENTER" wrapText="true">
+                                    <Button fx:id="manageButtons_subjects" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Subjects" textAlignment="CENTER" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

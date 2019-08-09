@@ -4,6 +4,7 @@ import app.AppSettings;
 import app.FxDragDropExample1;
 import app.MainApp;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -140,6 +141,7 @@ public class SubjectFormController implements Initializable {
         //This could be improved with property bindings and reduce overload
         subjectNameField.setOnKeyTyped(keyEvent -> {
             subject.setName(subjectNameField.getText());
+            computeGenerationExample();
             keyEvent.consume();
         });
         subjectShortNameField.setOnKeyTyped(keyEvent -> {
@@ -152,6 +154,11 @@ public class SubjectFormController implements Initializable {
         });
         subjectColorPicker.setOnAction(event -> {
             subject.setColor(subjectColorPicker.getValue());
+            event.consume();
+        });
+
+        generateEvents_eventTypeSelector.setOnAction(event -> {
+            computeGenerationExample();
             event.consume();
         });
 
@@ -174,10 +181,15 @@ public class SubjectFormController implements Initializable {
         });
 
         createSubjectButton.setOnAction(event -> {
-            createSubject(subject);
+            if(createSubject(subject)) closeWindow();
             event.consume();
-            closeWindow();
         });
+    }
+
+    private void computeGenerationExample() {
+        generationExampleLabel.setText(
+                subject.getName() + " " + "(" + generateEvents_eventTypeSelector.getSelectionModel().getSelectedItem() + "-1)"
+        );
     }
 
     private void deleteSubjectEvents(Collection<Long> selectedItems) {
@@ -235,13 +247,11 @@ public class SubjectFormController implements Initializable {
         }
     }
 
-    private void updateEventTable() {
-        eventTable.refresh();
-    }
-
-    private void createSubject(Subject sub) {
+    private boolean createSubject(Subject sub) {
         if(!warnings(checkSubjectCreationWarnings())) sub.setAsFinished();
         else sub.setAsUnfinished();
+
+        return sub.isFinished();
     }
 
     private boolean warnings(Warning warning) {

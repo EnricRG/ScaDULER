@@ -133,7 +133,7 @@ public class ResourceManagerController implements Initializable {
         if (warning == null) { //if no errors
             hideWarnings(); //no warnings to be shown
             updateCourseInTableView(
-                    MainApp.database().resourceDatabase().createResourceOrElseIncrement(name, quantity)
+                    MainApp.database().resourceDatabase().createResource(name, quantity)
             );
             clearInputFields();
         }

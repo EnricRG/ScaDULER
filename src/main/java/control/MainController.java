@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Course;
 import model.Quarter;
-import scala.App;
 import scala.Option;
 import scala.collection.mutable.ListBuffer;
 import view.DraggableVBox;
@@ -69,7 +68,7 @@ public class MainController implements Initializable {
     public VBox manageButtons;
     public Label manageButtons_title;
     public Button manageButtons_courses;
-    public Button manageButtons_courseResources;
+    public Button manageButtons_resources;
     public Button manageButtons_subjects;
     public Button manageButtons_events;
     public Button manageButtons_unfinishedEvents;
@@ -167,7 +166,7 @@ public class MainController implements Initializable {
 
         manageButtons_title.setText(AppSettings.language().getItem("manageButtons_title"));
         manageButtons_courses.setText(AppSettings.language().getItem("manageButtons_courses"));
-        manageButtons_courseResources.setText(AppSettings.language().getItem("manageButtons_courseResources"));
+        manageButtons_resources.setText(AppSettings.language().getItem("manageButtons_resources"));
         manageButtons_subjects.setText(AppSettings.language().getItem("manageButtons_subjects"));
         manageButtons_events.setText(AppSettings.language().getItem("manageButtons_events"));
         manageButtons_unfinishedEvents.setText(AppSettings.language().getItem("manageButtons_unfinishedEvents"));
@@ -203,12 +202,14 @@ public class MainController implements Initializable {
         addButtons_course.setOnAction(actionEvent -> promptCourseForm());
         addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
         addButtons_event.setOnAction(actionEvent -> promptEventForm());
-        manageButtons_courseResources.setOnAction(actionEvent ->
-                promptResourceManager(manageButtons_courseResources.getScene().getWindow(), null));
+
         manageButtons_courses.setOnAction(event -> promptCourseManager());
+        manageButtons_resources.setOnAction(actionEvent ->
+                promptResourceManager(manageButtons_resources.getScene().getWindow(), null));
+        manageButtons_subjects.setOnAction(event -> promptSubjectManager());
     }
 
-    //FIXME: unnecessary coupling
+    //FIXME: unnecessary coupling, could be inside an 'utils' class
     public static Stage promptBoundWindow(String title, Window owner, Modality modality, ViewFactory viewFactory){
         Scene scene;
 
@@ -260,7 +261,7 @@ public class MainController implements Initializable {
     private void promptCourseManager(){
         Stage prompt = promptBoundWindow(
                 AppSettings.language().getItem("courseManager_windowTitle"),
-                manageButtons_courseResources.getScene().getWindow(),
+                manageButtons_courses.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory(FXMLPaths.ManageCoursesPanel())
         );
@@ -278,6 +279,17 @@ public class MainController implements Initializable {
         );
 
         if(crmc != null) prompt.setOnCloseRequest(event -> crmc.updateResources());
+
+        prompt.show();
+    }
+
+    private void promptSubjectManager(){
+        Stage prompt = promptBoundWindow(
+                AppSettings.language().getItem("subjectManager_windowTitle"),
+                manageButtons_resources.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory(FXMLPaths.ManageSubjectsPanel())
+        );
 
         prompt.show();
     }

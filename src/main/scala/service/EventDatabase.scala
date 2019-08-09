@@ -11,5 +11,4 @@ class EventDatabase extends Database[NewEvent] {
     def this(initializer: EventDatabase#Initializer) = this
 
     def newEvent: Long = addElement(new NewEvent)
-    //def removeEvent()
 }

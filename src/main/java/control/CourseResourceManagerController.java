@@ -80,6 +80,9 @@ public class CourseResourceManagerController implements Initializable {
     public void linkResources(List<CourseResource> fqr, List<CourseResource> sqr){
         firstQuarterResources = fqr;
         secondQuarterResources = sqr;
+
+        firstQuarter_resourceTable.setItems(FXCollections.observableArrayList(fqr));
+        secondQuarter_resourceTable.setItems(FXCollections.observableArrayList(sqr));
     }
 
     private void initializeContentLanguage() {
@@ -112,12 +115,12 @@ public class CourseResourceManagerController implements Initializable {
             event.consume();
         });
         addButton.setOnAction(event -> {
-            addSelectedEvents();
+            addSelectedResources();
             generalResourceTable.getSelectionModel().clearSelection();
             event.consume();
         });
         removeButton.setOnAction(event -> {
-            removeSelectedEvents();
+            removeSelectedResources();
             firstQuarter_resourceTable.getSelectionModel().clearSelection();
             secondQuarter_resourceTable.getSelectionModel().clearSelection();
             event.consume();
@@ -148,7 +151,7 @@ public class CourseResourceManagerController implements Initializable {
         quantityField.setText(String.valueOf(min));
     }
 
-    private void addSelectedEvents() {
+    private void addSelectedResources() {
         ObservableList<Resource> selection = generalResourceTable.getSelectionModel().getSelectedItems();
 
         TableView<CourseResource> tableView = tabPane.getSelectionModel().getSelectedItem() == firstQuarterTab ? firstQuarter_resourceTable : secondQuarter_resourceTable;
@@ -160,7 +163,7 @@ public class CourseResourceManagerController implements Initializable {
             Integer maxAvailableQuantity = userInputQuantity <= resource.getAvailableQuantity() ? userInputQuantity : resource.getAvailableQuantity();
             if(maxAvailableQuantity > 0) {
                 CourseResource cr;
-                Integer crIndex = getIndexWithName(target, resource.getName());
+                Integer crIndex = getIndexWithResource(target, resource);
 
                 if (maxAvailableQuantity < userInputQuantity)
                     quantityField.setText(String.valueOf(maxAvailableQuantity));
@@ -181,13 +184,13 @@ public class CourseResourceManagerController implements Initializable {
     }
 
     //pre target and string not null
-    private Integer getIndexWithName(List<CourseResource> target, String name) {
+    private Integer getIndexWithResource(List<CourseResource> target, Resource resource) {
         if(target.isEmpty()) return -1;
 
         Integer i = 0;
         boolean found = false;
         while(!found && i<target.size()) {
-            if (target.get(i).getName().equals(name)) found = true;
+            if (target.get(i).getResource() == resource) found = true;
             else i++;
         }
         return found? i : -1;
@@ -209,7 +212,7 @@ public class CourseResourceManagerController implements Initializable {
         return quantity;
     }
 
-    private void removeSelectedEvents() {
+    private void removeSelectedResources() {
         TableView<CourseResource> tableView = tabPane.getSelectionModel().getSelectedItem() == firstQuarterTab ? firstQuarter_resourceTable : secondQuarter_resourceTable;
 
         ObservableList<CourseResource> selection = tableView.getSelectionModel().getSelectedItems();

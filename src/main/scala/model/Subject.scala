@@ -11,10 +11,12 @@ class Subject {
 
     //true when user has finished creating/editing this subject, false otherwise
     private var finished: Boolean = false
+    def isFinished = finished
     def setAsUnfinished: Unit = finished = false
     def setAsFinished: Unit = {
         finished = true
         println(this) //TODO remove this
+        println(getEventSummary)
     }
 
     var name: String = ""
@@ -40,6 +42,13 @@ class Subject {
 
     def getEvents: Iterable[NewEvent] = events.values
     def getEventIDs: Iterable[Long] = events.keys
+    def getEventSummary: String =
+        EventTypes.eventTypes.zip(
+            EventTypes.eventTypes.map(
+                evType => events.count(_._2.eventType == evType)
+            )
+        ).map{ case (evType, n) => evType + ": " + n}.mkString("\n")
+
     //def setEvents(el: Iterable[NewEvent]): Unit = events = new ListBuffer() ++= el
     def addEvent(id: Long, e: NewEvent): Unit = events.getOrElseUpdate(id, e)
     def removeEvent(id: Long): Unit = events.remove(id)
