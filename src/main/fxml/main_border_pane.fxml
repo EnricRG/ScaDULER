@@ -104,7 +104,7 @@
                               </Label>
                               <HBox maxHeight="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Button fx:id="manageButtons_courses" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Courses" textAlignment="CENTER" wrapText="true">
+                                    <Button fx:id="manageButtons_courses" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Courses" textAlignment="CENTER" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

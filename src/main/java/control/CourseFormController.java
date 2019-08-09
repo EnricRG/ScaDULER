@@ -124,9 +124,6 @@ public class CourseFormController implements Initializable {
         else if(secondQuarterResources.isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_secondQuarterResourcesCannotBeEmpty"));
         }
-        /*else if(!MainApp.database().courseDatabase().getCourse(name).isEmpty()){
-            return new Warning(AppSettings.language().getItem("warning_courseAlreadyExists"));
-        }*/
         else return null;
     }
 

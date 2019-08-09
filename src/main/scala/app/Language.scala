@@ -148,6 +148,19 @@ object DefaultLanguage extends Language {
         "eventForm_confirmationButton" -> "Create Event",
         "eventForm_manageIncompatibilities" -> "Manage Incompatibilities...",
 
+        "courseManager_windowTitle" -> "Manage Courses",
+        "courseManager_nameColumnHeader" -> "Name",
+        "courseManager_descriptionColumnHeader" -> "Description",
+        "courseManager_q1resourcesColumnHeader" -> "Q1 Resources",
+        "courseManager_q2resourcesColumnHeader" -> "Q2 Resources",
+        "courseManager_addCourseButton" -> "Add Course",
+        "courseManager_editCourseButton" -> "Edit Course",
+        "courseManager_removeCourseButton" -> "Remove Course",
+        "courseTable_placeholder" -> "No courses",
+        "courseTable_totalResourcesTypesWord" -> "Types: ",
+        "courseTable_totalResourcesWord" -> "Total: ",
+
+
         "warning" -> "Warning",
         "warning_courseNameCannotBeEmpty" -> "Course name cannot be empty.",
         "warning_courseQuarterCannotBeEmpty" -> "Course quarter cannot be empty.",

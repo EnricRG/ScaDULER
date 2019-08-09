@@ -4,10 +4,13 @@ object FXMLPaths {
     val MainInterface: String = "src/main/fxml/main_border_pane.fxml"
     val UnassignedEvent: String = "src/main/fxml/unassigned_event_box.fxml"
     val CoursePanel: String = "src/main/fxml/course_grid.fxml"
+
     val CourseForm: String = "src/main/fxml/course_form.fxml"
     val CourseResourceManagerForm: String = "src/main/fxml/course_resource_manager.fxml"
-    val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
     val SubjectForm: String = "src/main/fxml/subject_form.fxml"
+
+    val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
+    val ManageCoursesPanel: String = "src/main/fxml/course_manager.fxml"
 }
 
 object AppSettings {
