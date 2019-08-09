@@ -157,23 +157,24 @@ public class CourseResourceManagerController implements Initializable {
         final Integer userInputQuantity = getQuantityFieldValue();
 
         selection.forEach(resource -> {
-            CourseResource cr;
-            Integer crIndex = getIndexWithName(target, resource.getName());
             Integer maxAvailableQuantity = userInputQuantity <= resource.getAvailableQuantity() ? userInputQuantity : resource.getAvailableQuantity();
+            if(maxAvailableQuantity > 0) {
+                CourseResource cr;
+                Integer crIndex = getIndexWithName(target, resource.getName());
 
-            if(maxAvailableQuantity < userInputQuantity) quantityField.setText(String.valueOf(maxAvailableQuantity));
+                if (maxAvailableQuantity < userInputQuantity)
+                    quantityField.setText(String.valueOf(maxAvailableQuantity));
 
-            if(crIndex < 0){
-                cr = new CourseResource(resource, maxAvailableQuantity);
-                resource.linkCourseResource(cr);
-                target.add(cr);
-                tableView.getItems().add(cr);
+                if (crIndex < 0) {
+                    cr = new CourseResource(resource, maxAvailableQuantity);
+                    resource.linkCourseResource(cr);
+                    target.add(cr);
+                    tableView.getItems().add(cr);
+                } else {
+                    cr = target.get(crIndex);
+                    cr.incrementQuantity(maxAvailableQuantity);
+                }
             }
-            else{
-                cr = target.get(crIndex);
-                cr.incrementQuantity(maxAvailableQuantity);
-            }
-
         });
 
         refreshTables();
@@ -186,9 +187,10 @@ public class CourseResourceManagerController implements Initializable {
         Integer i = 0;
         boolean found = false;
         while(!found && i<target.size()) {
-            found = target.get(i++).getName().equals(name);
+            if (target.get(i).getName().equals(name)) found = true;
+            else i++;
         }
-        return found? i-1 : -1;
+        return found? i : -1;
     }
 
     private Integer getQuantityFieldValue() {
