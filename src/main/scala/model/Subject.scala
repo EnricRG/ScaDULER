@@ -1,11 +1,11 @@
 package model
 
 import javafx.scene.paint.Color
+import service.Identifiable
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
-class Subject {
+class Subject extends Identifiable{
 
     def DefaultColor: Color = Color.WHITESMOKE
 

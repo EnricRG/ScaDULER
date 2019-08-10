@@ -2,7 +2,6 @@ package model
 
 import java.time.LocalTime
 
-import app.AppSettings
 import misc.Weeks._
 
 class OldEvent(val num: Int, var start: LocalTime = null, var end: LocalTime = null,

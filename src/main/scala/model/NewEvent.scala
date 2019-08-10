@@ -2,6 +2,7 @@ package model
 
 import app.AppSettings
 import javafx.scene.paint.Color
+import service.Identifiable
 
 abstract class EventType{
     def toString: String
@@ -22,7 +23,7 @@ object ComputerEvent extends EventType {
 
 object EventTypes{ val eventTypes: List[EventType] = List(TheoryEvent, LaboratoryEvent, ComputerEvent) }
 
-class NewEvent{
+class NewEvent extends Identifiable{
 
     var name: String = ""
     var shortName: String = ""

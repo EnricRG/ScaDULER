@@ -1,6 +1,6 @@
 package service
 
-import model.{Course, CourseResource, Quarter, Resource}
+import model.{Course, CourseResource, Quarter}
 
 class CourseDatabase extends Database[Course]{
 
@@ -15,6 +15,7 @@ class CourseDatabase extends Database[Course]{
     def addCourse(c: Course): Course = {
         println(c) //TODO remove this
         val id = addElement(c)
+        //c.setID(id)
         getElement(id).get //this should be secure because we just added the course
     }
 

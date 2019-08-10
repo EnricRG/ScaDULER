@@ -2,7 +2,16 @@ package service
 
 import scala.collection.mutable
 
-abstract class Database[E] {
+//Bad approach, setID shouldn't be called outside Database class
+trait Identifiable {
+    var id: Long = _
+
+    //pre: setID must be called once before getting the id. Otherwise the results are unspecified.
+    def getID: Long = id
+    def setID(id: Long): Unit = this.id = id
+}
+
+abstract class Database[E<:Identifiable] {
 
     class DatabaseElement(val id: Long, element: E) {
         private var visible: Boolean = true
@@ -16,7 +25,7 @@ abstract class Database[E] {
     protected final val elements: mutable.HashMap[Long,DatabaseElement] = mutable.HashMap()
     protected var nextId: Long = 0
 
-    def addElement(element: E): Long = {val key = nextId; nextId+=1; elements.getOrElseUpdate(key, new DatabaseElement(key, element)); key}
+    def addElement(element: E): Long = {val key = nextId; nextId+=1; elements.getOrElseUpdate(key, new DatabaseElement(key, element)); element.setID(key); key}
     def getElement(key: Long): Option[E] = elements.get(key) match {
         case Some(e) if e.isVisible => Some(e.apply)
         case _ => None
@@ -40,11 +49,13 @@ abstract class Database[E] {
     def getElements: Iterable[E] = elements.values.filter(_.isVisible).map(_.apply)
 
     //soft delete
+    @Deprecated
     def removeElement(e: E): Option[E] = elements.find(_._2.apply == e) match {
         case Some((id,_)) => removeElement(id)
         case None => None
     }
     //hard delete
+    @Deprecated
     def deleteElement(e: E): Option[E] = elements.find(_._2.apply == e) match {
         case Some((id,_)) => deleteElement(id)
         case None => None

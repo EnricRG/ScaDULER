@@ -1,6 +1,7 @@
 package model
 
 import app.AppSettings
+import service.Identifiable
 
 import scala.collection.mutable.ListBuffer
 
@@ -9,7 +10,7 @@ abstract class QuantifiableResource{
     def getAvailableQuantity: Int
 }
 
-class Resource(val name: String, var quantity: Int) extends QuantifiableResource {
+class Resource(val name: String, var quantity: Int) extends QuantifiableResource with Identifiable {
 
     val courses: ListBuffer[Course] = new ListBuffer
     val courseResources: ListBuffer[CourseResource] = new ListBuffer

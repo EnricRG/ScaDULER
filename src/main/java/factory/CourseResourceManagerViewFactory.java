@@ -1,13 +1,10 @@
 package factory;
 
-import app.FXMLPaths;
 import control.CourseFormController;
 import control.CourseResourceManagerController;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import model.CourseResource;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 

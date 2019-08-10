@@ -1,15 +1,12 @@
 package control;
 
 import app.AppSettings;
-import app.FxDragDropExample1;
 import app.MainApp;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import misc.Warning;
 import model.*;
@@ -19,8 +16,6 @@ import service.ResourceDatabase;
 import service.SubjectDatabase;
 
 import java.net.URL;
-import java.nio.file.Watchable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ResourceBundle;
 

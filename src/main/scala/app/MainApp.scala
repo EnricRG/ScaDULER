@@ -1,19 +1,8 @@
 package app
 
-import akka.actor.{ActorSystem, Props}
-import akka.pattern.ask
-import akka.util.Timeout
 import misc.Weeks._
-import model.{OldEvent, InstanceData}
+import model.{InstanceData, OldEvent}
 import service.AppDatabase
-import solver.MiniZincInstanceSolver
-
-import scala.concurrent.Future.never
-
-//import gui.EventForm
-
-import scala.concurrent.Await
-import scala.concurrent.duration._
 
 object Instance {
     val labRooms = 1

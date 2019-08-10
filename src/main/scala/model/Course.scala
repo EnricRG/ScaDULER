@@ -1,6 +1,7 @@
 package model
 
 import app.AppSettings
+import service.Identifiable
 
 //invariant: quantity <= resource.quantity
 case class CourseResource(val resource: Resource, var quantity: Int) extends QuantifiableResource{
@@ -22,7 +23,7 @@ case class Quarter(var resources: Iterable[CourseResource]){
 //TODO: update to new database model
 //TODO: Add course assigned event list
 case class Course(val name: String, var descriptionOption: Option[String] = None,
-                  var firstQuarter: Quarter, var secondQuarter: Quarter) {
+                  var firstQuarter: Quarter, var secondQuarter: Quarter) extends Identifiable{
 
     def description: String = descriptionOption match{
         case Some(description) => description
