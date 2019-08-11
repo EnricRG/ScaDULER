@@ -21,6 +21,13 @@ object DefaultLanguage extends Language {
         "labEvent" -> "Laboratory",
         "computerEvent" -> "Computer",
 
+        "monday" -> "Monday",
+        "tuesday" -> "Tuesday",
+        "wednesday" -> "Wednesday",
+        "thursday" -> "Thursday",
+        "friday" -> "Friday",
+
+
         //this is obsolete
         "labRoom" -> "Lab Room",
         "classRoom" -> "Class Room",

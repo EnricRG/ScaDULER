@@ -308,7 +308,9 @@ public class MainController implements Initializable {
         Node courseTabContent = null;
 
         try{
-            courseTabContent = CoursePanelViewFactory.load(this);
+            //TODO load final schedule view
+            //courseTabContent = CoursePanelViewFactory.load(this);
+            courseTabContent = new ViewFactory(FXMLPaths.GenericSchedule()).load();
         } catch (IOException e){
             e.printStackTrace();
         }

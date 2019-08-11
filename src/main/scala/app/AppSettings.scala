@@ -12,6 +12,8 @@ object FXMLPaths {
     val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
     val ManageCoursesPanel: String = "src/main/fxml/course_manager.fxml"
     val ManageSubjectsPanel: String = "src/main/fxml/subject_manager.fxml"
+
+    val GenericSchedule: String = "src/main/fxml/schedule_view.fxml"
 }
 
 object AppSettings {
