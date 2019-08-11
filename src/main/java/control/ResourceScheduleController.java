@@ -37,6 +37,7 @@ public class ResourceScheduleController extends ScheduleController {
         else cell.setStyle(cell.getStyle().replace(SET_STATE, ""));
     }
 
+    //TODO: allow dragging
     private void configureCell(Node cell) {
         cell.setOnMouseClicked(event -> {
             resource.availability().flip(computeInterval(gridPane, cell));
