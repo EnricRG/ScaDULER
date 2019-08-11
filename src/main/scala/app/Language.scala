@@ -27,6 +27,7 @@ object DefaultLanguage extends Language {
         "thursday" -> "Thursday",
         "friday" -> "Friday",
 
+        "manage" -> "Manage",
 
         //this is obsolete
         "labRoom" -> "Lab Room",
@@ -100,6 +101,7 @@ object DefaultLanguage extends Language {
         "manageResources_searchResourceField" -> "search resources",
         "manageResources_nameColumn" -> "Name",
         "manageResources_quantityColumn" -> "Quantity",
+        "manageResources_availabilityColumn" -> "Availability",
         "manageResources_availableQuantityColumn" -> "Available\nQuantity",
         "manageResources_addButton" -> "Add Resource",
         "manageResources_modifyButton" -> "Modify Resource",
@@ -108,6 +110,7 @@ object DefaultLanguage extends Language {
         "manageResources_subButton" -> "-1",
         "manageResources_sumButton" -> "+1",
         "resourceTable_placeholder" -> "No resources",
+        "manageResources_availabilityPrompt" -> "Manage Availability",
 
         "manageCourseResources_windowTitle" -> "Manage Course Resources",
         "manageCourseResources_firstQuarter" -> "First Quarter",

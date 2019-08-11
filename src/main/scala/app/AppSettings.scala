@@ -27,6 +27,10 @@ object AppSettings {
     var dayStart: Int = 8
     var dayEnd: Int = 19
 
+    var timeSlotsPerDay:Int = 22
+    var days: Int = 5
+    var timeSlots: Int = timeSlotsPerDay*days
+
     var minQuantityPerResource: Int = 1
 
     object eventFormSettings {

@@ -14,6 +14,7 @@ class Resource(val name: String, var quantity: Int) extends QuantifiableResource
 
     val courses: ListBuffer[Course] = new ListBuffer
     val courseResources: ListBuffer[CourseResource] = new ListBuffer
+    var availability: ResourceSchedule = new ResourceSchedule(AppSettings.timeSlots)
 
     def getName: String = name
     def getQuantity: Int = quantity

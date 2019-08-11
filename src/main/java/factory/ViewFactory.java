@@ -11,7 +11,7 @@ import java.io.IOException;
 public class ViewFactory<C extends Initializable> {
 
     private String resourcePath;
-    private C controller = null;
+    protected C controller = null;
 
     public ViewFactory(String resourcePath){
         this.resourcePath = resourcePath;
@@ -22,6 +22,16 @@ public class ViewFactory<C extends Initializable> {
 
         Node n = fxmlLoader.load();
         controller = fxmlLoader.getController();
+
+        return n;
+    }
+
+    public Node load(C controller) throws IOException{
+        FXMLLoader fxmlLoader = new FXMLLoader(new File(resourcePath).toURI().toURL());
+        fxmlLoader.setController(controller);
+
+        Node n = fxmlLoader.load();
+        this.controller = controller;
 
         return n;
     }

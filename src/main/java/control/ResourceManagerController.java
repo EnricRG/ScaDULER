@@ -2,14 +2,22 @@ package control;
 
 import app.AppSettings;
 import app.MainApp;
+import factory.ScheduleViewFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import misc.Warning;
 import model.Resource;
 import scala.collection.JavaConverters;
+import util.Utils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,6 +31,7 @@ public class ResourceManagerController implements Initializable {
     public TableView<Resource> resourceTable;
     public TableColumn<Resource, String> resourceTable_nameColumn;
     public TableColumn<Resource, Integer> resourceTable_quantityColumn;
+    public TableColumn<Resource, Void> resourceTable_availabilityColumn;
 
     public Button addResourceButton;
     public TextField resourceNameField;
@@ -49,6 +58,7 @@ public class ResourceManagerController implements Initializable {
 
         resourceTable_nameColumn.setText(AppSettings.language().getItem("manageResources_nameColumn"));
         resourceTable_quantityColumn.setText(AppSettings.language().getItem("manageResources_quantityColumn"));
+        resourceTable_availabilityColumn.setText(AppSettings.language().getItem("manageResources_availabilityColumn"));
 
         addResourceButton.setText(AppSettings.language().getItem("manageResources_addButton"));
         deleteResourceButton.setText(AppSettings.language().getItem("manageResources_deleteButton"));
@@ -62,9 +72,43 @@ public class ResourceManagerController implements Initializable {
 
     private void setupTableView() {
         resourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         resourceTable_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         resourceTable_quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+
+        resourceTable_availabilityColumn.setCellFactory(param ->  new TableCell<>(){
+            private final HBox hbox = new HBox();
+            private final Button button = new Button(AppSettings.language().getItem("manage"));
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if(!empty){
+                    hbox.setAlignment(Pos.CENTER);
+                    hbox.setMaxWidth(USE_COMPUTED_SIZE);
+                    hbox.getChildren().add(button);
+                    HBox.setHgrow(button, Priority.ALWAYS);
+                    button.setPadding(new Insets(1));
+                    button.setMaxWidth(Double.MAX_VALUE);
+                    button.setMaxHeight(Double.MAX_VALUE);
+                    button.setOnAction(event -> manageResourceAvailability(this.getTableRow().getItem()));
+                    this.setGraphic(hbox);
+                }
+            }
+        });
+
         resourceTable.getItems().addAll(resources);
+    }
+
+    private void manageResourceAvailability(Resource resource) {
+        Stage manager = Utils.promptBoundWindow(
+                AppSettings.language().getItem("manageResources_availabilityPrompt"),
+                resourceTable.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ScheduleViewFactory<>(new ResourceScheduleController(resource))
+        );
+
+        manager.show();
     }
 
     private void initializeWarningSystem() {

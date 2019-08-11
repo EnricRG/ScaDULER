@@ -9,18 +9,19 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import util.Utils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ScheduleController implements Initializable {
 
-    private static final String HEADER_CSS_STYLE = "-fx-border-width: 0 0 2 0; -fx-border-color: gray;";
-    private static final String INNER_CELL_CSS_BORDER = "-fx-border-width: 1 0 0 0;";
-    private static final String O_CLOCK_CSS_BORDER_STYLE = INNER_CELL_CSS_BORDER + "-fx-border-color: gray;";
-    private static final String HALF_HOUR_CSS_BORDER_STYLE = INNER_CELL_CSS_BORDER + "-fx-border-color: lightgray; -fx-border-style: dotted;";
+    protected static final String HEADER_CSS_STYLE = "-fx-border-width: 0 0 2 0; -fx-border-color: gray;";
+    protected static final String INNER_CELL_CSS_BORDER = "-fx-border-width: 1 0 0 0;";
+    protected static final String O_CLOCK_CSS_BORDER_STYLE = INNER_CELL_CSS_BORDER + "-fx-border-color: gray;";
+    protected static final String HALF_HOUR_CSS_BORDER_STYLE = INNER_CELL_CSS_BORDER + "-fx-border-color: lightgray; -fx-border-style: dotted;";
 
-    private static final String DRAG_OVER_CELL_ADDITIONAL_CSS_STYLE = "-fx-background-color: lightgrey;";
+    protected static final String DRAG_OVER_CELL_ADDITIONAL_CSS_STYLE = "-fx-background-color: lightgrey;";
 
     public StackPane stackPane;
     public GridPane gridPane;
@@ -46,7 +47,7 @@ public class ScheduleController implements Initializable {
 
         //first row
         for(int column = 0; column < numberOfColumns; column++){
-            Node node = getNodeByColumnAndRow(column,0,gridPane);
+            Node node = Utils.getNodeByColumnAndRow(column,0,gridPane);
 
             if(node != null) node.setStyle(HEADER_CSS_STYLE);
             else {
@@ -59,9 +60,10 @@ public class ScheduleController implements Initializable {
         }
 
         //skipping first row that contains the headers
-        for(int row = 1; row < numberOfRows; row++){
-            for(int column = 0; column < numberOfColumns; column++){
-                Node node = getNodeByColumnAndRow(column,row,gridPane);
+        //I nested the loops this way to get all intervals sorted by its global interval number
+        for(int column = 0; column < numberOfColumns; column++){
+            for(int row = 1; row < numberOfRows; row++){
+                Node node = Utils.getNodeByColumnAndRow(column,row,gridPane);
 
                 if(node == null){ //fill grid cell
                     node = new HBox();
@@ -83,7 +85,7 @@ public class ScheduleController implements Initializable {
         }
     }
 
-    private void setupCellBehavior(Node node) {
+    protected void setupCellBehavior(Node node) {
         //TODO: finish this
         node.setOnMouseEntered(event ->
                 node.setStyle(node.getStyle() + DRAG_OVER_CELL_ADDITIONAL_CSS_STYLE)
@@ -101,21 +103,13 @@ public class ScheduleController implements Initializable {
         fridayTag.setText(AppSettings.language().getItem("friday"));
     }
 
-    //pre: gridPane not null
-    //post: if node is found, returns the reference to the node. Otherwise returns null
-    private Node getNodeByColumnAndRow(Integer column, Integer row, GridPane gridPane) {
-        Node result = null;
-
-        //Only way this works is using Integers and this particular line of code. If you swap equals order, you'll get NPE
-        for(Node n : gridPane.getChildren()) {
-            if (column.equals(GridPane.getColumnIndex(n)) && row.equals(GridPane.getRowIndex(n))) {
-                result = n;
-                break;
-            }
-        }
-
-        return result;
-    }
-
     public ObservableList<Node> getInnerCells() { return innerCells; }
+
+    //pre: gridPane != null && cell != null && gridPane.getChildren().contains(cell)
+    public static Integer computeInterval(GridPane gridPane, Node cell){
+        Integer day = GridPane.getColumnIndex(cell) - 1; //subtract first column
+        Integer dayInterval = GridPane.getRowIndex(cell);
+
+        return day * AppSettings.timeSlotsPerDay() + dayInterval;
+    }
 }

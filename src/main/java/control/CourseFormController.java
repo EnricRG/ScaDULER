@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import misc.Warning;
 import model.CourseResource;
 import scala.collection.JavaConverters;
+import util.Utils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class CourseFormController implements Initializable {
     }
 
     private void promptCourseResourcesForm() {
-        Stage prompt = MainController.promptBoundWindow(
+        Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("manageCourseResources_windowTitle"),
                 createCourseButton.getScene().getWindow(),
                 Modality.WINDOW_MODAL,

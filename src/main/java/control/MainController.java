@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
@@ -20,6 +19,7 @@ import model.Course;
 import model.Quarter;
 import scala.Option;
 import scala.collection.mutable.ListBuffer;
+import util.Utils;
 import view.DraggableVBox;
 
 import java.io.File;
@@ -209,29 +209,8 @@ public class MainController implements Initializable {
         manageButtons_subjects.setOnAction(event -> promptSubjectManager());
     }
 
-    //FIXME: unnecessary coupling, could be inside an 'utils' class
-    public static Stage promptBoundWindow(String title, Window owner, Modality modality, ViewFactory viewFactory){
-        Scene scene;
-
-        try{
-            scene = new Scene((Parent) viewFactory.load());
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-            scene = new Scene(new VBox());
-        }
-
-        Stage stage = new Stage();
-
-        stage.initModality(modality);
-        stage.initOwner(owner);
-        stage.setTitle(title);
-        stage.setScene(scene);
-
-        return stage;
-    }
-
     private void promptCourseForm() {
-        Stage prompt = promptBoundWindow(
+        Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("courseForm_windowTitle"),
                 addButtons_course.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
@@ -242,7 +221,7 @@ public class MainController implements Initializable {
     }
 
     private void promptSubjectForm(){
-        Stage prompt = promptBoundWindow(
+        Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("subjectForm_windowTitle"),
                 addButtons_subject.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
@@ -259,7 +238,7 @@ public class MainController implements Initializable {
 
 
     private void promptCourseManager(){
-        Stage prompt = promptBoundWindow(
+        Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("courseManager_windowTitle"),
                 manageButtons_courses.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
@@ -271,7 +250,7 @@ public class MainController implements Initializable {
 
     void promptResourceManager(Window owner, CourseResourceManagerController crmc) {
 
-        Stage prompt = promptBoundWindow(
+        Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("manageResources_windowTitle"),
                 owner,
                 Modality.WINDOW_MODAL,
@@ -284,7 +263,7 @@ public class MainController implements Initializable {
     }
 
     private void promptSubjectManager(){
-        Stage prompt = promptBoundWindow(
+        Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("subjectManager_windowTitle"),
                 manageButtons_resources.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
@@ -310,7 +289,7 @@ public class MainController implements Initializable {
         try{
             //TODO load final schedule view
             //courseTabContent = CoursePanelViewFactory.load(this);
-            courseTabContent = new ViewFactory(FXMLPaths.GenericSchedule()).load();
+            courseTabContent = new ScheduleViewFactory<>(new ScheduleController()).load();
         } catch (IOException e){
             e.printStackTrace();
         }
