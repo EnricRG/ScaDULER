@@ -2,6 +2,7 @@ package control;
 
 import app.AppSettings;
 import app.FXMLPaths;
+import app.MainApp;
 import factory.*;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -276,9 +277,9 @@ public class MainController implements Initializable {
     //TODO: remove this method, it has only debugging purposes.
     public void addCourseTab(){
         //TODO: decouple course creation and delegate to database.
-        Course c = new Course(AppSettings.language().getItem("course") + courseTabs.getTabs().size(), Option.apply(null),
+        Course c = new Course("Default", Option.apply(null),
         new Quarter(new ListBuffer<>()), new Quarter(new ListBuffer<>()));
-        addCourseTab(c);
+        addCourseTab(MainApp.database().courseDatabase().addCourse(c));
     }
 
     public void addCourseTab(Course c){
@@ -289,7 +290,11 @@ public class MainController implements Initializable {
         try{
             //TODO load final schedule view
             //courseTabContent = CoursePanelViewFactory.load(this);
-            courseTabContent = new ScheduleViewFactory<>(new ScheduleController()).load();
+            courseTabContent = new DualWeekScheduleViewFactory<>(
+                    new DualWeekScheduleViewController<>(
+                            new ScheduleController(), new ScheduleController()
+                    )
+            ).load();
         } catch (IOException e){
             e.printStackTrace();
         }
