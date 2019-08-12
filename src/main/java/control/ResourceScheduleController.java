@@ -1,18 +1,61 @@
 package control;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.input.*;
 import model.Resource;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ResourceScheduleController extends ScheduleController {
+public class ResourceScheduleController extends DualWeekScheduleViewController<ScheduleController, ScheduleController> {
+
+    private class CellEventHandler implements EventHandler<MouseEvent>{
+
+        private final Node cell;
+        private final Integer week;
+        private final Integer interval;
+
+        CellEventHandler(Node cell, Integer week, Integer interval){
+            this.cell = cell;
+            this.week = week;
+            this.interval = interval;
+        }
+
+        @Override
+        public void handle(MouseEvent event) {
+            if(event.getEventType() == MouseEvent.DRAG_DETECTED) {
+                dragging = true;
+                cell.startFullDrag();
+            }
+            else if(event.getEventType() == MouseDragEvent.MOUSE_DRAG_ENTERED){
+                if(dragging){
+                    modifyCellState(event,cell,week,interval);
+                }
+            }
+            else if(event.getEventType() == MouseDragEvent.MOUSE_DRAG_RELEASED){
+                dragging = false;
+            }
+            else if(event.getEventType() == MouseEvent.MOUSE_CLICKED){
+                if(!dragging && event.getSource() != cell) flipCellState(cell, week, interval);
+            }
+
+            event.consume();
+        }
+    }
+
+    private boolean dragging = false;
 
     private static final String SET_STATE = "-fx-background-color: steelblue;";
 
     protected Resource resource;
 
+
+
     public ResourceScheduleController(Resource resource){
+        super(new ScheduleController(), new ScheduleController());
         this.resource = resource;
     }
 
@@ -23,27 +66,47 @@ public class ResourceScheduleController extends ScheduleController {
     }
 
     private void initializeCustomBehavior() {
-        for(Node cell : getInnerCells()) {
-            setState(cell);
-            configureCell(cell);
+        for(int week = 0; week <= 1; week++) {
+            ScheduleController c = week < 1 ? this.firstWeekController : this.secondWeekController;
+            for (Node cell : c.getInnerCells()) {
+                Integer interval = ScheduleController.computeInterval(c.gridPane, cell);
+                setState(cell, week, interval);
+                configureCell(cell, week, interval);
+            }
         }
     }
 
-    //TODO: improve efficiency pre-computing interval and passing it as a parameter.
-    private void setState(Node cell) {
-        if(resource.availability().isAvailable(computeInterval(gridPane, cell))){
+    private void setState(Node cell, Integer week, Integer interval) {
+        if(resource.availability().isAvailable(week, interval)){
             cell.setStyle(cell.getStyle() + SET_STATE);
         }
         else cell.setStyle(cell.getStyle().replace(SET_STATE, ""));
     }
 
-    //TODO: allow dragging
-    private void configureCell(Node cell) {
-        cell.setOnMouseClicked(event -> {
-            resource.availability().flip(computeInterval(gridPane, cell));
-            setState(cell);
-            event.consume();
-        });
+    //pre: cell not null
+    private void configureCell(Node cell, Integer week, Integer interval) {
+        cell.addEventHandler(MouseEvent.ANY, new CellEventHandler(cell, week, interval));
+    }
+
+    private void setCellState(Node cell, Integer week, Integer interval) {
+        resource.availability().set(week, interval);
+        setState(cell, week, interval);
+    }
+
+    private void unsetCellState(Node cell, Integer week, Integer interval) {
+        resource.availability().unset(week, interval);
+        setState(cell, week, interval);
+    }
+
+    private void flipCellState(Node cell, Integer week, Integer interval){
+        resource.availability().flip(week, interval);
+        setState(cell, week, interval);
+    }
+
+    private void modifyCellState(MouseEvent event, Node cell, Integer week, Integer interval){
+        if (event.isPrimaryButtonDown()) setCellState(cell, week, interval);
+        else if (event.isSecondaryButtonDown()) unsetCellState(cell, week, interval);
+        else flipCellState(cell, week, interval);
     }
 
 

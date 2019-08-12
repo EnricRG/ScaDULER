@@ -14,6 +14,7 @@ object FXMLPaths {
     val ManageSubjectsPanel: String = "src/main/fxml/subject_manager.fxml"
 
     val GenericSchedule: String = "src/main/fxml/schedule_view.fxml"
+    val DualWeekGenericSchedule: String = "src/main/fxml/dual_week_schedule_view.fxml"
 }
 
 object AppSettings {

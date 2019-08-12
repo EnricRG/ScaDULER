@@ -86,7 +86,6 @@ public class ScheduleController implements Initializable {
     }
 
     protected void setupCellBehavior(Node node) {
-        //TODO: finish this
         node.setOnMouseEntered(event ->
                 node.setStyle(node.getStyle() + DRAG_OVER_CELL_ADDITIONAL_CSS_STYLE)
         );
@@ -107,8 +106,8 @@ public class ScheduleController implements Initializable {
 
     //pre: gridPane != null && cell != null && gridPane.getChildren().contains(cell)
     public static Integer computeInterval(GridPane gridPane, Node cell){
-        Integer day = GridPane.getColumnIndex(cell) - 1; //subtract first column
-        Integer dayInterval = GridPane.getRowIndex(cell);
+        Integer day = GridPane.getColumnIndex(cell) - 1; //subtract first column (hours)
+        Integer dayInterval = GridPane.getRowIndex(cell) - 1; //subtract first row (headers)
 
         return day * AppSettings.timeSlotsPerDay() + dayInterval;
     }

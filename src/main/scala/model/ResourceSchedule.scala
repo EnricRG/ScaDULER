@@ -1,15 +1,32 @@
 package model
 
-class ResourceSchedule(val intervals: Int) extends Schedule[Boolean](intervals){
+class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Boolean](intervalsPerWeek){
 
-    def set(interval: Int): Unit = updateInterval(interval, true)
-    def unset(interval: Int): Unit = updateInterval(interval, false)
+    def set(week: Int, interval: Int): Unit = week match{
+        case 0 => getFirstWeekSchedule.updateInterval(interval, true)
+        case 1 => getSecondWeekSchedule.updateInterval(interval, true)
+        case _ =>
+    }
+    def unset(week: Int, interval: Int): Unit = week match{
+        case 0 => getFirstWeekSchedule.updateInterval(interval, false)
+        case 1 => getSecondWeekSchedule.updateInterval(interval, false)
+        case _ =>
+    }
 
     //If the value did not exist, it's created with true as its state.
-    def flip(interval: Int): Unit = updateInterval(interval, !getValueAtIntervalOrElse(interval, false))
+    def flip(week: Int, interval: Int): Unit = week match{
+        case 0 => getFirstWeekSchedule.updateInterval(interval, !getFirstWeekSchedule.getValueAtIntervalOrElse(interval, false))
+        case 1 => getSecondWeekSchedule.updateInterval(interval, !getSecondWeekSchedule.getValueAtIntervalOrElse(interval, false))
+        case _ =>
+    }
 
-    def getState(interval: Int): Option[Boolean] = getValueAtInterval(interval)
-    def isAvailable(interval: Int): Boolean = getState(interval) match {
+    def getState(week: Int, interval: Int): Option[Boolean] = week match{
+        case 0 => getFirstWeekSchedule.getValueAtInterval(interval)
+        case 1 => getSecondWeekSchedule.getValueAtInterval(interval)
+        case _ => None
+    }
+
+    def isAvailable(week: Int, interval: Int): Boolean = getState(week, interval) match {
         case Some(state) => state
         case _ => false
     }

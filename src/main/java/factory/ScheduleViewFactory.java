@@ -1,14 +1,12 @@
 package factory;
 
-import app.AppSettings;
 import app.FXMLPaths;
 import control.ScheduleController;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 
 import java.io.IOException;
 
-public class ScheduleViewFactory<C extends ScheduleController> extends ViewFactory<ScheduleController> {
+public class ScheduleViewFactory<C extends ScheduleController> extends ViewFactory<C> {
 
     public ScheduleViewFactory(C controller) {
         super(FXMLPaths.GenericSchedule());
