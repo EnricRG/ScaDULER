@@ -7,6 +7,9 @@ class Schedule[T](intervals: Int) {
 
     def getValueAtInterval(interval: Int): Option[T] = if(interval < intervals) timeline.get(interval) else None
     def getValueAtIntervalOrElse(interval: Int, el: => T): T = if(interval < intervals) timeline.getOrElse(interval, el) else el
+    //Danger, if interval exceeds limit caller will not know that this happened. So...
+    //pre: interval < intervals
+    def getValueAtIntervalOrElseUpdate(interval: Int, el: => T): T = if(interval < intervals) timeline.getOrElseUpdate(interval, el) else el
 
     def updateInterval(interval: Int, element: T): Unit = if(interval < intervals) timeline.update(interval, element)
 

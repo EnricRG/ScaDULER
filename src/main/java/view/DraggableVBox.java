@@ -7,7 +7,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import model.OldEvent;
 
-class EventView extends VBox{
+/*class EventView extends VBox{
 
     public OldEvent event;
 
@@ -15,8 +15,9 @@ class EventView extends VBox{
         super(v);
         event = e;
     }
-}
+}*/
 
+@Deprecated
 public class DraggableVBox extends VBox {
 
     private double mouseX ;

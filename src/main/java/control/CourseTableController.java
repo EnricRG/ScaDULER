@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Deprecated
 public class CourseTableController implements Initializable {
 
     public GridPane gridPane;

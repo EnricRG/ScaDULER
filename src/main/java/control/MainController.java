@@ -3,6 +3,9 @@ package control;
 import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
+import control.manage.CourseResourceManagerController;
+import control.schedule.DualWeekScheduleViewController;
+import control.schedule.ScheduleController;
 import factory.*;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,6 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Course;
+import model.NewEventSchedule;
 import model.Quarter;
 import scala.Option;
 import scala.collection.mutable.ListBuffer;
@@ -249,7 +253,7 @@ public class MainController implements Initializable {
         prompt.show();
     }
 
-    void promptResourceManager(Window owner, CourseResourceManagerController crmc) {
+    public void promptResourceManager(Window owner, CourseResourceManagerController crmc) {
 
         Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("manageResources_windowTitle"),
@@ -278,7 +282,7 @@ public class MainController implements Initializable {
     public void addCourseTab(){
         //TODO: decouple course creation and delegate to database.
         Course c = new Course("Default", Option.apply(null),
-        new Quarter(new ListBuffer<>()), new Quarter(new ListBuffer<>()));
+        new Quarter(new ListBuffer<>(), new NewEventSchedule(AppSettings.timeSlots())), new Quarter(new ListBuffer<>(), new NewEventSchedule(AppSettings.timeSlots())));
         addCourseTab(MainApp.database().courseDatabase().addCourse(c));
     }
 

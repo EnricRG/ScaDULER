@@ -15,7 +15,8 @@ case class CourseResource(val resource: Resource, var quantity: Int) extends Qua
     def decrementQuantity(decr: Int): Unit = quantity -= decr
 }
 
-case class Quarter(var resources: Iterable[CourseResource]){
+//TODO finish schedule adoption
+case class Quarter(var resources: Iterable[CourseResource], var schedule: NewEventSchedule = new NewEventSchedule(AppSettings.timeSlots)){
     def resourceTypeCount: Int = resources.size
     def resourceAmount: Int = resources.map(_.getQuantity).sum
 }

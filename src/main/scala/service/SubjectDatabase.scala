@@ -8,7 +8,7 @@ class SubjectDatabase extends Database[Subject]{
     private lazy val eventDatabase = MainApp.database.eventDatabase
 
     class Initializer{
-        //TODO
+
     }
 
     def this(initializer: SubjectDatabase#Initializer) = this

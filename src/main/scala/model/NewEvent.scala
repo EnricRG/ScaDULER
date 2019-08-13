@@ -2,6 +2,7 @@ package model
 
 import app.AppSettings
 import javafx.scene.paint.Color
+import misc.Weeks.{AWeek, Week}
 import service.Identifiable
 
 abstract class EventType{
@@ -25,12 +26,19 @@ object EventTypes{ val eventTypes: List[EventType] = List(TheoryEvent, Laborator
 
 class NewEvent extends Identifiable{
 
-    var name: String = ""
-    var shortName: String = ""
-    var description: String = ""
-    var neededResource: Resource = _
-    var eventType: EventType = _
-    var subject: Option[Subject] = None
+    private var startInterval: Int = -1
+    private var name: String = ""
+    private var shortName: String = ""
+    private var description: String = ""
+    private var neededResource: Resource = _
+    private var eventType: EventType = _
+    private var subject: Option[Subject] = None
+    private var week: Week = AWeek
+
+    def getStartInterval: Int = startInterval
+    def setStartInterval(interval: Int): Unit = startInterval = interval
+    def isAssigned: Boolean = startInterval >= 0
+    def isUnassigned: Boolean = !isAssigned
 
     def getName: String = name
     def setName(n: String): Unit = name = n
@@ -46,6 +54,9 @@ class NewEvent extends Identifiable{
 
     def getNeededResource: Resource = neededResource
     def setNeededResource(nr: Resource): Unit = neededResource = nr
+
+    def getWeek: Week = week
+    def setWeek(week: Week): Unit = this.week = week
 
     /*def getResourceName: String = neededResource match{
         case r if r != null => r.name

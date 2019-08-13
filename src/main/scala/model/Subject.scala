@@ -13,11 +13,7 @@ class Subject extends Identifiable{
     private var finished: Boolean = false
     def isFinished = finished
     def setAsUnfinished: Unit = finished = false
-    def setAsFinished: Unit = {
-        finished = true
-        println(this) //TODO remove this
-        println(getEventSummary)
-    }
+    def setAsFinished: Unit = finished = true
 
     var name: String = ""
     var shortName: String = ""
@@ -45,7 +41,7 @@ class Subject extends Identifiable{
     def getEventSummary: String =
         EventTypes.eventTypes.zip(
             EventTypes.eventTypes.map(
-                evType => events.count(_._2.eventType == evType)
+                evType => events.count(_._2.getEventType == evType)
             )
         ).map{ case (evType, n) => evType + ": " + n}.mkString("\n")
 

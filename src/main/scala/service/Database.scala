@@ -49,17 +49,10 @@ abstract class Database[E<:Identifiable] {
     def getElements: Iterable[E] = elements.values.filter(_.isVisible).map(_.apply)
 
     //soft delete
-    @Deprecated
-    def removeElement(e: E): Option[E] = elements.find(_._2.apply == e) match {
-        case Some((id,_)) => removeElement(id)
-        case None => None
-    }
+    def removeElement(e: E): Option[E] = removeElement(e.getID)
     //hard delete
-    @Deprecated
-    def deleteElement(e: E): Option[E] = elements.find(_._2.apply == e) match {
-        case Some((id,_)) => deleteElement(id)
-        case None => None
-    }
+    def deleteElement(e: E): Option[E] = deleteElement(e.getID)
+
     def size: Int = elements.size
 
 }
