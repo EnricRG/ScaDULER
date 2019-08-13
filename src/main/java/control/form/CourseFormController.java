@@ -1,8 +1,9 @@
-package control;
+package control.form;
 
 import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
+import control.MainController;
 import factory.CourseResourceManagerViewFactory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

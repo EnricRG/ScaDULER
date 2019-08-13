@@ -1,7 +1,7 @@
 package factory;
 
 import control.MainController;
-import control.SubjectFormController;
+import control.form.SubjectFormController;
 import javafx.scene.Node;
 
 import java.io.IOException;

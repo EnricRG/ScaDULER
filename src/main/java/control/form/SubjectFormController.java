@@ -1,7 +1,8 @@
-package control;
+package control.form;
 
 import app.AppSettings;
 import app.MainApp;
+import control.MainController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

@@ -1,7 +1,7 @@
 package factory;
 
-import control.CourseFormController;
-import control.CourseResourceManagerController;
+import control.form.CourseFormController;
+import control.manage.CourseResourceManagerController;
 import javafx.scene.Node;
 import model.CourseResource;
 

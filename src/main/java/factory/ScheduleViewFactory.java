@@ -1,7 +1,7 @@
 package factory;
 
 import app.FXMLPaths;
-import control.ScheduleController;
+import control.schedule.ScheduleController;
 import javafx.scene.Node;
 
 import java.io.IOException;

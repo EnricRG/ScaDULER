@@ -1,4 +1,4 @@
-package control;
+package control.schedule;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;

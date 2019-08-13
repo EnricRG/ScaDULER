@@ -1,7 +1,8 @@
-package control;
+package control.manage;
 
 import app.AppSettings;
 import app.MainApp;
+import control.form.CourseFormController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -142,7 +143,6 @@ public class CourseResourceManagerController implements Initializable {
                 Integer act = selection.get(i).getAvailableQuantity();
                 min = min > act ? act : min;
             }
-            //FIXME: this will surely need a fix in the future
             updateQuantityField(min);
         }
     }

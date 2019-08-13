@@ -1,4 +1,4 @@
-package control;
+package control.schedule;
 
 import app.AppSettings;
 import javafx.collections.FXCollections;

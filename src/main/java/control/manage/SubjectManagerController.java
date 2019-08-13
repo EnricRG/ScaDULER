@@ -1,4 +1,4 @@
-package control;
+package control.manage;
 
 import app.AppSettings;
 import app.MainApp;

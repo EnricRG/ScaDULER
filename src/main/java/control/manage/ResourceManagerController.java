@@ -1,9 +1,9 @@
-package control;
+package control.manage;
 
 import app.AppSettings;
 import app.MainApp;
+import control.schedule.ResourceScheduleController;
 import factory.DualWeekScheduleViewFactory;
-import factory.ScheduleViewFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;

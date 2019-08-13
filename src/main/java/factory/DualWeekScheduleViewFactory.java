@@ -1,8 +1,8 @@
 package factory;
 
 import app.FXMLPaths;
-import control.DualWeekScheduleViewController;
-import control.ScheduleController;
+import control.schedule.DualWeekScheduleViewController;
+import control.schedule.ScheduleController;
 import javafx.scene.Node;
 
 import java.io.IOException;

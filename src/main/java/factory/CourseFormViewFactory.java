@@ -1,6 +1,6 @@
 package factory;
 
-import control.CourseFormController;
+import control.form.CourseFormController;
 import control.MainController;
 import javafx.scene.Node;
 
