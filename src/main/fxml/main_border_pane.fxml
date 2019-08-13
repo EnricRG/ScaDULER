@@ -20,11 +20,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="mainStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.MainController">
+<StackPane fx:id="mainStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.MainController">
    <children>
       <BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <top>
-            <VBox alignment="TOP_CENTER" maxHeight="100.0" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <VBox alignment="TOP_CENTER" maxHeight="100.0" maxWidth="1.7976931348623157E308" BorderPane.alignment="TOP_CENTER">
                <children>
                   <HBox>
                      <children>
@@ -223,7 +223,7 @@
             </VBox>
          </top>
          <center>
-            <TabPane fx:id="courseTabs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <TabPane fx:id="courseTabs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="TOP_CENTER">
                <tabs>
                   <Tab fx:id="courseTabs_addTab" closable="false" text="+" />
                </tabs>
@@ -235,7 +235,7 @@
          <right>
             <VBox fx:id="rightPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="TOP_CENTER">
                <children>
-                  <TextField fx:id="rightPane_eventSearch" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="29.0" promptText="Enter Event name">
+                  <TextField fx:id="rightPane_eventSearch" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="29.0" promptText="filter events by name">
                      <font>
                         <Font size="13.0" />
                      </font>

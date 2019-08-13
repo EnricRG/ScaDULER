@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="550.0" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.CourseFormController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.CourseFormController">
    <children>
       <HBox alignment="CENTER" spacing="100.0">
          <children>
@@ -22,10 +22,10 @@
             </VBox>
          </children>
       </HBox>
-      <VBox alignment="TOP_CENTER" spacing="5.0">
+      <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
             <Label fx:id="courseDescriptionTag" text="Course description (Optional): " />
-            <TextArea fx:id="courseDescriptionField" maxHeight="-Infinity" maxWidth="-Infinity" promptText="Enter a course description" />
+            <TextArea fx:id="courseDescriptionField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Enter a course description" VBox.vgrow="ALWAYS" />
             <CheckBox fx:id="descriptionWrapCheckBox" alignment="CENTER" mnemonicParsing="false" text="Wrap Text" />
          </children>
       </VBox>
@@ -71,6 +71,6 @@
       </VBox>
    </children>
    <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      <Insets bottom="10.0" left="25.0" right="25.0" top="10.0" />
    </padding>
 </VBox>
