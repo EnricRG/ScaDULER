@@ -1,8 +1,6 @@
 package control;
 
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.*;
 import model.Resource;
@@ -35,11 +33,11 @@ public class ResourceScheduleController extends DualWeekScheduleViewController<S
                     modifyCellState(event,cell,week,interval);
                 }
             }
-            else if(event.getEventType() == MouseDragEvent.MOUSE_DRAG_RELEASED){
-                dragging = false;
-            }
-            else if(event.getEventType() == MouseEvent.MOUSE_CLICKED){
-                if(!dragging && event.getSource() != cell) flipCellState(cell, week, interval);
+            else if (event.getEventType() == MouseEvent.MOUSE_RELEASED){
+                if(!dragging) {
+                    flipCellState(cell, week, interval);
+                }
+                else dragging = false;
             }
 
             event.consume();

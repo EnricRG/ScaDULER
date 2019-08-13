@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.StackPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,6 +15,7 @@ public class DualWeekScheduleViewController<C1 extends ScheduleController, C2 ex
     protected C1 firstWeekController;
     protected C2 secondWeekController;
 
+    public StackPane mainStackPane;
     public TabPane tabPane;
     public Tab aWeekTab;
     public Tab bWeekTab;
@@ -33,7 +35,7 @@ public class DualWeekScheduleViewController<C1 extends ScheduleController, C2 ex
 
         tabPane.widthProperty().addListener((observable, oldValue, newValue) ->
         {
-            //bad solution, but working
+            //bad solution (subtracting 20), but working
             tabPane.setTabMinWidth((tabPane.getWidth() / 2) - 20);
             tabPane.setTabMaxWidth((tabPane.getWidth() / 2) - 20);
         });
