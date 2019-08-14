@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import util.Utils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,13 +36,7 @@ public class DualWeekScheduleViewController<C1 extends ScheduleController, C2 ex
     }
 
     private void initializeTabConstraints() {
-
-        tabPane.widthProperty().addListener((observable, oldValue, newValue) ->
-        {
-            //bad solution (subtracting 20), but its working
-            tabPane.setTabMinWidth((tabPane.getWidth() / 2) - 20);
-            tabPane.setTabMaxWidth((tabPane.getWidth() / 2) - 20);
-        });
+        tabPane.widthProperty().addListener(Utils.bindTabWidthToTabPane(tabPane));
     }
 
     private void initializeContentLanguage() {

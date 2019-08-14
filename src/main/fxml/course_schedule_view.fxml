@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="mainStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab fx:id="firstQuarterTab" closable="false" text="First Quarter" />
+            <Tab fx:id="secondQuarterTab" closable="false" text="Second Quarter" />
+         </tabs>
+      </TabPane>
+   </children>
+</StackPane>

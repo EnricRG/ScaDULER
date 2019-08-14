@@ -10,14 +10,14 @@ import java.util.ResourceBundle;
 
 public abstract class EventViewController implements Initializable {
 
-    protected final CourseScheduleController controller;
+    protected final QuarterScheduleController controller;
     protected final NewEvent event;
 
     public VBox mainBox;
     public Label eventDisplayName;
     public Label eventDisplayAdditionalInfo;
 
-    public EventViewController(CourseScheduleController controller,NewEvent event){
+    public EventViewController(QuarterScheduleController controller, NewEvent event){
         this.controller = controller;
         this.event = event;
     }

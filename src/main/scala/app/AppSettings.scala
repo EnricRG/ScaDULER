@@ -3,6 +3,7 @@ package app
 object FXMLPaths {
     val MainInterface: String = "src/main/fxml/main_border_pane.fxml"
     val UnassignedEvent: String = "src/main/fxml/unassigned_event_box.fxml"
+    val AssignedEvent: String = "src/main/fxml/assigned_event_box.fxml"
     val CoursePanel: String = "src/main/fxml/course_grid.fxml"
 
     val CourseForm: String = "src/main/fxml/course_form.fxml"
@@ -15,6 +16,8 @@ object FXMLPaths {
 
     val GenericSchedule: String = "src/main/fxml/schedule_view.fxml"
     val DualWeekGenericSchedule: String = "src/main/fxml/dual_week_schedule_view.fxml"
+
+    val CourseSchedule: String = "src/main/fxml/course_schedule_view.fxml"
 }
 
 object AppSettings {

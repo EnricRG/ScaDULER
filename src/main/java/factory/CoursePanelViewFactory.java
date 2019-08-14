@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import java.io.File;
 import java.io.IOException;
 
+@Deprecated
 public class CoursePanelViewFactory {
     public static Node load(MainController mc) throws IOException{
 

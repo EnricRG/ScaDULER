@@ -4,6 +4,7 @@ import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
 import control.manage.CourseResourceManagerController;
+import control.schedule.CourseScheduleController;
 import control.schedule.DualWeekScheduleViewController;
 import control.schedule.ScheduleController;
 import factory.*;
@@ -294,11 +295,7 @@ public class MainController implements Initializable {
         try{
             //TODO load final schedule view
             //courseTabContent = CoursePanelViewFactory.load(this);
-            courseTabContent = new DualWeekScheduleViewFactory<>(
-                    new DualWeekScheduleViewController<>(
-                            new ScheduleController(), new ScheduleController()
-                    )
-            ).load();
+            courseTabContent = new CourseScheduleViewFactory(new CourseScheduleController(c)).load();
         } catch (IOException e){
             e.printStackTrace();
         }

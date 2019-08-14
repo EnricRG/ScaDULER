@@ -2,6 +2,7 @@ package control.manage;
 
 import app.AppSettings;
 import app.MainApp;
+import control.MainController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.Initializable;
@@ -18,7 +19,9 @@ import java.util.ResourceBundle;
 
 public class CourseManagerController implements Initializable {
 
-    private CourseDatabase courseDatabase = MainApp.database().courseDatabase();
+    private final CourseDatabase courseDatabase = MainApp.database().courseDatabase();
+
+    //private final MainController mainController;
 
     public TableView<Course> courseTable;
 
@@ -30,6 +33,10 @@ public class CourseManagerController implements Initializable {
     public Button addCourseButton;
     public Button editCourseButton;
     public Button removeCourseButton;
+
+    /*public CourseManagerController(MainController mainController){
+        this.mainController = mainController;
+    }*/
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -78,6 +85,7 @@ public class CourseManagerController implements Initializable {
         if(c != null){
             courseDatabase.removeElement(c.getID());
             courseTable.getItems().remove(c);
+            //TODO remove tab when course deleted
         }
     }
 

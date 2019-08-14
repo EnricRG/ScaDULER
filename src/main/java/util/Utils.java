@@ -1,9 +1,11 @@
 package util;
 
 import factory.ViewFactory;
+import javafx.beans.InvalidationListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -49,5 +51,14 @@ public class Utils {
         }
 
         return result;
+    }
+
+    //pre: tabPane not null
+    public static InvalidationListener bindTabWidthToTabPane(TabPane tabPane) {
+        return param -> {
+            //bad solution (subtracting 20), but its working
+            tabPane.setTabMinWidth((tabPane.getWidth() / 2) - 20);
+            tabPane.setTabMaxWidth((tabPane.getWidth() / 2) - 20);
+        };
     }
 }

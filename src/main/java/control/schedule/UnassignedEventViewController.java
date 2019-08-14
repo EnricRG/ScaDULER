@@ -4,7 +4,7 @@ import model.NewEvent;
 
 public class UnassignedEventViewController extends EventViewController {
 
-    public UnassignedEventViewController(CourseScheduleController controller, NewEvent event) {
+    public UnassignedEventViewController(QuarterScheduleController controller, NewEvent event) {
         super(controller,event);
     }
 
