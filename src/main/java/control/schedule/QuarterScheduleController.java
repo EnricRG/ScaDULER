@@ -1,9 +1,10 @@
 package control.schedule;
 
+import control.MainController;
 import javafx.scene.Node;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseDragEvent;
 import misc.Warning;
-import model.Course;
 import model.NewEvent;
 import model.Quarter;
 
@@ -13,10 +14,11 @@ import java.util.ResourceBundle;
 public class QuarterScheduleController extends DualWeekScheduleViewController<ScheduleController, ScheduleController>{
 
     private final Quarter quarter;
-    private EventViewController dragSource;
+    private final MainController mainController;
 
-    public QuarterScheduleController(Quarter quarter) {
+    public QuarterScheduleController(MainController mainController, Quarter quarter) {
         super(new ScheduleController(), new ScheduleController());
+        this.mainController = mainController;
         this.quarter = quarter;
     }
 
@@ -36,11 +38,14 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
     }
 
     private void setupCellBehavior(Node cell, int week, Integer interval) {
-        cell.setOnDragDropped(dragEvent -> processDropEvent(dragEvent, cell, week, interval));
+        cell.setOnMouseDragReleased(dragEvent -> {
+            System.out.println("Dropped here: " + week + " " + interval);
+            processDropEvent(dragEvent, cell, week, interval);
+        });
     }
 
-    private void processDropEvent(DragEvent dragEvent, Node cell, int week, Integer interval) {
-        NewEvent scheduleEvent = dragSource.getEvent();
+    private void processDropEvent(MouseDragEvent dragEvent, Node cell, int week, Integer interval) {
+        NewEvent scheduleEvent = mainController.getEventDragSource().getEvent();
 
         if(isViableAssignment(quarter, scheduleEvent, week, interval)) {
             quarter.schedule().addEvent(week,interval,scheduleEvent);
@@ -65,14 +70,6 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
             return new Warning("No drag source");
         }
         else return null;
-    }
-
-    public void setEventDragSource(EventViewController controller) {
-        dragSource = controller;
-    }
-
-    public void finishEventDrag() {
-        dragSource = null;
     }
 
 /*

@@ -1,18 +1,20 @@
 package control;
 
+import akka.Main;
 import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
+import control.manage.CourseManagerController;
 import control.manage.CourseResourceManagerController;
-import control.schedule.CourseScheduleController;
-import control.schedule.DualWeekScheduleViewController;
-import control.schedule.ScheduleController;
+import control.schedule.*;
 import factory.*;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.skin.TabPaneSkin;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -21,16 +23,20 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Course;
+import model.NewEvent;
 import model.NewEventSchedule;
 import model.Quarter;
 import scala.Option;
 import scala.collection.mutable.ListBuffer;
+import service.CourseDatabase;
 import util.Utils;
 import view.DraggableVBox;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -101,7 +107,13 @@ public class MainController implements Initializable {
     public VBox rightPane_VBox;
 
 
+    private Map<Long,Tab> courseTabMap = new HashMap<>();
+    private Map<Long,Node> eventViewMap = new HashMap<>();
+    private EventViewController dragSource = null;
     private boolean tabClosingEnabledFlag = false;
+
+    private final CourseDatabase courseDatabase = MainApp.database().courseDatabase();
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -124,9 +136,13 @@ public class MainController implements Initializable {
             event1 = new VBox();
         }
 
-        rightPane_VBox.getChildren().add(new DraggableVBox((VBox) event1,this));
+        //TODO remove this
+        //rightPane_VBox.getChildren().add(new DraggableVBox((VBox) event1,this));
+
+        addUnassignedEvent(new NewEvent()); //TODO delete this line
 
         rightPane_VBox.setOnDragEntered(dragEvent -> {
+            rightPane_VBox.startFullDrag();
             System.out.println("Right Pane VBOX Drag Entered");
         });
 
@@ -248,7 +264,8 @@ public class MainController implements Initializable {
                 AppSettings.language().getItem("courseManager_windowTitle"),
                 manageButtons_courses.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new ViewFactory(FXMLPaths.ManageCoursesPanel())
+                new ViewFactory<>(FXMLPaths.ManageCoursesPanel()),
+                new CourseManagerController(this)
         );
 
         prompt.show();
@@ -295,7 +312,7 @@ public class MainController implements Initializable {
         try{
             //TODO load final schedule view
             //courseTabContent = CoursePanelViewFactory.load(this);
-            courseTabContent = new CourseScheduleViewFactory(new CourseScheduleController(c)).load();
+            courseTabContent = new CourseScheduleViewFactory(new CourseScheduleController(this,c)).load();
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -303,17 +320,14 @@ public class MainController implements Initializable {
         //create tab with course grid if possible. If not, create empty tab.
         final Tab newTab = courseTabContent == null ? new Tab(c.name()) : new Tab(c.name(), courseTabContent);
 
+        //mapping the course to the tab
+        courseTabMap.put(c.getID(), newTab);
+
         //Setting tab properties.
         newTab.setClosable(false); //This is done by default.
 
         //Setting on close action. If only one tab is open, it cannot be closed.
-        newTab.setOnCloseRequest(event -> {
-            TabPane tab_pane = newTab.getTabPane();
-            System.out.println(tab_pane.getTabs().size());
-            if(tab_pane.getTabs().size() < 3){ //If there's only one tab left (not including creation tab).
-                disableTabClosing();
-            }
-        });
+        newTab.setOnCloseRequest(event -> closeCourseTab(c, newTab));
 
         //FIXME: Last tab can be closed, and shouldn't.
 
@@ -346,6 +360,50 @@ public class MainController implements Initializable {
         if(gestureSource != target ){
             sourceParent.getChildren().remove(gestureSource);
             target.getChildren().add(gestureSource);
+        }
+    }
+
+    public void closeCourseTab(Course c) {
+        closeCourseTab(c, courseTabMap.get(c.getID()));
+    }
+
+    //called when the tab is closed from the main interface, so it has to be deleted from db
+    public void closeCourseTab(Course c, Tab tab){
+        if(tab != null) {
+            courseTabMap.remove(c.getID());
+            courseTabs.getTabs().remove(tab);
+            courseDatabase.removeCourse(c);
+
+            if(courseTabs.getTabs().size() < 3){ //If there's only one tab left (not including creation tab).
+                disableTabClosing();
+            }
+        }
+    }
+
+    public EventViewController getEventDragSource() {
+        return dragSource;
+    }
+
+    public void setEventDragSource(EventViewController source) {
+        dragSource = source;
+    }
+
+    public void finishEventDrag() {
+        dragSource = null;
+    }
+
+    public void addUnassignedEvent(NewEvent event){
+        Node eventView = null;
+
+        try{
+           eventView = new ViewFactory<>(FXMLPaths.UnassignedEvent()).load(new UnassignedEventViewController(this, event));
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
+
+        if (eventView != null){
+            rightPane_VBox.getChildren().add(eventView); //TODO: improve this with a method that updates the list.
+            eventViewMap.put(event.getID(), eventView);
         }
     }
 }

@@ -1,6 +1,8 @@
 package control.schedule;
 
+import control.MainController;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import model.NewEvent;
@@ -10,14 +12,14 @@ import java.util.ResourceBundle;
 
 public abstract class EventViewController implements Initializable {
 
-    protected final QuarterScheduleController controller;
+    protected final MainController controller;
     protected final NewEvent event;
 
     public VBox mainBox;
     public Label eventDisplayName;
     public Label eventDisplayAdditionalInfo;
 
-    public EventViewController(QuarterScheduleController controller, NewEvent event){
+    public EventViewController(MainController controller, NewEvent event){
         this.controller = controller;
         this.event = event;
     }
@@ -35,7 +37,9 @@ public abstract class EventViewController implements Initializable {
 
     protected abstract void initializeBehavior();
 
-    public NewEvent getEvent() {
-        return event;
+    public NewEvent getEvent() { return event; }
+
+    public Node getNode() {
+        return mainBox;
     }
 }

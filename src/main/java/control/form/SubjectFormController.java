@@ -239,12 +239,18 @@ public class SubjectFormController implements Initializable {
                 event.setSubject(subject);
                 subject.addEvent(eventID, event);
                 eventTable.getItems().add(eventID);
+                //mainController.addUnassignedEvent(event); //This shouldn't be done here.
             }
         }
     }
 
     private boolean createSubject(Subject sub) {
-        if(!warnings(checkSubjectCreationWarnings())) sub.setAsFinished();
+        if(!warnings(checkSubjectCreationWarnings())) {
+            sub.setAsFinished();
+            for(NewEvent e : JavaConverters.asJavaCollection(sub.getEvents())){
+                mainController.addUnassignedEvent(e);
+            }
+        }
         else sub.setAsUnfinished();
 
         return sub.isFinished();

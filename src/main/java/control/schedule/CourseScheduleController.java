@@ -1,8 +1,7 @@
 package control.schedule;
 
 import app.AppSettings;
-import factory.DualWeekScheduleViewFactory;
-import javafx.beans.InvalidationListener;
+import control.MainController;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
@@ -10,7 +9,6 @@ import javafx.scene.control.TabPane;
 import model.Course;
 import util.Utils;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -24,10 +22,10 @@ public class CourseScheduleController implements Initializable {
     public Tab firstQuarterTab;
     public Tab secondQuarterTab;
 
-    public CourseScheduleController(Course course){
+    public CourseScheduleController(MainController mainController, Course course){
         this.course = course;
-        this.firstQuarterController = new QuarterScheduleController(course.firstQuarter());
-        this.secondQuarterController = new QuarterScheduleController(course.secondQuarter());
+        this.firstQuarterController = new QuarterScheduleController(mainController, course.firstQuarter());
+        this.secondQuarterController = new QuarterScheduleController(mainController, course.secondQuarter());
     }
 
     @Override

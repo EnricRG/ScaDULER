@@ -2,6 +2,7 @@ package util;
 
 import factory.ViewFactory;
 import javafx.beans.InvalidationListener;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,11 +17,15 @@ import java.io.IOException;
 
 public class Utils {
 
-    public static Stage promptBoundWindow(String title, Window owner, Modality modality, ViewFactory viewFactory){
+    public static Stage promptBoundWindow(String title, Window owner, Modality modality, ViewFactory<?> viewFactory){
+        return promptBoundWindow(title, owner, modality, viewFactory, null);
+    }
+
+    public static <C extends Initializable> Stage promptBoundWindow(String title, Window owner, Modality modality, ViewFactory<C> viewFactory, C controller){
         Scene scene;
 
         try{
-            scene = new Scene((Parent) viewFactory.load());
+            scene = new Scene((Parent) (controller == null ? viewFactory.load() : viewFactory.load(controller)));
         } catch (IOException ioe){
             ioe.printStackTrace();
             scene = new Scene(new VBox());

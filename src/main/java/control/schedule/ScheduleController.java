@@ -92,6 +92,8 @@ public class ScheduleController implements Initializable {
         node.setOnMouseExited(event ->
                 node.setStyle(node.getStyle().replace(DRAG_OVER_CELL_ADDITIONAL_CSS_STYLE, ""))
         );
+        node.setOnMouseDragEntered(node.getOnMouseEntered());
+        node.setOnMouseDragExited(node.getOnMouseExited());
     }
 
     private void initializeContentLanguage() {

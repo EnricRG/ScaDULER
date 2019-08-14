@@ -21,7 +21,7 @@ public class CourseManagerController implements Initializable {
 
     private final CourseDatabase courseDatabase = MainApp.database().courseDatabase();
 
-    //private final MainController mainController;
+    private final MainController mainController;
 
     public TableView<Course> courseTable;
 
@@ -34,9 +34,9 @@ public class CourseManagerController implements Initializable {
     public Button editCourseButton;
     public Button removeCourseButton;
 
-    /*public CourseManagerController(MainController mainController){
+    public CourseManagerController(MainController mainController){
         this.mainController = mainController;
-    }*/
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -85,7 +85,7 @@ public class CourseManagerController implements Initializable {
         if(c != null){
             courseDatabase.removeElement(c.getID());
             courseTable.getItems().remove(c);
-            //TODO remove tab when course deleted
+            mainController.closeCourseTab(c);
         }
     }
 

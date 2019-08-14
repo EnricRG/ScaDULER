@@ -1,12 +1,16 @@
 package control.schedule;
 
+import control.MainController;
+import model.NewEvent;
+
 public class AssignedEventViewController extends EventViewController {
 
-    private final UnassignedEventViewController oldController;
+    public AssignedEventViewController(MainController controller, NewEvent event) {
+        super(controller, event);
+    }
 
-    public AssignedEventViewController(QuarterScheduleController controller, UnassignedEventViewController oldController) {
+    public AssignedEventViewController(MainController controller, UnassignedEventViewController oldController) {
         super(controller, oldController.getEvent());
-        this.oldController = oldController;
     }
 
     @Override

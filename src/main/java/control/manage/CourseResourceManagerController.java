@@ -160,6 +160,7 @@ public class CourseResourceManagerController implements Initializable {
         final Integer userInputQuantity = getQuantityFieldValue();
 
         selection.forEach(resource -> {
+            //TODO change availableQuantity for quantity
             Integer maxAvailableQuantity = userInputQuantity <= resource.getAvailableQuantity() ? userInputQuantity : resource.getAvailableQuantity();
             if(maxAvailableQuantity > 0) {
                 CourseResource cr;
