@@ -2,7 +2,7 @@ package model
 
 import scala.collection.mutable
 
-class Schedule[T](intervals: Int) {
+class Schedule[T](intervals: Int) extends Serializable {
     private val timeline: mutable.Map[Int,T] = new mutable.HashMap
 
     def getValueAtInterval(interval: Int): Option[T] = if(interval < intervals) timeline.get(interval) else None

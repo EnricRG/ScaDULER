@@ -34,6 +34,7 @@
                                  <menus>
                                     <Menu fx:id="menuBar_fileMenu" mnemonicParsing="false" text="File">
                                        <items>
+                                          <MenuItem fx:id="fileMenu_open" mnemonicParsing="false" text="Open" />
                                           <MenuItem fx:id="fileMenu_save" mnemonicParsing="false" text="Save" />
                                           <MenuItem fx:id="fileMenu_saveAs" mnemonicParsing="false" text="Save as..." />
                                           <SeparatorMenuItem mnemonicParsing="false" />

@@ -59,9 +59,9 @@ public class SubjectFormController implements Initializable {
     public Label warningTag;
     public Button createSubjectButton;
 
-    private SubjectDatabase subjectDatabase = MainApp.database().subjectDatabase();
-    private EventDatabase eventDatabase = MainApp.database().eventDatabase();
-    private ResourceDatabase resourceDatabase = MainApp.database().resourceDatabase();
+    private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
+    private EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
+    private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
     private Long subjectID = subjectDatabase.newSubject();
     private Subject subject = subjectDatabase.getElement(subjectID).get(); //since we just created this subject, this should be secure
 

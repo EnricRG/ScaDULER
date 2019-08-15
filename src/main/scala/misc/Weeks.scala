@@ -2,10 +2,10 @@ package misc
 
 import app.AppSettings
 
-object Weeks{
+object Weeks extends Serializable {
 
-    sealed abstract class Week {
-        override def toString: String
+    sealed abstract class Week extends Serializable {
+        def toString: String
         def toShortString: String
     }
 

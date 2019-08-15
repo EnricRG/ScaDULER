@@ -3,9 +3,9 @@ package service
 import app.MainApp
 import model.Subject
 
-class SubjectDatabase extends Database[Subject]{
+class SubjectDatabase extends Database[Subject] {
 
-    private lazy val eventDatabase = MainApp.database.eventDatabase
+    private lazy val eventDatabase = MainApp.getDatabase.eventDatabase
 
     class Initializer{
 

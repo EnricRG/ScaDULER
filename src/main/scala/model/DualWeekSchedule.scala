@@ -1,6 +1,6 @@
 package model
 
-class DualWeekSchedule[T](intervalsPerWeek: Int) {
+class DualWeekSchedule[T](intervalsPerWeek: Int) extends Serializable {
     private val firstWeekSchedule = new Schedule[T](intervalsPerWeek)
     private val secondWeekSchedule = new Schedule[T](intervalsPerWeek)
 

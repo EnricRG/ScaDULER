@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 
 public class CourseManagerController implements Initializable {
 
-    private final CourseDatabase courseDatabase = MainApp.database().courseDatabase();
+    private final CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
 
     private final MainController mainController;
 

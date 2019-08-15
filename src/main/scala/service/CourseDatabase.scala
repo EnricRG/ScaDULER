@@ -2,7 +2,7 @@ package service
 
 import model.{Course, CourseResource, Quarter}
 
-class CourseDatabase extends Database[Course]{
+class CourseDatabase extends Database[Course] {
 
     class Initializer{
         //TODO: initalizer

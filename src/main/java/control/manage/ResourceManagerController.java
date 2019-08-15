@@ -47,7 +47,7 @@ public class ResourceManagerController implements Initializable {
 
     public Label warningTag;
 
-    private List<Resource> resources = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.database().resourceDatabase().getElements()));
+    private List<Resource> resources = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().resourceDatabase().getElements()));
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -190,7 +190,7 @@ public class ResourceManagerController implements Initializable {
         if (warning == null) { //if no errors
             hideWarnings(); //no warnings to be shown
             updateCourseInTableView(
-                    MainApp.database().resourceDatabase().createResource(name, quantity)
+                    MainApp.getDatabase().resourceDatabase().createResource(name, quantity)
             );
             clearInputFields();
         }
@@ -225,7 +225,7 @@ public class ResourceManagerController implements Initializable {
         if (warning == null) { //if no errors
             hideWarnings();
             //this order is mandatory, if changed resources will not update properly.
-            selection.forEach(resource -> MainApp.database().resourceDatabase().removeElement(resource));
+            selection.forEach(resource -> MainApp.getDatabase().resourceDatabase().removeElement(resource));
             resources.removeAll(selection);
             resourceTable.getItems().removeAll(selection);
         }

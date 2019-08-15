@@ -128,7 +128,7 @@ public class CourseFormController implements Initializable {
         if(warning == null){ //no warning
             hideWarnings();
             mainController.addCourseTab(
-                MainApp.database().courseDatabase().createCourse( //We know here that courseQuarter value cannot be null
+                MainApp.getDatabase().courseDatabase().createCourse( //We know here that courseQuarter value cannot be null
                     courseName.getValueSafe(), courseDescription.getValueSafe(),
                         JavaConverters.collectionAsScalaIterable(firstQuarterResources),
                         JavaConverters.collectionAsScalaIterable(secondQuarterResources)

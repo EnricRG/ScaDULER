@@ -19,6 +19,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -27,13 +28,14 @@ import model.NewEvent;
 import model.NewEventSchedule;
 import model.Quarter;
 import scala.Option;
+import scala.collection.JavaConverters;
 import scala.collection.mutable.ListBuffer;
+import service.AppDatabase;
 import service.CourseDatabase;
 import util.Utils;
 import view.DraggableVBox;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +53,9 @@ public class MainController implements Initializable {
 
     /** File menu */
     public Menu menuBar_fileMenu;
+
+    /** Open item in File menu */
+    public MenuItem fileMenu_open;
     /** Save item in File menu */
     public MenuItem fileMenu_save;
     /** Save item in File menu */
@@ -110,9 +115,13 @@ public class MainController implements Initializable {
     private Map<Long,Tab> courseTabMap = new HashMap<>();
     private Map<Long,Node> eventViewMap = new HashMap<>();
     private EventViewController dragSource = null;
+
     private boolean tabClosingEnabledFlag = false;
 
-    private final CourseDatabase courseDatabase = MainApp.database().courseDatabase();
+    private File userProjectFile = null;
+    private boolean userMadeChanges = false;
+
+    private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
 
 
     @Override
@@ -169,6 +178,7 @@ public class MainController implements Initializable {
     private void initializeLanguage() {
 
         menuBar_fileMenu.setText(AppSettings.language().getItem("fileMenu"));
+        fileMenu_open.setText(AppSettings.language().getItem("fileMenu_open"));
         fileMenu_save.setText(AppSettings.language().getItem("fileMenu_save"));
         fileMenu_saveAs.setText(AppSettings.language().getItem("fileMenu_saveAs"));
         fileMenu_close.setText(AppSettings.language().getItem("fileMenu_close"));
@@ -229,6 +239,100 @@ public class MainController implements Initializable {
         manageButtons_resources.setOnAction(actionEvent ->
                 promptResourceManager(manageButtons_resources.getScene().getWindow(), null));
         manageButtons_subjects.setOnAction(event -> promptSubjectManager());
+
+        fileMenu_open.setOnAction(event -> openFile());
+        fileMenu_save.setOnAction(event -> saveToFile());
+        fileMenu_saveAs.setOnAction(event -> saveToNewFile());
+    }
+
+    private void openFile(){
+        File f = new FileChooser().showOpenDialog(fileMenu_open.getStyleableNode().getScene().getWindow());
+
+        //TODO prompt warning if changes haven't been saved.
+        if(f != null){
+            userProjectFile = f;
+            //TODO simplify try catch blocks
+            ObjectInputStream oin = null;
+            try{
+                FileInputStream fin = new FileInputStream(f);
+                oin = new ObjectInputStream(fin);
+                MainApp.setDatabase((AppDatabase) oin.readObject());
+                projectLoaded();
+                fin.close();
+            } catch (IOException | ClassNotFoundException e){
+                e.printStackTrace();
+            } finally {
+                try { if(oin != null) oin.close(); } catch (IOException ioe){ ioe.printStackTrace(); }
+            }
+        }
+    }
+
+    private void projectLoaded() {
+        closeOpenCourseTabs();
+        clearEventList();
+        reloadDatabase();
+        openNewCourseTabs();
+        addUnassignedEvents();
+    }
+
+    private void addUnassignedEvents() {
+        //TODO load unassigned events
+    }
+
+    private void closeOpenCourseTabs() {
+        courseTabs.getTabs().removeAll(courseTabs.getTabs());
+        courseTabs.getTabs().add(courseTabs_addTab);
+    }
+
+    private void clearEventList() {
+        rightPane_VBox.getChildren().removeAll(rightPane_VBox.getChildren());
+    }
+
+    private void reloadDatabase() {
+        courseDatabase = MainApp.getDatabase().courseDatabase();
+    }
+
+    private void openNewCourseTabs() {
+        for(Course c : JavaConverters.asJavaCollection(courseDatabase.getElements())){
+            addCourseTab(c);
+        }
+        courseTabs.getSelectionModel().select(0);
+    }
+
+    private void saveToNewFile() {
+        File f = new FileChooser().showSaveDialog(fileMenu_saveAs.getStyleableNode().getScene().getWindow());
+
+        if(f != null){
+            userProjectFile = f;
+            saveToFile();
+        }
+        //else TODO notify the user that the file has not been saved
+    }
+
+    private void saveToFile() {
+        if(userProjectFile != null) {
+            if(userMadeChanges || true){
+                FileOutputStream fout = null;
+                ObjectOutputStream oout = null;
+
+                //TODO simplify try catch blocks
+                try{
+                    new FileWriter(userProjectFile).close(); //clean file's previous content
+                    fout = new FileOutputStream(userProjectFile);
+                    oout = new ObjectOutputStream(fout);
+                    oout.writeObject(MainApp.getDatabase());
+                } catch (IOException ioe){
+                    ioe.printStackTrace();
+                    //TODO better exception handling
+                } finally {
+                    try {if(fout != null) fout.close(); } catch(IOException ioe2){ ioe2.printStackTrace();}
+                    try {if(oout != null) oout.close(); } catch(IOException ioe3){ ioe3.printStackTrace();}
+                }
+
+            }
+        } else{
+            saveToNewFile(); //be careful with recursion kids
+        }
     }
 
     private void promptCourseForm() {
@@ -301,7 +405,7 @@ public class MainController implements Initializable {
         //TODO: decouple course creation and delegate to database.
         Course c = new Course("Default", Option.apply(null),
         new Quarter(new ListBuffer<>(), new NewEventSchedule(AppSettings.timeSlots())), new Quarter(new ListBuffer<>(), new NewEventSchedule(AppSettings.timeSlots())));
-        addCourseTab(MainApp.database().courseDatabase().addCourse(c));
+        addCourseTab(MainApp.getDatabase().courseDatabase().addCourse(c));
     }
 
     public void addCourseTab(Course c){

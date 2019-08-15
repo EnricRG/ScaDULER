@@ -4,6 +4,7 @@ import java.time.LocalTime
 
 import misc.Weeks._
 
+@Deprecated
 class OldEvent(val num: Int, var start: LocalTime = null, var end: LocalTime = null,
                var relativeStart: Int = 0, time_slots: Int = 0, var week: Week = EveryWeek,
                var name: String = null, var short_name: String = null, var description: String = null,

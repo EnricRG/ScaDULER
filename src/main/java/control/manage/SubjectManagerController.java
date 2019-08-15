@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 
 public class SubjectManagerController implements Initializable {
 
-    private SubjectDatabase subjectDatabase = MainApp.database().subjectDatabase();
+    private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
 
     public TableView<Long> subjectTable; //we store Subject ids, not Subjects itself
 

@@ -2,7 +2,7 @@ package service
 
 import model.Resource
 
-class ResourceDatabase extends Database[Resource] {
+class ResourceDatabase extends Database[Resource]{
 
     class Initializer{
 

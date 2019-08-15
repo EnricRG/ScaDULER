@@ -10,7 +10,7 @@ abstract class QuantifiableResource{
     def getAvailableQuantity: Int
 }
 
-class Resource(val name: String, var quantity: Int) extends QuantifiableResource with Identifiable {
+class Resource(val name: String, var quantity: Int) extends QuantifiableResource with Identifiable with Serializable {
 
     val courses: ListBuffer[Course] = new ListBuffer
     val courseResources: ListBuffer[CourseResource] = new ListBuffer

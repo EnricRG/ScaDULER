@@ -43,11 +43,12 @@ object DefaultLanguage extends Language {
         "shortEveryWeek" -> "W",
 
         "fileMenu" -> "File",
+        "fileMenu_open" -> "Open",
         "fileMenu_save" -> "Save",
         "fileMenu_saveAs" -> "Save As...",
         "fileMenu_close" -> "Close",
 
-        "editMenu" -> "File",
+        "editMenu" -> "Edit",
 
         "settingsMenu" -> "Settings",
         "settingsMenu_appSettings" -> "Application Settings",

@@ -5,7 +5,7 @@ import javafx.scene.paint.Color
 import misc.Weeks.{AWeek, Week}
 import service.Identifiable
 
-abstract class EventType{
+abstract class EventType extends Serializable {
     def toString: String
     def color: Color
 }
@@ -22,9 +22,9 @@ object ComputerEvent extends EventType {
     override def color: Color = Color.web("#4986E7")
 }
 
-object EventTypes{ val eventTypes: List[EventType] = List(TheoryEvent, LaboratoryEvent, ComputerEvent) }
+object EventTypes extends Serializable { val eventTypes: List[EventType] = List(TheoryEvent, LaboratoryEvent, ComputerEvent) }
 
-class NewEvent extends Identifiable{
+class NewEvent extends Identifiable with Serializable {
 
     private var startInterval: Int = -1
     private var name: String = ""
@@ -32,7 +32,7 @@ class NewEvent extends Identifiable{
     private var description: String = ""
     private var neededResource: Resource = _
     private var eventType: EventType = _
-    private var subject: Option[Subject] = None
+    private var subject: Option[Subject] = None //FIXME be careful with serialization
     private var week: Week = AWeek
 
     def getStartInterval: Int = startInterval

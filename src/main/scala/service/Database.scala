@@ -11,9 +11,9 @@ trait Identifiable {
     def setID(id: Long): Unit = this.id = id
 }
 
-abstract class Database[E<:Identifiable] {
+abstract class Database[E<:Identifiable] extends Serializable {
 
-    class DatabaseElement(val id: Long, element: E) {
+    class DatabaseElement(val id: Long, element: E) extends Serializable {
         private var visible: Boolean = true
 
         def hide: this.type = { visible = false; this }

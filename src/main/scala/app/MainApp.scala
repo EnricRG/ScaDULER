@@ -182,9 +182,13 @@ object test extends App{
 
 object MainApp extends App {
 
-    lazy val database = new AppDatabase
+    private var database: AppDatabase = _
+
+    def getDatabase: AppDatabase = database
+    def setDatabase(appDatabase: AppDatabase): Unit = database = appDatabase
 
     override def main(args: Array[String]): Unit = {
+        database = new AppDatabase
         MainInterface.main(Array())
     }
 }
