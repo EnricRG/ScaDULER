@@ -184,6 +184,7 @@ object DefaultLanguage extends Language {
         "warning" -> "Warning",
         "warning_courseNameCannotBeEmpty" -> "Course name cannot be empty.",
         "warning_courseQuarterCannotBeEmpty" -> "Course quarter cannot be empty.",
+        "warning_courseResourcesCannotBeEmpty" -> "Course resources cannot be empty.",
         "warning_firstQuarterResourcesCannotBeEmpty" -> "First quarter has no resources.",
         "warning_secondQuarterResourcesCannotBeEmpty" -> "Second quarter has no resources.",
         "warning_resourceNameCannotBeEmpty" -> "Resource name cannot be empty.",

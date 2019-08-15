@@ -39,8 +39,7 @@ public class CourseFormController implements Initializable {
 
     private StringProperty courseName = new SimpleStringProperty();
     private StringProperty courseDescription = new SimpleStringProperty();
-    private List<CourseResource> firstQuarterResources = new ArrayList<>();
-    private List<CourseResource> secondQuarterResources = new ArrayList<>();
+    private List<CourseResource> courseResources = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -96,9 +95,7 @@ public class CourseFormController implements Initializable {
                 AppSettings.language().getItem("manageCourseResources_windowTitle"),
                 createCourseButton.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new CourseResourceManagerViewFactory(FXMLPaths.CourseResourceManagerForm(),this,
-                        firstQuarterResources, secondQuarterResources
-                )
+                new CourseResourceManagerViewFactory(FXMLPaths.CourseResourceManagerForm(),this, courseResources)
         );
 
         prompt.show();
@@ -111,11 +108,8 @@ public class CourseFormController implements Initializable {
     private Warning courseCanBeCreated(String name){
         if(name.isEmpty())
             return new Warning(AppSettings.language().getItem("warning_courseNameCannotBeEmpty"));
-        else if(firstQuarterResources.isEmpty()){
-            return new Warning(AppSettings.language().getItem("warning_firstQuarterResourcesCannotBeEmpty"));
-        }
-        else if(secondQuarterResources.isEmpty()){
-            return new Warning(AppSettings.language().getItem("warning_secondQuarterResourcesCannotBeEmpty"));
+        else if(courseResources.isEmpty()){
+            return new Warning(AppSettings.language().getItem("warning_courseResourcesCannotBeEmpty"));
         }
         else return null;
     }
@@ -130,8 +124,7 @@ public class CourseFormController implements Initializable {
             mainController.addCourseTab(
                 MainApp.getDatabase().courseDatabase().createCourse( //We know here that courseQuarter value cannot be null
                     courseName.getValueSafe(), courseDescription.getValueSafe(),
-                        JavaConverters.collectionAsScalaIterable(firstQuarterResources),
-                        JavaConverters.collectionAsScalaIterable(secondQuarterResources)
+                        JavaConverters.collectionAsScalaIterable(courseResources)
                     )
                 );
 

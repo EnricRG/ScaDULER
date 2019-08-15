@@ -20,19 +20,12 @@ import java.util.ResourceBundle;
 
 public class CourseResourceManagerController implements Initializable {
 
+
     private CourseFormController courseFormController;
 
-    public TabPane tabPane;
-
-    public Tab firstQuarterTab;
-    public TableView<CourseResource> firstQuarter_resourceTable;
-    public TableColumn<CourseResource, String> firstQuarter_nameColumn;
-    public TableColumn<CourseResource, Integer> firstQuarter_quantityColumn;
-
-    public Tab secondQuarterTab;
-    public TableView<CourseResource> secondQuarter_resourceTable;
-    public TableColumn<CourseResource, String> secondQuarter_nameColumn;
-    public TableColumn<CourseResource, Integer> secondQuarter_quantityColumn;
+    public TableView<CourseResource> courseResourceTable;
+    public TableColumn<CourseResource, String> courseResourceTable_nameColumn;
+    public TableColumn<CourseResource, String> courseResourceTable_quantityColumn;
 
     public Button addButton;
     public TextField quantityField;
@@ -46,8 +39,7 @@ public class CourseResourceManagerController implements Initializable {
 
     public Button manageGlobalResources;
 
-    private List<CourseResource> firstQuarterResources;
-    private List<CourseResource> secondQuarterResources;
+    private List<CourseResource> courseResources = new ArrayList<>();
     private List<Resource> allResources =
             new ArrayList<>(
                     JavaConverters.asJavaCollection(
@@ -62,13 +54,9 @@ public class CourseResourceManagerController implements Initializable {
     }
 
     private void setupTableViews() {
-        firstQuarter_resourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        firstQuarter_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        firstQuarter_quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-
-        secondQuarter_resourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        secondQuarter_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        secondQuarter_quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        courseResourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        courseResourceTable_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        courseResourceTable_quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
         generalResourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         generalResourceTable_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -78,24 +66,15 @@ public class CourseResourceManagerController implements Initializable {
     }
 
     //this arrays will be used as modifiable containers to store new selected resources.
-    public void linkResources(List<CourseResource> fqr, List<CourseResource> sqr){
-        firstQuarterResources = fqr;
-        secondQuarterResources = sqr;
-
-        firstQuarter_resourceTable.setItems(FXCollections.observableArrayList(fqr));
-        secondQuarter_resourceTable.setItems(FXCollections.observableArrayList(sqr));
+    public void linkResources(List<CourseResource> courseResources){
+        this.courseResources = courseResources;
+        courseResourceTable.setItems(FXCollections.observableArrayList(courseResources));
     }
 
     private void initializeContentLanguage() {
-        firstQuarterTab.setText(AppSettings.language().getItem("manageCourseResources_firstQuarter"));
-        firstQuarter_resourceTable.setPlaceholder(new Label(AppSettings.language().getItem("resourceTable_placeholder")));
-        firstQuarter_nameColumn.setText(AppSettings.language().getItem("manageResources_nameColumn"));
-        firstQuarter_quantityColumn.setText(AppSettings.language().getItem("manageResources_quantityColumn"));
-
-        secondQuarterTab.setText(AppSettings.language().getItem("manageCourseResources_secondQuarter"));
-        secondQuarter_resourceTable.setPlaceholder(new Label(AppSettings.language().getItem("resourceTable_placeholder")));
-        secondQuarter_nameColumn.setText(AppSettings.language().getItem("manageResources_nameColumn"));
-        secondQuarter_quantityColumn.setText(AppSettings.language().getItem("manageResources_quantityColumn"));
+        courseResourceTable.setPlaceholder(new Label(AppSettings.language().getItem("resourceTable_placeholder")));
+        courseResourceTable_nameColumn.setText(AppSettings.language().getItem("manageResources_nameColumn"));
+        courseResourceTable_quantityColumn.setText(AppSettings.language().getItem("manageResources_quantityColumn"));
 
         resourceSearchBox.setPromptText(AppSettings.language().getItem("manageResources_searchResourceField"));
 
@@ -122,17 +101,14 @@ public class CourseResourceManagerController implements Initializable {
         });
         removeButton.setOnAction(event -> {
             removeSelectedResources();
-            firstQuarter_resourceTable.getSelectionModel().clearSelection();
-            secondQuarter_resourceTable.getSelectionModel().clearSelection();
+            courseResourceTable.getSelectionModel().clearSelection();
             event.consume();
         });
 
         generalResourceTable.getSelectionModel().selectedItemProperty().addListener((
                 (observable, oldValue, newValue) -> tableSelectionListener(generalResourceTable, newValue)));
-        firstQuarter_resourceTable.getSelectionModel().selectedItemProperty().addListener((
-                (observable, oldValue, newValue) -> tableSelectionListener(firstQuarter_resourceTable, newValue)));
-        secondQuarter_resourceTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> tableSelectionListener(secondQuarter_resourceTable, newValue));
+        courseResourceTable.getSelectionModel().selectedItemProperty().addListener((
+                (observable, oldValue, newValue) -> tableSelectionListener(courseResourceTable, newValue)));
     }
 
     private <E extends QuantifiableResource> void tableSelectionListener(TableView<E> tableView, E lastSelection) {
@@ -154,9 +130,6 @@ public class CourseResourceManagerController implements Initializable {
     private void addSelectedResources() {
         ObservableList<Resource> selection = generalResourceTable.getSelectionModel().getSelectedItems();
 
-        TableView<CourseResource> tableView = tabPane.getSelectionModel().getSelectedItem() == firstQuarterTab ? firstQuarter_resourceTable : secondQuarter_resourceTable;
-        List<CourseResource> target = tableView == firstQuarter_resourceTable ? firstQuarterResources : secondQuarterResources;
-
         final Integer userInputQuantity = getQuantityFieldValue();
 
         selection.forEach(resource -> {
@@ -164,7 +137,7 @@ public class CourseResourceManagerController implements Initializable {
             Integer maxAvailableQuantity = userInputQuantity <= resource.getAvailableQuantity() ? userInputQuantity : resource.getAvailableQuantity();
             if(maxAvailableQuantity > 0) {
                 CourseResource cr;
-                Integer crIndex = getIndexWithResource(target, resource);
+                Integer crIndex = getIndexWithResource(courseResources, resource);
 
                 if (maxAvailableQuantity < userInputQuantity)
                     quantityField.setText(String.valueOf(maxAvailableQuantity));
@@ -172,10 +145,10 @@ public class CourseResourceManagerController implements Initializable {
                 if (crIndex < 0) {
                     cr = new CourseResource(resource, maxAvailableQuantity);
                     resource.linkCourseResource(cr);
-                    target.add(cr);
-                    tableView.getItems().add(cr);
+                    courseResources.add(cr);
+                    courseResourceTable.getItems().add(cr);
                 } else {
-                    cr = target.get(crIndex);
+                    cr = courseResources.get(crIndex);
                     cr.incrementQuantity(maxAvailableQuantity);
                 }
             }
@@ -214,10 +187,7 @@ public class CourseResourceManagerController implements Initializable {
     }
 
     private void removeSelectedResources() {
-        TableView<CourseResource> tableView = tabPane.getSelectionModel().getSelectedItem() == firstQuarterTab ? firstQuarter_resourceTable : secondQuarter_resourceTable;
-
-        ObservableList<CourseResource> selection = tableView.getSelectionModel().getSelectedItems();
-        List<CourseResource> source = tableView == firstQuarter_resourceTable ? firstQuarterResources : secondQuarterResources;
+        ObservableList<CourseResource> selection = courseResourceTable.getSelectionModel().getSelectedItems();
 
         final Integer userInputQuantity = getQuantityFieldValue();
 
@@ -225,7 +195,7 @@ public class CourseResourceManagerController implements Initializable {
 
         selection.forEach(courseResource -> {
 
-            Integer maxAvailableQuantity = courseResource.getQuantity()<userInputQuantity ? courseResource.getQuantity() : userInputQuantity;
+            Integer maxAvailableQuantity = courseResource.getQuantity() < userInputQuantity ? courseResource.getQuantity() : userInputQuantity;
             courseResource.decrementQuantity(maxAvailableQuantity);
 
             if(courseResource.getQuantity() <= 0) {
@@ -235,16 +205,15 @@ public class CourseResourceManagerController implements Initializable {
 
         });
 
-        source.removeAll(removableCourseResources);
-        tableView.getItems().removeAll(removableCourseResources);
+        courseResources.removeAll(removableCourseResources);
+        courseResourceTable.getItems().removeAll(removableCourseResources);
 
         refreshTables();
     }
 
     private void refreshTables() {
         generalResourceTable.refresh();
-        firstQuarter_resourceTable.refresh();
-        secondQuarter_resourceTable.refresh();
+        courseResourceTable.refresh();
     }
 
     public void setCourseController(CourseFormController cfc){

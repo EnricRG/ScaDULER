@@ -23,16 +23,15 @@ class CourseDatabase extends Database[Course] {
 
     //FIXME: useless overload
     def createCourse(name: String, description: Option[String] = None,
-                     firstQuarterResources: Iterable[CourseResource],
-                     secondQuarterResources: Iterable[CourseResource]): Course =
+                     courseResources: Iterable[CourseResource]): Course =
             addCourse(
                 new Course( name, description,
-                    new Quarter(firstQuarterResources),
-                    new Quarter(secondQuarterResources)
+                    new Quarter(courseResources),
+                    new Quarter(courseResources),
                 )
             )
 
     def createCourse(name: String, description: String,
-                     firstQuarterResources: Iterable[CourseResource], secondQuarterResources: Iterable[CourseResource]): Course =
-            createCourse(name, Some(description), firstQuarterResources, secondQuarterResources)
+                     courseResources: Iterable[CourseResource]): Course =
+            createCourse(name, Some(description), courseResources)
 }
