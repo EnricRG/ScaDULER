@@ -3,11 +3,13 @@ package control.schedule;
 import app.AppSettings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import util.Utils;
 
@@ -25,6 +27,7 @@ public class ScheduleController implements Initializable {
 
     public StackPane stackPane;
     public GridPane gridPane;
+    public Pane overPane;
 
     public Label mondayTag;
     public Label tuesdayTag;
@@ -39,6 +42,7 @@ public class ScheduleController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeGrid();
         initializeContentLanguage();
+        overPane.setPickOnBounds(false);
     }
 
     private void initializeGrid() {

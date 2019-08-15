@@ -1,25 +1,26 @@
 package model
 
 import app.AppSettings
+import javafx.scene.paint
 import javafx.scene.paint.Color
 import misc.Weeks.{AWeek, Week}
 import service.Identifiable
 
 abstract class EventType extends Serializable {
     def toString: String
-    def color: Color
+    def color: paint.Color
 }
 object TheoryEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("theoryEvent")
-    override def color: Color = Color.web("#CABDBF")
+    override def color: paint.Color = paint.Color.web("#CABDBF")
 }
 object LaboratoryEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("labEvent")
-    override def color: Color = Color.web("#FBE983")
+    override def color: paint.Color = paint.Color.web("#FBE983")
 }
 object ComputerEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("computerEvent")
-    override def color: Color = Color.web("#4986E7")
+    override def color: paint.Color = paint.Color.web("#4986E7")
 }
 
 object EventTypes extends Serializable { val eventTypes: List[EventType] = List(TheoryEvent, LaboratoryEvent, ComputerEvent) }
@@ -32,8 +33,9 @@ class NewEvent extends Identifiable with Serializable {
     private var description: String = ""
     private var neededResource: Resource = _
     private var eventType: EventType = _
-    private var subject: Option[Subject] = None //FIXME be careful with serialization
+    private var subject: Option[Subject] = None
     private var week: Week = AWeek
+    private var duration: Int = 1
 
     def getStartInterval: Int = startInterval
     def setStartInterval(interval: Int): Unit = startInterval = interval
@@ -57,6 +59,9 @@ class NewEvent extends Identifiable with Serializable {
 
     def getWeek: Week = week
     def setWeek(week: Week): Unit = this.week = week
+
+    def getDuration: Int = duration
+    def setDuration(duration: Int): Unit = this.duration = duration
 
     /*def getResourceName: String = neededResource match{
         case r if r != null => r.name

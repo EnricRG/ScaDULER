@@ -2,19 +2,24 @@ package control.schedule;
 
 import control.MainController;
 import javafx.scene.Node;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseDragEvent;
+import javafx.scene.layout.Region;
 import misc.Warning;
 import model.NewEvent;
 import model.Quarter;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class QuarterScheduleController extends DualWeekScheduleViewController<ScheduleController, ScheduleController>{
 
     private final Quarter quarter;
     private final MainController mainController;
+
+    private Map<Integer, ScheduleIntervalController> firstWeekEventViews = new HashMap<>(); //map that holds the EventViews at each interval
+    private Map<Integer, ScheduleIntervalController> secondWeekEventViews = new HashMap<>(); //map that holds the EventViews at each interval
 
     public QuarterScheduleController(MainController mainController, Quarter quarter) {
         super(new ScheduleController(), new ScheduleController());
@@ -48,8 +53,27 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
         NewEvent scheduleEvent = mainController.getEventDragSource().getEvent();
 
         if(isViableAssignment(quarter, scheduleEvent, week, interval)) {
+            Map<Integer, ScheduleIntervalController> targetWeekViews = week == 0 ? firstWeekEventViews : secondWeekEventViews;
+            ScheduleIntervalController intervalController = targetWeekViews.get(interval);
+
+            if (intervalController == null){
+                intervalController = new ScheduleIntervalController(this, (Region) cell);
+                targetWeekViews.put(interval, intervalController);
+            }
+
+            intervalController.addEvent(mainController,mainController.getEventDragSource(),interval);
+
+            addEventToIntervalView(intervalController, week == 0 ? firstWeekController : secondWeekController, cell);
+
             quarter.schedule().addEvent(week,interval,scheduleEvent);
         }
+    }
+
+    private void addEventToIntervalView(ScheduleIntervalController intervalController, ScheduleController weekController, Node cell) {
+        Node visibleBox = intervalController.getBoundingBox();
+        weekController.overPane.getChildren().add(visibleBox);
+        visibleBox.setLayoutX(cell.getLayoutX());
+        visibleBox.setLayoutY(cell.getLayoutY());
     }
 
     private boolean isViableAssignment(Quarter quarter, NewEvent scheduleEvent, int week, Integer interval) {

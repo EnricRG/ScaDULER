@@ -5,10 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import util.Utils;
 
 import java.net.URL;
@@ -19,7 +16,7 @@ public class DualWeekScheduleViewController<C1 extends ScheduleController, C2 ex
     protected C1 firstWeekController;
     protected C2 secondWeekController;
 
-    public StackPane mainStackPane;
+    public Pane mainPane;
     public TabPane tabPane;
     public Tab aWeekTab;
     public Tab bWeekTab;
@@ -33,6 +30,9 @@ public class DualWeekScheduleViewController<C1 extends ScheduleController, C2 ex
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeContentLanguage();
         initializeTabConstraints();
+        /*tabPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            mainPane.setMa
+        });*/
     }
 
     private void initializeTabConstraints() {

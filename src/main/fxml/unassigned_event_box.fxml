@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="mainBox" focusTraversable="true" maxHeight="75.0" maxWidth="200.0" minWidth="200.0" style="-fx-border-color: gray;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="mainBox" focusTraversable="true" maxWidth="200.0" minWidth="1.0" prefWidth="200.0" style="-fx-border-color: gray;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="eventDisplayName" text="[EVABB-01] Event complete name it can be very long but it will be wrapped" wrapText="true" />
       <Label fx:id="eventDisplayAdditionalInfo" text="(Type) (Week) [Room name]" wrapText="true" />
