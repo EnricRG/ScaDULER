@@ -11,7 +11,7 @@
       <Font size="9.0" />
    </font>
    <content>
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+      <VBox fx:id="mainBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <children>
             <Label fx:id="eventDisplayName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="[EVABB-01] Event complete name it can be very long but it will be wrapped" wrapText="true" />
             <Label fx:id="eventDisplayAdditionalInfo" prefWidth="200.0" text="(Type) (Week) [Room name]" wrapText="true" />

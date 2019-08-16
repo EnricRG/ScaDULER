@@ -16,10 +16,12 @@ public class ScheduleIntervalController {
     private final Region boundingRegion;
 
     private final HBox boundingBox = new HBox();
+    private final Integer interval;
 
-    public ScheduleIntervalController(QuarterScheduleController quarterScheduleController, Region regionBelow){
+    public ScheduleIntervalController(QuarterScheduleController quarterScheduleController, Region regionBelow, Integer interval){
         this.quarterScheduleController = quarterScheduleController;
         this.boundingRegion = regionBelow;
+        this.interval = interval;
         initializeBoundingBox();
     }
 
@@ -38,17 +40,44 @@ public class ScheduleIntervalController {
         });
     }
 
-    public void addEvent(MainController mainController, EventViewController eventView, Integer interval){
-        AssignedEventViewController assignedView = new AssignedEventViewController(mainController,eventView);
+
+
+    public void addEventFromAssignedView(MainController.EventDrag eventDrag, AssignedEventViewController assignedEventViewController) {
+
+        if(eventDrag.eventSource == MainController.EventDrag.FROM_UNASSIGNED){ //comes from an unassigned event
+            addEvent(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), assignedEventViewController);
+        }
+        else if(eventDrag.eventSource == MainController.EventDrag.FROM_ASSIGNED){
+            if(boundingBox.getChildren().contains(assignedEventViewController.hourPane)){ //same interval
+                addEvent(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), assignedEventViewController);
+                boundingBox.getChildren().remove(assignedEventViewController.hourPane); //TODO object messages >>>>>>> direct control
+            }
+            else{ //another interval
+                assignedEventViewController.intervalController.boundingBox.getChildren().remove(assignedEventViewController.hourPane); //TODO object messages >>>>>>> direct control
+                addEvent(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), null);
+            }
+        }
+        //else error, no event drag with this code should exist.
+    }
+
+    public void addEvent(MainController mainController, EventViewController eventView, AssignedEventViewController hint){
+        AssignedEventViewController assignedView = new AssignedEventViewController(mainController,this,eventView);
 
         try{new ViewFactory<>(FXMLPaths.AssignedEvent()).load(assignedView);} catch (IOException ioe){ ioe.printStackTrace(); }
 
         assignedView.setHour(interval);
-        boundingBox.getChildren().add(assignedView.hourPane);
+
+        int hintIndex = hint != null ? boundingBox.getChildren().indexOf(hint.hourPane) : -1;
+
+        if(hintIndex < 0) boundingBox.getChildren().add(assignedView.hourPane);
+        else boundingBox.getChildren().add(hintIndex, assignedView.hourPane);
     }
 
     public HBox getBoundingBox() {
         return boundingBox;
     }
+
+    public Integer getInterval() { return interval; }
+
 
 }

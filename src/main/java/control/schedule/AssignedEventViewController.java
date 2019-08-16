@@ -7,14 +7,19 @@ import model.NewEvent;
 
 public class AssignedEventViewController extends EventViewController {
 
+    protected final MainController controller;
+    protected final ScheduleIntervalController intervalController;
+
     public TitledPane hourPane;
 
-    public AssignedEventViewController(MainController controller, NewEvent event) {
-        super(controller, event);
+    public AssignedEventViewController(MainController controller, ScheduleIntervalController intervalController, NewEvent event) {
+        super(event);
+        this.controller = controller;
+        this.intervalController = intervalController;
     }
 
-    public AssignedEventViewController(MainController controller, EventViewController oldController) {
-        super(controller, oldController.getEvent());
+    public AssignedEventViewController(MainController controller, ScheduleIntervalController intervalController, EventViewController oldController) {
+        this(controller, intervalController, oldController.getEvent());
     }
 
     public void setHour(Integer interval){
@@ -32,13 +37,31 @@ public class AssignedEventViewController extends EventViewController {
     @Override
     protected void initializeEventView(){
         super.initializeEventView();
-        //TODO ad event color
+        setEventColor();
+    }
+
+    @Override
+    protected void setEventColor() {
+        hourPane.setStyle("-fx-color: #" + event.getEventType().color().toString().substring(2) + ";");
+        super.setEventColor();
     }
 
     @Override
     protected void initializeBehavior() {
         hourPane.setOnDragDetected(event -> {
+            hourPane.startFullDrag();
+            controller.startEventDrag(MainController.EventDrag.FROM_ASSIGNED,controller,this, intervalController);
+            event.consume();
+        });
 
+        hourPane.setOnMouseDragReleased(event -> {
+            System.out.println("DragDropped"); //TODO delete this
+            MainController.EventDrag eventDrag = controller.getEventDrag();
+            if(eventDrag.getEventViewController() != this){
+                intervalController.addEventFromAssignedView(eventDrag, this);
+            }
+            eventDrag.finish(); //only the function that calls getEventDrag should call this
+            event.consume();
         });
     }
 }

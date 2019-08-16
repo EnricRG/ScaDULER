@@ -1,5 +1,6 @@
 package control.schedule;
 
+import akka.Main;
 import control.MainController;
 import javafx.scene.Node;
 import javafx.scene.input.MouseDragEvent;
@@ -45,23 +46,23 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
     private void setupCellBehavior(Node cell, int week, Integer interval) {
         cell.setOnMouseDragReleased(dragEvent -> {
             System.out.println("Dropped here: " + week + " " + interval);
-            processDropEvent(dragEvent, cell, week, interval);
+            processDropEvent(mainController.getEventDrag(), cell, week, interval);
         });
     }
 
-    private void processDropEvent(MouseDragEvent dragEvent, Node cell, int week, Integer interval) {
-        NewEvent scheduleEvent = mainController.getEventDragSource().getEvent();
+    private void processDropEvent(MainController.EventDrag eventDrag, Node cell, int week, Integer interval) {
+        NewEvent scheduleEvent = eventDrag.getEventViewController().getEvent();
 
         if(isViableAssignment(quarter, scheduleEvent, week, interval)) {
             Map<Integer, ScheduleIntervalController> targetWeekViews = week == 0 ? firstWeekEventViews : secondWeekEventViews;
             ScheduleIntervalController intervalController = targetWeekViews.get(interval);
 
             if (intervalController == null){
-                intervalController = new ScheduleIntervalController(this, (Region) cell);
+                intervalController = new ScheduleIntervalController(this, (Region) cell, interval);
                 targetWeekViews.put(interval, intervalController);
             }
 
-            intervalController.addEvent(mainController,mainController.getEventDragSource(),interval);
+            intervalController.addEvent(mainController,eventDrag.getEventViewController(),null);
 
             addEventToIntervalView(intervalController, week == 0 ? firstWeekController : secondWeekController, cell);
 
@@ -95,6 +96,8 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
         }
         else return null;
     }
+
+    public MainController getMainController() { return mainController; }
 
 /*
     private void initializeWarningSystem() {

@@ -1,6 +1,5 @@
 package control;
 
-import akka.Main;
 import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
@@ -8,14 +7,9 @@ import control.manage.CourseManagerController;
 import control.manage.CourseResourceManagerController;
 import control.schedule.*;
 import factory.*;
-import javafx.event.Event;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.skin.TabPaneSkin;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -23,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import jdk.jfr.Event;
 import model.Course;
 import model.NewEvent;
 import model.NewEventSchedule;
@@ -33,7 +28,6 @@ import scala.collection.mutable.ListBuffer;
 import service.AppDatabase;
 import service.CourseDatabase;
 import util.Utils;
-import view.DraggableVBox;
 
 import java.io.*;
 import java.net.URL;
@@ -111,15 +105,55 @@ public class MainController implements Initializable {
     public ScrollPane rightPane_scrollPane;
     public VBox rightPane_VBox;
 
-
     private Map<Long,Tab> courseTabMap = new HashMap<>();
     private Map<Long,Node> eventViewMap = new HashMap<>();
-    private EventViewController dragSource = null;
 
-    private boolean tabClosingEnabledFlag = false;
+    public class EventDrag{
+        /*public static final int UNASSIGNED_TO_INTERVAL = 1;
+        public static final int UNASSIGNED_TO_ASSIGNED = 2;
+        public static final int UNASSIGNED_TO_RIGHT_PANE = 3;
+        public static final int ASSIGNED_TO_ASSIGNED = 4;
+        public static final int ASSIGNED_TO_INTERVAL = 5;
+        public static final int ASSIGNED_TO_RIGHT_PANE = 6;*/
+
+        public static final int FROM_UNASSIGNED = 1;
+        public static final int FROM_ASSIGNED = 2;
+
+        public final int eventSource;
+        private final MainController mainController;
+        private final EventViewController eventViewController;
+        private final ScheduleIntervalController intervalController;
+
+        public EventDrag(int eventSource, MainController mainController, EventViewController eventViewController, ScheduleIntervalController intervalController){
+            this.eventSource = eventSource;
+            this.mainController = mainController;
+            this.eventViewController = eventViewController;
+            this.intervalController = intervalController;
+        }
+
+        public EventViewController getEventViewController() { return eventViewController; }
+
+        public void finish(){
+            mainController.finishEventDrag();
+        }
+
+    }
+
+    public EventDrag startEventDrag(int eventType, MainController mainController, EventViewController viewController, ScheduleIntervalController intervalController){
+        eventDrag = new EventDrag(eventType, mainController, viewController, intervalController);
+        return eventDrag;
+    }
+
+    public EventDrag getEventDrag(){
+        return eventDrag;
+    }
+
+    public void finishEventDrag(){ eventDrag = null; }
+
+    private EventDrag eventDrag = null;
 
     private File userProjectFile = null;
-    private boolean userMadeChanges = false;
+    private boolean userMadeChanges = false; //TODO update when user made changes
 
     private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
 
@@ -136,42 +170,7 @@ public class MainController implements Initializable {
         // Setting course view behavior //
         configureCoursePane();
 
-        Parent event1;
-
-        try{
-            event1 = FXMLLoader.load(new File(FXMLPaths.UnassignedEvent()).toURI().toURL());
-        } catch (Exception e){
-            e.printStackTrace();
-            event1 = new VBox();
-        }
-
-        //TODO remove this
-        //rightPane_VBox.getChildren().add(new DraggableVBox((VBox) event1,this));
-
-        addUnassignedEvent(new NewEvent()); //TODO delete this line
-
-        rightPane_VBox.setOnDragEntered(dragEvent -> {
-            rightPane_VBox.startFullDrag();
-            System.out.println("Right Pane VBOX Drag Entered");
-        });
-
-        rightPane_scrollPane.setOnDragOver(dragEvent -> {
-            System.out.println("Right Pane Drag Entered");
-            dragEvent.acceptTransferModes(TransferMode.ANY);
-        });
-
-        rightPane_scrollPane.setOnDragDropped(dragEvent -> {
-            Node unassignedEvent = null;
-            try {
-                unassignedEvent = (Node) dragEvent.getGestureSource();
-            } catch (ClassCastException cce){
-                cce.printStackTrace();
-            }
-
-            if(unassignedEvent != null) {
-                moveUnassignedEvent((Node) dragEvent.getGestureSource(), (VBox) ((Node) (dragEvent.getGestureSource())).getParent(), rightPane_VBox);
-            }
-        });
+        configureUnassignedEventPane();
 
     }
 
@@ -227,6 +226,16 @@ public class MainController implements Initializable {
                 promptCourseForm();
                 event.consume();
             }
+        });
+    }
+
+    private void configureUnassignedEventPane() {
+        rightPane_scrollPane.setOnMouseDragReleased(event -> {
+            EventDrag eventDrag = this.getEventDrag();
+            if(eventDrag.eventSource != EventDrag.FROM_UNASSIGNED){ // only if drag comes from outside the pane
+                addUnassignedEvent(eventDrag.getEventViewController().getEvent());
+            }
+            event.consume();
         });
     }
 
@@ -446,7 +455,6 @@ public class MainController implements Initializable {
         for(Tab t: courseTabs.getTabs()){
             t.setClosable(false);
         }
-        tabClosingEnabledFlag = false;
         courseTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
     }
 
@@ -455,13 +463,12 @@ public class MainController implements Initializable {
             t.setClosable(true);
         }
         courseTabs_addTab.setClosable(false); //This could be done inside the for loop, but I wanted to avoid an if statement there.
-        tabClosingEnabledFlag = true;
 
         courseTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.SELECTED_TAB);
     }
 
     public void moveUnassignedEvent(Node gestureSource, VBox sourceParent, VBox target) {
-        if(gestureSource != target ){
+        if(gestureSource != target){
             sourceParent.getChildren().remove(gestureSource);
             target.getChildren().add(gestureSource);
         }
@@ -482,18 +489,6 @@ public class MainController implements Initializable {
                 disableTabClosing();
             }
         }
-    }
-
-    public EventViewController getEventDragSource() {
-        return dragSource;
-    }
-
-    public void setEventDragSource(EventViewController source) {
-        dragSource = source;
-    }
-
-    public void finishEventDrag() {
-        dragSource = null;
     }
 
     public void addUnassignedEvent(NewEvent event){
