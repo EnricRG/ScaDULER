@@ -40,27 +40,38 @@ public class ScheduleIntervalController {
         });
     }
 
+    public void addEvent(MainController.EventDrag eventDrag){
+        addEvent(eventDrag, null);
+    }
 
-
-    public void addEventFromAssignedView(MainController.EventDrag eventDrag, AssignedEventViewController assignedEventViewController) {
+    public void addEvent(MainController.EventDrag eventDrag, AssignedEventViewController assignedEventViewController) {
 
         if(eventDrag.eventSource == MainController.EventDrag.FROM_UNASSIGNED){ //comes from an unassigned event
-            addEvent(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), assignedEventViewController);
+            addNewAssignment(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), assignedEventViewController);
+            quarterScheduleController.getMainController().assignmentDone(eventDrag);
         }
         else if(eventDrag.eventSource == MainController.EventDrag.FROM_ASSIGNED){
             if(boundingBox.getChildren().contains(assignedEventViewController.hourPane)){ //same interval
-                addEvent(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), assignedEventViewController);
-                boundingBox.getChildren().remove(assignedEventViewController.hourPane); //TODO object messages >>>>>>> direct control
+                addNewAssignment(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), assignedEventViewController);
+                removeAssignment(assignedEventViewController);
             }
             else{ //another interval
-                assignedEventViewController.intervalController.boundingBox.getChildren().remove(assignedEventViewController.hourPane); //TODO object messages >>>>>>> direct control
-                addEvent(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), null);
+                assignedEventViewController.getIntervalController().removeAssignment(assignedEventViewController);
+                addNewAssignment(quarterScheduleController.getMainController(), eventDrag.getEventViewController(), null);
             }
         }
         //else error, no event drag with this code should exist.
     }
 
-    public void addEvent(MainController mainController, EventViewController eventView, AssignedEventViewController hint){
+    public void removeAssignment(Node node) {
+        boundingBox.getChildren().remove(node);
+    }
+
+    public void removeAssignment(AssignedEventViewController assignedEventViewController) {
+        removeAssignment(assignedEventViewController.hourPane);
+    }
+
+    private void addNewAssignment(MainController mainController, EventViewController eventView, AssignedEventViewController hint){
         AssignedEventViewController assignedView = new AssignedEventViewController(mainController,this,eventView);
 
         try{new ViewFactory<>(FXMLPaths.AssignedEvent()).load(assignedView);} catch (IOException ioe){ ioe.printStackTrace(); }

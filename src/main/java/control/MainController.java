@@ -122,6 +122,9 @@ public class MainController implements Initializable {
         public final int eventSource;
         private final MainController mainController;
         private final EventViewController eventViewController;
+
+
+
         private final ScheduleIntervalController intervalController;
 
         public EventDrag(int eventSource, MainController mainController, EventViewController eventViewController, ScheduleIntervalController intervalController){
@@ -132,6 +135,8 @@ public class MainController implements Initializable {
         }
 
         public EventViewController getEventViewController() { return eventViewController; }
+
+        public ScheduleIntervalController getIntervalController() { return intervalController; }
 
         public void finish(){
             mainController.finishEventDrag();
@@ -146,6 +151,10 @@ public class MainController implements Initializable {
 
     public EventDrag getEventDrag(){
         return eventDrag;
+    }
+
+    public void assignmentDone(EventDrag eventDrag) {
+        rightPane_VBox.getChildren().remove(eventDrag.getEventViewController().getNode());
     }
 
     public void finishEventDrag(){ eventDrag = null; }
@@ -234,7 +243,9 @@ public class MainController implements Initializable {
             EventDrag eventDrag = this.getEventDrag();
             if(eventDrag.eventSource != EventDrag.FROM_UNASSIGNED){ // only if drag comes from outside the pane
                 addUnassignedEvent(eventDrag.getEventViewController().getEvent());
+                eventDrag.getIntervalController().removeAssignment(eventDrag.getEventViewController().getNode());
             }
+            eventDrag.finish();
             event.consume();
         });
     }

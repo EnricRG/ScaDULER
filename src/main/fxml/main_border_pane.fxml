@@ -234,7 +234,7 @@
             </TabPane>
          </center>
          <right>
-            <VBox fx:id="rightPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="200.0" BorderPane.alignment="TOP_CENTER">
+            <VBox fx:id="rightPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="200.0" BorderPane.alignment="TOP_CENTER">
                <children>
                   <TextField fx:id="rightPane_eventSearch" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="29.0" promptText="filter events by name">
                      <font>
@@ -245,7 +245,7 @@
                      <content>
                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
-                              <VBox fx:id="rightPane_VBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                              <VBox fx:id="rightPane_VBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="1.0" />
                            </children>
                         </AnchorPane>
                      </content>

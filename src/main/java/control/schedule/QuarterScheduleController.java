@@ -1,9 +1,7 @@
 package control.schedule;
 
-import akka.Main;
 import control.MainController;
 import javafx.scene.Node;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.layout.Region;
 import misc.Warning;
 import model.NewEvent;
@@ -45,7 +43,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
 
     private void setupCellBehavior(Node cell, int week, Integer interval) {
         cell.setOnMouseDragReleased(dragEvent -> {
-            System.out.println("Dropped here: " + week + " " + interval);
+            System.out.println("Dropped here: " + week + " " + interval); //TODO remove this line
             processDropEvent(mainController.getEventDrag(), cell, week, interval);
         });
     }
@@ -60,17 +58,18 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
             if (intervalController == null){
                 intervalController = new ScheduleIntervalController(this, (Region) cell, interval);
                 targetWeekViews.put(interval, intervalController);
+                addIntervalViewToWeekController(intervalController, week == 0 ? firstWeekController : secondWeekController, cell);
             }
 
-            intervalController.addEvent(mainController,eventDrag.getEventViewController(),null);
-
-            addEventToIntervalView(intervalController, week == 0 ? firstWeekController : secondWeekController, cell);
+            intervalController.addEvent(eventDrag);
 
             quarter.schedule().addEvent(week,interval,scheduleEvent);
         }
+
+        eventDrag.finish(); //maybe this shouldn't be here
     }
 
-    private void addEventToIntervalView(ScheduleIntervalController intervalController, ScheduleController weekController, Node cell) {
+    private void addIntervalViewToWeekController(ScheduleIntervalController intervalController, ScheduleController weekController, Node cell) {
         Node visibleBox = intervalController.getBoundingBox();
         weekController.overPane.getChildren().add(visibleBox);
         visibleBox.setLayoutX(cell.getLayoutX());

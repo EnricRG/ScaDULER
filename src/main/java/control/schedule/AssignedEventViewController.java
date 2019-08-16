@@ -2,13 +2,14 @@ package control.schedule;
 
 import app.AppSettings;
 import control.MainController;
+import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
 import model.NewEvent;
 
 public class AssignedEventViewController extends EventViewController {
 
-    protected final MainController controller;
-    protected final ScheduleIntervalController intervalController;
+    private final MainController controller;
+    private final ScheduleIntervalController intervalController;
 
     public TitledPane hourPane;
 
@@ -55,13 +56,19 @@ public class AssignedEventViewController extends EventViewController {
         });
 
         hourPane.setOnMouseDragReleased(event -> {
-            System.out.println("DragDropped"); //TODO delete this
             MainController.EventDrag eventDrag = controller.getEventDrag();
             if(eventDrag.getEventViewController() != this){
-                intervalController.addEventFromAssignedView(eventDrag, this);
+                intervalController.addEvent(eventDrag, this);
             }
             eventDrag.finish(); //only the function that calls getEventDrag should call this
             event.consume();
         });
+    }
+
+    public ScheduleIntervalController getIntervalController() { return intervalController; }
+
+    @Override
+    public Node getNode() {
+        return hourPane;
     }
 }

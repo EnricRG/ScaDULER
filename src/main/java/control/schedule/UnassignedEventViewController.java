@@ -16,7 +16,6 @@ public class UnassignedEventViewController extends EventViewController {
     protected void initializeBehavior() {
         mainBox.setOnDragDetected(event -> {
             mainBox.startFullDrag();
-            System.out.println("Drag Started");
             this.controller.startEventDrag(MainController.EventDrag.FROM_UNASSIGNED, controller, this, null);
             event.consume();
         });

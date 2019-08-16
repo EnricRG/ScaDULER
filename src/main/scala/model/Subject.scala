@@ -40,7 +40,7 @@ class Subject extends Identifiable with Serializable {
     def setDescription(desc: String): Unit = description = desc
 
     //this can be abstracted and use a generic type for color
-    def getColor: paint.Color = new paint.Color(0,0,0,0)
+    def getColor: paint.Color = color.toColor
     def setColor(c: paint.Color): paint.Color = {val oldColor = color.toColor; color = new Color(c); oldColor}
 
     def getEvents: Iterable[NewEvent] = events.values
