@@ -19,6 +19,7 @@ case class CourseResource(val resource: Resource, var quantity: Int) extends Qua
 case class Quarter(var resources: Iterable[CourseResource], var schedule: NewEventSchedule = new NewEventSchedule(AppSettings.timeSlots)) extends Serializable {
     def resourceTypeCount: Int = resources.size
     def resourceAmount: Int = resources.map(_.getQuantity).sum
+    def getSchedule: NewEventSchedule = schedule
 }
 
 //TODO: update to new database model

@@ -3,6 +3,7 @@ package control;
 import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
+import app.AssignmentViabilityChecker;
 import control.manage.CourseManagerController;
 import control.manage.CourseResourceManagerController;
 import control.schedule.*;
@@ -17,7 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import jdk.jfr.Event;
+import misc.Warning;
 import model.Course;
 import model.NewEvent;
 import model.NewEventSchedule;
@@ -108,27 +109,55 @@ public class MainController implements Initializable {
     private Map<Long,Tab> courseTabMap = new HashMap<>();
     private Map<Long,Node> eventViewMap = new HashMap<>();
 
-    public class EventDrag{
-        /*public static final int UNASSIGNED_TO_INTERVAL = 1;
-        public static final int UNASSIGNED_TO_ASSIGNED = 2;
-        public static final int UNASSIGNED_TO_RIGHT_PANE = 3;
-        public static final int ASSIGNED_TO_ASSIGNED = 4;
-        public static final int ASSIGNED_TO_INTERVAL = 5;
-        public static final int ASSIGNED_TO_RIGHT_PANE = 6;*/
+    public void processEventAssignment(CourseScheduleController courseScheduleController,
+                                       QuarterScheduleController quarterScheduleController,
+                                       ScheduleIntervalController intervalController,
+                                       AssignedEventViewController assignedEventViewController,
+                                       int hint) {
 
+        AssignmentViabilityChecker viabilityChecker = new AssignmentViabilityChecker(courseScheduleController.getCourse(),
+                quarterScheduleController.getQuarter(), eventDrag.getEvent().getWeek(), intervalController.getInterval(), eventDrag.getEvent());
+
+        if(viabilityChecker.isAViableAssignment()){ //if event can be assigned there
+            //TODO allow multiple course assignments
+            courseScheduleController.hideWarnings();
+            quarterScheduleController.processEventDrop(
+                    eventDrag.getEvent(),
+                    eventDrag.dragSource,
+                    hint,
+                    eventDrag.getIntervalController(),
+                    intervalController.getBoundingRegion(),
+                    intervalController.getWeek(),
+                    intervalController.getInterval()
+            );
+            assignmentDone(eventDrag);
+        }
+        else {
+            Warning warning = viabilityChecker.getWarning();
+            courseScheduleController.popUpWarning(warning);
+        }
+    }
+
+    public void processEventUnassignment(QuarterScheduleController quarterScheduleController, NewEvent event){
+        quarterScheduleController.newUnassignEvent(event);
+        addUnassignedEvent(event);
+    }
+
+    public class EventDrag{
         public static final int FROM_UNASSIGNED = 1;
         public static final int FROM_ASSIGNED = 2;
 
-        public final int eventSource;
+        public final int dragSource;
         private final MainController mainController;
         private final EventViewController eventViewController;
-
-
+        private final NewEvent event;
+        //private final QuarterScheduleController quarterScheduleController;
 
         private final ScheduleIntervalController intervalController;
 
-        public EventDrag(int eventSource, MainController mainController, EventViewController eventViewController, ScheduleIntervalController intervalController){
-            this.eventSource = eventSource;
+        public EventDrag(NewEvent event, int dragSource, MainController mainController, EventViewController eventViewController, ScheduleIntervalController intervalController){
+            this.event = event;
+            this.dragSource = dragSource;
             this.mainController = mainController;
             this.eventViewController = eventViewController;
             this.intervalController = intervalController;
@@ -142,10 +171,15 @@ public class MainController implements Initializable {
             mainController.finishEventDrag();
         }
 
+        public boolean fromAssigned() {
+            return dragSource == FROM_ASSIGNED;
+        }
+
+        public NewEvent getEvent() { return event; }
     }
 
-    public EventDrag startEventDrag(int eventType, MainController mainController, EventViewController viewController, ScheduleIntervalController intervalController){
-        eventDrag = new EventDrag(eventType, mainController, viewController, intervalController);
+    public EventDrag startEventDrag(NewEvent event, int eventType, EventViewController viewController, ScheduleIntervalController intervalController){
+        eventDrag = new EventDrag(event, eventType, this, viewController, intervalController);
         return eventDrag;
     }
 
@@ -154,7 +188,7 @@ public class MainController implements Initializable {
     }
 
     public void assignmentDone(EventDrag eventDrag) {
-        rightPane_VBox.getChildren().remove(eventDrag.getEventViewController().getNode());
+        if(eventDrag.dragSource == EventDrag.FROM_UNASSIGNED) rightPane_VBox.getChildren().remove(eventDrag.getEventViewController().getNode());
     }
 
     public void finishEventDrag(){ eventDrag = null; }
@@ -241,11 +275,7 @@ public class MainController implements Initializable {
     private void configureUnassignedEventPane() {
         rightPane_scrollPane.setOnMouseDragReleased(event -> {
             EventDrag eventDrag = this.getEventDrag();
-            if(eventDrag.eventSource != EventDrag.FROM_UNASSIGNED){ // only if drag comes from outside the pane
-                addUnassignedEvent(eventDrag.getEventViewController().getEvent());
-                eventDrag.getIntervalController().removeAssignment(eventDrag.getEventViewController().getNode());
-            }
-            eventDrag.finish();
+            if(eventDrag.dragSource == EventDrag.FROM_ASSIGNED) processEventUnassignment(eventDrag.getIntervalController().getQuarterScheduleController(), eventDrag.getEvent());
             event.consume();
         });
     }

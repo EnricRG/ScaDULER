@@ -4,23 +4,23 @@ import app.AppSettings;
 import control.MainController;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import model.NewEvent;
 
 public class AssignedEventViewController extends EventViewController {
 
-    private final MainController controller;
     private final ScheduleIntervalController intervalController;
 
     public TitledPane hourPane;
 
-    public AssignedEventViewController(MainController controller, ScheduleIntervalController intervalController, NewEvent event) {
+    public AssignedEventViewController(ScheduleIntervalController intervalController, NewEvent event) {
         super(event);
-        this.controller = controller;
         this.intervalController = intervalController;
     }
 
-    public AssignedEventViewController(MainController controller, ScheduleIntervalController intervalController, EventViewController oldController) {
-        this(controller, intervalController, oldController.getEvent());
+    public AssignedEventViewController(ScheduleIntervalController intervalController, EventViewController oldController) {
+        this(intervalController, oldController.getEvent());
     }
 
     public void setHour(Integer interval){
@@ -38,7 +38,17 @@ public class AssignedEventViewController extends EventViewController {
     @Override
     protected void initializeEventView(){
         super.initializeEventView();
+        initializeBoxSize();
         setEventColor();
+    }
+
+    private void initializeBoxSize() {
+        //HBox.setHgrow(hourPane, Priority.ALWAYS);
+        hourPane.setMaxWidth(Double.MAX_VALUE);
+        double maxHeight = getEvent().getDuration()*intervalController.getBoundingRegion().getHeight();
+        hourPane.setMaxHeight(maxHeight);
+        hourPane.setPrefHeight(maxHeight);
+        hourPane.setMinHeight(maxHeight);
     }
 
     @Override
@@ -51,16 +61,12 @@ public class AssignedEventViewController extends EventViewController {
     protected void initializeBehavior() {
         hourPane.setOnDragDetected(event -> {
             hourPane.startFullDrag();
-            controller.startEventDrag(MainController.EventDrag.FROM_ASSIGNED,controller,this, intervalController);
+            intervalController.startEventDrag(getEvent(), this);
             event.consume();
         });
 
         hourPane.setOnMouseDragReleased(event -> {
-            MainController.EventDrag eventDrag = controller.getEventDrag();
-            if(eventDrag.getEventViewController() != this){
-                intervalController.addEvent(eventDrag, this);
-            }
-            eventDrag.finish(); //only the function that calls getEventDrag should call this
+            intervalController.notifyEventDrop(this);
             event.consume();
         });
     }

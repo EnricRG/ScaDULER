@@ -18,4 +18,6 @@ class Schedule[T](intervals: Int) extends Serializable {
         case Some(t) => Some(function.apply(t))
         case _ => None
     }
+
+    override def toString: String = timeline.toString
 }

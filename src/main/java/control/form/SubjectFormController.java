@@ -232,7 +232,7 @@ public class SubjectFormController implements Initializable {
                 Long eventID = eventDatabase.newEvent();
                 NewEvent event = eventDatabase.getElement(eventID).get(); //this should be secure because we've just created the event in DB.
                 event.setName(String.format("%s\n%s-%d", subject.getName(), eventType, i));
-                event.setShortName(String.format("%s %s-%d", subject.getShortName(), eventType, i));
+                event.setShortName(String.format("%s %s-%d", subject.getShortName(), eventType.toShortString(), i));
                 event.setEventType(eventType);
                 event.setNeededResource(selectResourceListView.getSelectionModel().getSelectedItem());
 

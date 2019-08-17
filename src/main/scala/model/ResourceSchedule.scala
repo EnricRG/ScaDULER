@@ -1,5 +1,7 @@
 package model
 
+import misc.Weeks.{AWeek, BWeek, EveryWeek}
+
 class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Boolean](intervalsPerWeek){
 
     def set(week: Int, interval: Int): Unit = week match{
@@ -26,8 +28,21 @@ class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Boolean](
         case _ => None
     }
 
-    def isAvailable(week: Int, interval: Int): Boolean = getState(week, interval) match {
-        case Some(state) => state
-        case _ => false
+    def isAvailable(week: Int, interval: Int): Boolean = {
+        if (week == EveryWeek.toWeekNumber) {
+            val aState = getState(AWeek.toWeekNumber, interval) match {
+                case Some(state) => state
+                case _ => false
+            }
+            val bState = getState(BWeek.toWeekNumber, interval) match {
+                case Some(state) => state
+                case _ => false
+            }
+            aState && bState
+        }
+        else getState(week, interval) match {
+            case Some(state) => state
+            case _ => false
+        }
     }
 }

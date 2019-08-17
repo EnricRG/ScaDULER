@@ -4,9 +4,10 @@ import app.AppSettings;
 import control.MainController;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.Pane;
+import misc.Warning;
 import model.Course;
 import util.Utils;
 
@@ -18,15 +19,19 @@ public class CourseScheduleController implements Initializable {
     private final Course course;
     private final QuarterScheduleController firstQuarterController;
     private final QuarterScheduleController secondQuarterController;
+    private final MainController mainController;
+
+    public Label warningTag;
 
     public TabPane tabPane;
     public Tab firstQuarterTab;
     public Tab secondQuarterTab;
 
     public CourseScheduleController(MainController mainController, Course course){
+        this.mainController = mainController;
         this.course = course;
-        this.firstQuarterController = new QuarterScheduleController(mainController, course.firstQuarter());
-        this.secondQuarterController = new QuarterScheduleController(mainController, course.secondQuarter());
+        this.firstQuarterController = new QuarterScheduleController(mainController, this, course.firstQuarter());
+        this.secondQuarterController = new QuarterScheduleController(mainController, this, course.secondQuarter());
     }
 
     @Override
@@ -34,6 +39,7 @@ public class CourseScheduleController implements Initializable {
         initializeContentLanguage();
         initializeQuarters();
         initializeTabView();
+        initializeWarningSystem();
         bindActions();
     }
 
@@ -54,6 +60,10 @@ public class CourseScheduleController implements Initializable {
     private void bindActions() {
     }
 
+    public void notifyEventDrop(QuarterScheduleController quarterScheduleController, ScheduleIntervalController intervalController, AssignedEventViewController assignedEventViewController, int hint) {
+        mainController.processEventAssignment(this, quarterScheduleController, intervalController, assignedEventViewController, hint);
+    }
+
     public QuarterScheduleController getFirstQuarterController() { return firstQuarterController; }
     public QuarterScheduleController getSecondQuarterController() { return secondQuarterController; }
 
@@ -64,4 +74,19 @@ public class CourseScheduleController implements Initializable {
     public void setSecondQuarterContent(Node node) {
         secondQuarterTab.setContent(node);
     }
+
+    private void initializeWarningSystem() {
+        hideWarnings();
+        warningTag.setText("");
+    }
+
+    public void hideWarnings(){ warningTag.setVisible(false); }
+    private void showWarnings(){ warningTag.setVisible(true); }
+
+    public void popUpWarning(Warning warning) {
+        warningTag.setText(warning.toString());
+        showWarnings();
+    }
+
+    public Course getCourse() { return course; }
 }

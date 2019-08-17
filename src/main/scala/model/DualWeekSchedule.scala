@@ -11,4 +11,6 @@ class DualWeekSchedule[T](intervalsPerWeek: Int) extends Serializable {
         case 1 => getSecondWeekSchedule
         case _ => getFirstWeekSchedule
     }
+
+    override def toString: String = firstWeekSchedule.toString + "\n" + secondWeekSchedule.toString
 }
