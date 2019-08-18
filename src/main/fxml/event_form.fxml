@@ -21,7 +21,7 @@
                   <Label fx:id="eventNameTag" text="Event Name:" />
                   <TextField fx:id="eventNameField" prefColumnCount="25" promptText="Full Event name" />
                   <Label fx:id="eventShortNameTag" text="Event Short Name (optional):" />
-                  <TextField fx:id="eventShortNameField" prefColumnCount="10" promptText="Name abbreviation" />
+                  <TextField fx:id="eventShortNameField" promptText="Name abbreviation" />
                   <Label fx:id="eventDescriptionTag" text="Event Description (optional):" />
                   <VBox spacing="2.0">
                      <children>
@@ -39,26 +39,26 @@
                <children>
                   <VBox spacing="4.0">
                      <children>
+                        <Label fx:id="eventSubjectTag" layoutX="10.0" layoutY="10.0" text="Subject (Optional):" />
+                        <HBox>
+                           <children>
+                              <ComboBox fx:id="eventSubjectBox" prefWidth="150.0" />
+                              <Button fx:id="unassignSubjectButton" mnemonicParsing="false" text="X" />
+                           </children>
+                        </HBox>
                         <Label fx:id="eventDurationTag" text="Duration:" />
                         <ComboBox fx:id="eventDurationBox" prefWidth="100.0" />
-                        <Label fx:id="eventRoomTypeTag" text="Room type:" />
-                        <ComboBox fx:id="eventRoomTypeBox" prefWidth="150.0" />
+                        <Label fx:id="eventTypeTag" text="Event type:" />
+                        <ComboBox fx:id="eventTypeBox" prefWidth="150.0" />
                         <Label fx:id="eventWeekTag" text="Week:" />
                         <ComboBox fx:id="eventWeekBox" prefWidth="150.0" />
-                        <VBox>
+                        <Label fx:id="eventResourceTag" text="Resource:" />
+                        <HBox>
                            <children>
-                              <Label fx:id="eventStartTimeTag" text="Start Time (optional):" />
-                              <HBox alignment="CENTER">
-                                 <children>
-                                    <ComboBox fx:id="eventStartTime_dayBox" promptText="Day" />
-                                    <Label fx:id="eventStartTime_dayHourSeparator" text=":" />
-                                    <ComboBox fx:id="eventStartTime_hourBox" promptText="Hour" />
-                                    <Label fx:id="eventStartTime_hourMinuteSeparator" text=":" />
-                                    <ComboBox fx:id="eventStartTime_minuteBox" promptText="Minutes" />
-                                 </children>
-                              </HBox>
+                              <ComboBox fx:id="eventResourceBox" prefWidth="150.0" />
+                              <Button fx:id="unassignResourceButton" mnemonicParsing="false" text="X" />
                            </children>
-                        </VBox>
+                        </HBox>
                      </children>
                      <opaqueInsets>
                         <Insets />
@@ -71,7 +71,7 @@
                   <VBox alignment="CENTER" spacing="10.0">
                      <children>
                         <Button fx:id="manageIncompatibilitiesButton" mnemonicParsing="false" text="Manage Incompatibilities..." />
-                        <Button fx:id="managePrecedencesButton" mnemonicParsing="false" text="Manage precedences..." />
+                        <Button fx:id="managePrecedencesButton" disable="true" mnemonicParsing="false" text="Manage precedences..." visible="false" />
                      </children>
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" top="10.0" />
@@ -93,9 +93,9 @@
          </VBox.margin></Separator>
       <VBox alignment="TOP_CENTER" spacing="2.0">
          <children>
-            <Label fx:id="formWarningTag" text="Warning: this functionality is not finished yet.">
+            <Label fx:id="warningTag" text="Warning: this functionality is not finished yet." textFill="RED">
                <font>
-                  <Font name="System Italic" size="12.0" />
+                  <Font name="System Italic" size="14.0" />
                </font>
             </Label>
             <HBox alignment="TOP_CENTER">
@@ -116,4 +116,7 @@
          </VBox.margin>
       </VBox>
    </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
 </VBox>

@@ -62,5 +62,5 @@ class Subject extends Identifiable with Serializable {
     }*/
 
     //debug method
-    override def toString: String = List(name, shortName, description, events, color).mkString("\n")
+    def summary: String = List(name, shortName, description, events, color).mkString("\n")
 }

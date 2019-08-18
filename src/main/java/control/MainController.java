@@ -4,6 +4,7 @@ import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
 import app.AssignmentViabilityChecker;
+import control.form.EventFormController;
 import control.manage.CourseManagerController;
 import control.manage.CourseResourceManagerController;
 import control.schedule.*;
@@ -413,7 +414,8 @@ public class MainController implements Initializable {
                 AppSettings.language().getItem("eventForm_windowTitle"),
                 addButtons_event.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.EventForm())
+                new ViewFactory<>(FXMLPaths.EventForm()),
+                new EventFormController(this)
         );
 
         prompt.show();

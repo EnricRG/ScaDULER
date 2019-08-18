@@ -44,7 +44,7 @@
                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="290.0" spacing="5.0">
                                  <children>
                                     <Label fx:id="subjectDescriptionTag" text="Subject Description (optional)" />
-                                    <TextArea fx:id="subjectDescriptionField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                    <TextArea fx:id="subjectDescriptionField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" />
                                  </children>
                               </VBox>
                               <VBox alignment="TOP_CENTER" spacing="5.0">

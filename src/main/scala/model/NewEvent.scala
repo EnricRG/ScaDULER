@@ -54,13 +54,13 @@ class NewEvent extends Identifiable with Serializable {
     private var name: String = ""
     private var shortName: String = ""
     private var description: String = ""
-    private var neededResource: Resource = _
+    private var neededResource: Option[Resource] = None
     private var eventType: EventType = _
     private var subject: Option[Subject] = None
     private var week: Week = EveryWeek
     private var duration: Int = AppSettings.maxEventDuration
     private var incompatibilities: ListBuffer[NewEvent] = new ListBuffer
-    private var precedences: ListBuffer[Precedence] = new ListBuffer
+    //private var precedences: ListBuffer[Precedence] = new ListBuffer
 
     def getStartInterval: Int = startInterval
     def assign(interval: Int): Unit = startInterval = interval
@@ -74,14 +74,21 @@ class NewEvent extends Identifiable with Serializable {
     def getShortName: String = shortName
     def setShortName(n: String): Unit = shortName = n
 
+    def getDescription: String = description
+    def setDescription(n: String): Unit = description = n
+
     def getSubject: Option[Subject] = subject
     def setSubject(s: Subject): Unit = subject = Some(s)
 
     def getEventType: EventType = eventType
     def setEventType(et: EventType): Unit = eventType = et
 
-    def getNeededResource: Resource = neededResource
-    def setNeededResource(nr: Resource): Unit = neededResource = nr
+    def needsResource: Boolean = neededResource match{
+        case Some(_) => true
+        case _ => false
+    }
+    def getNeededResource: Resource = neededResource.orNull
+    def setNeededResource(nr: Resource): Unit = neededResource = Some(nr)
 
     def getWeek: Week = week
     def setWeek(week: Week): Unit = this.week = week

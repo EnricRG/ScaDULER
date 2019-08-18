@@ -10,6 +10,7 @@ object FXMLPaths {
     val CourseResourceManagerForm: String = "src/main/fxml/course_resource_manager.fxml"
     val SubjectForm: String = "src/main/fxml/subject_form.fxml"
     val EventForm: String = "src/main/fxml/event_form.fxml"
+    val EventIncompatibilityFrom: String = "src/main/fxml/event_incompatibility_form.fxml"
 
     val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
     val ManageCoursesPanel: String = "src/main/fxml/course_manager.fxml"

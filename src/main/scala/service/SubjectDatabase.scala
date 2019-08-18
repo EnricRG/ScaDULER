@@ -22,5 +22,6 @@ class SubjectDatabase extends Database[Subject] {
         case _ => None
     }
 
-    def getFinishedSubjectsIDs(): Iterable[Long] = getIDs.filter(getElement(_).get.isFinished)
+    def getFinishedSubjectsIDs: Iterable[Long] = getIDs.filter(getElement(_).get.isFinished)
+    def getFinishedSubjects: Iterable[Subject] = getElements.filter(_.isFinished)
 }
