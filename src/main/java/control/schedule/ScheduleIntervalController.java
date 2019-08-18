@@ -16,6 +16,7 @@ import java.util.Map;
 public class ScheduleIntervalController {
 
     private final QuarterScheduleController quarterScheduleController;
+    private final ScheduleController weekController;
     private final Region boundingRegion;
 
     private final Map<Long, AssignedEventViewController> eventViewControllers = new HashMap<>();
@@ -25,8 +26,9 @@ public class ScheduleIntervalController {
 
     private final Integer week;
 
-    public ScheduleIntervalController(QuarterScheduleController quarterScheduleController, Region regionBelow, Integer week, Integer interval){
+    public ScheduleIntervalController(QuarterScheduleController quarterScheduleController, ScheduleController weekController, Region regionBelow, Integer week, Integer interval){
         this.quarterScheduleController = quarterScheduleController;
+        this.weekController = weekController;
         this.boundingRegion = regionBelow;
         this.interval = interval;
         this.week = week;
@@ -39,16 +41,24 @@ public class ScheduleIntervalController {
         boundingBox.setMaxWidth(boundingRegion.getWidth()*AppSettings.eventViewColumnPercentage());
         boundingBox.setMaxHeight(boundingRegion.getHeight()* AppSettings.maxEventDuration());
 
+        weekController.gridPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            rePosition();
+        });
+
+        weekController.gridPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            rePosition();
+        });
+
         boundingRegion.widthProperty().addListener((observable, oldValue, newValue) -> {
             boundingBox.setMaxWidth(newValue.doubleValue()*AppSettings.eventViewColumnPercentage());
-            rePosition();
         });
 
         boundingRegion.heightProperty().addListener((observable, oldValue, newValue) -> {
             boundingBox.setMaxHeight(newValue.doubleValue()*AppSettings.maxEventDuration());
             resizeNodes(oldValue.doubleValue(), newValue.doubleValue());
-            rePosition();
         });
+
+        //FIXME this doesn't work when maximizing
     }
 
     private void rePosition() {

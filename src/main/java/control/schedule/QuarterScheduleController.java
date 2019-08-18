@@ -44,7 +44,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
             for(int interval = 0; interval < innerCells.size(); interval++){
                 Node cell = innerCells.get(interval);
 
-                ScheduleIntervalController intervalController = new ScheduleIntervalController(this, (Region) cell, week, interval);
+                ScheduleIntervalController intervalController = new ScheduleIntervalController(this, weekController, (Region) cell, week, interval);
 
                 Map<Integer, ScheduleIntervalController> weekIntervals = week == 0? firstWeekEventViews : secondWeekEventViews;
                 weekIntervals.put(interval, intervalController);

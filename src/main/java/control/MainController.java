@@ -244,11 +244,11 @@ public class MainController implements Initializable {
         manageButtons_resources.setText(AppSettings.language().getItem("manageButtons_resources"));
         manageButtons_subjects.setText(AppSettings.language().getItem("manageButtons_subjects"));
         manageButtons_events.setText(AppSettings.language().getItem("manageButtons_events"));
-        manageButtons_unfinishedEvents.setText(AppSettings.language().getItem("manageButtons_unfinishedEvents"));
+        //manageButtons_unfinishedEvents.setText(AppSettings.language().getItem("manageButtons_unfinishedEvents"));
 
         viewButtons_title.setText(AppSettings.language().getItem("viewButtons_title"));
         viewButtons_eventList.setText(AppSettings.language().getItem("viewButtons_eventList"));
-        viewButtons_unfinishedEventsList.setText(AppSettings.language().getItem("viewButtons_unfinishedEventsList"));
+        //viewButtons_unfinishedEventsList.setText(AppSettings.language().getItem("viewButtons_unfinishedEventsList"));
 
         runButtons_title.setText(AppSettings.language().getItem("runButtons_title"));
         runButtons_solve.setText(AppSettings.language().getItem("runButtons_solve"));
