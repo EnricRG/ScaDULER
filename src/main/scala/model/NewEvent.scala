@@ -29,7 +29,22 @@ object ComputerEvent extends EventType {
     override def color: paint.Color = paint.Color.web("#4986E7")
 }
 
-object EventTypes extends Serializable { val eventTypes: List[EventType] = List(TheoryEvent, LaboratoryEvent, ComputerEvent) }
+object ProblemsEvent extends EventType {
+    override def toString: String = AppSettings.language.getItem("problemEvent")
+    override def toShortString: String = AppSettings.language.getItem("problemEventShort")
+    override def color: paint.Color = TheoryEvent.color
+}
+
+object SpecialEvent extends EventType {
+    override def toString: String = AppSettings.language.getItem("specialEvent")
+    override def toShortString: String = AppSettings.language.getItem("specialEventShort")
+    override def color: paint.Color = paint.Color.web("#af77c9")
+}
+
+object EventTypes extends Serializable {
+    val commonEventTypes: List[EventType] = List(TheoryEvent, ProblemsEvent, LaboratoryEvent, ComputerEvent)
+    val allEventTypes: List[EventType] = SpecialEvent :: commonEventTypes
+}
 
 case class Precedence(event: NewEvent, isStrict: Boolean)
 

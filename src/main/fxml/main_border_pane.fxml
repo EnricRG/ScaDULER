@@ -38,16 +38,16 @@
                                           <MenuItem fx:id="fileMenu_save" mnemonicParsing="false" text="Save" />
                                           <MenuItem fx:id="fileMenu_saveAs" mnemonicParsing="false" text="Save as..." />
                                           <SeparatorMenuItem mnemonicParsing="false" />
-                                          <MenuItem fx:id="fileMenu_close" mnemonicParsing="false" text="Close" />
+                                          <MenuItem fx:id="fileMenu_close" disable="true" mnemonicParsing="false" text="Close" />
                                        </items>
                                     </Menu>
                                     <Menu fx:id="menuBar_editMenu" disable="true" mnemonicParsing="false" text="Edit" />
-                                    <Menu fx:id="menuBar_settingsMenu" mnemonicParsing="false" text="Settings">
+                                    <Menu fx:id="menuBar_settingsMenu" disable="true" mnemonicParsing="false" text="Settings">
                                        <items>
                                           <MenuItem fx:id="settingsMenu_appSettings" mnemonicParsing="false" text="Application Settings" />
                                        </items>
                                     </Menu>
-                                    <Menu fx:id="menuBar_helpMenu" mnemonicParsing="false" text="Help">
+                                    <Menu fx:id="menuBar_helpMenu" disable="true" mnemonicParsing="false" text="Help">
                                        <items>
                                           <MenuItem fx:id="helpMenu_about" mnemonicParsing="false" text="About" />
                                        </items>
@@ -79,7 +79,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="addButtons_event" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Event" HBox.hgrow="ALWAYS">
+                                    <Button fx:id="addButtons_event" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Event" HBox.hgrow="ALWAYS">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -131,14 +131,6 @@
                                           <Insets />
                                        </opaqueInsets>
                                     </Button>
-                                    <Button fx:id="manageButtons_unfinishedEvents" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="86.0" text="Unfinished Events" textAlignment="CENTER" wrapText="true">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                    </Button>
                                  </children>
                               </HBox>
                            </children>
@@ -158,11 +150,6 @@
                               <HBox maxHeight="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                                  <children>
                                     <ToggleButton fx:id="viewButtons_eventList" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" selected="true" text="Event List" textAlignment="CENTER">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </ToggleButton>
-                                    <ToggleButton fx:id="viewButtons_unfinishedEventsList" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="86.0" text="Unfinished&#10;Event List" textAlignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

@@ -9,6 +9,7 @@ object FXMLPaths {
     val CourseForm: String = "src/main/fxml/course_form.fxml"
     val CourseResourceManagerForm: String = "src/main/fxml/course_resource_manager.fxml"
     val SubjectForm: String = "src/main/fxml/subject_form.fxml"
+    val EventForm: String = "src/main/fxml/event_form.fxml"
 
     val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
     val ManageCoursesPanel: String = "src/main/fxml/course_manager.fxml"
@@ -24,6 +25,7 @@ object AppSettings {
 
     final val applicationTitle: String = "ScaDULER v0.1"
     final val TimeSlotDuration: Int = 30
+    final val TimeSlotsPerHour: Int = 60/TimeSlotDuration
 
     var language: Language = DefaultLanguage
 

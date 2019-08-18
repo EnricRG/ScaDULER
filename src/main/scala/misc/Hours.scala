@@ -1,6 +1,23 @@
 package misc
 
 import app.AppSettings
+import misc.Minutes.HalfHour
+
+case class Duration(duration: Int){
+    override def toString: String = Duration.asPrettyString(duration)
+    def toInt: Int = duration
+}
+
+object Duration{
+    def getDurations: List[Duration] = (for(i <- 1 to AppSettings.maxEventDuration) yield Duration(i)).toList
+    def asPrettyString(duration: Int): String = {
+        if(duration == 1) HalfHour.toString + "m"
+        else{
+            val hours = (duration/AppSettings.TimeSlotsPerHour).toString
+            hours + "h " + ((duration % AppSettings.TimeSlotsPerHour)*AppSettings.TimeSlotDuration).toString + "m"
+        }
+    }
+}
 
 object Hours {
     def hourList: List[Int] = (AppSettings.dayStart to AppSettings.dayEnd).toList

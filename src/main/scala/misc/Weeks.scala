@@ -31,8 +31,8 @@ object Weeks extends Serializable {
     def weekList: List[Week] = List(EveryWeek,AWeek,BWeek)
 
     def getEveryWeek: Week = EveryWeek
-    def getAWeek: Week = EveryWeek
-    def getBWeek: Week = EveryWeek
+    def getAWeek: Week = AWeek
+    def getBWeek: Week = BWeek
 }
 
 

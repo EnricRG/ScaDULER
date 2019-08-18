@@ -9,7 +9,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import misc.Duration;
 import misc.Warning;
+import misc.Weeks;
 import model.*;
 import scala.collection.JavaConverters;
 import service.EventDatabase;
@@ -39,7 +41,12 @@ public class SubjectFormController implements Initializable {
 
     public Label generateEventsTag;
     public ComboBox<EventType> generateEvents_eventTypeSelector;
-    public TextField generateEvents_numberOfEvents;
+    public Label generateEvents_rangeTag;
+    public TextField generateEvents_rangeLowerBound;
+    public TextField generateEvents_rangeUpperBound;
+    public Button generateEvents_equalButton;
+    public ComboBox<Weeks.Week> generateEvents_weekSelector;
+    public ComboBox<Duration> generateEvents_durationSelector;
     public Label generationExampleTag;
     public Label generationExampleLabel;
 
@@ -58,6 +65,8 @@ public class SubjectFormController implements Initializable {
 
     public Label warningTag;
     public Button createSubjectButton;
+
+    //public TextField generateEvents_numberOfEvents;
 
     private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
     private EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
@@ -87,8 +96,15 @@ public class SubjectFormController implements Initializable {
         subjectColorExplanation.setText(AppSettings.language().getItem("subjectForm_subjectColorExplanation"));
 
         generateEventsTag.setText(AppSettings.language().getItem("subjectForm_generateEventsTag"));
+
         generateEvents_eventTypeSelector.setPromptText(AppSettings.language().getItem("subjectForm_eventType"));
-        generateEvents_numberOfEvents.setPromptText(AppSettings.language().getItem("subjectForm_numberOfEvents"));
+        generateEvents_rangeTag.setText(AppSettings.language().getItem("subjectForm_rangeTag"));
+        generateEvents_rangeLowerBound.setPromptText(AppSettings.language().getItem("subjectForm_rangeLowerBound"));
+        generateEvents_rangeUpperBound.setPromptText(AppSettings.language().getItem("subjectForm_rangeUpperBound"));
+
+        generateEvents_weekSelector.setPromptText(AppSettings.language().getItem("subjectForm_eventWeek"));
+        generateEvents_durationSelector.setPromptText(AppSettings.language().getItem("subjectForm_eventDuration"));
+
         generationExampleTag.setText(AppSettings.language().getItem("subjectForm_generationExampleTag"));
         generationExampleLabel.setText("");
 
@@ -109,8 +125,24 @@ public class SubjectFormController implements Initializable {
     }
 
     private void setupViews() {
-        generateEvents_eventTypeSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(EventTypes.eventTypes())));
-        generateEvents_eventTypeSelector.getSelectionModel().selectFirst();
+        generateEvents_eventTypeSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(EventTypes.commonEventTypes())));
+
+        generateEvents_durationSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Duration.getDurations().toBuffer())));
+        generateEvents_durationSelector.setCellFactory(param -> new ListCell<>(){
+                    @Override
+                    protected void updateItem(Duration item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if(item == null || empty){
+                            setGraphic(null);
+                        }
+                        else {
+                            setText(item.toString());
+                        }
+                    }
+                }
+        );
+
+        generateEvents_weekSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.weekList())));
 
         selectResourceListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         selectResourceListView.setCellFactory(param -> new ListCell<>() {
@@ -137,7 +169,11 @@ public class SubjectFormController implements Initializable {
         //This could be improved with property bindings and reduce overload
         subjectNameField.setOnKeyTyped(keyEvent -> {
             subject.setName(subjectNameField.getText());
-            computeGenerationExample();
+            computeGenerationExample(
+                    subject,
+                    generateEvents_eventTypeSelector.getValue(),
+                    generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
+                    1);
             keyEvent.consume();
         });
         subjectShortNameField.setOnKeyTyped(keyEvent -> {
@@ -153,8 +189,25 @@ public class SubjectFormController implements Initializable {
             event.consume();
         });
 
+
         generateEvents_eventTypeSelector.setOnAction(event -> {
-            computeGenerationExample();
+            computeGenerationExample(
+                    subject,
+                    generateEvents_eventTypeSelector.getValue(),
+                    generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
+                    1);
+            event.consume();
+        });
+        generateEvents_equalButton.setOnAction(event -> {
+            equalizeRangeValues();
+            event.consume();
+        });
+        generateEvents_weekSelector.setOnAction(event -> {
+            computeGenerationExample(
+                    subject,
+                    generateEvents_eventTypeSelector.getValue(),
+                    generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
+                    1);
             event.consume();
         });
 
@@ -163,7 +216,15 @@ public class SubjectFormController implements Initializable {
             keyEvent.consume();
         });
         generateEventsButton.setOnAction(event -> {
-            generateEvents(subject,generateEvents_eventTypeSelector.getValue(),getNumberOfEvents());
+            generateEvents(
+                    subject,
+                    generateEvents_eventTypeSelector.getValue(),
+                    getRangeLowerBound(),
+                    getRangeUpperBound(),
+                    generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
+                    generateEvents_durationSelector.getSelectionModel().getSelectedItem(),
+                    selectResourceListView.getSelectionModel().getSelectedItem()
+            );
             event.consume();
         });
 
@@ -182,10 +243,20 @@ public class SubjectFormController implements Initializable {
         });
     }
 
-    private void computeGenerationExample() {
-        generationExampleLabel.setText(
-                subject.getName() + " " + "(" + generateEvents_eventTypeSelector.getSelectionModel().getSelectedItem() + "-1)"
-        );
+    private boolean canGenerateExample(Subject subject, EventType eventType, Weeks.Week week) {
+        return subject != null && eventType != null && week != null;
+    }
+
+    private void equalizeRangeValues() {
+        generateEvents_rangeUpperBound.setText(generateEvents_rangeLowerBound.getText());
+    }
+
+    private void computeGenerationExample(Subject subject, EventType eventType, Weeks.Week week, int number) {
+        if(canGenerateExample(subject, eventType, week)) {
+            generationExampleLabel.setText(
+                    String.format("%s (%s-%d) (%s)", subject.getName(), eventType.toString(), number, week.toShortString())
+            );
+        }
     }
 
     private void deleteSubjectEvents(Collection<Long> selectedItems) {
@@ -209,37 +280,48 @@ public class SubjectFormController implements Initializable {
         ((Stage)createSubjectButton.getScene().getWindow()).close();
     }
 
-    private int getNumberOfEvents() {
-        int nEvents = 1;
-        if(!generateEvents_numberOfEvents.getText().isBlank()) {
+    private int getNumberFromField(TextField textField){
+        int number = 1;
+        if(!textField.getText().isBlank()) {
             try {
-                nEvents = Integer.parseInt(generateEvents_numberOfEvents.getText());
+                number = Integer.parseInt(textField.getText());
             } catch (NumberFormatException npe){
-                nEvents = -1;
+                number = -1;
             }
-        } else nEvents = -1;
+        } else number = -1;
 
-        if (nEvents < 1) {
-            generateEvents_numberOfEvents.setText(String.valueOf(1));
+        if (number < 1) {
+            textField.setText(String.valueOf(1));
             return 1;
         }
-        else return nEvents;
+        else return number;
     }
 
-    private void generateEvents(Subject subject, EventType eventType, int numberOfEvents) {
-        if(!warnings(checkEventGenerationWarnings())) {
-            for(int i = 1; i<=numberOfEvents; i++){
+    private int getRangeLowerBound() {
+        return getNumberFromField(generateEvents_rangeLowerBound);
+    }
+
+    private int getRangeUpperBound() {
+        return getNumberFromField(generateEvents_rangeUpperBound);
+    }
+
+    private void generateEvents(Subject subject, EventType eventType, int rangeStart, int rangeEnd,
+                                Weeks.Week week, Duration duration, Resource neededResource) {
+        if(!warnings(checkEventGenerationWarnings(eventType, rangeStart, rangeEnd, week, duration, neededResource))) {
+            for(int i = rangeStart; i<=rangeEnd; i++){
                 Long eventID = eventDatabase.newEvent();
                 NewEvent event = eventDatabase.getElement(eventID).get(); //this should be secure because we've just created the event in DB.
-                event.setName(String.format("%s\n%s-%d", subject.getName(), eventType, i));
-                event.setShortName(String.format("%s %s-%d", subject.getShortName(), eventType.toShortString(), i));
+
+                event.setName(String.format("%s\n(%s-%d) (%s)", subject.getName(), eventType.toString(), i, week.toShortString()));
+                event.setShortName(String.format("%s (%s %d) (%s)", subject.getShortName(), eventType.toShortString(), i, week.toShortString()));
                 event.setEventType(eventType);
-                event.setNeededResource(selectResourceListView.getSelectionModel().getSelectedItem());
+                event.setNeededResource(neededResource);
+                event.setWeek(week);
+                event.setDuration(duration.toInt());
 
                 event.setSubject(subject);
                 subject.addEvent(eventID, event);
                 eventTable.getItems().add(eventID);
-                //mainController.addUnassignedEvent(event); //This shouldn't be done here.
             }
         }
     }
@@ -263,9 +345,21 @@ public class SubjectFormController implements Initializable {
         } else return false;
     }
 
-    private Warning checkEventGenerationWarnings() {
-        if(selectResourceListView.getSelectionModel().getSelectedItems().isEmpty()){
+    private Warning checkEventGenerationWarnings(EventType eventType, int rangeStart, int rangeEnd, Weeks.Week week, Duration duration, Resource neededResource) {
+        if(neededResource == null){
             return new Warning(AppSettings.language().getItem("warning_resourcesNotSelected"));
+        }
+        else if (rangeStart > rangeEnd){
+            return new Warning(AppSettings.language().getItem("warning_descendingRange"));
+        }
+        else if(eventType == null){
+            return new Warning(AppSettings.language().getItem("warning_eventTypeNotSelected"));
+        }
+        else if(week == null){
+            return new Warning(AppSettings.language().getItem("warning_weekNotSelected"));
+        }
+        else if(duration == null){
+            return new Warning(AppSettings.language().getItem("warning_durationNotSelected"));
         }
         else return checkSubjectCreationWarnings();
     }

@@ -116,7 +116,10 @@ public class MainController implements Initializable {
                                        int hint) {
 
         AssignmentViabilityChecker viabilityChecker = new AssignmentViabilityChecker(courseScheduleController.getCourse(),
-                quarterScheduleController.getQuarter(), eventDrag.getEvent().getWeek(), intervalController.getInterval(), eventDrag.getEvent());
+                quarterScheduleController.getQuarter(), eventDrag.getEvent().getWeek(),
+                intervalController.getWeek(), intervalController.getInterval(),
+                eventDrag.getEvent()
+        );
 
         if(viabilityChecker.isAViableAssignment()){ //if event can be assigned there
             //TODO allow multiple course assignments
@@ -139,7 +142,7 @@ public class MainController implements Initializable {
     }
 
     public void processEventUnassignment(QuarterScheduleController quarterScheduleController, NewEvent event){
-        quarterScheduleController.newUnassignEvent(event);
+        quarterScheduleController.unassignEvent(event);
         addUnassignedEvent(event);
     }
 
@@ -151,7 +154,6 @@ public class MainController implements Initializable {
         private final MainController mainController;
         private final EventViewController eventViewController;
         private final NewEvent event;
-        //private final QuarterScheduleController quarterScheduleController;
 
         private final ScheduleIntervalController intervalController;
 
@@ -214,7 +216,6 @@ public class MainController implements Initializable {
         configureCoursePane();
 
         configureUnassignedEventPane();
-
     }
 
     private void initializeLanguage() {
@@ -408,7 +409,14 @@ public class MainController implements Initializable {
     }
 
     private void promptEventForm() {
-        //TODO: prompt event form
+        Stage prompt = Utils.promptBoundWindow(
+                AppSettings.language().getItem("eventForm_windowTitle"),
+                addButtons_event.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory<>(FXMLPaths.EventForm())
+        );
+
+        prompt.show();
     }
 
 

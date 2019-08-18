@@ -69,7 +69,7 @@ public class ScheduleIntervalController {
         quarterScheduleController.startEventDrag(event, MainController.EventDrag.FROM_ASSIGNED, assignedEventViewController, this);
     }
 
-    public void newAddEvent(NewEvent event, int hint) {
+    public void addEvent(NewEvent event, int hint) {
         AssignedEventViewController assignedView = new AssignedEventViewController(this,event);
 
         try{new ViewFactory<>(FXMLPaths.AssignedEvent()).load(assignedView);} catch (IOException ioe){ ioe.printStackTrace(); }
@@ -82,31 +82,6 @@ public class ScheduleIntervalController {
         eventViewControllers.put(event.getID(), assignedView);
     }
 
-    /*
-    public void addEvent(MainController.EventDrag eventDrag){
-        addEvent(eventDrag.getEventViewController().getEvent(), eventDrag.dragSource, null);
-    }
-
-    public void addEvent(NewEvent event, int dragSource, AssignedEventViewController assignedEventViewController) {
-
-        if(dragSource == MainController.EventDrag.FROM_UNASSIGNED){ //comes from an unassigned event
-            addNewAssignment(quarterScheduleController.getMainController(), event, assignedEventViewController);
-            //quarterScheduleController.getMainController().assignmentDone(eventDrag);
-        }
-        else if(dragSource == MainController.EventDrag.FROM_ASSIGNED){
-            if(eventViewControllers.get(event.getID()) == assignedEventViewController){ //same interval
-                addNewAssignment(quarterScheduleController.getMainController(), event, assignedEventViewController);
-                removeOldController(assignedEventViewController);
-            }
-            else{ //another interval
-                //assignedEventViewController.getIntervalController().getQuarterScheduleController().unassignEvent(eventDrag, week);
-                //FIXME uncomment this and update behavior
-                addNewAssignment(quarterScheduleController.getMainController(), event, null);
-            }
-        }
-        //else error, no event drag with this code should exist.
-    }
-    */
     private void removeOldController(Node node) {
         boundingBox.getChildren().remove(node);
     }
@@ -126,22 +101,6 @@ public class ScheduleIntervalController {
     public void notifyEventDrop(AssignedEventViewController assignedEventViewController) {
         quarterScheduleController.notifyEventDrop(this, assignedEventViewController, boundingBox.getChildren().indexOf(assignedEventViewController.getNode()));
     }
-
-    /*
-    private void addNewAssignment(MainController mainController, NewEvent event, AssignedEventViewController hint){
-        AssignedEventViewController assignedView = new AssignedEventViewController(mainController,this,event);
-
-        try{new ViewFactory<>(FXMLPaths.AssignedEvent()).load(assignedView);} catch (IOException ioe){ ioe.printStackTrace(); }
-
-        assignedView.setHour(interval);
-
-        int hintIndex = hint != null ? boundingBox.getChildren().indexOf(hint.hourPane) : -1;
-
-        if(hintIndex < 0) boundingBox.getChildren().add(assignedView.hourPane);
-        else boundingBox.getChildren().add(hintIndex, assignedView.hourPane);
-
-        eventViewControllers.put(event.getID(), assignedView);
-    }*/
 
     public HBox getBoundingBox() {
         return boundingBox;

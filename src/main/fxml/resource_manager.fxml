@@ -49,9 +49,9 @@
             </VBox>
          </children>
       </HBox>
-      <Label fx:id="warningTag" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Warning: warning zone" visible="false">
+      <Label fx:id="warningTag" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Warning: warning zone" textFill="RED" visible="false">
          <font>
-            <Font name="System Italic" size="12.0" />
+            <Font name="System Italic" size="14.0" />
          </font>
       </Label>
    </children>

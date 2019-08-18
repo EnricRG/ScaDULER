@@ -108,9 +108,6 @@ public class CourseFormController implements Initializable {
     private Warning courseCanBeCreated(String name){
         if(name.isEmpty())
             return new Warning(AppSettings.language().getItem("warning_courseNameCannotBeEmpty"));
-        else if(courseResources.isEmpty()){
-            return new Warning(AppSettings.language().getItem("warning_courseResourcesCannotBeEmpty"));
-        }
         else return null;
     }
 

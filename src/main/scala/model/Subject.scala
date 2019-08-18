@@ -46,8 +46,8 @@ class Subject extends Identifiable with Serializable {
     def getEvents: Iterable[NewEvent] = events.values
     def getEventIDs: Iterable[Long] = events.keys
     def getEventSummary: String =
-        EventTypes.eventTypes.zip(
-            EventTypes.eventTypes.map(
+        EventTypes.commonEventTypes.zip(
+            EventTypes.commonEventTypes.map(
                 evType => events.count(_._2.getEventType == evType)
             )
         ).map{ case (evType, n) => evType + ": " + n}.mkString("\n")

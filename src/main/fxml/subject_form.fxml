@@ -67,9 +67,22 @@
                         <Label fx:id="generateEventsTag" text="Generate Subject Events:" />
                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                            <children>
-                              <ComboBox fx:id="generateEvents_eventTypeSelector" prefWidth="150.0" />
-                              <Label text="-" />
-                              <TextField fx:id="generateEvents_numberOfEvents" promptText="number of Events" />
+                              <ComboBox fx:id="generateEvents_eventTypeSelector" prefWidth="150.0" promptText="event type" />
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="generateEvents_rangeTag" text="Range:" />
+                                    <TextField fx:id="generateEvents_rangeLowerBound" maxWidth="80.0" promptText="start" />
+                                    <Label text="-" />
+                                    <TextField fx:id="generateEvents_rangeUpperBound" maxWidth="80.0" promptText="end" />
+                                    <Button fx:id="generateEvents_equalButton" mnemonicParsing="false" text="=" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox spacing="20.0">
+                           <children>
+                              <ComboBox fx:id="generateEvents_weekSelector" prefWidth="150.0" promptText="week" />
+                              <ComboBox fx:id="generateEvents_durationSelector" prefWidth="150.0" promptText="duration" />
                            </children>
                         </HBox>
                         <HBox>
@@ -135,7 +148,7 @@
       <Separator maxHeight="0.0" maxWidth="1.7976931348623157E308" minHeight="0.0" prefWidth="200.0" />
       <VBox alignment="TOP_CENTER">
          <children>
-            <Label fx:id="warningTag" text="Warning: ">
+            <Label fx:id="warningTag" text="Warning: " textFill="RED">
                <font>
                   <Font size="14.0" />
                </font>

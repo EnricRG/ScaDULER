@@ -1,13 +1,12 @@
 package app
 
-import misc.Warning
+import misc.{Warning, Weeks}
 import misc.Weeks.Week
 import model.{Course, NewEvent, Quarter}
 
-import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
 
-class AssignmentViabilityChecker(course: Course, quarter: Quarter, week: Week, interval: Int, event: NewEvent) {
+class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: Week, droppedWeek: Int, interval: Int, event: NewEvent) {
     private var checked: Boolean = false
     private var viable: Boolean = false
     private var warning: Option[Warning] = None
@@ -44,33 +43,35 @@ class AssignmentViabilityChecker(course: Course, quarter: Quarter, week: Week, i
             return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceUnavailable"), event.getNeededResource.getName)))
 
 
+
         val inFirstQuarter = course.firstQuarter == quarter
         val quarters = MainApp.getDatabase.courseDatabase.getElements.map(x => if(inFirstQuarter) x.firstQuarter else x.secondQuarter)
+
+
 
         //map of all events at each interval that would run the new event that use the same resource as our new event
         val concurrentEventsFromInterval: Map[Int, Iterable[NewEvent]] = (for(i <- interval until interval + event.getDuration) yield
             (i, quarters.flatMap(_.schedule.getEventsAtIntervalOrElseCreate(week.toWeekNumber, i).filter(x => x != event && x.getNeededResource == event.getNeededResource)))).toMap
 
+
+
         val concurrentEventsBeforeInterval = (for(i <- interval-AppSettings.maxEventDuration+1 until interval) yield {
             (i, quarters.flatMap(_.schedule.getEventsAtIntervalOrElseCreate(week.toWeekNumber, i).filter(x => x != event && x.getDuration+i-1>=interval && x.getNeededResource == event.getNeededResource)))
         }).toMap
-
-/*
-        for(i <- interval-AppSettings.maxEventDuration+1 until interval){
-            val eventsAtInterval = quarters.flatMap(_.schedule.getEventsAtIntervalOrElseCreate(week.toWeekNumber, i)
-                .filter(x => x.getDuration+i-1 >= interval && x.getNeededResource == event.getNeededResource))
-            for(e <- eventsAtInterval) yield {
-
-            }
-        }*/
 
         val addedEvents = (for(i <- interval until interval + event.getDuration) yield{
             (i, concurrentEventsBeforeInterval.values.flatten.filter(x => x.getStartInterval <= i && x.getStartInterval+x.getDuration-1 >= i))
         }).toMap
 
+
+
         val allConcurrentEvents: Map[Int, List[NewEvent]] = concurrentEventsFromInterval.map{case (k,l) => (k,l.toList++addedEvents.getOrElse(k,ListBuffer()).toList)}
 
+
+
         val consumedResources: Map[Int, Int] = allConcurrentEvents.map{case (i,l)=> (i,l.size)}
+
+
 
         for(i <- interval until interval + event.getDuration) if(event.getNeededResource.getAvailableQuantity - consumedResources.getOrElse(i,0) <= 0) {
             val relativeMinutes = (AppSettings.TimeSlotDuration*(interval-i)).toString
@@ -89,15 +90,25 @@ class AssignmentViabilityChecker(course: Course, quarter: Quarter, week: Week, i
         else None
     }
 
+    def checkWeeks(eventWeek: Week, droppedWeek: Int): Option[Warning] = {
+        if(eventWeek != Weeks.EveryWeek && event.getWeek.toWeekNumber != droppedWeek)
+            Some(new Warning(AppSettings.language.getItem("warning_weekMatchError")))
+        else
+            None
+    }
+
     def checkViability():Unit = {
 
+        //TODO
         //if (warning != null) warning = checkEventPrecedences(course, quarter, event, week, interval)
 
-        if (warning.isEmpty) warning = checkBorders(course, quarter, event, week, interval)
+        if (warning.isEmpty) warning = checkWeeks(eventWeek, droppedWeek)
 
-        if (warning.isEmpty) warning = checkEventIncompatibilities(course, quarter, event, week, interval)
+        if (warning.isEmpty) warning = checkBorders(course, quarter, event, eventWeek, interval)
 
-        if (warning.isEmpty) warning = checkResourceAvailability(course, quarter, event, week, interval)
+        if (warning.isEmpty) warning = checkEventIncompatibilities(course, quarter, event, eventWeek, interval)
+
+        if (warning.isEmpty) warning = checkResourceAvailability(course, quarter, event, eventWeek, interval)
 
         checked = true
     }

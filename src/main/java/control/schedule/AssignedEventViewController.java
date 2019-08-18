@@ -1,11 +1,8 @@
 package control.schedule;
 
 import app.AppSettings;
-import control.MainController;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import model.NewEvent;
 
 public class AssignedEventViewController extends EventViewController {
@@ -43,7 +40,6 @@ public class AssignedEventViewController extends EventViewController {
     }
 
     private void initializeBoxSize() {
-        //HBox.setHgrow(hourPane, Priority.ALWAYS);
         hourPane.setMaxWidth(Double.MAX_VALUE);
         double maxHeight = getEvent().getDuration()*intervalController.getBoundingRegion().getHeight();
         hourPane.setMaxHeight(maxHeight);

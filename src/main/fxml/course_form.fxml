@@ -31,8 +31,8 @@
       </VBox>
       <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="1.0" VBox.vgrow="ALWAYS">
          <children>
-            <Button fx:id="manageCourseResourcesButton" mnemonicParsing="false" text="Manage Course Resources..." />
-            <Label fx:id="manageCourseResourcesInfo" text="Choose the type of rooms available for this course">
+            <Button fx:id="manageCourseResourcesButton" mnemonicParsing="false" text="Manage Course Resources..." visible="false" />
+            <Label fx:id="manageCourseResourcesInfo" text="Choose the type of rooms available for this course" visible="false">
                <font>
                   <Font name="System Italic" size="12.0" />
                </font>
@@ -44,7 +44,7 @@
       </VBox>
       <VBox alignment="TOP_CENTER" spacing="2.0">
          <children>
-            <Label fx:id="formWarningTag" text="Warning: this functionality is not finished yet.">
+            <Label fx:id="formWarningTag" text="Warning: this functionality is not finished yet." textFill="RED">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
