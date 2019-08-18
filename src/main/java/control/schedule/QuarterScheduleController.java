@@ -2,10 +2,12 @@ package control.schedule;
 
 import control.MainController;
 import javafx.scene.Node;
+import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
 import misc.Weeks;
 import model.NewEvent;
 import model.Quarter;
+import scala.collection.JavaConverters;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
     public void initialize(URL url, ResourceBundle resourceBundle) {
         super.initialize(url, resourceBundle);
         initializeCustomListeners();
+        System.out.println("Quarter init");
     }
 
     private void initializeCustomListeners() {
@@ -63,13 +66,20 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
         });
     }
 
+    public void fillQuarter() {
+        for(NewEvent e: JavaConverters.asJavaCollection(quarter.getSchedule().getEvents())){
+            processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, null, null, e.getWeek().toWeekNumber(), e.getStartInterval());
+        }
+        //FIXME this will need a fix
+    }
+
     public void processEventDrop(NewEvent event, int dragSource, int hint, ScheduleIntervalController previousController, Node cell, int scheduleWeek, Integer interval) {
         if(dragSource == MainController.EventDrag.FROM_ASSIGNED) unassignEvent(event);
         assignEvent(event, dragSource, cell, scheduleWeek, interval, hint, previousController);
     }
 
     //pre event not assigned to this quarter
-    //TODO fix cell, actually the quarter does not know to wich
+    //TODO fix cell, actually the quarter does not know to which
     public void assignEvent(NewEvent scheduleEvent, int dragSource, Node cell, int scheduleWeek, Integer interval, int hint, ScheduleIntervalController previousController) {
         if(scheduleEvent.getWeek() == Weeks.getEveryWeek()){
             assignEventI(scheduleEvent, firstWeekController, firstWeekEventViews, cell, scheduleWeek, interval, hint, previousController);

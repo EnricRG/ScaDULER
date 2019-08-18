@@ -168,6 +168,15 @@ object DefaultLanguage extends Language {
         "eventForm_confirmationButton" -> "Create Event",
         "eventForm_manageIncompatibilities" -> "Manage Incompatibilities",
 
+        "manageIncompat_assignedIncompat" -> "Assigned Incompatibilities",
+        "manageIncompat_incompatTablePlaceholder" -> "No incompatibilities",
+        "manageIncompat_nameColumnHeader" -> "Name",
+        "manageIncompat_selectAllIncompatibilities" -> "Select All Incompatibilities",
+        "manageIncompat_allEventsHeader" -> "All Events",
+        "manageIncompat_searchEvent" -> "Enter event name",
+        "manageIncompat_selectAllEvents" -> "Select All Events",
+        "eventListPlaceholder" -> "No events",
+
         "courseManager_windowTitle" -> "Manage Courses",
         "courseManager_nameColumnHeader" -> "Name",
         "courseManager_descriptionColumnHeader" -> "Description",

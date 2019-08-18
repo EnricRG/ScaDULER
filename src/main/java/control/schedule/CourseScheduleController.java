@@ -41,6 +41,7 @@ public class CourseScheduleController implements Initializable {
         initializeTabView();
         initializeWarningSystem();
         bindActions();
+        fillCourse();
     }
 
     private void initializeContentLanguage() {
@@ -78,6 +79,12 @@ public class CourseScheduleController implements Initializable {
     private void initializeWarningSystem() {
         hideWarnings();
         warningTag.setText("");
+    }
+
+    private void fillCourse() {
+        System.out.println("Fill course init");
+        firstQuarterController.fillQuarter();
+        secondQuarterController.fillQuarter();
     }
 
     public void hideWarnings(){ warningTag.setVisible(false); }

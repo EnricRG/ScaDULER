@@ -110,10 +110,10 @@ public class EventFormController implements Initializable {
 
     private void setupViews() {
         eventSubjectBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(subjectDatabase.getFinishedSubjects())));
-        eventSubjectBox.setConverter(new StringConverter<Subject>() {
+        eventSubjectBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Subject object) {
-                if(object == null) return null;
+                if (object == null) return null;
                 else return object.getName();
             }
 
@@ -130,6 +130,18 @@ public class EventFormController implements Initializable {
         eventWeekBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.weekList())));
 
         eventResourceBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(resourceDatabase.getElements())));
+        eventResourceBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Resource object) {
+                if (object == null) return null;
+                else return object.getName();
+            }
+
+            @Override
+            public Resource fromString(String string) {
+                return null;
+            }
+        });
     }
 
     private void bindActions() {

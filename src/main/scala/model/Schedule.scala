@@ -19,5 +19,7 @@ class Schedule[T](intervals: Int) extends Serializable {
         case _ => None
     }
 
+    def getAllElements: Iterable[T] = timeline.toSeq.sortBy(_._1).map(_._2)
+
     override def toString: String = timeline.toString
 }

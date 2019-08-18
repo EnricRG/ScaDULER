@@ -23,6 +23,8 @@ class NewEventSchedule(intervalsPerWeek: Int) extends Schedule[ListBuffer[NewEve
         case _ =>
     }
 
+    def getEvents: Iterable[NewEvent] = super.getAllElements.flatten
+
     def getIncompatibleEvents(e: NewEvent, week: Int, interval: Int): Iterable[NewEvent] = e.getIncompatibilities.toList intersect getEventsAtIntervalOrElse(week,interval)
         //e.getIncompatibilities.filter(getEventsAtIntervalOrElse(week,interval).contains(_))
 }

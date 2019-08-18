@@ -1,5 +1,6 @@
 package control;
 
+import akka.Main;
 import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
@@ -33,6 +34,7 @@ import util.Utils;
 
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -292,6 +294,12 @@ public class MainController implements Initializable {
                 promptResourceManager(manageButtons_resources.getScene().getWindow(), null));
         manageButtons_subjects.setOnAction(event -> promptSubjectManager());
 
+        viewButtons_eventList.setOnAction(event -> {
+            if(viewButtons_eventList.isSelected()) mainBorderPane.setRight(rightPane);
+            else mainBorderPane.setRight(null);
+            event.consume();
+        });
+
         fileMenu_open.setOnAction(event -> openFile());
         fileMenu_save.setOnAction(event -> saveToFile());
         fileMenu_saveAs.setOnAction(event -> saveToNewFile());
@@ -328,7 +336,8 @@ public class MainController implements Initializable {
     }
 
     private void addUnassignedEvents() {
-        //TODO load unassigned events
+        ArrayList<NewEvent> unassignedEvents = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().eventDatabase().getUnassignedEvents()));
+        for(NewEvent e : unassignedEvents) addUnassignedEvent(e);
     }
 
     private void closeOpenCourseTabs() {

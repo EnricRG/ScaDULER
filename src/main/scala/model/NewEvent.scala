@@ -6,6 +6,7 @@ import javafx.scene.paint.Color
 import misc.Weeks.{AWeek, EveryWeek, Week}
 import service.Identifiable
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 abstract class EventType extends Serializable {
@@ -59,7 +60,7 @@ class NewEvent extends Identifiable with Serializable {
     private var subject: Option[Subject] = None
     private var week: Week = EveryWeek
     private var duration: Int = AppSettings.maxEventDuration
-    private var incompatibilities: ListBuffer[NewEvent] = new ListBuffer
+    private var incompatibilities: mutable.Set[NewEvent] = new mutable.HashSet[NewEvent]
     //private var precedences: ListBuffer[Precedence] = new ListBuffer
 
     def getStartInterval: Int = startInterval
@@ -96,8 +97,11 @@ class NewEvent extends Identifiable with Serializable {
     def getDuration: Int = duration
     def setDuration(duration: Int): Unit = this.duration = duration
 
-    def getIncompatibilities: Iterable[NewEvent] = incompatibilities
-    def addIncompatibility(e: NewEvent): ListBuffer[NewEvent] = incompatibilities += e
+    def getIncompatibilities: mutable.Set[NewEvent] = incompatibilities
+    def addIncompatibility(e: NewEvent): Unit = {
+        incompatibilities.add(e)
+        if(!e.getIncompatibilities.contains(this)) e.addIncompatibility(this)
+    }
 
     //def getPrecedent
 

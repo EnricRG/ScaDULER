@@ -224,7 +224,7 @@ public class CourseResourceManagerController implements Initializable {
     private void filterResourceTable(String text) {
         ObservableList<Resource> filteredResources = FXCollections.observableArrayList(allResources);
 
-        //if search field is not blank, remove all rows that resource's name does not contain fields content as a substring
+        //if search field is not blank, remove all rows that resource's name does not contain field's content as a substring
         if(!text.isBlank()) filteredResources.removeIf(resource -> !resource.name().toLowerCase().contains(text));
 
         generalResourceTable.setItems(filteredResources);
