@@ -46,6 +46,8 @@ object AppSettings {
 
     var defaultTimeout: Double = 10 //seconds
 
+    var tempPath: String = "temp/"
+
     object eventFormSettings {
         var width: Int = 640
         var height: Int = 450

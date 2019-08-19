@@ -1,6 +1,6 @@
 package actors
 
-import solver.{EventAssignment, NewInstanceData}
+import solver.{EventAssignment, NewInstanceData, NewMiniZincInstanceData}
 
 object Messages{
     abstract class Message
@@ -10,5 +10,10 @@ object Messages{
     //case class Optimize(data: NewInstanceData, criterion: Criterion) extends Message
     case object Stop extends Message
     //case class Stop(reason: String) extends Message
-    case class Solution(assignments: Option[Iterable[EventAssignment]]) extends Message
+    case object NoSolution extends Message
+    case class Solution(assignments: Iterable[EventAssignment]) extends Message
+
+    object MiniZincMessages{
+        case class MiniZincSolveRequest(data: NewMiniZincInstanceData)
+    }
 }

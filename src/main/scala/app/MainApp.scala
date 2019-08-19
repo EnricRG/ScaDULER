@@ -1,8 +1,10 @@
 package app
 
+import actors.Messages.SolveRequest
 import actors.{MasterActor, Messages}
 import akka.actor.{ActorRef, ActorSystem, Props}
 import service.AppDatabase
+import solver.NewInstanceData
 
 object MainApp extends App {
 
@@ -31,8 +33,17 @@ object MainApp extends App {
     }
 
     def solve(timeout: Double) = {
-        //TODO prepare instance data
-        //TODO send SolveRequest to master
+        val instanceData = NewInstanceData(
+            AppSettings.days,
+            AppSettings.timeSlotsPerDay,
+            database.resourceDatabase.getElements.size,
+            database.resourceDatabase.getElements.toList,
+            database.eventDatabase.getElements.size,
+            database.eventDatabase.getElements.toList
+        )
+
+        master ! SolveRequest(instanceData, timeout) //TODO get result
+
         //TODO wait for response
         //TODO notify MainController if the solution was found
     }

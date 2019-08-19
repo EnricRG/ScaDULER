@@ -1,9 +1,11 @@
 package actors
 
-import actors.Messages.{SolveRequest, Stop}
+import actors.Messages.MiniZincMessages.MiniZincSolveRequest
+import actors.Messages.{NoSolution, Solution, SolveRequest, Stop}
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import solver.MiniZincInstance
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
@@ -16,26 +18,31 @@ class MasterActor extends Actor{
 
     override def receive: PartialFunction[Any, Unit] = {
         case SolveRequest(data, time) => {
-            childSolver = context.system.actorOf(Props(new MiniZincInstanceSolver))
+            childSolver = context.system.actorOf(Props(new NewMiniZincInstanceSolver))
 
-            implicit val timeout = new Timeout(time seconds)
-            val future = childSolver ? SolveRequest(data, time)
+            implicit val timeout: Timeout = new Timeout(time seconds)
+            val future = childSolver ? MiniZincSolveRequest(MiniZincInstance.fromInstanceData(data))
 
             val response: Option[Try[_]] = Await.ready(future, timeout.duration).value //master blocks here
 
             response match {
-                case Some(Success(result)) =>{
-                    //TODO process result solution/none
+                case Some(Success(Solution(assignments))) =>{
+                    println(assignments)
+                    //TODO report to main
+                }
+                case Some(Success(NoSolution)) =>{
+                    println("no solution")
+                    //TODO report to main
                 }
                 case Some(Failure(_)) => {
-                    //TODO timeout expired
+                    println("Failure")
+                    //TODO timeout expired report to main
                 }
-                case None => //unknown error
+                case None => println("Master: unknown error") //unknown error
             }
         }
         case Stop => {
             if(childSolver != null) context.stop(childSolver)
-            println("Stopped")
         }
         case _ =>
     }

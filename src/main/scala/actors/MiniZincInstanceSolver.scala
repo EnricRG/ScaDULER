@@ -1,17 +1,10 @@
 package actors
 
-import solver.{EventSchedule, InstanceData}
+import solver.{EventSchedule, InstanceData, MiniZincConstants}
 
 import scala.sys.process.Process
 
-object MiniZincConstants {
-    val MiniZincPath = "./bin/minizinc/minizinc"
-    val CommandLineStatisticsOption = "-s --compiler-statistics"
-    val CommandLineDataOption = "-D"
-    val ChuffedSolver = "--solver Chuffed"
-    val EqualsSign = "="
-    val SemiColon = ";"
-}
+
 
 case class MiniZincInstanceData(dayDuration: Int,
                                 labRooms: Int, classRooms: Int, pcRooms: Int,
