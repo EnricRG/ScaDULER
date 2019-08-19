@@ -1,6 +1,6 @@
-package solver
+package actors
 
-import model.{EventSchedule, InstanceData}
+import solver.{EventSchedule, InstanceData}
 
 import scala.sys.process.Process
 

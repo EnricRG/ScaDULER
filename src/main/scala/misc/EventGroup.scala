@@ -1,4 +1,4 @@
-package model
+package misc
 
 abstract class EventGroup
 

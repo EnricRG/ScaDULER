@@ -1,7 +1,7 @@
-package solver
+package actors
 
 import akka.actor.Actor
-import model.EventSchedule
+import solver.EventSchedule
 
 trait InstanceSolver extends Actor{
 

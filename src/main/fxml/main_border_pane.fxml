@@ -172,7 +172,7 @@
                               </Label>
                               <HBox maxHeight="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Button fx:id="runButtons_solve" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Solve" textAlignment="CENTER" wrapText="true">
+                                    <Button fx:id="runButtons_solve" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Solve" textAlignment="CENTER" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -182,7 +182,16 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="runButtons_stop" disable="true" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Stop" textAlignment="CENTER" wrapText="true">
+                                    <VBox alignment="TOP_CENTER">
+                                       <children>
+                                          <Label fx:id="runButtons_timeoutLabel" text="Timeout" />
+                                          <TextField fx:id="runButtons_timeoutField" prefColumnCount="4" promptText="seconds" />
+                                       </children>
+                                       <HBox.margin>
+                                          <Insets left="4.0" right="4.0" />
+                                       </HBox.margin>
+                                    </VBox>
+                                    <Button fx:id="runButtons_stop" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="82.0" text="Stop" textAlignment="CENTER" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

@@ -1,6 +1,5 @@
 package control;
 
-import akka.Main;
 import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
@@ -99,6 +98,8 @@ public class MainController implements Initializable {
     public Label runButtons_title;
     public Button runButtons_solve;
     public Button runButtons_optimize;
+    public Label runButtons_timeoutLabel;
+    public TextField runButtons_timeoutField;
     public Button runButtons_stop;
 
     public TabPane courseTabs;
@@ -281,6 +282,9 @@ public class MainController implements Initializable {
         runButtons_title.setText(AppSettings.language().getItem("runButtons_title"));
         runButtons_solve.setText(AppSettings.language().getItem("runButtons_solve"));
         runButtons_optimize.setText(AppSettings.language().getItem("runButtons_optimize"));
+        runButtons_timeoutLabel.setText(AppSettings.language().getItem("runButtons_timeout"));
+        runButtons_timeoutField.setPromptText(AppSettings.language().getItem("runButtons_timeoutUnit"));
+        runButtons_timeoutField.setTooltip(new Tooltip(AppSettings.language().getItem("runButtons_timeoutTooltip")));
         runButtons_stop.setText(AppSettings.language().getItem("runButtons_stop"));
 
         rightPane_eventSearch.setPromptText(AppSettings.language().getItem("rightPane_eventSearch"));
@@ -310,6 +314,10 @@ public class MainController implements Initializable {
     }
 
     private void setButtonActions() {
+        fileMenu_open.setOnAction(event -> openFile());
+        fileMenu_save.setOnAction(event -> saveToFile());
+        fileMenu_saveAs.setOnAction(event -> saveToNewFile());
+
         addButtons_course.setOnAction(actionEvent -> promptCourseForm());
         addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
         addButtons_event.setOnAction(actionEvent -> promptEventForm());
@@ -326,9 +334,33 @@ public class MainController implements Initializable {
             event.consume();
         });
 
-        fileMenu_open.setOnAction(event -> openFile());
-        fileMenu_save.setOnAction(event -> saveToFile());
-        fileMenu_saveAs.setOnAction(event -> saveToNewFile());
+        runButtons_timeoutField.setText(String.valueOf(AppSettings.defaultTimeout()));
+
+        runButtons_solve.setOnAction(event -> {
+            MainApp.solve(getTimeoutFieldValue());
+            event.consume();
+        });
+        runButtons_stop.setOnAction(event -> {
+            MainApp.stopSolver();
+            event.consume();
+        });
+    }
+
+    private double getTimeoutFieldValue() {
+        double timeout;
+
+        try{
+            timeout = Double.parseDouble(runButtons_timeoutField.getText());
+        } catch (NumberFormatException nfe){
+            timeout = -1;
+        }
+
+        if(timeout < 1) {
+            timeout = AppSettings.defaultTimeout();
+            runButtons_timeoutField.setText(String.valueOf(timeout));
+        }
+
+        return timeout;
     }
 
     private void openFile(){

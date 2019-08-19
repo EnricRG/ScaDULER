@@ -82,6 +82,9 @@ object DefaultLanguage extends Language {
         "runButtons_title" -> "Run...",
         "runButtons_solve" -> "Solve",
         "runButtons_optimize" -> "Optimize",
+        "runButtons_timeout" -> "Timeout",
+        "runButtons_timeoutUnit" -> "seconds",
+        "runButtons_timeoutTooltip" -> "Seconds until the solver stops searching valid assignments",
         "runButtons_stop" -> "Stop",
 
         "optional_tag" -> "(Optional)",

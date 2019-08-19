@@ -18,7 +18,6 @@ class NewEventSchedule(intervalsPerWeek: Int) extends Schedule[ListBuffer[NewEve
         case true => {
             updateInterval(interval, getValueAtIntervalOrElse(interval, new ListBuffer)-=event)
             event.unassign()
-            println(this) //TODO remove this
         }
         case _ =>
     }

@@ -32,8 +32,8 @@ object AppSettings {
     var language: Language = DefaultLanguage
 
     var timeSeparatorSymbol: String = ":"
-    var dayStart: Int = 8
-    var dayEnd: Int = 19
+    var dayStart: Int = 8 //8:00 AM
+    var dayEnd: Int = 19 //19:00
 
     var timeSlotsPerDay:Int = 22
     var days: Int = 5
@@ -43,6 +43,8 @@ object AppSettings {
     var eventViewColumnPercentage: Double = 0.9
 
     var minQuantityPerResource: Int = 1
+
+    var defaultTimeout: Double = 10 //seconds
 
     object eventFormSettings {
         var width: Int = 640

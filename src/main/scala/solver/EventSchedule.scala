@@ -1,4 +1,4 @@
-package model
+package solver
 
 @Deprecated
 class EventSchedule {
