@@ -2,6 +2,7 @@ package control.manage;
 
 import app.AppSettings;
 import app.MainApp;
+import control.MainController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.Initializable;
@@ -11,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.text.TextAlignment;
+import model.NewEvent;
 import scala.collection.JavaConverters;
 import service.SubjectDatabase;
 
@@ -18,6 +20,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SubjectManagerController implements Initializable {
+
+    private final MainController mainController;
 
     private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
 
@@ -31,6 +35,10 @@ public class SubjectManagerController implements Initializable {
     public Button addSubjectButton;
     public Button editSubjectButton;
     public Button removeSubjectButton;
+
+    public SubjectManagerController(MainController mainController){
+        this.mainController = mainController;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -49,7 +57,7 @@ public class SubjectManagerController implements Initializable {
 
         addSubjectButton.setText(AppSettings.language().getItem("subjectManager_addSubjectButton"));
         editSubjectButton.setText(AppSettings.language().getItem("subjectManager_editSubjectButton"));
-        removeSubjectButton.setText(AppSettings.language().getItem("courseManager_removeSubjectButton"));
+        removeSubjectButton.setText(AppSettings.language().getItem("subjectManager_removeSubjectButton"));
     }
 
     private void setupColumn(TableColumn tc){
@@ -86,8 +94,10 @@ public class SubjectManagerController implements Initializable {
         Long sid = subjectTable.getSelectionModel().getSelectedItem();
 
         if(sid != null){
-            subjectDatabase.removeSubject(sid);
             subjectTable.getItems().remove(sid);
+            for(NewEvent e : JavaConverters.asJavaCollection(subjectDatabase.getElement(sid).get().getEvents()))
+                mainController.removeEvent(e);
+            subjectDatabase.removeSubject(sid);
         }
     }
 

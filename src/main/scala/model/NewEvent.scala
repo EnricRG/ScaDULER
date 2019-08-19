@@ -78,6 +78,7 @@ class NewEvent extends Identifiable with Serializable {
     def getDescription: String = description
     def setDescription(n: String): Unit = description = n
 
+    def getSafeSubject: Subject = subject.orNull
     def getSubject: Option[Subject] = subject
     def setSubject(s: Subject): Unit = subject = Some(s)
 
@@ -89,6 +90,7 @@ class NewEvent extends Identifiable with Serializable {
         case _ => false
     }
     def getNeededResource: Resource = neededResource.orNull
+    def getSafeNeededResource: Resource = getNeededResource
     def setNeededResource(nr: Resource): Unit = neededResource = Some(nr)
 
     def getWeek: Week = week
@@ -101,6 +103,10 @@ class NewEvent extends Identifiable with Serializable {
     def addIncompatibility(e: NewEvent): Unit = {
         incompatibilities.add(e)
         if(!e.getIncompatibilities.contains(this)) e.addIncompatibility(this)
+    }
+    def removeIncompatibility(e: NewEvent): Unit = {
+        incompatibilities.remove(e)
+        if(e.getIncompatibilities.contains(this)) e.removeIncompatibility(this)
     }
 
     //def getPrecedent

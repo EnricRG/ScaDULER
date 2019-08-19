@@ -122,7 +122,8 @@ public class CourseFormController implements Initializable {
                 MainApp.getDatabase().courseDatabase().createCourse( //We know here that courseQuarter value cannot be null
                     courseName.getValueSafe(), courseDescription.getValueSafe(),
                         JavaConverters.collectionAsScalaIterable(courseResources)
-                    )
+                    ),
+                    false
                 );
 
             finished = true;

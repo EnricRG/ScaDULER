@@ -8,6 +8,8 @@ import app.AssignmentViabilityChecker;
 import control.form.EventFormController;
 import control.manage.CourseManagerController;
 import control.manage.CourseResourceManagerController;
+import control.manage.EventManagerController;
+import control.manage.SubjectManagerController;
 import control.schedule.*;
 import factory.*;
 import javafx.fxml.Initializable;
@@ -109,6 +111,8 @@ public class MainController implements Initializable {
     public ScrollPane rightPane_scrollPane;
     public VBox rightPane_VBox;
 
+    private Map<Long, QuarterScheduleController> eventQuartersMap = new HashMap<>();
+    private Map<Long, UnassignedEventViewController> unassignedEventsMap = new HashMap<>();
     private Map<Long,Tab> courseTabMap = new HashMap<>();
     private Map<Long,Node> eventViewMap = new HashMap<>();
 
@@ -136,6 +140,7 @@ public class MainController implements Initializable {
                     intervalController.getWeek(),
                     intervalController.getInterval()
             );
+            eventQuartersMap.put(eventDrag.getEvent().getID(), quarterScheduleController);
             assignmentDone(eventDrag);
         }
         else {
@@ -146,7 +151,27 @@ public class MainController implements Initializable {
 
     public void processEventUnassignment(QuarterScheduleController quarterScheduleController, NewEvent event){
         quarterScheduleController.unassignEvent(event);
+        eventQuartersMap.remove(event.getID());
         addUnassignedEvent(event);
+    }
+
+    //pre event exists in DB
+    public void removeEvent(NewEvent event) {
+        QuarterScheduleController quarterScheduleController = eventQuartersMap.get(event.getID());
+        if(quarterScheduleController != null) {
+            quarterScheduleController.unassignEvent(event);
+            eventQuartersMap.remove(event.getID());
+        }
+        removeUnassignedEvent(event);
+    }
+
+    private void removeUnassignedEvent(NewEvent event) {
+        Long eventID = event.getID();
+        UnassignedEventViewController viewController = unassignedEventsMap.get(eventID);
+        if(viewController != null){
+            rightPane_VBox.getChildren().remove(viewController.getNode());
+            unassignedEventsMap.remove(eventID);
+        }
     }
 
     public class EventDrag{
@@ -293,6 +318,7 @@ public class MainController implements Initializable {
         manageButtons_resources.setOnAction(actionEvent ->
                 promptResourceManager(manageButtons_resources.getScene().getWindow(), null));
         manageButtons_subjects.setOnAction(event -> promptSubjectManager());
+        manageButtons_events.setOnAction(event -> promptEventManager());
 
         viewButtons_eventList.setOnAction(event -> {
             if(viewButtons_eventList.isSelected()) mainBorderPane.setRight(rightPane);
@@ -332,6 +358,7 @@ public class MainController implements Initializable {
         clearEventList();
         reloadDatabase();
         openNewCourseTabs();
+        addAddTab();
         addUnassignedEvents();
     }
 
@@ -342,6 +369,9 @@ public class MainController implements Initializable {
 
     private void closeOpenCourseTabs() {
         courseTabs.getTabs().removeAll(courseTabs.getTabs());
+    }
+
+    private void addAddTab() {
         courseTabs.getTabs().add(courseTabs_addTab);
     }
 
@@ -355,7 +385,7 @@ public class MainController implements Initializable {
 
     private void openNewCourseTabs() {
         for(Course c : JavaConverters.asJavaCollection(courseDatabase.getElements())){
-            addCourseTab(c);
+            addCourseTab(c, true);
         }
         courseTabs.getSelectionModel().select(0);
     }
@@ -461,9 +491,22 @@ public class MainController implements Initializable {
     private void promptSubjectManager(){
         Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("subjectManager_windowTitle"),
-                manageButtons_resources.getScene().getWindow(),
+                manageButtons_subjects.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new ViewFactory(FXMLPaths.ManageSubjectsPanel())
+                new ViewFactory<>(FXMLPaths.ManageSubjectsPanel()),
+                new SubjectManagerController(this)
+        );
+
+        prompt.show();
+    }
+
+    private void promptEventManager() {
+        Stage prompt = Utils.promptBoundWindow(
+                AppSettings.language().getItem("eventManager_windowTitle"),
+                manageButtons_events.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory<>(FXMLPaths.ManageEventsPanel()),
+                new EventManagerController(this)
         );
 
         prompt.show();
@@ -474,10 +517,10 @@ public class MainController implements Initializable {
         //TODO: decouple course creation and delegate to database.
         Course c = new Course("Default", Option.apply(null),
         new Quarter(new ListBuffer<>(), new NewEventSchedule(AppSettings.timeSlots())), new Quarter(new ListBuffer<>(), new NewEventSchedule(AppSettings.timeSlots())));
-        addCourseTab(MainApp.getDatabase().courseDatabase().addCourse(c));
+        addCourseTab(MainApp.getDatabase().courseDatabase().addCourse(c), false);
     }
 
-    public void addCourseTab(Course c){
+    public void addCourseTab(Course c, boolean reload){
 
         //create course grid.
         Node courseTabContent = null;
@@ -505,7 +548,7 @@ public class MainController implements Initializable {
         //FIXME: Last tab can be closed, and shouldn't.
 
         //Add tab at the end and select it.
-        courseTabs.getTabs().add(courseTabs.getTabs().size()-1, newTab);
+        courseTabs.getTabs().add(reload ? courseTabs.getTabs().size() : courseTabs.getTabs().size()-1, newTab);
         courseTabs.getSelectionModel().select(newTab);
 
         enableTabClosing();
@@ -527,13 +570,6 @@ public class MainController implements Initializable {
         courseTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.SELECTED_TAB);
     }
 
-    public void moveUnassignedEvent(Node gestureSource, VBox sourceParent, VBox target) {
-        if(gestureSource != target){
-            sourceParent.getChildren().remove(gestureSource);
-            target.getChildren().add(gestureSource);
-        }
-    }
-
     public void closeCourseTab(Course c) {
         closeCourseTab(c, courseTabMap.get(c.getID()));
     }
@@ -541,6 +577,9 @@ public class MainController implements Initializable {
     //called when the tab is closed from the main interface, so it has to be deleted from db
     public void closeCourseTab(Course c, Tab tab){
         if(tab != null) {
+            for(NewEvent e : JavaConverters.asJavaCollection(c.getAllEvents()))
+                addUnassignedEvent(e);
+
             courseTabMap.remove(c.getID());
             courseTabs.getTabs().remove(tab);
             courseDatabase.removeCourse(c);
@@ -553,14 +592,16 @@ public class MainController implements Initializable {
 
     public void addUnassignedEvent(NewEvent event){
         Node eventView = null;
+        UnassignedEventViewController controller = new UnassignedEventViewController(this, event);
 
         try{
-           eventView = new ViewFactory<>(FXMLPaths.UnassignedEvent()).load(new UnassignedEventViewController(this, event));
+            eventView = new ViewFactory<>(FXMLPaths.UnassignedEvent()).load(controller);
         } catch (IOException ioe){
             ioe.printStackTrace();
         }
 
         if (eventView != null){
+            unassignedEventsMap.put(event.getID(), controller);
             rightPane_VBox.getChildren().add(eventView); //TODO: improve this with a method that updates the list.
             eventViewMap.put(event.getID(), eventView);
         }
