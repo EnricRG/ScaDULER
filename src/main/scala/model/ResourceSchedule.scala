@@ -1,6 +1,9 @@
 package model
 
+import app.AppSettings
 import misc.Weeks.{AWeek, BWeek, EveryWeek}
+
+import scala.collection.immutable
 
 class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Boolean](intervalsPerWeek){
 
@@ -45,4 +48,10 @@ class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Boolean](
             case _ => false
         }
     }
+
+    //post sorted Iterable of unavailable intervals
+    def getUnavailableIntervals(week: Int): Iterable[Int] = (0 until intervalsPerWeek).filter(!isAvailable(week,_))
+    //post sorted Iterable of unavailable intervals
+    def getUnavailableIntervalsOrElse(week: Int, el: Int): Iterable[Int] =
+        (0 until intervalsPerWeek).map(x => if (!isAvailable(week, x)) x else el)
 }

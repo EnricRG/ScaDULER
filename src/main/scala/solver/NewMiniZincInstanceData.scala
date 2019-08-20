@@ -1,5 +1,13 @@
 package solver
 
+import app.AppSettings
+import misc.Weeks.{AWeek, BWeek, Week}
+import model.Resource
+
+import scala.collection.mutable.ListBuffer
+import annotation.tailrec
+import scala.collection.immutable
+
 case class NewMiniZincInstanceData(nDays: Int, //unused
                                    dayDuration: Int,
                                    nResources: Int,
@@ -42,27 +50,81 @@ object MiniZincInstance{
 
     def fromInstanceData(instance: NewInstanceData): NewMiniZincInstanceData = {
         val preassignedEventsAux = instance.events.filter(_.isAssigned)
+        object resourceAvailabilityFillerAux {
+            private val aWeekAuxEvents = new ListBuffer[(Int,Int,Resource)] //list containing auxiliary events' start, duration and resource needed
+            private val bWeekAuxEvents = new ListBuffer[(Int,Int,Resource)] //list containing auxiliary events' start, duration and resource needed
+
+            for(r <- instance.resources) {
+
+                //source: https://stackoverflow.com/questions/28286089/scala-group-consecutive-elements-in-list-where-function-is-true
+                def pack(xs: List[Int]): List[List[Int]] = xs match {
+                    case Nil => Nil
+                    case _ =>
+                        val (first, rest) = xs.span(_ >= 0)
+                        first :: pack(rest.dropWhile(_ < 0))
+                }
+
+                //post-condition of getAvailableIntervalsOrElse ensures that the list is sorted
+
+                def generateEventTuples(r: Resource, week: Week): List[(Int, Int, Resource)] = {
+                    val weekAuxEvents: ListBuffer[(Int,Int,Resource)] = new ListBuffer
+                    val packedWeekIntervals = pack(r.getUnavailableIntervalsOrElse(week.toWeekNumber, -1).toList)
+                    for(consecutiveIntervals <- packedWeekIntervals if consecutiveIntervals.nonEmpty){
+                        weekAuxEvents ++= (for (i <- 1 to r.quantity) yield (consecutiveIntervals.head + ModelIndexDeviation,consecutiveIntervals.length, r)).toList
+                    }
+                    weekAuxEvents.toList
+                }
+
+                aWeekAuxEvents ++= generateEventTuples(r, AWeek)
+                bWeekAuxEvents ++= generateEventTuples(r, BWeek)
+            }
+
+            private val eventDurationAuxAWeek = aWeekAuxEvents.map(_._2)
+            private val eventWeekAuxAWeek = aWeekAuxEvents.map(_ => AWeek.toShortString)
+            private val nPreassignedEventsAuxAWeek = aWeekAuxEvents.length
+            private val nPreassignedEventNumbersAuxAWeek = aWeekAuxEvents.indices.map(_+instance.nEvents)
+            private val nPreassignedEventStartsAuxAWeek = aWeekAuxEvents.map(_._1)
+            private val resourceNeededAuxAWeek = for(rNeeded <- aWeekAuxEvents.map(_._3)) yield for(r <- instance.resources) yield rNeeded == r
+
+            private val eventDurationAuxBWeek = bWeekAuxEvents.map(_._2)
+            private val eventWeekAuxBWeek = bWeekAuxEvents.map(_ => BWeek.toShortString)
+            private val nPreassignedEventsAuxBWeek = bWeekAuxEvents.length
+            private val nPreassignedEventNumbersAuxBWeek = bWeekAuxEvents.indices.map(_+instance.nEvents+nPreassignedEventsAuxAWeek)
+            private val nPreassignedEventStartsAuxBWeek = bWeekAuxEvents.map(_._1)
+            private val resourceNeededAuxBWeek = for(rNeeded <- bWeekAuxEvents.map(_._3)) yield for(r <- instance.resources) yield rNeeded == r
+
+            val eventDurationAux: ListBuffer[Int] = eventDurationAuxAWeek ++ eventDurationAuxBWeek
+            val eventWeekAux: ListBuffer[String] = eventWeekAuxAWeek ++ eventWeekAuxBWeek
+            val nPreassignedEventsAux: Int = nPreassignedEventsAuxAWeek + nPreassignedEventsAuxBWeek
+            val nPreassignedEventNumbersAux: immutable.IndexedSeq[Int] = nPreassignedEventNumbersAuxAWeek ++ nPreassignedEventNumbersAuxBWeek
+            val nPreassignedEventStartsAux: ListBuffer[Int] = nPreassignedEventStartsAuxAWeek ++ nPreassignedEventStartsAuxBWeek
+            val resourceNeededAux: ListBuffer[List[Boolean]] = resourceNeededAuxAWeek ++ resourceNeededAuxBWeek
+        }
+
+        //FIXME resource needed
 
         val nDays = instance.nDays
         val dayDuration = instance.dayDuration
         val nResources = instance.nResources
         val resourceQuantity = instance.resources.map(_.getQuantity)
-        val nEvents = instance.nEvents
-        val eventDuration = instance.events.map(_.getDuration)
-        val eventWeek = instance.events.map(_.getWeek.toShortString)
+        val nEvents = instance.nEvents + resourceAvailabilityFillerAux.nPreassignedEventsAux
+        val eventDuration = instance.events.map(_.getDuration) ++ resourceAvailabilityFillerAux.eventDurationAux
+        val eventWeek = instance.events.map(_.getWeek.toShortString) ++ resourceAvailabilityFillerAux.eventWeekAux
         val eventExclusions = for(e1 <- instance.events) yield for(e2 <- instance.events) yield e1.getIncompatibilities.contains(e2)
-        val resourceNeeded = for(e <- instance.events) yield for(r <- instance.resources) yield e.getNeededResource == r
-        val preassignedEventNumbers = preassignedEventsAux.map(instance.events.indexOf(_) + ModelIndexDeviation)
-        val preassignedEventStarts = preassignedEventsAux.map(_.getStartInterval + ModelIndexDeviation)
-        val nPreassignedEvents = preassignedEventsAux.length
+        val resourceNeeded = (for(e <- instance.events) yield for(r <- instance.resources) yield e.getNeededResource == r) ++ resourceAvailabilityFillerAux.resourceNeededAux
+        val preassignedEventNumbers = preassignedEventsAux.map(instance.events.indexOf(_) + ModelIndexDeviation) ++ resourceAvailabilityFillerAux.nPreassignedEventNumbersAux
+        val preassignedEventStarts = preassignedEventsAux.map(_.getStartInterval + ModelIndexDeviation) ++ resourceAvailabilityFillerAux.nPreassignedEventStartsAux
+        val nPreassignedEvents = preassignedEventsAux.length + resourceAvailabilityFillerAux.nPreassignedEventsAux
         val nPrecedences = 0
         val predecessors = List()
         val successors = List()
 
+        val totalEventExclusions = (for(e1 <- 0 until nEvents) yield (for(e2 <- 0 until nEvents) yield if(e1 < instance.nEvents && e2 < instance.nEvents) eventExclusions(e1)(e2) else false).toList).toList
+
         NewMiniZincInstanceData(
             nDays, dayDuration, //general parameters
             nResources, resourceQuantity, //resource parameters
-            nEvents, eventDuration, eventWeek, eventExclusions, resourceNeeded, //event parameters
+            nEvents, eventDuration, eventWeek, totalEventExclusions, resourceNeeded, //event parameters
             nPreassignedEvents, preassignedEventNumbers, preassignedEventStarts, //pre-assignation parameters
             nPrecedences, predecessors,successors //precedences parameters
         )

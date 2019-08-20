@@ -394,6 +394,34 @@ public class MainController implements Initializable {
         addUnassignedEvents();
     }
 
+    public void promptAlert(String title, String message){
+        Stage alert = Utils.promptBoundWindow(
+                title,
+                addButtons.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory<>(FXMLPaths.BasicAlert()),
+                new BasicAlertController(message)
+        );
+
+        alert.show();
+    }
+
+    public boolean promptChoice(String title, String message){
+        ChoiceAlertController controller = new ChoiceAlertController(message);
+
+        Stage alert = Utils.promptBoundWindow(
+                title,
+                addButtons.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory<>(FXMLPaths.ChoiceAlert()),
+                controller
+        );
+
+        alert.showAndWait();
+
+        return ChoiceAlertController.accepted;
+    }
+
     private void addUnassignedEvents() {
         ArrayList<NewEvent> unassignedEvents = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().eventDatabase().getUnassignedEvents()));
         for(NewEvent e : unassignedEvents) addUnassignedEvent(e);

@@ -5,7 +5,7 @@ import java.io.{File, FileWriter, PrintWriter}
 import actors.Messages.MiniZincMessages.MiniZincSolveRequest
 import actors.Messages.{NoSolution, Solution}
 import akka.actor.Actor
-import solver.{EventAssignment, MiniZincConstants}
+import solver.{EventAssignment, MiniZincConstants, MiniZincInstance}
 
 import scala.sys.process.Process
 
@@ -40,7 +40,15 @@ class NewMiniZincInstanceSolver extends Actor{
 
             val assignments = parseMiniZincOutput(minizinc_process.lineStream)
 
-            if(assignments.isDefined) sender ! Solution(assignments.get)
+            if(assignments.isDefined) {
+                val indexDeviation = MiniZincInstance.ModelIndexDeviation
+
+                //adapt to application indexing
+                val adaptedAssignments = assignments.get
+                    .map(x => EventAssignment(x.eventID-indexDeviation, x.interval-indexDeviation))
+
+                sender ! Solution(adaptedAssignments)
+            }
             else sender ! NoSolution
         }
         case _ =>
@@ -49,13 +57,16 @@ class NewMiniZincInstanceSolver extends Actor{
     }
 
     def parseMiniZincOutput(lineStream: Stream[String]): Option[List[EventAssignment]] = {
-        lineStream.take(2) match{
-            case x if(x.head.contains("---")) => None
-            case x => {
-                val events = x.head.split(",").map(_.toInt).toList
-                val starts = x.last.split(",").map(_.toInt).toList
-                val assignmentList = events.zip(starts).map(x => EventAssignment(x._1, x._2))
-                Some(assignmentList)
+        lineStream.take(2).toList match{
+            case x: List[String] if x.head.contains("---") => None
+            case x: List[String] => {
+                if(x.head.isBlank) None
+                else {
+                    val events = x.head.split(",").map(_.toInt).toList
+                    val starts = x.last.split(",").map(_.toInt).toList
+                    val assignmentList = events.zip(starts).map(x => EventAssignment(x._1, x._2))
+                    Some(assignmentList)
+                }
             }
             case _ => {
                 println("Error")

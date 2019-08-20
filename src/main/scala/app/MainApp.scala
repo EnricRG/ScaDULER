@@ -1,16 +1,60 @@
 package app
 
-import actors.Messages.SolveRequest
+import actors.Messages.{NoSolution, Solution, SolveRequest}
 import actors.{MasterActor, Messages}
 import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.pattern.ask
+import akka.util.Timeout
 import service.AppDatabase
 import solver.NewInstanceData
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.postfixOps
+import scala.util.{Failure, Success}
+import scala.concurrent.duration._
+
+object test extends App{
+    def splitWith[A](list: List[A], predicate: (A,A) => Boolean) = {
+        if(list.size < 2) list
+        else {
+            var result: List[List[A]] = List()
+            val indices = list.indices.dropRight(1)
+            var firstIndex = indices(0)
+            for (i <- indices) {
+                if (!predicate(list(i), list(i + 1))) {
+                    result = result :+ list.slice(firstIndex, i+1)
+                    firstIndex = i+1
+                }
+                else if(i == indices.last){
+                    result = result :+ list.slice(firstIndex, i+2)
+                }
+            }
+            result
+        }
+    }
+
+    def foldSplit[A](list: List[A], predicate: (A,A) => Boolean) = {
+        if(list.size < 2) list
+        else {
+            list
+            .indices //get indices
+            .dropRight(1) //remove last index
+            .map(x => (list(x),list(x+1))) //map to pairs (i,i+1)
+            .partition(predicate.tupled) //
+        }
+    }
+
+    override def main(args: Array[String]): Unit = {
+        println(splitWith(List(1,2), (x: Int, y: Int) => y == x+1))
+    }
+}
 
 object MainApp extends App {
 
     private var actorSystem: ActorSystem = _
     private var master: ActorRef = _
     private var database: AppDatabase = _
+    private var solving: Boolean = false
 
     def getDatabase: AppDatabase = database
     def setDatabase(appDatabase: AppDatabase): Unit = database = appDatabase
@@ -28,11 +72,11 @@ object MainApp extends App {
     }
 
     private def exit(): Unit = {
-        actorSystem.stop(master) //FIXME maybe error
+        actorSystem.stop(master) //unnecessary and pops a warning
         actorSystem.terminate()
     }
 
-    def solve(timeout: Double) = {
+    def solve(timeout: Double): Unit = {
         val instanceData = NewInstanceData(
             AppSettings.days,
             AppSettings.timeSlotsPerDay,
@@ -42,42 +86,77 @@ object MainApp extends App {
             database.eventDatabase.getElements.toList
         )
 
-        master ! SolveRequest(instanceData, timeout) //TODO get result
+        solving = true
 
-        //TODO wait for response
-        //TODO notify MainController if the solution was found
+        implicit val t: Timeout = new Timeout(timeout+1 seconds)
+        val futureResponse = master ? SolveRequest(instanceData, timeout)
+
+        futureResponse.onComplete{
+            case Success(value) => value match{ //if master responds us
+                case Some(Solution(assignments)) =>{
+                    MainApp.notifySolution(Some(Solution(assignments)))
+                }
+                case Some(NoSolution) =>{
+                    MainApp.notifySolution(None)
+                }
+                case Some(Failure(_)) =>{
+                    MainApp.notifySolverError()
+                }
+                case None => { //timeout
+                    MainApp.notifyTimeout()
+                }
+                case _ => println("Unknown response from Master Actor")
+            }
+            case Failure(exception) => { //if not
+                println("Master Actor error")
+                exception.printStackTrace()
+            }
+        }(JavaFXExecutionContext.javaFxExecutionContext)
     }
-    def stopSolver() = {
+
+    def stopSolver(): Unit = {
+        solving = false
         master ! Messages.Stop
     }
-}
 
-/*
-    override def main(args: Array[String]): Unit = {
-
-        //
-        // app.Instance 1: 1er_s1 (2019-2020)
-        //
-
-        //gui.GUI.gui
-
-        val system = ActorSystem("System")
-
-        val minizinc_solver = system.actorOf(Props[MiniZincInstanceSolver])
-
-        implicit val timeout = Timeout(10 seconds)
-
-        val awaited_response = minizinc_solver ? Instance.instance1
-
-        val result: List[String] = Await.result(awaited_response, timeout.duration).asInstanceOf[List[String]]
-
-        for(line <- result) println(line)
-
-        system.stop(minizinc_solver)
-        system.terminate
-
+    def notifySolution(solution: Option[Solution]): Unit = {
+        solution match {
+            case Some(Solution(assignments)) =>{
+                //TODO filter preassigned events and auxiliary events
+                //TODO assign events
+                MainInterface.promptAlert(
+                    AppSettings.language.getItem("solver_noSolutionWindowTitle"),
+                    AppSettings.language.getItem("solver_noSolutionText")
+                )
+            }
+            case None => {
+                MainInterface.promptAlert(
+                    AppSettings.language.getItem("solver_noSolutionWindowTitle"),
+                    AppSettings.language.getItem("solver_noSolutionText")
+                )
+            }
+        }
+        solving = false
     }
 
+    def notifySolverError(): Unit = {
+        if(solving) {
+            MainInterface.promptAlert(
+                AppSettings.language.getItem("solverError_WindowTitle"),
+                AppSettings.language.getItem("solverError_solverError")
+            )
+            solving = false
+        }
+    }
+
+    def notifyTimeout(): Unit = {
+        if(solving) {
+            MainInterface.promptAlert(
+                AppSettings.language.getItem("timeout_windowTitle"),
+                AppSettings.language.getItem("timeout_timeoutMessage")
+            )
+            solving = false
+        }
+    }
 
 }
-*/

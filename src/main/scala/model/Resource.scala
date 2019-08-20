@@ -28,4 +28,6 @@ class Resource(val name: String, var quantity: Int) extends QuantifiableResource
     def unlinkCourseResource(cr: CourseResource): Unit = courseResources -= cr
 
     def getAvailableQuantity: Int = quantity - courseResources.map(_.quantity).sum
+    def getUnavailableIntervals(week: Int): Iterable[Int] = availability.getUnavailableIntervals(week)
+    def getUnavailableIntervalsOrElse(week: Int, el: Int): Iterable[Int] = availability.getUnavailableIntervalsOrElse(week, el)
 }

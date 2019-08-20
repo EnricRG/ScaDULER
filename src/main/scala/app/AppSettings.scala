@@ -21,6 +21,9 @@ object FXMLPaths {
     val DualWeekGenericSchedule: String = "src/main/fxml/dual_week_schedule_view.fxml"
 
     val CourseSchedule: String = "src/main/fxml/course_schedule_view.fxml"
+
+    val BasicAlert: String = "src/main/fxml/basic_alert.fxml"
+    val ChoiceAlert: String = "src/main/fxml/choice_alert.fxml"
 }
 
 object AppSettings {

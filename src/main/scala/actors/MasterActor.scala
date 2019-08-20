@@ -5,9 +5,10 @@ import actors.Messages.{NoSolution, Solution, SolveRequest, Stop}
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import app.MainApp
 import solver.MiniZincInstance
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Future, TimeoutException}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
@@ -23,25 +24,38 @@ class MasterActor extends Actor{
             implicit val timeout: Timeout = new Timeout(time seconds)
             val future = childSolver ? MiniZincSolveRequest(MiniZincInstance.fromInstanceData(data))
 
-            val response: Option[Try[_]] = Await.ready(future, timeout.duration).value //master blocks here
+            var response: Option[Try[_]] = None
+
+            try{
+                response = Await.ready(future, timeout.duration).value //master blocks here
+            } catch{
+                case te: java.util.concurrent.TimeoutException => {
+                    response = None
+                }
+            }
 
             response match {
-                case Some(Success(Solution(assignments))) =>{
+                case Some(Success(Solution(assignments))) =>{ //solution found
                     println(assignments)
-                    //TODO report to main
+                    sender ! Some(Solution(assignments))
                 }
-                case Some(Success(NoSolution)) =>{
+                case Some(Success(NoSolution)) =>{ //no solution
                     println("no solution")
-                    //TODO report to main
+                    sender ! Some(NoSolution)
                 }
-                case Some(Failure(_)) => {
+                case Some(Failure(x)) => { //process failed
                     println("Failure")
-                    //TODO timeout expired report to main
+                    sender ! Some(Failure(x))
                 }
-                case None => println("Master: unknown error") //unknown error
+                case None => //timeout
+                    println("Timeout") //unknown error
+                    sender ! None
             }
+
+            context.stop(childSolver) //danger
         }
         case Stop => {
+            //TODO improve solver stop
             if(childSolver != null) context.stop(childSolver)
         }
         case _ =>

@@ -214,6 +214,18 @@ object DefaultLanguage extends Language {
         "eventManager_editEventButton" -> "Edit Event",
         "eventManager_removeEventButton" -> "Remove Event",
 
+        "denyButton" -> "Reject",
+        "confirmationButton" -> "Accept",
+
+        "solverError_WindowTitle" -> "Solver Error",
+        "solverError_solverError" -> "Unknown error when running process: Solver",
+
+        "timeout_windowTitle" -> "Timeout expired",
+        "timeout_timeoutMessage" -> "The solver did not find any solution for your schedule in the specified amount of time",
+
+        "solver_noSolutionWindowTitle" -> "No solution",
+        "solver_noSolutionText" -> "A solution for your particular schedule does not exist. Try checking your resource constrains or moving some assignments.",
+
         "warning" -> "Warning",
         "warning_courseNameCannotBeEmpty" -> "Course name cannot be empty.",
         "warning_courseQuarterCannotBeEmpty" -> "Course quarter cannot be empty.",
