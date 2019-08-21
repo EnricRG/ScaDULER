@@ -31,14 +31,12 @@ import scala.collection.JavaConverters;
 import scala.collection.mutable.ListBuffer;
 import service.AppDatabase;
 import service.CourseDatabase;
+import solver.EventAssignment;
 import util.Utils;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MainController implements Initializable {
 
@@ -112,15 +110,15 @@ public class MainController implements Initializable {
     public ScrollPane rightPane_scrollPane;
     public VBox rightPane_VBox;
 
+    private Map<Tab, CourseScheduleController> tabCourseMap = new HashMap<>();
     private Map<Long, QuarterScheduleController> eventQuartersMap = new HashMap<>();
     private Map<Long, UnassignedEventViewController> unassignedEventsMap = new HashMap<>();
-    private Map<Long,Tab> courseTabMap = new HashMap<>();
-    private Map<Long,Node> eventViewMap = new HashMap<>();
+    private Map<Long, Tab> courseTabMap = new HashMap<>();
+    private Map<Long, Node> eventViewMap = new HashMap<>();
 
     public void processEventAssignment(CourseScheduleController courseScheduleController,
                                        QuarterScheduleController quarterScheduleController,
                                        ScheduleIntervalController intervalController,
-                                       AssignedEventViewController assignedEventViewController,
                                        int hint) {
 
         AssignmentViabilityChecker viabilityChecker = new AssignmentViabilityChecker(courseScheduleController.getCourse(),
@@ -154,6 +152,31 @@ public class MainController implements Initializable {
         quarterScheduleController.unassignEvent(event);
         eventQuartersMap.remove(event.getID());
         addUnassignedEvent(event);
+    }
+
+    public void processEventAssignments(Collection<EventAssignment> eventAssignments){
+        CourseScheduleController courseScheduleController = getVisibleCourse();
+        QuarterScheduleController quarterScheduleController = courseScheduleController.getVisibleQuarterController();
+
+        for(EventAssignment ea : eventAssignments){
+            ScheduleIntervalController intervalController = quarterScheduleController.getVisibleIntervalControllerAt(ea.interval());
+
+            startEventDrag(
+                    MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null),
+                    EventDrag.FROM_UNASSIGNED,
+                    unassignedEventsMap.get((long)ea.eventID()),
+                    intervalController);
+
+            processEventAssignment(
+                    courseScheduleController,
+                    quarterScheduleController,
+                    intervalController,
+                    -1);
+        }
+    }
+
+    private CourseScheduleController getVisibleCourse() {
+        return tabCourseMap.get(courseTabs.getSelectionModel().getSelectedItem());
     }
 
     //pre event exists in DB
@@ -209,8 +232,8 @@ public class MainController implements Initializable {
         public NewEvent getEvent() { return event; }
     }
 
-    public EventDrag startEventDrag(NewEvent event, int eventType, EventViewController viewController, ScheduleIntervalController intervalController){
-        eventDrag = new EventDrag(event, eventType, this, viewController, intervalController);
+    public EventDrag startEventDrag(NewEvent event, int dragSource, EventViewController viewController, ScheduleIntervalController intervalController){
+        eventDrag = new EventDrag(event, dragSource, this, viewController, intervalController);
         return eventDrag;
     }
 
@@ -344,6 +367,21 @@ public class MainController implements Initializable {
             MainApp.stopSolver();
             event.consume();
         });
+
+        rightPane_eventSearch.setOnKeyTyped(event-> {
+            filterRightPane(rightPane_eventSearch.getText().trim());
+            event.consume();
+        });
+    }
+
+    private void filterRightPane(String text) {
+        ArrayList<Node> filteredEvents = new ArrayList<>();
+
+        for(EventViewController evc: unassignedEventsMap.values())
+            if(evc.getEvent().getName().toLowerCase().contains(text.toLowerCase())) filteredEvents.add(evc.getNode());
+
+        rightPane_VBox.getChildren().clear();
+        rightPane_VBox.getChildren().addAll(filteredEvents);
     }
 
     private double getTimeoutFieldValue() {
@@ -377,7 +415,13 @@ public class MainController implements Initializable {
                 MainApp.setDatabase((AppDatabase) oin.readObject());
                 projectLoaded();
                 fin.close();
-            } catch (IOException | ClassNotFoundException e){
+            } catch (InvalidClassException ice){
+                promptAlert(
+                        AppSettings.language().getItem("unknownFileFormat_windowTitle"),
+                        AppSettings.language().getItem("unknownFileFormat_explanation")
+                );
+            }
+            catch (IOException | ClassNotFoundException e){
                 e.printStackTrace();
             } finally {
                 try { if(oin != null) oin.close(); } catch (IOException ioe){ ioe.printStackTrace(); }
@@ -585,10 +629,12 @@ public class MainController implements Initializable {
         //create course grid.
         Node courseTabContent = null;
 
+        CourseScheduleController controller = new CourseScheduleController(this,c);
+
         try{
             //TODO load final schedule view
             //courseTabContent = CoursePanelViewFactory.load(this);
-            courseTabContent = new CourseScheduleViewFactory(new CourseScheduleController(this,c)).load();
+            courseTabContent = new CourseScheduleViewFactory(controller).load();
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -610,6 +656,8 @@ public class MainController implements Initializable {
         //Add tab at the end and select it.
         courseTabs.getTabs().add(reload ? courseTabs.getTabs().size() : courseTabs.getTabs().size()-1, newTab);
         courseTabs.getSelectionModel().select(newTab);
+
+        tabCourseMap.put(newTab, controller);
 
         enableTabClosing();
     }
@@ -641,6 +689,7 @@ public class MainController implements Initializable {
                 addUnassignedEvent(e);
 
             courseTabMap.remove(c.getID());
+            tabCourseMap.remove(tab);
             courseTabs.getTabs().remove(tab);
             courseDatabase.removeCourse(c);
 

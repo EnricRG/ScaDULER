@@ -30,7 +30,7 @@ public class BasicAlertController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         message.setText(text);
-        button.setText(AppSettings.language().getItem("confirmationButton"));
+        button.setText(AppSettings.language().getItem("acceptButton"));
         button.setOnAction(event -> {
             accepted = true;
             event.consume();

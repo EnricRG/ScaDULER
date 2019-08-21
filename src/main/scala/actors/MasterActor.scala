@@ -43,6 +43,10 @@ class MasterActor extends Actor{
                     println("no solution")
                     sender ! Some(NoSolution)
                 }
+                case Some(Success(None)) =>{
+                    println("Solver Actor error")
+                    sender ! Some(Failure(new Exception))
+                }
                 case Some(Failure(x)) => { //process failed
                     println("Failure")
                     sender ! Some(Failure(x))

@@ -6,9 +6,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import solver.EventAssignment;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 
 public class MainInterface extends javafx.application.Application{
 
@@ -42,6 +45,10 @@ public class MainInterface extends javafx.application.Application{
             return mainController.promptChoice(title, message);
         }
         else return false;
+    }
+
+    public static void processAssignments(Collection<EventAssignment> assignments){
+        mainController.processEventAssignments(assignments);
     }
 
 }

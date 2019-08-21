@@ -30,9 +30,6 @@ public class DualWeekScheduleViewController<C1 extends ScheduleController, C2 ex
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeContentLanguage();
         initializeTabConstraints();
-        /*tabPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-            mainPane.setMa
-        });*/
     }
 
     private void initializeTabConstraints() {

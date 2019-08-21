@@ -9,6 +9,7 @@ import service.Identifiable
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
+@SerialVersionUID(1L)
 abstract class EventType extends Serializable {
     def toString: String
     def toShortString: String
@@ -49,6 +50,7 @@ object EventTypes extends Serializable {
 
 case class Precedence(event: NewEvent, isStrict: Boolean)
 
+@SerialVersionUID(1L)
 class NewEvent extends Identifiable with Serializable {
 
     private var startInterval: Int = -1

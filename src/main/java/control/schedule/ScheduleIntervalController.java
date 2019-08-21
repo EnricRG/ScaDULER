@@ -38,15 +38,19 @@ public class ScheduleIntervalController {
     private void initializeBoundingBox() {
         boundingBox.setPrefWidth(Region.USE_COMPUTED_SIZE);
         boundingBox.setPrefHeight(Region.USE_COMPUTED_SIZE);
-        boundingBox.setMaxWidth(boundingRegion.getWidth()*AppSettings.eventViewColumnPercentage());
-        boundingBox.setMaxHeight(boundingRegion.getHeight()* AppSettings.maxEventDuration());
+        boundingBox.setMaxWidth(boundingRegion.getWidth() * AppSettings.eventViewColumnPercentage());
+        boundingBox.setMaxHeight((boundingRegion.getHeight()-1) * AppSettings.maxEventDuration());
 
-        weekController.gridPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-            rePosition();
+        //FIXME bounding box size problem
+
+        //boundingBox.setStyle("-fx-border-width: 2; -fx-border-color: red");
+
+        boundingRegion.layoutXProperty().addListener((observableValue, number, t1) -> {
+            boundingBox.setLayoutX(boundingRegion.getLayoutX());
         });
 
-        weekController.gridPane.heightProperty().addListener((observable, oldValue, newValue) -> {
-            rePosition();
+        boundingRegion.layoutYProperty().addListener((observableValue, number, t1) -> {
+            boundingBox.setLayoutY(boundingRegion.getLayoutY());
         });
 
         boundingRegion.widthProperty().addListener((observable, oldValue, newValue) -> {

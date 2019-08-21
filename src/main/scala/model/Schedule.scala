@@ -2,6 +2,7 @@ package model
 
 import scala.collection.mutable
 
+@SerialVersionUID(1L)
 class Schedule[T](intervals: Int) extends Serializable {
     private val timeline: mutable.Map[Int,T] = new mutable.HashMap
 

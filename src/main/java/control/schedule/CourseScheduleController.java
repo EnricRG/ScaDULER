@@ -61,8 +61,8 @@ public class CourseScheduleController implements Initializable {
     private void bindActions() {
     }
 
-    public void notifyEventDrop(QuarterScheduleController quarterScheduleController, ScheduleIntervalController intervalController, AssignedEventViewController assignedEventViewController, int hint) {
-        mainController.processEventAssignment(this, quarterScheduleController, intervalController, assignedEventViewController, hint);
+    public void notifyEventDrop(QuarterScheduleController quarterScheduleController, ScheduleIntervalController intervalController, int hint) {
+        mainController.processEventAssignment(this, quarterScheduleController, intervalController, hint);
     }
 
     public QuarterScheduleController getFirstQuarterController() { return firstQuarterController; }
@@ -96,4 +96,8 @@ public class CourseScheduleController implements Initializable {
     }
 
     public Course getCourse() { return course; }
+
+    public QuarterScheduleController getVisibleQuarterController() {
+        return tabPane.getSelectionModel().getSelectedItem() == firstQuarterTab ? firstQuarterController : secondQuarterController;
+    }
 }

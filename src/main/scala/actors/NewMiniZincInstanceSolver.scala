@@ -36,20 +36,35 @@ class NewMiniZincInstanceSolver extends Actor{
 
             val minizinc_call = generateMiniZincCall(MiniZincConstants.PredefinedDZNFilePath)
 
-            val minizinc_process = Process(minizinc_call)
+            var minizinc_process: scala.sys.process.ProcessBuilder = null
 
-            val assignments = parseMiniZincOutput(minizinc_process.lineStream)
+            var success = true
 
-            if(assignments.isDefined) {
-                val indexDeviation = MiniZincInstance.ModelIndexDeviation
-
-                //adapt to application indexing
-                val adaptedAssignments = assignments.get
-                    .map(x => EventAssignment(x.eventID-indexDeviation, x.interval-indexDeviation))
-
-                sender ! Solution(adaptedAssignments)
+            try{
+                minizinc_process = Process(minizinc_call)
+            } catch {
+                case e: Exception => {
+                    success = false
+                    sender ! None
+                }
             }
-            else sender ! NoSolution
+
+            if(success) try {
+                val assignments = parseMiniZincOutput(minizinc_process.lineStream)
+
+                if(assignments.isDefined) {
+                    val indexDeviation = MiniZincInstance.ModelIndexDeviation
+
+                    //adapt to application indexing
+                    val adaptedAssignments = assignments.get
+                        .map(x => EventAssignment(x.eventID-indexDeviation, x.interval-indexDeviation))
+
+                    sender ! Solution(adaptedAssignments)
+                }
+                else sender ! NoSolution
+            } catch{
+                case e: RuntimeException => sender ! None
+            }
         }
         case _ =>
             println("Error: MiniZincInstanceSolver unknown message")
@@ -58,6 +73,7 @@ class NewMiniZincInstanceSolver extends Actor{
 
     def parseMiniZincOutput(lineStream: Stream[String]): Option[List[EventAssignment]] = {
         lineStream.take(2).toList match{
+            case x: List[String] if x.head.contains("UNSATISFIABLE") => None
             case x: List[String] if x.head.contains("---") => None
             case x: List[String] => {
                 if(x.head.isBlank) None

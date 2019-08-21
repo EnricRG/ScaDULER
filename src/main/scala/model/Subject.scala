@@ -7,11 +7,13 @@ import service.Identifiable
 import scala.collection.mutable
 
 //TODO use case classes
+@SerialVersionUID(1L)
 class Color(r: Double, g: Double, b: Double, o: Double) extends Serializable{
     def this(color: paint.Color) = this(color.getRed, color.getGreen, color.getBlue, color.getOpacity)
     def toColor: paint.Color = new paint.Color(r,g,b,o)
 }
 
+@SerialVersionUID(1L)
 class Subject extends Identifiable with Serializable {
 
     def DefaultColor: paint.Color = Color.WHITESMOKE

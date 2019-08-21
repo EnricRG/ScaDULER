@@ -38,6 +38,7 @@ public class EventIncompatibilityManagerController implements Initializable {
 
     public EventIncompatibilityManagerController(ArrayList<NewEvent> incompatibilities){
         this.incompatibilities = incompatibilities;
+        allEvents.removeAll(incompatibilities);
     }
 
     @Override
@@ -67,6 +68,7 @@ public class EventIncompatibilityManagerController implements Initializable {
         generalEventTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         generalEventTable_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
+        incompatibilityTable.getItems().addAll(incompatibilities);
         generalEventTable.getItems().addAll(allEvents);
     }
 

@@ -8,46 +8,11 @@ import akka.util.Timeout
 import service.AppDatabase
 import solver.NewInstanceData
 
+import scala.collection.JavaConverters
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 import scala.concurrent.duration._
-
-object test extends App{
-    def splitWith[A](list: List[A], predicate: (A,A) => Boolean) = {
-        if(list.size < 2) list
-        else {
-            var result: List[List[A]] = List()
-            val indices = list.indices.dropRight(1)
-            var firstIndex = indices(0)
-            for (i <- indices) {
-                if (!predicate(list(i), list(i + 1))) {
-                    result = result :+ list.slice(firstIndex, i+1)
-                    firstIndex = i+1
-                }
-                else if(i == indices.last){
-                    result = result :+ list.slice(firstIndex, i+2)
-                }
-            }
-            result
-        }
-    }
-
-    def foldSplit[A](list: List[A], predicate: (A,A) => Boolean) = {
-        if(list.size < 2) list
-        else {
-            list
-            .indices //get indices
-            .dropRight(1) //remove last index
-            .map(x => (list(x),list(x+1))) //map to pairs (i,i+1)
-            .partition(predicate.tupled) //
-        }
-    }
-
-    override def main(args: Array[String]): Unit = {
-        println(splitWith(List(1,2), (x: Int, y: Int) => y == x+1))
-    }
-}
 
 object MainApp extends App {
 
@@ -94,10 +59,10 @@ object MainApp extends App {
         futureResponse.onComplete{
             case Success(value) => value match{ //if master responds us
                 case Some(Solution(assignments)) =>{
-                    MainApp.notifySolution(Some(Solution(assignments)))
+                    MainApp.notifySolution(instanceData, Some(Solution(assignments)))
                 }
                 case Some(NoSolution) =>{
-                    MainApp.notifySolution(None)
+                    MainApp.notifySolution(instanceData, None)
                 }
                 case Some(Failure(_)) =>{
                     MainApp.notifySolverError()
@@ -119,15 +84,22 @@ object MainApp extends App {
         master ! Messages.Stop
     }
 
-    def notifySolution(solution: Option[Solution]): Unit = {
+    def notifySolution(instanceData: NewInstanceData, solution: Option[Solution]): Unit = {
         solution match {
             case Some(Solution(assignments)) =>{
-                //TODO filter preassigned events and auxiliary events
-                //TODO assign events
-                MainInterface.promptAlert(
-                    AppSettings.language.getItem("solver_noSolutionWindowTitle"),
-                    AppSettings.language.getItem("solver_noSolutionText")
+
+                val realAssignments = assignments.take(instanceData.nEvents)
+                    .filter(x => {
+                        val e = database.eventDatabase.getElement(x.eventID)
+                        e.isDefined && !e.get.isAssigned
+                    })
+
+                val accepted: Boolean = MainInterface.promptChoice(
+                    AppSettings.language.getItem("solver_solutionFoundWindowTitle"),
+                    AppSettings.language.getItem("solver_solutionFoundText")
                 )
+
+                if(accepted) MainInterface.processAssignments(JavaConverters.asJavaCollection(realAssignments))
             }
             case None => {
                 MainInterface.promptAlert(

@@ -68,9 +68,11 @@ object MiniZincInstance{
 
                 def generateEventTuples(r: Resource, week: Week): List[(Int, Int, Resource)] = {
                     val weekAuxEvents: ListBuffer[(Int,Int,Resource)] = new ListBuffer
-                    val packedWeekIntervals = pack(r.getUnavailableIntervalsOrElse(week.toWeekNumber, -1).toList)
-                    for(consecutiveIntervals <- packedWeekIntervals if consecutiveIntervals.nonEmpty){
-                        weekAuxEvents ++= (for (i <- 1 to r.quantity) yield (consecutiveIntervals.head + ModelIndexDeviation,consecutiveIntervals.length, r)).toList
+                    for(d <- 0 until AppSettings.days) {
+                        val packedWeekIntervals = pack(r.getUnavailableIntervalsOrElse(week.toWeekNumber, d, -1).toList)
+                        for (consecutiveIntervals <- packedWeekIntervals if consecutiveIntervals.nonEmpty) {
+                            weekAuxEvents ++= (for (i <- 1 to r.quantity) yield (consecutiveIntervals.head + ModelIndexDeviation, consecutiveIntervals.length, r)).toList
+                        }
                     }
                     weekAuxEvents.toList
                 }
@@ -82,14 +84,14 @@ object MiniZincInstance{
             private val eventDurationAuxAWeek = aWeekAuxEvents.map(_._2)
             private val eventWeekAuxAWeek = aWeekAuxEvents.map(_ => AWeek.toShortString)
             private val nPreassignedEventsAuxAWeek = aWeekAuxEvents.length
-            private val nPreassignedEventNumbersAuxAWeek = aWeekAuxEvents.indices.map(_+instance.nEvents)
+            private val nPreassignedEventNumbersAuxAWeek = aWeekAuxEvents.indices.map(_ + instance.nEvents + ModelIndexDeviation)
             private val nPreassignedEventStartsAuxAWeek = aWeekAuxEvents.map(_._1)
             private val resourceNeededAuxAWeek = for(rNeeded <- aWeekAuxEvents.map(_._3)) yield for(r <- instance.resources) yield rNeeded == r
 
             private val eventDurationAuxBWeek = bWeekAuxEvents.map(_._2)
             private val eventWeekAuxBWeek = bWeekAuxEvents.map(_ => BWeek.toShortString)
             private val nPreassignedEventsAuxBWeek = bWeekAuxEvents.length
-            private val nPreassignedEventNumbersAuxBWeek = bWeekAuxEvents.indices.map(_+instance.nEvents+nPreassignedEventsAuxAWeek)
+            private val nPreassignedEventNumbersAuxBWeek = bWeekAuxEvents.indices.map(_ + instance.nEvents + ModelIndexDeviation + nPreassignedEventsAuxAWeek)
             private val nPreassignedEventStartsAuxBWeek = bWeekAuxEvents.map(_._1)
             private val resourceNeededAuxBWeek = for(rNeeded <- bWeekAuxEvents.map(_._3)) yield for(r <- instance.resources) yield rNeeded == r
 
@@ -101,7 +103,7 @@ object MiniZincInstance{
             val resourceNeededAux: ListBuffer[List[Boolean]] = resourceNeededAuxAWeek ++ resourceNeededAuxBWeek
         }
 
-        //FIXME resource needed
+        //FIXME the generated events cannot surpass day limit
 
         val nDays = instance.nDays
         val dayDuration = instance.dayDuration

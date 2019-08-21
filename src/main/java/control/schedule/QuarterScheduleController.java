@@ -2,7 +2,6 @@ package control.schedule;
 
 import control.MainController;
 import javafx.scene.Node;
-import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
 import misc.Weeks;
 import model.NewEvent;
@@ -19,6 +18,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
 
     private final Quarter quarter;
     private final MainController mainController;
+
     private final CourseScheduleController courseController;
 
     private Map<Long, Integer> eventsAtInterval = new HashMap<>(); //map of eventID and interval
@@ -62,7 +62,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
     private void setupCellBehavior(Node cell, int week, Integer interval, ScheduleIntervalController intervalController) {
         cell.setOnMouseDragReleased(dragEvent -> {
             System.out.println("Dropped here: " + week + " " + interval); //TODO remove this line
-            courseController.notifyEventDrop(this, intervalController, null, -1);
+            courseController.notifyEventDrop(this, intervalController, -1);
         });
     }
 
@@ -136,8 +136,19 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
     }
 
     public void notifyEventDrop(ScheduleIntervalController intervalController, AssignedEventViewController assignedEventViewController, int hint) {
-        courseController.notifyEventDrop(this, intervalController, assignedEventViewController, hint);
+        courseController.notifyEventDrop(this, intervalController, hint);
     }
 
     public Quarter getQuarter() { return quarter; }
+
+    public CourseScheduleController getCourseController() {
+        return courseController;
+    }
+
+    public ScheduleIntervalController getVisibleIntervalControllerAt(int interval) {
+        Map<Integer, ScheduleIntervalController> weekViews =
+                tabPane.getSelectionModel().getSelectedItem() == aWeekTab ? firstWeekEventViews : secondWeekEventViews;
+
+        return weekViews.get(interval);
+    }
 }
