@@ -251,7 +251,7 @@ object DefaultLanguage extends Language {
         "warning_incompatibleEvents" -> "the event that you're trying to assign (%s) is incompatible with this event: %s.",
         "warning_resourceUnavailable" -> "the resource %s is not available for as long as it requires.",
         "warning_resourceNeverUnavailable" -> "the resource %s is not available in any of the intervals.",
-        "warning_resourceWillBeUnavailable" -> "the resource %s will be unavailable %s from the start of the event.",
+        "warning_resourceWillBeUnavailable" -> "the resource %s will be unavailable in %s minutes from the start of the event.",
         "warning_borderLimit" -> "this event cannot be placed here because its ending time would exceed max hour allowed.",
         "warning_weekMatchError" -> "cannot assign event to this week because it's not its selected week.",
         "warning_eventNameCannotBeEmpty" -> "event name cannot be empty.",

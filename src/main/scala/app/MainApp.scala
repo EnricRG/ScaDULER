@@ -48,7 +48,7 @@ object MainApp extends App {
             database.resourceDatabase.getElements.size,
             database.resourceDatabase.getElements.toList,
             database.eventDatabase.getElements.size,
-            database.eventDatabase.getElements.toList
+            database.eventDatabase.getElements.toList.sortBy(_.getID)
         )
 
         solving = true
@@ -93,6 +93,10 @@ object MainApp extends App {
                         val e = database.eventDatabase.getElement(x.eventID)
                         e.isDefined && !e.get.isAssigned
                     })
+
+                println(realAssignments)
+
+                //TODO notify user if realAssignments has 0 assignments
 
                 val accepted: Boolean = MainInterface.promptChoice(
                     AppSettings.language.getItem("solver_solutionFoundWindowTitle"),

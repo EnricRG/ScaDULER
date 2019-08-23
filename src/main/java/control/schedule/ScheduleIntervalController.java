@@ -41,8 +41,6 @@ public class ScheduleIntervalController {
         boundingBox.setMaxWidth(boundingRegion.getWidth() * AppSettings.eventViewColumnPercentage());
         boundingBox.setMaxHeight((boundingRegion.getHeight()-1) * AppSettings.maxEventDuration());
 
-        //FIXME bounding box size problem
-
         //boundingBox.setStyle("-fx-border-width: 2; -fx-border-color: red");
 
         boundingRegion.layoutXProperty().addListener((observableValue, number, t1) -> {
@@ -62,14 +60,9 @@ public class ScheduleIntervalController {
             resizeNodes(oldValue.doubleValue(), newValue.doubleValue());
         });
 
-        //FIXME this doesn't work when maximizing
     }
 
-    private void rePosition() {
-        boundingBox.setLayoutX(boundingRegion.getLayoutX());
-        boundingBox.setLayoutY(boundingRegion.getLayoutY());
-    }
-
+    //pre: oldValue > 0
     private void resizeNodes(double oldValue, double newValue) {
         for(Node n : boundingBox.getChildren()){
             Region r = (Region) n;

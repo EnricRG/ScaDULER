@@ -36,6 +36,7 @@ public class AssignedEventViewController extends EventViewController {
     protected void initializeEventView(){
         super.initializeEventView();
         initializeBoxSize();
+        bindBoxSize();
         setEventColor();
     }
 
@@ -45,6 +46,12 @@ public class AssignedEventViewController extends EventViewController {
         hourPane.setMaxHeight(maxHeight);
         hourPane.setPrefHeight(maxHeight);
         hourPane.setMinHeight(maxHeight);
+    }
+
+    private void bindBoxSize() {
+        intervalController.getBoundingRegion().heightProperty().addListener((observable, oldValue, newValue) -> {
+            initializeBoxSize(); //TODO improvable redundant job
+        });
     }
 
     @Override

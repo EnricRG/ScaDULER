@@ -84,22 +84,22 @@ object MiniZincInstance{
             private val eventDurationAuxAWeek = aWeekAuxEvents.map(_._2)
             private val eventWeekAuxAWeek = aWeekAuxEvents.map(_ => AWeek.toShortString)
             private val nPreassignedEventsAuxAWeek = aWeekAuxEvents.length
-            private val nPreassignedEventNumbersAuxAWeek = aWeekAuxEvents.indices.map(_ + instance.nEvents + ModelIndexDeviation)
-            private val nPreassignedEventStartsAuxAWeek = aWeekAuxEvents.map(_._1)
+            private val preassignedEventNumbersAuxAWeek = aWeekAuxEvents.indices.map(_ + instance.nEvents + ModelIndexDeviation)
+            private val preassignedEventStartsAuxAWeek = aWeekAuxEvents.map(_._1)
             private val resourceNeededAuxAWeek = for(rNeeded <- aWeekAuxEvents.map(_._3)) yield for(r <- instance.resources) yield rNeeded == r
 
             private val eventDurationAuxBWeek = bWeekAuxEvents.map(_._2)
             private val eventWeekAuxBWeek = bWeekAuxEvents.map(_ => BWeek.toShortString)
             private val nPreassignedEventsAuxBWeek = bWeekAuxEvents.length
-            private val nPreassignedEventNumbersAuxBWeek = bWeekAuxEvents.indices.map(_ + instance.nEvents + ModelIndexDeviation + nPreassignedEventsAuxAWeek)
-            private val nPreassignedEventStartsAuxBWeek = bWeekAuxEvents.map(_._1)
+            private val preassignedEventNumbersAuxBWeek = bWeekAuxEvents.indices.map(_ + instance.nEvents + ModelIndexDeviation + nPreassignedEventsAuxAWeek)
+            private val preassignedEventStartsAuxBWeek = bWeekAuxEvents.map(_._1)
             private val resourceNeededAuxBWeek = for(rNeeded <- bWeekAuxEvents.map(_._3)) yield for(r <- instance.resources) yield rNeeded == r
 
             val eventDurationAux: ListBuffer[Int] = eventDurationAuxAWeek ++ eventDurationAuxBWeek
             val eventWeekAux: ListBuffer[String] = eventWeekAuxAWeek ++ eventWeekAuxBWeek
             val nPreassignedEventsAux: Int = nPreassignedEventsAuxAWeek + nPreassignedEventsAuxBWeek
-            val nPreassignedEventNumbersAux: immutable.IndexedSeq[Int] = nPreassignedEventNumbersAuxAWeek ++ nPreassignedEventNumbersAuxBWeek
-            val nPreassignedEventStartsAux: ListBuffer[Int] = nPreassignedEventStartsAuxAWeek ++ nPreassignedEventStartsAuxBWeek
+            val preassignedEventNumbersAux: immutable.IndexedSeq[Int] = preassignedEventNumbersAuxAWeek ++ preassignedEventNumbersAuxBWeek
+            val preassignedEventStartsAux: ListBuffer[Int] = preassignedEventStartsAuxAWeek ++ preassignedEventStartsAuxBWeek
             val resourceNeededAux: ListBuffer[List[Boolean]] = resourceNeededAuxAWeek ++ resourceNeededAuxBWeek
         }
 
@@ -114,8 +114,8 @@ object MiniZincInstance{
         val eventWeek = instance.events.map(_.getWeek.toShortString) ++ resourceAvailabilityFillerAux.eventWeekAux
         val eventExclusions = for(e1 <- instance.events) yield for(e2 <- instance.events) yield e1.getIncompatibilities.contains(e2)
         val resourceNeeded = (for(e <- instance.events) yield for(r <- instance.resources) yield e.getNeededResource == r) ++ resourceAvailabilityFillerAux.resourceNeededAux
-        val preassignedEventNumbers = preassignedEventsAux.map(instance.events.indexOf(_) + ModelIndexDeviation) ++ resourceAvailabilityFillerAux.nPreassignedEventNumbersAux
-        val preassignedEventStarts = preassignedEventsAux.map(_.getStartInterval + ModelIndexDeviation) ++ resourceAvailabilityFillerAux.nPreassignedEventStartsAux
+        val preassignedEventNumbers = preassignedEventsAux.map(instance.events.indexOf(_) + ModelIndexDeviation) ++ resourceAvailabilityFillerAux.preassignedEventNumbersAux
+        val preassignedEventStarts = preassignedEventsAux.map(_.getStartInterval + ModelIndexDeviation) ++ resourceAvailabilityFillerAux.preassignedEventStartsAux
         val nPreassignedEvents = preassignedEventsAux.length + resourceAvailabilityFillerAux.nPreassignedEventsAux
         val nPrecedences = 0
         val predecessors = List()

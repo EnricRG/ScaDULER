@@ -61,13 +61,14 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
 
     private void setupCellBehavior(Node cell, int week, Integer interval, ScheduleIntervalController intervalController) {
         cell.setOnMouseDragReleased(dragEvent -> {
-            System.out.println("Dropped here: " + week + " " + interval); //TODO remove this line
+            System.out.println("Dropped here: " + week + " " + interval + " " + mainController.getEventDrag().getEvent().getID()); //TODO remove this line
             courseController.notifyEventDrop(this, intervalController, -1);
         });
     }
 
     public void fillQuarter() {
         for(NewEvent e: JavaConverters.asJavaCollection(quarter.getSchedule().getEvents())){
+            //unassignEvent(e);
             processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, null, null, e.getWeek().toWeekNumber(), e.getStartInterval());
         }
         //FIXME this will need a fix

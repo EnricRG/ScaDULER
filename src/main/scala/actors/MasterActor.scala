@@ -36,7 +36,7 @@ class MasterActor extends Actor{
 
             response match {
                 case Some(Success(Solution(assignments))) =>{ //solution found
-                    println(assignments)
+                    //println(assignments)
                     sender ! Some(Solution(assignments))
                 }
                 case Some(Success(NoSolution)) =>{ //no solution
