@@ -132,7 +132,11 @@ class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: We
                 None
             }
 
-            checkWeeklyAvailability(AWeek) match {
+            if(event.getWeek != EveryWeek) checkWeeklyAvailability(event.getWeek) match{
+                case Some(x) => return Some(x)
+                case _ =>
+            }
+            else checkWeeklyAvailability(AWeek) match {
                 case Some(x) => return Some(x)
                 case None => checkWeeklyAvailability(BWeek) match{
                     case Some(x) => return Some(x)

@@ -51,14 +51,4 @@ object AppSettings {
 
     var tempPath: String = "temp/"
 
-    object eventFormSettings {
-        var width: Int = 640
-        var height: Int = 450
-
-        var fieldSpacing: Int = 4
-
-        var nameFieldWidth: Int = width/2
-        var shortNameFieldWidth: Int = width/4
-
-    }
 }

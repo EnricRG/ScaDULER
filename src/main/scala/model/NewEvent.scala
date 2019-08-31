@@ -63,7 +63,7 @@ class NewEvent extends Identifiable with Serializable {
     private var week: Week = EveryWeek
     private var duration: Int = AppSettings.maxEventDuration
     private var incompatibilities: mutable.Set[NewEvent] = new mutable.HashSet[NewEvent]
-    //private var precedences: ListBuffer[Precedence] = new ListBuffer
+    private var precedences: ListBuffer[Precedence] = new ListBuffer
 
     def getStartInterval: Int = startInterval
     def assign(interval: Int): Unit = startInterval = interval

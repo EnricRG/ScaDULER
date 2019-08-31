@@ -159,10 +159,11 @@ public class MainController implements Initializable {
         QuarterScheduleController quarterScheduleController = courseScheduleController.getVisibleQuarterController();
 
         for(EventAssignment ea : eventAssignments){
-            ScheduleIntervalController intervalController = quarterScheduleController.getVisibleIntervalControllerAt(ea.interval());
+            NewEvent event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
+            ScheduleIntervalController intervalController = quarterScheduleController.getVisibleIntervalControllerAt(event.getWeek().toWeekNumber(), ea.interval());
 
             startEventDrag(
-                    MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null),
+                    event,
                     EventDrag.FROM_UNASSIGNED,
                     unassignedEventsMap.get((long)ea.eventID()),
                     intervalController);

@@ -19,6 +19,7 @@ object Duration{
     }
 }
 
+@Deprecated
 object Hours {
     def hourList: List[Int] = (AppSettings.dayStart to AppSettings.dayEnd).toList
 }

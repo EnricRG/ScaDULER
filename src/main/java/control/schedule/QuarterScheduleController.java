@@ -146,9 +146,9 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
         return courseController;
     }
 
-    public ScheduleIntervalController getVisibleIntervalControllerAt(int interval) {
+    public ScheduleIntervalController getVisibleIntervalControllerAt(int week, int interval) {
         Map<Integer, ScheduleIntervalController> weekViews =
-                tabPane.getSelectionModel().getSelectedItem() == aWeekTab ? firstWeekEventViews : secondWeekEventViews;
+                week == Weeks.getAWeek().toWeekNumber() ? firstWeekEventViews : secondWeekEventViews;
 
         return weekViews.get(interval);
     }

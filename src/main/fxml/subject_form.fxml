@@ -50,7 +50,7 @@
                               <VBox alignment="TOP_CENTER" spacing="5.0">
                                  <children>
                                     <Label fx:id="subjectColorTag" text="Subject Color" />
-                                    <Label fx:id="subjectColorExplanation" text="This color will be used to show&#10;a thin frame around&#10;the events of the subject" textAlignment="CENTER">
+                                    <Label fx:id="subjectColorExplanation" maxWidth="150.0" text="This color will be used to draw a thin frame around the events of the subject" textAlignment="CENTER" wrapText="true">
                                        <font>
                                           <Font name="System Italic" size="12.0" />
                                        </font>

@@ -24,7 +24,7 @@ predicate no_overlap(var int: start0, var int: duration0,
 %  Atomic time slots to be filled by the different classes (30min each in our case). 
 %  Time slots are interpreted as a consecutive vector of time, 
 %  and there are no distinctions between days or weeks.
-%  This distinction will be modeled by constraints.
+%  This distinction will be modelled by constraints.
 
 %Number of days for the schedule.  
 int: nDays = 5; 
@@ -50,6 +50,7 @@ array[Resources] of int: resourceQuantity;
 
 
 %%% Events 
+% Events to be scheduled.
 int: nEvents; % Number of events.
 set of int: Events = 1..nEvents;
 
@@ -57,7 +58,7 @@ set of int: Events = 1..nEvents;
 % eventDuration[e] = i if event e has duration i.
 array[Events] of int: eventDuration;
 
-% For each Event we know in which week it has to be performed.
+% For each Event we know in which week it must be performed.
 % eventWeek[e] = w if event e must be performed during week w.
 array[Events] of WEEK: eventWeek;
 
@@ -74,12 +75,12 @@ array[Events, Resources] of bool: resourceNeeded;
 int: nPreassignedEvents;
 set of int: PreassignedEvents = 1..nPreassignedEvents;
 
-% preassignedEventNumbers[n] = e if preassignation n refers to event e.
+% preassignedEventNumbers[n] = e if preassignment n refers to event e.
 array[PreassignedEvents] of Events: preassignedEventNumbers;
-% preassignedEventStarts[n] = t if preassignation n refers assigns the event to start at t.
+% preassignedEventStarts[n] = t if preassignment n assigns the event preassignedEventNumbers[n] to start at time t.
 array[PreassignedEvents] of Times: preassignedEventStarts;
 
-% Some events have to run later than others.
+% Some events must run later than others.
 int: nPrecedences;
 set of int: Precedences = 1..nPrecedences;
 
@@ -98,17 +99,16 @@ array[Events] of var Times: eventStart;
 
 %%% Auxiliary variables
 
-% no auxiliary variables
-
-
+% Determines in which day the event is running. 
+array[Events] of var Days: dayOfEvent; 
 
 
 %%%% Constraints
 
 %%% Auxiliary variable constraints
 
-% no auxiliary variable contraints
-
+% Compute the day the event is running.
+constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDuration ) + 1);
 
 
 %%% Hard constraints
@@ -117,12 +117,12 @@ array[Events] of var Times: eventStart;
 constraint forall(p in PreassignedEvents) 
   (eventStart[preassignedEventNumbers[p]] = preassignedEventStarts[p]);
 
-% If an event has to precede another, its end time has to be smaller than the start time of the other event (strict precedence).
+% If an event must precede another, its end time must be smaller than the start time of the other event (strict precedence).
 constraint forall(prec in Precedences) 
   (eventStart[predecessors[prec]] + eventDuration[predecessors[prec]] - 1 < eventStart[successors[prec]]);
   
 % If two events are mutually exclusive, they cannot run in parallel.
-% Because eventExclusions is a symetric matrix, we can skip some combinations.
+% Because eventExclusions is a symmetric matrix, we can skip a part of the matrix.
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
   ( eventExclusions[e1,e2] -> no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
 
@@ -137,11 +137,7 @@ constraint forall(r in Resources)
 constraint forall(r in Resources)
   (cumulative(eventStart, eventDuration, [resourceNeeded[e,r]*(eventWeek[e]!=A) | e in Events], resourceQuantity[r]));
 
-% An Event cannot run between day transitions.
-array[Events] of var Days: dayOfEvent; %Auxiliar variable that determines in which day the event is running. 
-constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDuration ) + 1);
-
-%The event runs entirely on the day it starts.
+%% An Event cannot run between day transitions. The event runs entirely on the day it starts.
 constraint forall(e in Events) ( within(eventStart[e]+eventDuration[e]-1, eventStart[e], dayOfEvent[e]*dayDuration) );
 
 
