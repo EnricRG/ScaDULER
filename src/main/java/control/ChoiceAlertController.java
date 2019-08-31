@@ -5,7 +5,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import scala.App;
 
 import java.net.URL;
 import java.util.ResourceBundle;

@@ -2,7 +2,6 @@ package factory;
 
 import app.FXMLPaths;
 import control.schedule.CourseScheduleController;
-import control.schedule.QuarterScheduleController;
 import javafx.scene.Node;
 
 import java.io.IOException;

@@ -3,8 +3,6 @@ package model
 import app.AppSettings
 import misc.Weeks.{AWeek, BWeek, EveryWeek}
 
-import scala.collection.immutable
-
 @SerialVersionUID(1L)
 class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Boolean](intervalsPerWeek){
 

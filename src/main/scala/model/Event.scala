@@ -2,8 +2,7 @@ package model
 
 import app.AppSettings
 import javafx.scene.paint
-import javafx.scene.paint.Color
-import misc.Weeks.{AWeek, EveryWeek, Week}
+import misc.Weeks.{EveryWeek, Week}
 import service.Identifiable
 
 import scala.collection.mutable

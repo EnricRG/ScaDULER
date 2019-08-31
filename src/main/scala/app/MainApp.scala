@@ -6,13 +6,12 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import service.AppDatabase
-import solver.NewInstanceData
+import solver.InstanceData
 
 import scala.collection.JavaConverters
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
-import scala.concurrent.duration._
 
 object MainApp extends App {
 
@@ -42,7 +41,7 @@ object MainApp extends App {
     }
 
     def solve(timeout: Double): Unit = {
-        val instanceData = NewInstanceData(
+        val instanceData = InstanceData(
             AppSettings.days,
             AppSettings.timeSlotsPerDay,
             database.resourceDatabase.getElements.size,
@@ -84,7 +83,7 @@ object MainApp extends App {
         master ! Messages.Stop
     }
 
-    def notifySolution(instanceData: NewInstanceData, solution: Option[Solution]): Unit = {
+    def notifySolution(instanceData: InstanceData, solution: Option[Solution]): Unit = {
         solution match {
             case Some(Solution(assignments)) =>{
 

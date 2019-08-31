@@ -4,9 +4,8 @@ import app.AppSettings
 import misc.Weeks.{AWeek, BWeek, Week}
 import model.Resource
 
-import scala.collection.mutable.ListBuffer
-import annotation.tailrec
 import scala.collection.immutable
+import scala.collection.mutable.ListBuffer
 
 case class NewMiniZincInstanceData(nDays: Int, //unused
                                    dayDuration: Int,
@@ -48,7 +47,7 @@ case class NewMiniZincInstanceData(nDays: Int, //unused
 object MiniZincInstance{
     val ModelIndexDeviation = 1;
 
-    def fromInstanceData(instance: NewInstanceData): NewMiniZincInstanceData = {
+    def fromInstanceData(instance: InstanceData): NewMiniZincInstanceData = {
         val preassignedEventsAux = instance.events.filter(_.isAssigned)
         object resourceAvailabilityFillerAux {
             private val aWeekAuxEvents = new ListBuffer[(Int,Int,Resource)] //list containing auxiliary events' start, duration and resource needed

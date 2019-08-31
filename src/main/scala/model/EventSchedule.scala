@@ -1,10 +1,9 @@
 package model
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 @SerialVersionUID(1L)
-class NewEventSchedule(intervalsPerWeek: Int) extends Schedule[mutable.Set[NewEvent]](intervalsPerWeek){
+class EventSchedule(intervalsPerWeek: Int) extends Schedule[mutable.Set[NewEvent]](intervalsPerWeek){
 
 
     //def getEventsAtInterval(week: Int = 0, interval: Int): Option[ListBuffer[NewEvent]] = getWeekSchedule(week).getValueAtInterval(interval)
@@ -18,7 +17,7 @@ class NewEventSchedule(intervalsPerWeek: Int) extends Schedule[mutable.Set[NewEv
         x
     }
 
-    def removeEvent(week: Int = 0, interval: Int, event: NewEvent) = getEventsAtIntervalOrElse(week, interval).contains(event) match {
+    def removeEvent(week: Int = 0, interval: Int, event: NewEvent): Unit = getEventsAtIntervalOrElse(week, interval).contains(event) match {
         case true => {
             updateInterval(interval, getValueAtIntervalOrElse(interval, new mutable.HashSet) -= event)
             event.unassign()

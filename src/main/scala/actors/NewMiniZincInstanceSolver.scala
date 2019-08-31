@@ -1,6 +1,6 @@
 package actors
 
-import java.io.{File, FileWriter, PrintWriter}
+import java.io.{File, PrintWriter}
 
 import actors.Messages.MiniZincMessages.MiniZincSolveRequest
 import actors.Messages.{NoSolution, Solution}

@@ -11,7 +11,6 @@ import solver.EventAssignment;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 
 public class MainInterface extends javafx.application.Application{
 

@@ -24,7 +24,7 @@ import javafx.stage.Window;
 import misc.Warning;
 import model.Course;
 import model.NewEvent;
-import model.NewEventSchedule;
+import model.EventSchedule;
 import model.Quarter;
 import scala.Option;
 import scala.collection.JavaConverters;
@@ -621,7 +621,7 @@ public class MainController implements Initializable {
     public void addCourseTab(){
         //TODO: decouple course creation and delegate to database.
         Course c = new Course("Default", Option.apply(null),
-        new Quarter(new ListBuffer<>(), new NewEventSchedule(AppSettings.timeSlots())), new Quarter(new ListBuffer<>(), new NewEventSchedule(AppSettings.timeSlots())));
+        new Quarter(new ListBuffer<>(), new EventSchedule(AppSettings.timeSlots())), new Quarter(new ListBuffer<>(), new EventSchedule(AppSettings.timeSlots())));
         addCourseTab(MainApp.getDatabase().courseDatabase().addCourse(c), false);
     }
 

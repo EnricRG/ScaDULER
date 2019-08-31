@@ -1,9 +1,10 @@
 package solver
 
-import model.OldEvent
+import model.{NewEvent, Resource}
 
-@Deprecated
-case class InstanceData(dayDuration: Int,
-                        labRooms: Int, classRooms: Int, pcRooms: Int,
-                        nEvents: Int, events: List[OldEvent], preassignedEvents: List[OldEvent],
-                        precedences: List[(OldEvent, OldEvent)])
+case class InstanceData(nDays: Int,
+                        dayDuration: Int,
+                        nResources: Int,
+                        resources: List[Resource],
+                        nEvents: Int,
+                        events: List[NewEvent])

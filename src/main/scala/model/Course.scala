@@ -18,10 +18,10 @@ case class CourseResource(val resource: Resource, var quantity: Int) extends Qua
 
 //TODO finish schedule adoption
 @SerialVersionUID(1L)
-case class Quarter(var resources: Iterable[CourseResource], var schedule: NewEventSchedule = new NewEventSchedule(AppSettings.timeSlots)) extends Serializable {
+case class Quarter(var resources: Iterable[CourseResource], var schedule: EventSchedule = new EventSchedule(AppSettings.timeSlots)) extends Serializable {
     def resourceTypeCount: Int = resources.size
     def resourceAmount: Int = resources.map(_.getQuantity).sum
-    def getSchedule: NewEventSchedule = schedule
+    def getSchedule: EventSchedule = schedule
 }
 
 //TODO: update to new database model

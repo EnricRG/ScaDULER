@@ -1,10 +1,8 @@
 package app
 
-import misc.{Warning, Weeks}
 import misc.Weeks.{AWeek, BWeek, EveryWeek, Week}
+import misc.{Warning, Weeks}
 import model.{Course, NewEvent, Quarter}
-
-import scala.collection.mutable.ListBuffer
 
 class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: Week, droppedWeek: Int, interval: Int, event: NewEvent) {
 

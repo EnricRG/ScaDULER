@@ -5,10 +5,9 @@ import actors.Messages.{NoSolution, Solution, SolveRequest, Stop}
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import app.MainApp
 import solver.MiniZincInstance
 
-import scala.concurrent.{Await, Future, TimeoutException}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
