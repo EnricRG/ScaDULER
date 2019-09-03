@@ -3,19 +3,16 @@ package control.manage;
 import app.AppSettings;
 import app.MainApp;
 import control.MainController;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.TextAlignment;
 import misc.Duration;
-import model.NewEvent;
+import model.Event;
 import model.Resource;
 import model.Subject;
 import scala.collection.JavaConverters;
@@ -32,15 +29,15 @@ public class EventManagerController implements Initializable {
     private final EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
     private final SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
 
-    public TableView<NewEvent> eventTable;
+    public TableView<Event> eventTable;
 
-    public TableColumn<NewEvent, String> eventTable_nameColumn;
-    public TableColumn<NewEvent, String> eventTable_shortNameColumn;
-    public TableColumn<NewEvent, String> eventTable_subjectColumn;
-    public TableColumn<NewEvent, String> eventTable_resourceColumn;
-    public TableColumn<NewEvent, String> eventTable_weekColumn;
-    public TableColumn<NewEvent, String> eventTable_durationColumn;
-    public TableColumn<NewEvent, String> eventTable_incompatibilitiesColumn;
+    public TableColumn<Event, String> eventTable_nameColumn;
+    public TableColumn<Event, String> eventTable_shortNameColumn;
+    public TableColumn<Event, String> eventTable_subjectColumn;
+    public TableColumn<Event, String> eventTable_resourceColumn;
+    public TableColumn<Event, String> eventTable_weekColumn;
+    public TableColumn<Event, String> eventTable_durationColumn;
+    public TableColumn<Event, String> eventTable_incompatibilitiesColumn;
 
     public Button addEventButton;
     public Button editEventButton;
@@ -103,7 +100,7 @@ public class EventManagerController implements Initializable {
     }
 
     private void removeSelectedEvent() {
-        NewEvent event = eventTable.getSelectionModel().getSelectedItem();
+        Event event = eventTable.getSelectionModel().getSelectedItem();
 
         if(event != null){
 
@@ -112,7 +109,7 @@ public class EventManagerController implements Initializable {
                 subject.removeEvent(event.getID());
             }
 
-            for(NewEvent e : JavaConverters.asJavaCollection(event.getIncompatibilities())){
+            for(Event e : JavaConverters.asJavaCollection(event.getIncompatibilities())){
                 e.removeIncompatibility(event);
             }
 

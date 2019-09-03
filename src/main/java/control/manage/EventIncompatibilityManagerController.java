@@ -7,7 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import model.NewEvent;
+import model.Event;
 import scala.collection.JavaConverters;
 import service.EventDatabase;
 
@@ -17,11 +17,11 @@ import java.util.ResourceBundle;
 
 public class EventIncompatibilityManagerController implements Initializable {
 
-    private final ArrayList<NewEvent> incompatibilities;
+    private final ArrayList<Event> incompatibilities;
 
     public Label assignedIncompatibilitiesTag;
-    public TableView<NewEvent> incompatibilityTable;
-    public TableColumn<NewEvent, String> incompatibilityTable_nameColumn;
+    public TableView<Event> incompatibilityTable;
+    public TableColumn<Event, String> incompatibilityTable_nameColumn;
     public Button selectAllAssigned;
 
     public Button addButton;
@@ -29,14 +29,14 @@ public class EventIncompatibilityManagerController implements Initializable {
 
     public Label generalEventListTag;
     public TextField eventSearchBox;
-    public TableView<NewEvent> generalEventTable;
-    public TableColumn<NewEvent, String> generalEventTable_nameColumn;
+    public TableView<Event> generalEventTable;
+    public TableColumn<Event, String> generalEventTable_nameColumn;
     public Button selectAllUnassigned;
 
     private final EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
-    private final ArrayList<NewEvent> allEvents = new ArrayList<>(JavaConverters.asJavaCollection(eventDatabase.getElements()));
+    private final ArrayList<Event> allEvents = new ArrayList<>(JavaConverters.asJavaCollection(eventDatabase.getElements()));
 
-    public EventIncompatibilityManagerController(ArrayList<NewEvent> incompatibilities){
+    public EventIncompatibilityManagerController(ArrayList<Event> incompatibilities){
         this.incompatibilities = incompatibilities;
         allEvents.removeAll(incompatibilities);
     }
@@ -74,7 +74,7 @@ public class EventIncompatibilityManagerController implements Initializable {
 
     //pre: text not null
     private void filterGeneralEventTable(String text) {
-        ObservableList<NewEvent> filteredResources = FXCollections.observableArrayList(allEvents);
+        ObservableList<Event> filteredResources = FXCollections.observableArrayList(allEvents);
 
         //if search field is not blank, remove all rows that event's name does not contain field's content as a substring
         if(!text.isBlank()) filteredResources.removeIf(event -> !event.getName().toLowerCase().contains(text));
@@ -108,7 +108,7 @@ public class EventIncompatibilityManagerController implements Initializable {
     }
 
     private void addSelectedIncompatibilities() {
-        ObservableList<NewEvent> selection = generalEventTable.getSelectionModel().getSelectedItems();
+        ObservableList<Event> selection = generalEventTable.getSelectionModel().getSelectedItems();
 
         //generalEventTable.getItems().removeAll(selection);
         allEvents.removeAll(selection);
@@ -120,7 +120,7 @@ public class EventIncompatibilityManagerController implements Initializable {
     }
 
     private void removeSelectedIncompatibilities() {
-        ObservableList<NewEvent> selection = incompatibilityTable.getSelectionModel().getSelectedItems();
+        ObservableList<Event> selection = incompatibilityTable.getSelectionModel().getSelectedItems();
 
         //generalEventTable.getItems().addAll(selection);
         allEvents.addAll(selection);

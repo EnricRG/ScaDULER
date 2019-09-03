@@ -12,7 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.text.TextAlignment;
-import model.NewEvent;
+import model.Event;
 import scala.collection.JavaConverters;
 import service.SubjectDatabase;
 
@@ -95,7 +95,7 @@ public class SubjectManagerController implements Initializable {
 
         if(sid != null){
             subjectTable.getItems().remove(sid);
-            for(NewEvent e : JavaConverters.asJavaCollection(subjectDatabase.getElement(sid).get().getEvents()))
+            for(Event e : JavaConverters.asJavaCollection(subjectDatabase.getElement(sid).get().getEvents()))
                 mainController.removeEvent(e);
             subjectDatabase.removeSubject(sid);
         }

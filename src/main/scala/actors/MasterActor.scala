@@ -18,7 +18,7 @@ class MasterActor extends Actor{
 
     override def receive: PartialFunction[Any, Unit] = {
         case SolveRequest(data, time) => {
-            childSolver = context.system.actorOf(Props(new NewMiniZincInstanceSolver))
+            childSolver = context.system.actorOf(Props(new MiniZincInstanceSolver))
 
             implicit val timeout: Timeout = new Timeout(time seconds)
             val future = childSolver ? MiniZincSolveRequest(MiniZincInstance.fromInstanceData(data))

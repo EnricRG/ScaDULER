@@ -3,7 +3,7 @@ package control.schedule;
 import app.AppSettings;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
-import model.NewEvent;
+import model.Event;
 
 public class AssignedEventViewController extends EventViewController {
 
@@ -11,7 +11,7 @@ public class AssignedEventViewController extends EventViewController {
 
     public TitledPane hourPane;
 
-    public AssignedEventViewController(ScheduleIntervalController intervalController, NewEvent event) {
+    public AssignedEventViewController(ScheduleIntervalController intervalController, Event event) {
         super(event);
         this.intervalController = intervalController;
     }

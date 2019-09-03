@@ -47,10 +47,10 @@ object EventTypes extends Serializable {
     val allEventTypes: List[EventType] = SpecialEvent :: commonEventTypes
 }
 
-case class Precedence(event: NewEvent, isStrict: Boolean)
+case class Precedence(event: Event, isStrict: Boolean)
 
 @SerialVersionUID(1L)
-class NewEvent extends Identifiable with Serializable {
+class Event extends Identifiable with Serializable {
 
     private var startInterval: Int = -1
     private var name: String = ""
@@ -61,7 +61,7 @@ class NewEvent extends Identifiable with Serializable {
     private var subject: Option[Subject] = None
     private var week: Week = EveryWeek
     private var duration: Int = AppSettings.maxEventDuration
-    private var incompatibilities: mutable.Set[NewEvent] = new mutable.HashSet[NewEvent]
+    private val incompatibilities: mutable.Set[Event] = new mutable.HashSet[Event]
     private var precedences: ListBuffer[Precedence] = new ListBuffer
 
     def getStartInterval: Int = startInterval
@@ -100,12 +100,12 @@ class NewEvent extends Identifiable with Serializable {
     def getDuration: Int = duration
     def setDuration(duration: Int): Unit = this.duration = duration
 
-    def getIncompatibilities: mutable.Set[NewEvent] = incompatibilities
-    def addIncompatibility(e: NewEvent): Unit = {
+    def getIncompatibilities: mutable.Set[Event] = incompatibilities
+    def addIncompatibility(e: Event): Unit = {
         incompatibilities.add(e)
         if(!e.getIncompatibilities.contains(this)) e.addIncompatibility(this)
     }
-    def removeIncompatibility(e: NewEvent): Unit = {
+    def removeIncompatibility(e: Event): Unit = {
         incompatibilities.remove(e)
         if(e.getIncompatibilities.contains(this)) e.removeIncompatibility(this)
     }

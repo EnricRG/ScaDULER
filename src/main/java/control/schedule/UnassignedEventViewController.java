@@ -1,13 +1,13 @@
 package control.schedule;
 
 import control.MainController;
-import model.NewEvent;
+import model.Event;
 
 public class UnassignedEventViewController extends EventViewController {
 
     protected final MainController controller;
 
-    public UnassignedEventViewController(MainController controller, NewEvent event) {
+    public UnassignedEventViewController(MainController controller, Event event) {
         super(event);
         this.controller = controller;
     }

@@ -4,7 +4,7 @@ import control.MainController;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import misc.Weeks;
-import model.NewEvent;
+import model.Event;
 import model.Quarter;
 import scala.collection.JavaConverters;
 
@@ -67,30 +67,30 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
     }
 
     public void fillQuarter() {
-        for(NewEvent e: JavaConverters.asJavaCollection(quarter.getSchedule().getEvents())){
+        for(Event e: JavaConverters.asJavaCollection(quarter.getSchedule().getEvents())){
             //unassignEvent(e);
-            processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, null, null, e.getWeek().toWeekNumber(), e.getStartInterval());
+            processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, e.getWeek().toWeekNumber(), e.getStartInterval());
         }
         //FIXME this will need a fix
     }
 
-    public void processEventDrop(NewEvent event, int dragSource, int hint, ScheduleIntervalController previousController, Node cell, int scheduleWeek, Integer interval) {
+    public void processEventDrop(Event event, int dragSource, int hint, int scheduleWeek, Integer interval) {
         if(dragSource == MainController.EventDrag.FROM_ASSIGNED) unassignEvent(event);
-        assignEvent(event, dragSource, cell, scheduleWeek, interval, hint, previousController);
+        assignEvent(event, scheduleWeek, interval, hint);
     }
 
     //pre event not assigned to this quarter
     //TODO fix cell, actually the quarter does not know to which
-    public void assignEvent(NewEvent scheduleEvent, int dragSource, Node cell, int scheduleWeek, Integer interval, int hint, ScheduleIntervalController previousController) {
+    public void assignEvent(Event scheduleEvent, int scheduleWeek, Integer interval, int hint) {
         if(scheduleEvent.getWeek() == Weeks.getEveryWeek()){
-            assignEventI(scheduleEvent, firstWeekController, firstWeekEventViews, cell, scheduleWeek, interval, hint, previousController);
-            assignEventI(scheduleEvent, secondWeekController, secondWeekEventViews, cell, scheduleWeek, interval, hint, previousController);
+            assignEventI(scheduleEvent, firstWeekEventViews, interval, hint);
+            assignEventI(scheduleEvent, secondWeekEventViews, interval, hint);
         }
         else if(scheduleEvent.getWeek() == Weeks.getAWeek()){
-            assignEventI(scheduleEvent, firstWeekController, firstWeekEventViews, cell, scheduleWeek, interval, hint, previousController);
+            assignEventI(scheduleEvent, firstWeekEventViews, interval, hint);
         }
         else if(scheduleEvent.getWeek() == Weeks.getBWeek()){
-            assignEventI(scheduleEvent, secondWeekController, secondWeekEventViews, cell, scheduleWeek, interval, hint, previousController);
+            assignEventI(scheduleEvent, secondWeekEventViews, interval, hint);
         }
         //else error, no week like this exists
 
@@ -98,8 +98,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
         quarter.schedule().addEvent(scheduleWeek, interval, scheduleEvent); //scheduleWeek is a dummy parameter here
     }
 
-    private void assignEventI(NewEvent event, ScheduleController weekController, Map<Integer, ScheduleIntervalController> weekIntervals,
-                              Node cell, int week, Integer interval, int hint, ScheduleIntervalController previousController){
+    private void assignEventI(Event event, Map<Integer, ScheduleIntervalController> weekIntervals, Integer interval, int hint){
 
         ScheduleIntervalController intervalController = weekIntervals.get(interval);
 
@@ -108,7 +107,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
     }
 
     //pre: event assigned to this quarter
-    public void unassignEvent(NewEvent scheduleEvent) {
+    public void unassignEvent(Event scheduleEvent) {
         Weeks.Week week = scheduleEvent.getWeek();
 
         if(week == Weeks.getEveryWeek()){
@@ -132,7 +131,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
 
     public MainController getMainController() { return mainController; }
 
-    public void startEventDrag(NewEvent event, int dragSource, AssignedEventViewController assignedEventViewController, ScheduleIntervalController intervalController) {
+    public void startEventDrag(Event event, int dragSource, AssignedEventViewController assignedEventViewController, ScheduleIntervalController intervalController) {
         mainController.startEventDrag(event, dragSource, assignedEventViewController, intervalController);
     }
 

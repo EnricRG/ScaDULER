@@ -4,7 +4,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import model.NewEvent;
+import model.Event;
 import model.Subject;
 
 import java.net.URL;
@@ -13,13 +13,13 @@ import java.util.ResourceBundle;
 public abstract class EventViewController implements Initializable {
 
 
-    protected final NewEvent event;
+    protected final Event event;
 
     public VBox mainBox;
     public Label eventDisplayName;
     public Label eventDisplayAdditionalInfo;
 
-    public EventViewController(NewEvent event){
+    public EventViewController(Event event){
         this.event = event;
     }
 
@@ -47,7 +47,7 @@ public abstract class EventViewController implements Initializable {
 
     protected abstract void initializeBehavior();
 
-    public NewEvent getEvent() { return event; }
+    public Event getEvent() { return event; }
 
     public Node getNode() {
         return mainBox;

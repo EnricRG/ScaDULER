@@ -27,7 +27,7 @@ class Subject extends Identifiable with Serializable {
     var name: String = ""
     var shortName: String = ""
     var description: String = ""
-    var events: mutable.Map[Long,NewEvent] = new mutable.HashMap
+    var events: mutable.Map[Long,Event] = new mutable.HashMap
     var color: Color = new model.Color(DefaultColor)
     //var linkedCourses: ListBuffer[Course] = new ListBuffer
     //var linkedCourseResources: ListBuffer[CourseResource] = new ListBuffer
@@ -45,7 +45,7 @@ class Subject extends Identifiable with Serializable {
     def getColor: paint.Color = color.toColor
     def setColor(c: paint.Color): paint.Color = {val oldColor = color.toColor; color = new Color(c); oldColor}
 
-    def getEvents: Iterable[NewEvent] = events.values
+    def getEvents: Iterable[Event] = events.values
     def getEventIDs: Iterable[Long] = events.keys
     def getEventSummary: String =
         EventTypes.commonEventTypes.zip(
@@ -55,7 +55,7 @@ class Subject extends Identifiable with Serializable {
         ).map{ case (evType, n) => evType + ": " + n}.mkString("\n")
 
     //def setEvents(el: Iterable[NewEvent]): Unit = events = new ListBuffer() ++= el
-    def addEvent(id: Long, e: NewEvent): Unit = events.getOrElseUpdate(id, e)
+    def addEvent(id: Long, e: Event): Unit = events.getOrElseUpdate(id, e)
     def removeEvent(id: Long): Unit = events.remove(id)
 
     /*def removeEventFromId(eid: Int): Unit = events.find(_.num == eid) match {

@@ -1,8 +1,8 @@
 package service
 
-import model.NewEvent
+import model.Event
 
-class EventDatabase extends Database[NewEvent] {
+class EventDatabase extends Database[Event] {
 
     class Initializer{
 
@@ -10,7 +10,7 @@ class EventDatabase extends Database[NewEvent] {
 
     def this(initializer: EventDatabase#Initializer) = this
 
-    def newEvent: Long = addElement(new NewEvent)
+    def newEvent: Long = addElement(new Event)
 
-    def getUnassignedEvents: Iterable[NewEvent] = getElements.filter(_.isUnassigned)
+    def getUnassignedEvents: Iterable[Event] = getElements.filter(_.isUnassigned)
 }

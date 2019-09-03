@@ -9,7 +9,7 @@ import solver.{EventAssignment, MiniZincConstants, MiniZincInstance}
 
 import scala.sys.process.Process
 
-class NewMiniZincInstanceSolver extends Actor{
+class MiniZincInstanceSolver extends Actor{
 
     private def generateMiniZincCall(dataFilePath: String): String = {
         MiniZincConstants.MiniZincPath + " " +

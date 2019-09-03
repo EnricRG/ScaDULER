@@ -17,7 +17,6 @@ import misc.Warning;
 import misc.Weeks;
 import model.*;
 import scala.collection.JavaConverters;
-import scala.collection.convert.AsScalaConverters;
 import service.EventDatabase;
 import service.ResourceDatabase;
 import service.SubjectDatabase;
@@ -68,7 +67,7 @@ public class EventFormController implements Initializable {
     private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
     private EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
     private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
-    private ArrayList<NewEvent> incompatibilities = new ArrayList<>();
+    private ArrayList<Event> incompatibilities = new ArrayList<>();
 
     public EventFormController(MainController mainController){
         this.mainController = mainController;
@@ -172,7 +171,7 @@ public class EventFormController implements Initializable {
         ((Stage)createEventButton.getScene().getWindow()).close();
     }
 
-    private void manageIncompatibilities(ArrayList<NewEvent> incompatibilities) {
+    private void manageIncompatibilities(ArrayList<Event> incompatibilities) {
         Stage manager = Utils.promptBoundWindow(
                 AppSettings.language().getItem("eventForm_manageIncompatibilities"),
                 manageIncompatibilitiesButton.getScene().getWindow(),
@@ -186,7 +185,7 @@ public class EventFormController implements Initializable {
 
     private boolean createEvent() {
         if(!warnings()){
-            NewEvent event = new NewEvent();
+            Event event = new Event();
 
             event.setName(eventNameField.getText().trim());
             event.setShortName(eventShortNameField.getText().trim());
@@ -194,7 +193,7 @@ public class EventFormController implements Initializable {
             event.setDuration(eventDurationBox.getValue().toInt());
             event.setEventType(eventTypeBox.getValue());
             event.setWeek(eventWeekBox.getValue());
-            for(NewEvent e: incompatibilities) event.addIncompatibility(e);
+            for(Event e: incompatibilities) event.addIncompatibility(e);
 
             Resource resource = eventResourceBox.getValue();
             if(resource != null){

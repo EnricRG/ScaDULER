@@ -35,8 +35,8 @@ case class Course(val name: String, var descriptionOption: Option[String] = None
         case None => AppSettings.language.getItem("course_emptyDescription")
     }
 
-    def getFirstQuarterEvents: Iterable[NewEvent] = firstQuarter.getSchedule.getEvents
-    def getSecondQuarterEvents: Iterable[NewEvent] = secondQuarter.getSchedule.getEvents
+    def getFirstQuarterEvents: Iterable[Event] = firstQuarter.getSchedule.getEvents
+    def getSecondQuarterEvents: Iterable[Event] = secondQuarter.getSchedule.getEvents
     //WARNING danger, future implementations may allow repeated events appear in this iterable.
-    def getAllEvents: Iterable[NewEvent] = getFirstQuarterEvents ++ getSecondQuarterEvents
+    def getAllEvents: Iterable[Event] = getFirstQuarterEvents ++ getSecondQuarterEvents
 }

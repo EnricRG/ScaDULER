@@ -310,7 +310,7 @@ public class SubjectFormController implements Initializable {
         if(!warnings(checkEventGenerationWarnings(eventType, rangeStart, rangeEnd, week, duration, neededResource))) {
             for(int i = rangeStart; i<=rangeEnd; i++){
                 Long eventID = eventDatabase.newEvent();
-                NewEvent event = eventDatabase.getElement(eventID).get(); //this should be secure because we've just created the event in DB.
+                Event event = eventDatabase.getElement(eventID).get(); //this should be secure because we've just created the event in DB.
 
                 event.setName(String.format("%s\n(%s-%d) (%s)", subject.getName(), eventType.toString(), i, week.toShortString()));
                 event.setShortName(String.format("%s (%s %d) (%s)", subject.getShortName(), eventType.toShortString(), i, week.toShortString()));
@@ -329,7 +329,7 @@ public class SubjectFormController implements Initializable {
     private boolean createSubject(Subject sub) {
         if(!warnings(checkSubjectCreationWarnings())) {
             sub.setAsFinished();
-            for(NewEvent e : JavaConverters.asJavaCollection(sub.getEvents())){
+            for(Event e : JavaConverters.asJavaCollection(sub.getEvents())){
                 mainController.addUnassignedEvent(e);
             }
         }

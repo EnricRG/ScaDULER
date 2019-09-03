@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import misc.Warning;
 import model.Course;
-import model.NewEvent;
+import model.Event;
 import model.EventSchedule;
 import model.Quarter;
 import scala.Option;
@@ -134,8 +134,6 @@ public class MainController implements Initializable {
                     eventDrag.getEvent(),
                     eventDrag.dragSource,
                     hint,
-                    eventDrag.getIntervalController(),
-                    intervalController.getBoundingRegion(),
                     intervalController.getWeek(),
                     intervalController.getInterval()
             );
@@ -148,7 +146,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void processEventUnassignment(QuarterScheduleController quarterScheduleController, NewEvent event){
+    public void processEventUnassignment(QuarterScheduleController quarterScheduleController, Event event){
         quarterScheduleController.unassignEvent(event);
         eventQuartersMap.remove(event.getID());
         addUnassignedEvent(event);
@@ -159,7 +157,7 @@ public class MainController implements Initializable {
         QuarterScheduleController quarterScheduleController = courseScheduleController.getVisibleQuarterController();
 
         for(EventAssignment ea : eventAssignments){
-            NewEvent event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
+            Event event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
             ScheduleIntervalController intervalController = quarterScheduleController.getVisibleIntervalControllerAt(event.getWeek().toWeekNumber(), ea.interval());
 
             startEventDrag(
@@ -181,7 +179,7 @@ public class MainController implements Initializable {
     }
 
     //pre event exists in DB
-    public void removeEvent(NewEvent event) {
+    public void removeEvent(Event event) {
         QuarterScheduleController quarterScheduleController = eventQuartersMap.get(event.getID());
         if(quarterScheduleController != null) {
             quarterScheduleController.unassignEvent(event);
@@ -190,7 +188,7 @@ public class MainController implements Initializable {
         removeUnassignedEvent(event);
     }
 
-    private void removeUnassignedEvent(NewEvent event) {
+    private void removeUnassignedEvent(Event event) {
         Long eventID = event.getID();
         UnassignedEventViewController viewController = unassignedEventsMap.get(eventID);
         if(viewController != null){
@@ -206,11 +204,11 @@ public class MainController implements Initializable {
         public final int dragSource;
         private final MainController mainController;
         private final EventViewController eventViewController;
-        private final NewEvent event;
+        private final Event event;
 
         private final ScheduleIntervalController intervalController;
 
-        public EventDrag(NewEvent event, int dragSource, MainController mainController, EventViewController eventViewController, ScheduleIntervalController intervalController){
+        public EventDrag(Event event, int dragSource, MainController mainController, EventViewController eventViewController, ScheduleIntervalController intervalController){
             this.event = event;
             this.dragSource = dragSource;
             this.mainController = mainController;
@@ -230,10 +228,10 @@ public class MainController implements Initializable {
             return dragSource == FROM_ASSIGNED;
         }
 
-        public NewEvent getEvent() { return event; }
+        public Event getEvent() { return event; }
     }
 
-    public EventDrag startEventDrag(NewEvent event, int dragSource, EventViewController viewController, ScheduleIntervalController intervalController){
+    public EventDrag startEventDrag(Event event, int dragSource, EventViewController viewController, ScheduleIntervalController intervalController){
         eventDrag = new EventDrag(event, dragSource, this, viewController, intervalController);
         return eventDrag;
     }
@@ -252,6 +250,7 @@ public class MainController implements Initializable {
 
     private File userProjectFile = null;
     private boolean userMadeChanges = false; //TODO update when user made changes
+    private boolean debug = true;
 
     private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
 
@@ -468,8 +467,8 @@ public class MainController implements Initializable {
     }
 
     private void addUnassignedEvents() {
-        ArrayList<NewEvent> unassignedEvents = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().eventDatabase().getUnassignedEvents()));
-        for(NewEvent e : unassignedEvents) addUnassignedEvent(e);
+        ArrayList<Event> unassignedEvents = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().eventDatabase().getUnassignedEvents()));
+        for(Event e : unassignedEvents) addUnassignedEvent(e);
     }
 
     private void closeOpenCourseTabs() {
@@ -507,7 +506,7 @@ public class MainController implements Initializable {
 
     private void saveToFile() {
         if(userProjectFile != null) {
-            if(userMadeChanges || true){
+            if(userMadeChanges || debug){
                 FileOutputStream fout = null;
                 ObjectOutputStream oout = null;
 
@@ -686,7 +685,7 @@ public class MainController implements Initializable {
     //called when the tab is closed from the main interface, so it has to be deleted from db
     public void closeCourseTab(Course c, Tab tab){
         if(tab != null) {
-            for(NewEvent e : JavaConverters.asJavaCollection(c.getAllEvents()))
+            for(Event e : JavaConverters.asJavaCollection(c.getAllEvents()))
                 addUnassignedEvent(e);
 
             courseTabMap.remove(c.getID());
@@ -700,7 +699,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void addUnassignedEvent(NewEvent event){
+    public void addUnassignedEvent(Event event){
         Node eventView = null;
         UnassignedEventViewController controller = new UnassignedEventViewController(this, event);
 

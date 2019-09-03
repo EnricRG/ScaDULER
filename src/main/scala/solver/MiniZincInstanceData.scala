@@ -7,21 +7,21 @@ import model.Resource
 import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
 
-case class NewMiniZincInstanceData(nDays: Int, //unused
-                                   dayDuration: Int,
-                                   nResources: Int,
-                                   resourceQuantity: List[Int],
-                                   nEvents: Int,
-                                   eventDuration: List[Int],
-                                   eventWeek: List[String],
-                                   eventExclusions: List[List[Boolean]],
-                                   resourceNeeded: List[List[Boolean]],
-                                   nPreassignedEvents: Int,
-                                   preassignedEventNumbers: List[Int],
-                                   preassignedEventStarts: List[Int],
-                                   nPrecedences: Int,
-                                   predecessors: List[Int],
-                                   successors: List[Int]){
+case class MiniZincInstanceData(nDays: Int, //unused
+                                dayDuration: Int,
+                                nResources: Int,
+                                resourceQuantity: List[Int],
+                                nEvents: Int,
+                                eventDuration: List[Int],
+                                eventWeek: List[String],
+                                eventExclusions: List[List[Boolean]],
+                                resourceNeeded: List[List[Boolean]],
+                                nPreassignedEvents: Int,
+                                preassignedEventNumbers: List[Int],
+                                preassignedEventStarts: List[Int],
+                                nPrecedences: Int,
+                                predecessors: List[Int],
+                                successors: List[Int]){
 
     def asDZNString: String = {
         val SemiColon = MiniZincConstants.SemiColon
@@ -47,7 +47,7 @@ case class NewMiniZincInstanceData(nDays: Int, //unused
 object MiniZincInstance{
     val ModelIndexDeviation = 1;
 
-    def fromInstanceData(instance: InstanceData): NewMiniZincInstanceData = {
+    def fromInstanceData(instance: InstanceData): MiniZincInstanceData = {
         val preassignedEventsAux = instance.events.filter(_.isAssigned)
         object resourceAvailabilityFillerAux {
             private val aWeekAuxEvents = new ListBuffer[(Int,Int,Resource)] //list containing auxiliary events' start, duration and resource needed
@@ -122,7 +122,7 @@ object MiniZincInstance{
 
         val totalEventExclusions = (for(e1 <- 0 until nEvents) yield (for(e2 <- 0 until nEvents) yield if(e1 < instance.nEvents && e2 < instance.nEvents) eventExclusions(e1)(e2) else false).toList).toList
 
-        NewMiniZincInstanceData(
+        MiniZincInstanceData(
             nDays, dayDuration, //general parameters
             nResources, resourceQuantity, //resource parameters
             nEvents, eventDuration, eventWeek, totalEventExclusions, resourceNeeded, //event parameters

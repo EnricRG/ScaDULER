@@ -7,7 +7,7 @@ import factory.ViewFactory;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import model.NewEvent;
+import model.Event;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -72,11 +72,11 @@ public class ScheduleIntervalController {
         }
     }
 
-    public void startEventDrag(NewEvent event, AssignedEventViewController assignedEventViewController) {
+    public void startEventDrag(Event event, AssignedEventViewController assignedEventViewController) {
         quarterScheduleController.startEventDrag(event, MainController.EventDrag.FROM_ASSIGNED, assignedEventViewController, this);
     }
 
-    public void addEvent(NewEvent event, int hint) {
+    public void addEvent(Event event, int hint) {
         AssignedEventViewController assignedView = new AssignedEventViewController(this,event);
 
         try{new ViewFactory<>(FXMLPaths.AssignedEvent()).load(assignedView);} catch (IOException ioe){ ioe.printStackTrace(); }
@@ -97,7 +97,7 @@ public class ScheduleIntervalController {
         removeOldController(assignedEventViewController.hourPane);
     }
 
-    public void removeAssignment(NewEvent event){
+    public void removeAssignment(Event event){
         AssignedEventViewController eventViewController = eventViewControllers.get(event.getID());
         if(eventViewController != null){
             removeOldController(eventViewController);

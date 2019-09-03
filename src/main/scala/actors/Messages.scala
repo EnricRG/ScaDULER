@@ -1,6 +1,6 @@
 package actors
 
-import solver.{EventAssignment, InstanceData, NewMiniZincInstanceData}
+import solver.{EventAssignment, InstanceData, MiniZincInstanceData}
 
 object Messages{
     abstract class Message
@@ -14,6 +14,6 @@ object Messages{
     case class Solution(assignments: Iterable[EventAssignment]) extends Message
 
     object MiniZincMessages{
-        case class MiniZincSolveRequest(data: NewMiniZincInstanceData)
+        case class MiniZincSolveRequest(data: MiniZincInstanceData)
     }
 }
