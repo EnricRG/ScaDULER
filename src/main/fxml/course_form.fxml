@@ -44,7 +44,7 @@
       </VBox>
       <VBox alignment="TOP_CENTER" spacing="2.0">
          <children>
-            <Label fx:id="formWarningTag" text="Warning: this functionality is not finished yet." textFill="RED">
+            <Label fx:id="formWarningTag" text="Warning: warning field." textFill="RED">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>

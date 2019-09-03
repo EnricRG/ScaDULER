@@ -52,7 +52,7 @@
                         <ComboBox fx:id="eventTypeBox" prefWidth="150.0" />
                         <Label fx:id="eventWeekTag" text="Week:" />
                         <ComboBox fx:id="eventWeekBox" prefWidth="150.0" />
-                        <Label fx:id="eventResourceTag" text="Resource:" />
+                        <Label fx:id="eventResourceTag" text="Resource (Optional):" />
                         <HBox>
                            <children>
                               <ComboBox fx:id="eventResourceBox" prefWidth="150.0" />
@@ -93,7 +93,7 @@
          </VBox.margin></Separator>
       <VBox alignment="TOP_CENTER" spacing="2.0">
          <children>
-            <Label fx:id="warningTag" text="Warning: this functionality is not finished yet." textFill="RED">
+            <Label fx:id="warningTag" text="Warning: warning field." textFill="RED">
                <font>
                   <Font name="System Italic" size="14.0" />
                </font>
