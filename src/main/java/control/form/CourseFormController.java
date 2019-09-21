@@ -1,24 +1,16 @@
 package control.form;
 
 import app.AppSettings;
-import app.FXMLPaths;
 import app.MainApp;
 import control.MainController;
-import factory.CourseResourceManagerViewFactory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import misc.Warning;
-import model.CourseResource;
-import scala.collection.JavaConverters;
-import util.Utils;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class CourseFormController implements Initializable {
@@ -31,15 +23,11 @@ public class CourseFormController implements Initializable {
     public TextArea courseDescriptionField;
     public CheckBox descriptionWrapCheckBox;
 
-    public Button manageCourseResourcesButton;
-    public Label manageCourseResourcesInfo;
-
     public Label formWarningTag;
     public Button createCourseButton;
 
     private StringProperty courseName = new SimpleStringProperty();
     private StringProperty courseDescription = new SimpleStringProperty();
-    private List<CourseResource> courseResources = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -62,9 +50,6 @@ public class CourseFormController implements Initializable {
         courseDescriptionField.setPromptText(AppSettings.language().getItem("courseForm_courseDescriptionFieldText"));
         descriptionWrapCheckBox.setText(AppSettings.language().getItem("form_wrapDescription"));
 
-        manageCourseResourcesButton.setText(AppSettings.language().getItem("courseForm_manageCourseResourcesButtonText"));
-        manageCourseResourcesInfo.setText(AppSettings.language().getItem("courseForm_manageCourseResourcesInfo"));
-
         createCourseButton.setText(AppSettings.language().getItem("courseForm_createCourseButtonText"));
     }
 
@@ -80,25 +65,12 @@ public class CourseFormController implements Initializable {
     }
 
     private void bindButtonsToActions() {
-        manageCourseResourcesButton.setOnAction(event -> promptCourseResourcesForm());
-
         //add course to database and close the window
         createCourseButton.setOnAction(actionEvent -> {
             if(createCourse()) closeWindow();
         });
 
         descriptionWrapCheckBox.selectedProperty().bindBidirectional(courseDescriptionField.wrapTextProperty());
-    }
-
-    private void promptCourseResourcesForm() {
-        Stage prompt = Utils.promptBoundWindow(
-                AppSettings.language().getItem("manageCourseResources_windowTitle"),
-                createCourseButton.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new CourseResourceManagerViewFactory(FXMLPaths.CourseResourceManagerForm(),this, courseResources)
-        );
-
-        prompt.show();
     }
 
     private void closeWindow() {
@@ -120,9 +92,8 @@ public class CourseFormController implements Initializable {
             hideWarnings();
             mainController.addCourseTab(
                 MainApp.getDatabase().courseDatabase().createCourse( //We know here that courseQuarter value cannot be null
-                    courseName.getValueSafe(), courseDescription.getValueSafe(),
-                        JavaConverters.collectionAsScalaIterable(courseResources)
-                    ),
+                    courseName.getValueSafe(),
+                    courseDescription.getValueSafe()),
                     false
                 );
 

@@ -3,24 +3,13 @@ package model
 import app.AppSettings
 import service.Identifiable
 
-//invariant: quantity <= resource.quantity
+/** Course quarter
+ *  A Quarter holds all relevant information about a course quarter, like the schedule for its events.
+ *
+ *  @param schedule Event Schedule
+ */
 @SerialVersionUID(1L)
-case class CourseResource(val resource: Resource, var quantity: Int) extends QuantifiableResource with Serializable {
-    override def getQuantity: Int = quantity
-    override def getAvailableQuantity: Int = getQuantity //TODO: truly check resource availability
-
-    def getName: String = resource.getName
-    def getResource: Resource = resource
-
-    def incrementQuantity(incr: Int): Unit = quantity += incr
-    def decrementQuantity(decr: Int): Unit = quantity -= decr
-}
-
-//TODO finish schedule adoption
-@SerialVersionUID(1L)
-case class Quarter(var resources: Iterable[CourseResource], var schedule: EventSchedule = new EventSchedule(AppSettings.timeSlots)) extends Serializable {
-    def resourceTypeCount: Int = resources.size
-    def resourceAmount: Int = resources.map(_.getQuantity).sum
+class Quarter(schedule: EventSchedule = new EventSchedule(AppSettings.timeSlots)) extends Serializable {
     def getSchedule: EventSchedule = schedule
 }
 

@@ -27,8 +27,6 @@ public class CourseManagerController implements Initializable {
 
     public TableColumn<Course, String> courseTable_nameColumn;
     public TableColumn<Course, String> courseTable_descriptionColumn;
-    public TableColumn<Course, String> courseTable_firstQuarterResources;
-    public TableColumn<Course, String> courseTable_secondQuarterResources;
 
     public Button addCourseButton;
     public Button editCourseButton;
@@ -50,8 +48,6 @@ public class CourseManagerController implements Initializable {
 
         courseTable_nameColumn.setText(AppSettings.language().getItem("courseManager_nameColumnHeader"));
         courseTable_descriptionColumn.setText(AppSettings.language().getItem("courseManager_descriptionColumnHeader"));
-        courseTable_firstQuarterResources.setText(AppSettings.language().getItem("courseManager_q1resourcesColumnHeader"));
-        courseTable_secondQuarterResources.setText(AppSettings.language().getItem("courseManager_q2resourcesColumnHeader"));
 
         addCourseButton.setText(AppSettings.language().getItem("courseManager_addCourseButton"));
         editCourseButton.setText(AppSettings.language().getItem("courseManager_editCourseButton"));
@@ -61,16 +57,6 @@ public class CourseManagerController implements Initializable {
     private void setupViews() {
         courseTable_nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().name()));
         courseTable_descriptionColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().description()));
-        courseTable_firstQuarterResources.setCellValueFactory(cell -> {
-            String s1 = AppSettings.language().getItem("courseTable_totalResourcesTypesWord") + cell.getValue().firstQuarter().resourceTypeCount();
-            String s2 = AppSettings.language().getItem("courseTable_totalResourcesWord") + cell.getValue().firstQuarter().resourceAmount();
-            return new SimpleStringProperty(s1 + "\n" + s2);
-        });
-        courseTable_secondQuarterResources.setCellValueFactory(cell -> {
-            String s1 = AppSettings.language().getItem("courseTable_totalResourcesTypesWord") + cell.getValue().secondQuarter().resourceTypeCount();
-            String s2 = AppSettings.language().getItem("courseTable_totalResourcesWord") + cell.getValue().secondQuarter().resourceAmount();
-            return new SimpleStringProperty(s1 + "\n" + s2);
-        });
 
         courseTable.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(courseDatabase.getElements())));
     }

@@ -6,7 +6,6 @@ import app.MainApp;
 import app.AssignmentViabilityChecker;
 import control.form.EventFormController;
 import control.manage.CourseManagerController;
-import control.manage.CourseResourceManagerController;
 import control.manage.EventManagerController;
 import control.manage.SubjectManagerController;
 import control.schedule.*;
@@ -28,7 +27,6 @@ import model.EventSchedule;
 import model.Quarter;
 import scala.Option;
 import scala.collection.JavaConverters;
-import scala.collection.mutable.ListBuffer;
 import service.AppDatabase;
 import service.CourseDatabase;
 import solver.EventAssignment;
@@ -347,7 +345,7 @@ public class MainController implements Initializable {
 
         manageButtons_courses.setOnAction(event -> promptCourseManager());
         manageButtons_resources.setOnAction(actionEvent ->
-                promptResourceManager(manageButtons_resources.getScene().getWindow(), null));
+                promptResourceManager(manageButtons_resources.getScene().getWindow()));
         manageButtons_subjects.setOnAction(event -> promptSubjectManager());
         manageButtons_events.setOnAction(event -> promptEventManager());
 
@@ -578,7 +576,7 @@ public class MainController implements Initializable {
         prompt.show();
     }
 
-    public void promptResourceManager(Window owner, CourseResourceManagerController crmc) {
+    public void promptResourceManager(Window owner) {
 
         Stage prompt = Utils.promptBoundWindow(
                 AppSettings.language().getItem("manageResources_windowTitle"),
@@ -586,8 +584,6 @@ public class MainController implements Initializable {
                 Modality.WINDOW_MODAL,
                 new ViewFactory(FXMLPaths.ManageResourcesPanel())
         );
-
-        if(crmc != null) prompt.setOnCloseRequest(event -> crmc.updateResources());
 
         prompt.show();
     }
@@ -620,7 +616,7 @@ public class MainController implements Initializable {
     public void addCourseTab(){
         //TODO: decouple course creation and delegate to database.
         Course c = new Course("Default", Option.apply(null),
-        new Quarter(new ListBuffer<>(), new EventSchedule(AppSettings.timeSlots())), new Quarter(new ListBuffer<>(), new EventSchedule(AppSettings.timeSlots())));
+        new Quarter(new EventSchedule(AppSettings.timeSlots())), new Quarter(new EventSchedule(AppSettings.timeSlots())));
         addCourseTab(MainApp.getDatabase().courseDatabase().addCourse(c), false);
     }
 

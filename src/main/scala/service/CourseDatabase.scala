@@ -1,6 +1,6 @@
 package service
 
-import model.{Course, CourseResource, Quarter}
+import model.{Course, Quarter}
 
 class CourseDatabase extends Database[Course] {
 
@@ -19,19 +19,17 @@ class CourseDatabase extends Database[Course] {
         getElement(id).get //this should be secure because we just added the course
     }
 
-    def removeCourse(c: Course) = removeElement(c)
+    def removeCourse(c: Course): Option[Course] = removeElement(c)
 
     //FIXME: useless overload
-    def createCourse(name: String, description: Option[String] = None,
-                     courseResources: Iterable[CourseResource]): Course =
+    def createCourse(name: String, description: Option[String] = None): Course =
             addCourse(
                 new Course( name, description,
-                    new Quarter(courseResources),
-                    new Quarter(courseResources),
+                    new Quarter(),
+                    new Quarter(),
                 )
             )
 
-    def createCourse(name: String, description: String,
-                     courseResources: Iterable[CourseResource]): Course =
-            createCourse(name, Some(description), courseResources)
+    def createCourse(name: String, description: String): Course =
+            createCourse(name, Some(description))
 }

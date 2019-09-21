@@ -95,7 +95,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
         //else error, no week like this exists
 
         eventsAtInterval.put(scheduleEvent.getID(), interval);
-        quarter.schedule().addEvent(scheduleWeek, interval, scheduleEvent); //scheduleWeek is a dummy parameter here
+        quarter.getSchedule().addEvent(scheduleWeek, interval, scheduleEvent); //scheduleWeek is a dummy parameter here
     }
 
     private void assignEventI(Event event, Map<Integer, ScheduleIntervalController> weekIntervals, Integer interval, int hint){
