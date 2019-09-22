@@ -27,6 +27,9 @@ libraryDependencies ++= javaFXModules.map( m =>
 libraryDependencies +=
   "com.typesafe.akka" %% "akka-actor" % "2.4.20"
 
+libraryDependencies += "org.json4s" % "json4s-jackson_2.12" % "3.6.7"
+libraryDependencies += "org.json4s" % "json4s-jackson_2.12" % "3.6.7"
+
 //addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 //libraryDependencies += "org.scalafx" %% "scalafxml-core-sfx8" % "0.4"
