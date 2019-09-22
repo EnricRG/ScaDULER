@@ -2,6 +2,7 @@ package control.manage;
 
 import app.AppSettings;
 import app.MainApp;
+import control.StageController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -15,7 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class EventIncompatibilityManagerController implements Initializable {
+public class EventIncompatibilityManagerController extends StageController implements Initializable {
 
     private final ArrayList<Event> incompatibilities;
 
@@ -37,6 +38,7 @@ public class EventIncompatibilityManagerController implements Initializable {
     private final ArrayList<Event> allEvents = new ArrayList<>(JavaConverters.asJavaCollection(eventDatabase.getElements()));
 
     public EventIncompatibilityManagerController(ArrayList<Event> incompatibilities){
+        super();
         this.incompatibilities = incompatibilities;
         allEvents.removeAll(incompatibilities);
     }
@@ -72,12 +74,12 @@ public class EventIncompatibilityManagerController implements Initializable {
         generalEventTable.getItems().addAll(allEvents);
     }
 
-    //pre: text not null
+    //pre: text not null and should be trimmed.
     private void filterGeneralEventTable(String text) {
         ObservableList<Event> filteredResources = FXCollections.observableArrayList(allEvents);
 
         //if search field is not blank, remove all rows that event's name does not contain field's content as a substring
-        if(!text.isBlank()) filteredResources.removeIf(event -> !event.getName().toLowerCase().contains(text));
+        if(!text.isBlank()) filteredResources.removeIf(event -> !event.getName().toLowerCase().contains(text.toLowerCase()));
 
         generalEventTable.setItems(filteredResources);
     }
@@ -92,17 +94,15 @@ public class EventIncompatibilityManagerController implements Initializable {
             event.consume();
         });
         eventSearchBox.setOnKeyTyped(event -> {
-            filterGeneralEventTable(eventSearchBox.getText().trim().toLowerCase());
+            filterGeneralEventTable(eventSearchBox.getText().trim());
             event.consume();
         });
         addButton.setOnAction(event -> {
             addSelectedIncompatibilities();
-            //generalEventTable.getSelectionModel().clearSelection();
             event.consume();
         });
         removeButton.setOnAction(event -> {
             removeSelectedIncompatibilities();
-            //incompatibilityTable.getSelectionModel().clearSelection();
             event.consume();
         });
     }
@@ -110,7 +110,6 @@ public class EventIncompatibilityManagerController implements Initializable {
     private void addSelectedIncompatibilities() {
         ObservableList<Event> selection = generalEventTable.getSelectionModel().getSelectedItems();
 
-        //generalEventTable.getItems().removeAll(selection);
         allEvents.removeAll(selection);
 
         incompatibilityTable.getItems().addAll(selection);
@@ -122,7 +121,6 @@ public class EventIncompatibilityManagerController implements Initializable {
     private void removeSelectedIncompatibilities() {
         ObservableList<Event> selection = incompatibilityTable.getSelectionModel().getSelectedItems();
 
-        //generalEventTable.getItems().addAll(selection);
         allEvents.addAll(selection);
 
         incompatibilities.removeAll(selection);

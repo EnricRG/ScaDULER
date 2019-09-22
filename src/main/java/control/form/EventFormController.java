@@ -4,10 +4,10 @@ import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
 import control.MainController;
+import control.StageController;
 import control.manage.EventIncompatibilityManagerController;
 import factory.ViewFactory;
 import javafx.collections.FXCollections;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -22,13 +22,9 @@ import service.ResourceDatabase;
 import service.SubjectDatabase;
 import util.Utils;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
-public class EventFormController implements Initializable {
-
-    private final MainController mainController;
+public class EventFormController extends FormController {
 
     public Label eventNameTag;
     public TextField eventNameField;
@@ -60,8 +56,6 @@ public class EventFormController implements Initializable {
     public Button manageIncompatibilitiesButton;
     //public Button managePrecedencesButton;
 
-    public Label warningTag;
-
     public Button createEventButton;
 
     private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
@@ -70,18 +64,14 @@ public class EventFormController implements Initializable {
     private ArrayList<Event> incompatibilities = new ArrayList<>();
 
     public EventFormController(MainController mainController){
-        this.mainController = mainController;
+        super(mainController);
+    }
+    public EventFormController(Stage stage, MainController mainController){
+        super(stage, mainController);
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeContentLanguage();
-        setupViews();
-        initializeWarningSystem();
-        bindActions();
-    }
-
-    private void initializeContentLanguage() {
+    protected void initializeContentLanguage() {
         eventNameTag.setText(AppSettings.language().getItem("eventForm_eventName"));
         eventNameField.setPromptText(AppSettings.language().getItem("eventForm_eventNameHelp"));
 
@@ -107,7 +97,8 @@ public class EventFormController implements Initializable {
         createEventButton.setText(AppSettings.language().getItem("eventForm_confirmationButton"));
     }
 
-    private void setupViews() {
+    @Override
+    protected void setupViews() {
         eventSubjectBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(subjectDatabase.getFinishedSubjects())));
         eventSubjectBox.setConverter(new StringConverter<>() {
             @Override
@@ -143,7 +134,8 @@ public class EventFormController implements Initializable {
         });
     }
 
-    private void bindActions() {
+    @Override
+    protected void bindActions() {
         wrapEventDescriptionCheckbox.selectedProperty().bindBidirectional(eventDescriptionField.wrapTextProperty());
 
         unassignSubjectButton.setOnAction(event -> {
@@ -162,25 +154,23 @@ public class EventFormController implements Initializable {
         });
 
         createEventButton.setOnAction(event -> {
-            if(createEvent()) closeWindow();
+            if(createEvent()) close();
             event.consume();
         });
     }
 
-    private void closeWindow() {
-        ((Stage)createEventButton.getScene().getWindow()).close();
-    }
-
     private void manageIncompatibilities(ArrayList<Event> incompatibilities) {
-        Stage manager = Utils.promptBoundWindow(
+        StageController managerController = new EventIncompatibilityManagerController(incompatibilities);
+
+        managerController.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItem("eventForm_manageIncompatibilities"),
                 manageIncompatibilitiesButton.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EventIncompatibilityFrom()),
-                new EventIncompatibilityManagerController(incompatibilities)
-        );
+                managerController
+        ));
 
-        manager.show();
+        managerController.show();
     }
 
     private boolean createEvent() {
@@ -208,25 +198,14 @@ public class EventFormController implements Initializable {
                 subject.addEvent(event.getID(), event);
             }
 
-            mainController.addUnassignedEvent(event);
+            getMainController().addUnassignedEvent(event);
             return true;
         }
         return false;
     }
 
-    private boolean warnings() {
-        Warning warning = checkWarnings();
-        if(warning == null){
-            hideWarnings();
-            return false;
-        }
-        else{
-            popUpWarning(warning);
-            return true;
-        }
-    }
-
-    private Warning checkWarnings() {
+    @Override
+    protected Warning checkWarnings() {
         if(eventNameField.getText().isBlank()){
             return new Warning(AppSettings.language().getItem("warning_eventNameCannotBeEmpty"));
         }
@@ -240,19 +219,6 @@ public class EventFormController implements Initializable {
             return new Warning(AppSettings.language().getItem("warning_eventWeekCannotBeEmpty"));
         }
         else return null;
-    }
-
-    private void initializeWarningSystem() {
-        hideWarnings();
-        warningTag.setText("");
-    }
-
-    private void hideWarnings(){ warningTag.setVisible(false); }
-    private void showWarnings(){ warningTag.setVisible(true); }
-
-    private void popUpWarning(Warning warning) {
-        warningTag.setText(warning.toString());
-        showWarnings();
     }
 
 }

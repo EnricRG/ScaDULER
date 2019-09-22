@@ -551,15 +551,17 @@ public class MainController implements Initializable {
     }
 
     private void promptEventForm() {
-        Stage prompt = Utils.promptBoundWindow(
+        StageController stageController = new EventFormController(this);
+
+        stageController.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItem("eventForm_windowTitle"),
                 addButtons_event.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EventForm()),
-                new EventFormController(this)
-        );
+                stageController
+        ));
 
-        prompt.show();
+        stageController.show();
     }
 
 
