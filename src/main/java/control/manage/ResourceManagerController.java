@@ -169,7 +169,7 @@ public class ResourceManagerController implements Initializable {
         ObservableList<Resource> filteredResources = FXCollections.observableArrayList(resources);
 
         //if search field is not blank, remove all rows that resource's name does not contain fields content as a substring
-        if(!text.isBlank()) filteredResources.removeIf(resource -> !resource.name().toLowerCase().contains(text));
+        if(!text.isBlank()) filteredResources.removeIf(resource -> !resource.getName().toLowerCase().contains(text));
 
         resourceTable.setItems(filteredResources);
     }
@@ -189,9 +189,12 @@ public class ResourceManagerController implements Initializable {
 
         if (warning == null) { //if no errors
             hideWarnings(); //no warnings to be shown
-            updateCourseInTableView(
-                    MainApp.getDatabase().resourceDatabase().createResource(name, quantity)
-            );
+
+            Resource r = MainApp.getDatabase().resourceDatabase().createResource()._2;
+            r.setName(name);
+            r.setQuantity(quantity);
+
+            updateCourseInTableView(r);
             clearInputFields();
         }
         else popUpWarning(warning);
@@ -206,12 +209,12 @@ public class ResourceManagerController implements Initializable {
         resourceTable.refresh();
     }
 
-    //pre: cr not null
-    private void updateCourseInTableView(Resource cr) {
-        if(resourceTable.getItems().contains(cr)) updateTableView();
+    //pre: r not null
+    private void updateCourseInTableView(Resource r) {
+        if(resourceTable.getItems().contains(r)) updateTableView();
         else {
-            resources.add(cr);
-            resourceTable.getItems().add(cr);
+            resources.add(r);
+            resourceTable.getItems().add(r);
         }
     }
 

@@ -56,7 +56,7 @@ public class CourseManagerController implements Initializable {
 
     private void setupViews() {
         courseTable_nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().name()));
-        courseTable_descriptionColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().description()));
+        courseTable_descriptionColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDescription()));
 
         courseTable.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(courseDatabase.getElements())));
     }

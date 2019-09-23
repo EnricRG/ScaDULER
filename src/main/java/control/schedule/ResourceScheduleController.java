@@ -75,7 +75,7 @@ public class ResourceScheduleController extends DualWeekScheduleViewController<S
     }
 
     private void setState(Node cell, Integer week, Integer interval) {
-        if(resource.availability().isAvailable(week, interval)){
+        if(resource.getAvailability().isAvailable(week, interval)){
             cell.setStyle(cell.getStyle() + SET_STATE);
         }
         else cell.setStyle(cell.getStyle().replace(SET_STATE, ""));
@@ -87,17 +87,17 @@ public class ResourceScheduleController extends DualWeekScheduleViewController<S
     }
 
     private void setCellState(Node cell, Integer week, Integer interval) {
-        resource.availability().set(week, interval);
+        resource.getAvailability().set(week, interval);
         setState(cell, week, interval);
     }
 
     private void unsetCellState(Node cell, Integer week, Integer interval) {
-        resource.availability().unset(week, interval);
+        resource.getAvailability().unset(week, interval);
         setState(cell, week, interval);
     }
 
     private void flipCellState(Node cell, Integer week, Integer interval){
-        resource.availability().flip(week, interval);
+        resource.getAvailability().flip(week, interval);
         setState(cell, week, interval);
     }
 

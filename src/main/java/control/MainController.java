@@ -1,15 +1,18 @@
 package control;
 
 import app.AppSettings;
+import app.AssignmentViabilityChecker;
 import app.FXMLPaths;
 import app.MainApp;
-import app.AssignmentViabilityChecker;
 import control.form.EventFormController;
 import control.manage.CourseManagerController;
 import control.manage.EventManagerController;
 import control.manage.SubjectManagerController;
 import control.schedule.*;
-import factory.*;
+import factory.CourseFormViewFactory;
+import factory.CourseScheduleViewFactory;
+import factory.SubjectFormViewFactory;
+import factory.ViewFactory;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -23,9 +26,6 @@ import javafx.stage.Window;
 import misc.Warning;
 import model.Course;
 import model.Event;
-import model.EventSchedule;
-import model.Quarter;
-import scala.Option;
 import scala.collection.JavaConverters;
 import service.AppDatabase;
 import service.CourseDatabase;
@@ -414,6 +414,7 @@ public class MainController implements Initializable {
                 projectLoaded();
                 fin.close();
             } catch (InvalidClassException ice){
+                ice.printStackTrace();
                 promptAlert(
                         AppSettings.language().getItem("unknownFileFormat_windowTitle"),
                         AppSettings.language().getItem("unknownFileFormat_explanation")
@@ -616,10 +617,9 @@ public class MainController implements Initializable {
 
     //TODO: remove this method, it has only debugging purposes.
     public void addCourseTab(){
-        //TODO: decouple course creation and delegate to database.
-        Course c = new Course("Default", Option.apply(null),
-        new Quarter(new EventSchedule(AppSettings.timeSlots())), new Quarter(new EventSchedule(AppSettings.timeSlots())));
-        addCourseTab(MainApp.getDatabase().courseDatabase().addCourse(c), false);
+        Course c = courseDatabase.createCourse()._2;
+        c.setName("Default");
+        addCourseTab(c, false);
     }
 
     public void addCourseTab(Course c, boolean reload){

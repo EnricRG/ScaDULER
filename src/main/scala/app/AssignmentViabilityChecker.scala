@@ -1,8 +1,8 @@
 package app
 
-import misc.Weeks.{AWeek, BWeek, EveryWeek, Week}
-import misc.{Warning, Weeks}
-import model.{Course, Event, Quarter}
+import model.Weeks.{AWeek, BWeek, EveryWeek, Week}
+import misc.Warning
+import model.{Course, Event, Quarter, Weeks}
 
 class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: Week, droppedWeek: Int, interval: Int, event: Event) {
 
@@ -55,7 +55,7 @@ class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: We
     def checkResourceAvailability(course: Course, quarter: Quarter, event: Event, week: Week, interval: Int): Option[Warning] = {
         if(event.needsResource) {
 
-            val availabilityMap = for (i <- interval until interval + event.getDuration) yield event.getNeededResource.availability.isAvailable(week.toWeekNumber, i)
+            val availabilityMap = for (i <- interval until interval + event.getDuration) yield event.getNeededResource.getAvailability.isAvailable(week.toWeekNumber, i)
 
             if (!availabilityMap.toList.contains(true))
                 return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceNeverUnavailable"), event.getNeededResource.getName)))
@@ -68,7 +68,7 @@ class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: We
             def checkWeeklyAvailability(week: Week): Option[Warning] = {
                 val concurrentEvents = quarterEvents.filter(x => x != event && x.isAssigned && weekOverlap(week, x.getWeek) && overlap(x.getStartInterval,x.getDuration,interval,event.getDuration))
 
-                val resourceAvailability = for(i <- interval until interval + event.getDuration) yield (i,event.getNeededResource.quantity - concurrentEvents.count(x => overlap(i, 1, x.getStartInterval, x.getDuration)))
+                val resourceAvailability = for(i <- interval until interval + event.getDuration) yield (i,event.getNeededResource.getQuantity - concurrentEvents.count(x => overlap(i, 1, x.getStartInterval, x.getDuration)))
 
                 for((inter, resourceAvailableQuantity) <- resourceAvailability) {
                     if(resourceAvailableQuantity == 0) {

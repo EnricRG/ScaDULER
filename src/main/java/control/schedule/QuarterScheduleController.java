@@ -3,9 +3,9 @@ package control.schedule;
 import control.MainController;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
-import misc.Weeks;
 import model.Event;
 import model.Quarter;
+import model.Weeks;
 import scala.collection.JavaConverters;
 
 import java.net.URL;

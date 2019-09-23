@@ -5,31 +5,20 @@ import model.{Course, Quarter}
 class CourseDatabase extends Database[Course] {
 
     class Initializer{
-        //TODO: initalizer
+
     }
 
-    //TODO: initialize DB from initializer
     def this(initializer: CourseDatabase#Initializer) = this
 
-    //TODO: update to pure DBID model
-    def addCourse(c: Course): Course = {
-        println(c) //TODO remove this
-        val id = addElement(c)
-        //c.setID(id)
-        getElement(id).get //this should be secure because we just added the course
+    def createCourse(): (ID, Course) = {
+        val id = reserveNextId
+        val course = new Course(id)
+        addElement(id, course)
     }
 
-    def removeCourse(c: Course): Option[Course] = removeElement(c)
+    def removeCourse(cid: ID): Unit = removeElement(cid)
+    def removeCourse(c: Course): Unit = removeElement(c)
 
-    //FIXME: useless overload
-    def createCourse(name: String, description: Option[String] = None): Course =
-            addCourse(
-                new Course( name, description,
-                    new Quarter(),
-                    new Quarter(),
-                )
-            )
-
-    def createCourse(name: String, description: String): Course =
-            createCourse(name, Some(description))
+    def deleteCourse(cid: ID): Unit = deleteElement(cid)
+    def deleteCourse(c: Course): Unit = deleteElement(c)
 }

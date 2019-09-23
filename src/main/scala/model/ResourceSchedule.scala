@@ -1,7 +1,7 @@
 package model
 
 import app.AppSettings
-import misc.Weeks.{AWeek, BWeek, EveryWeek}
+import Weeks.{AWeek, BWeek, EveryWeek}
 
 @SerialVersionUID(1L)
 class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Boolean](intervalsPerWeek){

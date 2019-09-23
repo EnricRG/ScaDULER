@@ -1,7 +1,7 @@
 package model
 
 import app.AppSettings
-import service.Identifiable
+import service.{ID, Identifiable}
 
 /** Course quarter
  *  A Quarter holds all relevant information about a course quarter, like the schedule for its events.
@@ -14,15 +14,19 @@ class Quarter(schedule: EventSchedule = new EventSchedule(AppSettings.timeSlots)
 }
 
 //TODO: update to new database model
-//TODO: Add course assigned event list
 @SerialVersionUID(1L)
-case class Course(val name: String, var descriptionOption: Option[String] = None,
-                  var firstQuarter: Quarter, var secondQuarter: Quarter) extends Identifiable with Serializable {
+class Course(id: ID) extends Identifiable(id) with Serializable {
 
-    def description: String = descriptionOption match{
-        case Some(description) => description
-        case None => AppSettings.language.getItem("course_emptyDescription")
-    }
+    var name: String = ""
+    var description: String = ""
+    var firstQuarter: Quarter = new Quarter
+    var secondQuarter: Quarter = new Quarter
+
+    def getName: String = name
+    def setName(n: String): Unit = name = n
+
+    def getDescription: String = description
+    def setDescription(d: String): Unit = description = d
 
     def getFirstQuarterEvents: Iterable[Event] = firstQuarter.getSchedule.getEvents
     def getSecondQuarterEvents: Iterable[Event] = secondQuarter.getSchedule.getEvents

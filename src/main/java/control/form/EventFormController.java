@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import misc.Duration;
 import misc.Warning;
-import misc.Weeks;
 import model.*;
 import scala.collection.JavaConverters;
 import service.EventDatabase;
@@ -175,7 +174,7 @@ public class EventFormController extends FormController {
 
     private boolean createEvent() {
         if(!warnings()){
-            Event event = new Event();
+            Event event = eventDatabase.createEvent()._2;
 
             event.setName(eventNameField.getText().trim());
             event.setShortName(eventShortNameField.getText().trim());
@@ -189,8 +188,6 @@ public class EventFormController extends FormController {
             if(resource != null){
                 event.setNeededResource(resource);
             }
-
-            eventDatabase.addElement(event);
 
             Subject subject = eventSubjectBox.getValue();
             if(subject != null) {

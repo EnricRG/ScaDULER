@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import misc.Duration;
 import misc.Warning;
-import misc.Weeks;
 import model.*;
 import scala.collection.JavaConverters;
 import service.EventDatabase;
@@ -71,7 +70,7 @@ public class SubjectFormController implements Initializable {
     private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
     private EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
     private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
-    private Long subjectID = subjectDatabase.newSubject();
+    private Long subjectID = (Long) subjectDatabase.newSubject()._1;
     private Subject subject = subjectDatabase.getElement(subjectID).get(); //since we just created this subject, this should be secure
 
     @Override
@@ -309,8 +308,7 @@ public class SubjectFormController implements Initializable {
                                 Weeks.Week week, Duration duration, Resource neededResource) {
         if(!warnings(checkEventGenerationWarnings(eventType, rangeStart, rangeEnd, week, duration, neededResource))) {
             for(int i = rangeStart; i<=rangeEnd; i++){
-                Long eventID = eventDatabase.newEvent();
-                Event event = eventDatabase.getElement(eventID).get(); //this should be secure because we've just created the event in DB.
+                Event event = eventDatabase.createEvent()._2;
 
                 event.setName(String.format("%s\n(%s-%d) (%s)", subject.getName(), eventType.toString(), i, week.toShortString()));
                 event.setShortName(String.format("%s (%s %d) (%s)", subject.getShortName(), eventType.toShortString(), i, week.toShortString()));
@@ -320,8 +318,8 @@ public class SubjectFormController implements Initializable {
                 event.setDuration(duration.toInt());
 
                 event.setSubject(subject);
-                subject.addEvent(eventID, event);
-                eventTable.getItems().add(eventID);
+                subject.addEvent(event.getID(), event);
+                eventTable.getItems().add(event.getID());
             }
         }
     }

@@ -2,8 +2,8 @@ package model
 
 import app.AppSettings
 import javafx.scene.paint
-import misc.Weeks.{EveryWeek, Week}
-import service.Identifiable
+import Weeks.{EveryWeek, Week}
+import service.{ID, Identifiable}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -14,16 +14,19 @@ abstract class EventType extends Serializable {
     def toShortString: String
     def color: paint.Color
 }
+
 object TheoryEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("theoryEvent")
     override def toShortString: String = AppSettings.language.getItem("theoryEventShort")
     override def color: paint.Color = paint.Color.web("#CABDBF")
 }
+
 object LaboratoryEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("labEvent")
     override def toShortString: String = AppSettings.language.getItem("labEventShort")
     override def color: paint.Color = paint.Color.web("#FBE983")
 }
+
 object ComputerEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("computerEvent")
     override def toShortString: String = AppSettings.language.getItem("computerEventShort")
@@ -50,7 +53,7 @@ object EventTypes extends Serializable {
 case class Precedence(event: Event, isStrict: Boolean)
 
 @SerialVersionUID(1L)
-class Event extends Identifiable with Serializable {
+class Event(id: ID) extends Identifiable(id) with Serializable {
 
     private var startInterval: Int = -1
     private var name: String = ""

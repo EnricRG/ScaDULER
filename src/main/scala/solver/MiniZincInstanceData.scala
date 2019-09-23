@@ -1,7 +1,7 @@
 package solver
 
 import app.AppSettings
-import misc.Weeks.{AWeek, BWeek, Week}
+import model.Weeks.{AWeek, BWeek, Week}
 import model.Resource
 
 import scala.collection.immutable
@@ -70,7 +70,7 @@ object MiniZincInstance{
                     for(d <- 0 until AppSettings.days) {
                         val packedWeekIntervals = pack(r.getUnavailableIntervalsOrElse(week.toWeekNumber, d, -1).toList)
                         for (consecutiveIntervals <- packedWeekIntervals if consecutiveIntervals.nonEmpty) {
-                            weekAuxEvents ++= (for (i <- 1 to r.quantity) yield (consecutiveIntervals.head + ModelIndexDeviation, consecutiveIntervals.length, r)).toList
+                            weekAuxEvents ++= (for (i <- 1 to r.getQuantity) yield (consecutiveIntervals.head + ModelIndexDeviation, consecutiveIntervals.length, r)).toList
                         }
                     }
                     weekAuxEvents.toList

@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import misc.Warning;
+import model.Course;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -90,12 +91,12 @@ public class CourseFormController implements Initializable {
 
         if(warning == null){ //no warning
             hideWarnings();
-            mainController.addCourseTab(
-                MainApp.getDatabase().courseDatabase().createCourse( //We know here that courseQuarter value cannot be null
-                    courseName.getValueSafe(),
-                    courseDescription.getValueSafe()),
-                    false
-                );
+
+            Course c = MainApp.getDatabase().courseDatabase().createCourse()._2;
+            c.setName(courseName.getValueSafe());
+            c.setDescription(courseDescription.getValueSafe());
+
+            mainController.addCourseTab(c, false);
 
             finished = true;
         }

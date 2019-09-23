@@ -1,4 +1,4 @@
-package misc
+package model
 
 import app.AppSettings
 
@@ -34,6 +34,3 @@ object Weeks extends Serializable {
     def getAWeek: Week = AWeek
     def getBWeek: Week = BWeek
 }
-
-
-
