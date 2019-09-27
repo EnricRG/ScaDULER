@@ -27,7 +27,7 @@ predicate no_overlap(var int: start0, var int: duration0,
 %  This distinction will be modelled by constraints.
 
 %Number of days for the schedule.  
-int: nDays = 5; 
+int: nDays; 
 set of int: Days = 1..nDays;
 
 %Duration of a day in time slots.

@@ -27,6 +27,7 @@ case class MiniZincInstanceData(nDays: Int, //unused
         val SemiColon = MiniZincConstants.SemiColon
         val LineJump = "\n\n"
 
+        "nDays = " + nDays + SemiColon + LineJump +
         "dayDuration = " + dayDuration + SemiColon + LineJump +
         "nResources = " + nResources + SemiColon + LineJump +
         "resourceQuantity = " + resourceQuantity.mkString("[", ",", "]") + SemiColon + LineJump +
