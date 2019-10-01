@@ -31,9 +31,17 @@ abstract class Database[E<:Identifiable] extends Serializable {
     class DatabaseElement(element: E) extends Serializable {
         private var visible: Boolean = true
 
+        //true when user has finished creating/editing this element, false otherwise
+        private var finished: Boolean = false
+
         def hide: this.type = { visible = false; this }
         def show: this.type = { visible = true; this }
         def isVisible: Boolean = visible
+
+        def isFinished: Boolean = finished
+        def setAsUnfinished(): Unit = finished = false
+        def setAsFinished(): Unit = finished = true
+
         def apply: E = element
     }
 
@@ -78,6 +86,19 @@ abstract class Database[E<:Identifiable] extends Serializable {
     protected final def removeElement(e: E): Option[E] = removeElement(e.getID)
     //hard delete
     protected final def deleteElement(e: E): Option[E] = deleteElement(e.getID)
+
+    final def isFinished(key: ID): Boolean = elements.get(key) match {
+        case Some(de) => de.isFinished
+        case _ => false
+    }
+    final def setAsFinished(key: ID): Unit = elements.get(key) match {
+        case Some(de) => de.setAsFinished()
+        case _ =>
+    }
+    final def setAsUnfinished(key: ID): Unit = elements.get(key) match {
+        case Some(de) => de.setAsUnfinished()
+        case _ =>
+    }
 
     final def size: Int = elements.size
 }

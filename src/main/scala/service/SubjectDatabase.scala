@@ -13,7 +13,7 @@ class SubjectDatabase extends Database[Subject] {
 
     def this(initializer: SubjectDatabase#Initializer) = this
 
-    def newSubject(): (ID, Subject) = {
+    def createSubject(): (ID, Subject) = {
         val id = reserveNextId
         val subject = new Subject(id)
         addElement(id, subject)
@@ -35,6 +35,6 @@ class SubjectDatabase extends Database[Subject] {
     }
     def deleteSubject(s: Subject): Unit = deleteSubject(s.getID)
 
-    def getFinishedSubjectsIDs: Iterable[Long] = getIDs.filter(getElement(_).get.isFinished)
-    def getFinishedSubjects: Iterable[Subject] = getElements.filter(_.isFinished)
+    def getFinishedSubjectsIDs: Iterable[Long] = getIDs.filter(isFinished)
+    def getFinishedSubjects: Iterable[Subject] = getFinishedSubjectsIDs.map(getElement(_).get)
 }

@@ -10,9 +10,6 @@ class Subject(id: ID) extends Identifiable(id) with Serializable {
 
     def DefaultColor: paint.Color = paint.Color.WHITESMOKE
 
-    //true when user has finished creating/editing this subject, false otherwise
-    private var finished: Boolean = false
-
     private var name: String = ""
     private var shortName: String = ""
     private var description: String = ""
@@ -20,11 +17,6 @@ class Subject(id: ID) extends Identifiable(id) with Serializable {
     private var color: Color = new Color(DefaultColor)
     //var linkedCourses: ListBuffer[Course] = new ListBuffer
     //var linkedCourseResources: ListBuffer[CourseResource] = new ListBuffer
-
-    //TODO abstract this to DatabaseElement
-    def isFinished: Boolean = finished
-    def setAsUnfinished(): Unit = finished = false
-    def setAsFinished(): Unit = finished = true
 
     def getName: String = name
     def setName(n: String): Unit = name = n
