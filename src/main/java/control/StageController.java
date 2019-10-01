@@ -17,7 +17,7 @@ public abstract class StageController implements Initializable{
      * @param stage non-null stage that will be controlled.
      */
     public StageController(Stage stage) {
-        this.stage = stage;
+        setStage(stage);
     }
 
     /** Sets the stage for this controller if possible. This method can only be called if the stage was not set yet.

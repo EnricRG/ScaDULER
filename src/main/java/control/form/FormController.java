@@ -20,7 +20,6 @@ public abstract class FormController extends ChildStageController implements Ini
     /** Warning notification field that all forms must have. */
     public Label warningTag;
 
-    //TODO check if this works correctly.
     /** {@inheritDoc} */
     public FormController(MainController mainController){
         super(mainController);
@@ -30,12 +29,6 @@ public abstract class FormController extends ChildStageController implements Ini
     public FormController(Stage stage, MainController mainController) {
         super(stage, mainController);
     }
-
-    /** Should be used to check that all input form fields are well formatted.
-     *
-     * @return a Warning if a field contains an error, null otherwise.
-     */
-    protected abstract Warning checkWarnings();
 
     /** Should be used to initialize static text fields that depend on the application language. */
     protected abstract void initializeContentLanguage();
@@ -61,12 +54,34 @@ public abstract class FormController extends ChildStageController implements Ini
         bindActions();
     }
 
+    /** Should be used to check that all input form fields are well formatted.
+     *
+     * @return a Warning if a field contains an error, null otherwise.
+     */
+    protected abstract Warning checkWarnings();
+
     /** Checks if any warning is generated when checking form fields, and shows it to the user if any.
      *
      * @return true when a warning is shown to the user, false otherwise.
      */
     protected boolean warnings() {
         Warning warning = checkWarnings();
+        if(warning == null){
+            hideWarnings();
+            return false;
+        }
+        else{
+            popUpWarning(warning);
+            return true;
+        }
+    }
+
+    /** Checks if @p warning is a valid Warning, and shows it to the user if it is.
+     *
+     * @param warning A Warning.
+     * @return true when a warning is shown to the user, false otherwise.
+     */
+    protected boolean warnings(Warning warning) {
         if(warning == null){
             hideWarnings();
             return false;
