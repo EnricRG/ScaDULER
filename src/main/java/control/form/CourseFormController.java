@@ -3,20 +3,13 @@ package control.form;
 import app.AppSettings;
 import app.MainApp;
 import control.MainController;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import misc.Warning;
 import model.Course;
+import service.CourseDatabase;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class CourseFormController implements Initializable {
-
-    private MainController mainController;
+public class CourseFormController extends FormController {
 
     public Label courseNameTag;
     public TextField courseNameField;
@@ -24,26 +17,19 @@ public class CourseFormController implements Initializable {
     public TextArea courseDescriptionField;
     public CheckBox descriptionWrapCheckBox;
 
-    public Label formWarningTag;
     public Button createCourseButton;
 
-    private StringProperty courseName = new SimpleStringProperty();
-    private StringProperty courseDescription = new SimpleStringProperty();
+    private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
+
+    public CourseFormController(MainController mainController){
+        super(mainController);
+    }
+    public CourseFormController(Stage stage, MainController mainController){
+        super(stage, mainController);
+    }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeContentLanguage();
-        bindFieldsToValues();
-        initializeWarningSystem();
-        bindButtonsToActions();
-    }
-
-    public MainController getMainController(){ return mainController; }
-    public void setMainController(MainController mc){
-        mainController = mc;
-    }
-
-    private void initializeContentLanguage() {
+    protected void initializeContentLanguage() {
         courseNameTag.setText(AppSettings.language().getItem("courseForm_courseNameTagText"));
         courseNameField.setPromptText(AppSettings.language().getItem("courseForm_courseNameFieldText"));
 
@@ -54,64 +40,38 @@ public class CourseFormController implements Initializable {
         createCourseButton.setText(AppSettings.language().getItem("courseForm_createCourseButtonText"));
     }
 
-    private void bindFieldsToValues() {
-        courseName.bind(courseNameField.textProperty());
+    @Override
+    protected void setupViews(){}
 
-        courseDescription.bind(courseDescriptionField.textProperty());
-    }
-
-    private void initializeWarningSystem() {
-        hideWarnings();
-        formWarningTag.setText("");
-    }
-
-    private void bindButtonsToActions() {
+    @Override
+    protected void bindActions() {
         //add course to database and close the window
         createCourseButton.setOnAction(actionEvent -> {
-            if(createCourse()) closeWindow();
+            if(createCourse()) close();
+            actionEvent.consume();
         });
 
         descriptionWrapCheckBox.selectedProperty().bindBidirectional(courseDescriptionField.wrapTextProperty());
     }
 
-    private void closeWindow() {
-        ((Stage)createCourseButton.getScene().getWindow()).close();
+    private boolean createCourse() {
+        if(!warnings()){
+            Course c = courseDatabase.createCourse()._2;
+
+            c.setName(courseNameField.getText());
+            c.setDescription(courseDescriptionField.getText());
+
+            getMainController().addCourseTab(c, false);
+
+            return true;
+        }
+        return false;
     }
 
-    private Warning courseCanBeCreated(String name){
-        if(name.isEmpty())
+    @Override
+    protected Warning checkWarnings(){
+        if(courseNameField.getText().trim().isEmpty())
             return new Warning(AppSettings.language().getItem("warning_courseNameCannotBeEmpty"));
         else return null;
-    }
-
-    private boolean createCourse(){
-        String name = courseNameField.getText().trim();
-        Warning warning = courseCanBeCreated(name);
-        boolean finished = false;
-
-        if(warning == null){ //no warning
-            hideWarnings();
-
-            Course c = MainApp.getDatabase().courseDatabase().createCourse()._2;
-            c.setName(courseName.getValueSafe());
-            c.setDescription(courseDescription.getValueSafe());
-
-            mainController.addCourseTab(c, false);
-
-            finished = true;
-        }
-        else{
-            popUpWarning(warning);
-        }
-
-        return finished;
-    }
-
-    private void hideWarnings(){ formWarningTag.setVisible(false); }
-    private void showWarnings(){ formWarningTag.setVisible(true); }
-
-    private void popUpWarning(Warning warning) {
-        formWarningTag.setText(warning.toString());
-        showWarnings();
     }
 }

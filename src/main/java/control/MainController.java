@@ -4,13 +4,13 @@ import app.AppSettings;
 import app.AssignmentViabilityChecker;
 import app.FXMLPaths;
 import app.MainApp;
+import control.form.CourseFormController;
 import control.form.EventFormController;
 import control.form.SubjectFormController;
 import control.manage.CourseManagerController;
 import control.manage.EventManagerController;
 import control.manage.SubjectManagerController;
 import control.schedule.*;
-import factory.CourseFormViewFactory;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
 import javafx.fxml.Initializable;
@@ -530,14 +530,17 @@ public class MainController implements Initializable {
     }
 
     private void promptCourseForm() {
-        Stage prompt = Utils.promptBoundWindow(
+        StageController stageController = new CourseFormController(this);
+
+        stageController.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItem("courseForm_windowTitle"),
                 addButtons_course.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new CourseFormViewFactory(FXMLPaths.CourseForm(), this)
-        );
+                new ViewFactory<>(FXMLPaths.CourseForm()),
+                stageController
+        ));
 
-        prompt.show();
+        stageController.show();
     }
 
     private void promptSubjectForm(){
