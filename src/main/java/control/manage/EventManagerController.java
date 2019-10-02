@@ -4,119 +4,119 @@ import app.AppSettings;
 import app.MainApp;
 import control.MainController;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import misc.Duration;
 import model.Event;
 import model.Resource;
 import model.Subject;
 import scala.collection.JavaConverters;
 import service.EventDatabase;
-import service.SubjectDatabase;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class EventManagerController implements Initializable {
-
-    private final MainController mainController;
+public class EventManagerController extends EntityManagerController<Event> {
 
     private final EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
-    private final SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
 
-    public TableView<Event> eventTable;
-
-    public TableColumn<Event, String> eventTable_nameColumn;
-    public TableColumn<Event, String> eventTable_shortNameColumn;
-    public TableColumn<Event, String> eventTable_subjectColumn;
-    public TableColumn<Event, String> eventTable_resourceColumn;
-    public TableColumn<Event, String> eventTable_weekColumn;
-    public TableColumn<Event, String> eventTable_durationColumn;
-    public TableColumn<Event, String> eventTable_incompatibilitiesColumn;
-
-    public Button addEventButton;
-    public Button editEventButton;
-    public Button removeEventButton;
+    public TableColumn<Event, String> nameColumn = new TableColumn<>();
+    public TableColumn<Event, String> shortNameColumn = new TableColumn<>();
+    public TableColumn<Event, String> subjectColumn = new TableColumn<>();
+    public TableColumn<Event, String> resourceColumn = new TableColumn<>();
+    public TableColumn<Event, String> weekColumn = new TableColumn<>();
+    public TableColumn<Event, String> durationColumn = new TableColumn<>();
+    public TableColumn<Event, String> incompatibilitiesColumn = new TableColumn<>();
 
     public EventManagerController(MainController mainController){
-        this.mainController = mainController;
+        super(mainController);
+    }
+    public EventManagerController(Stage stage, MainController mainController){
+        super(stage, mainController);
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeContentLanguage();
-        setupViews();
-        bindActions();
+    protected void initializeContentLanguage() {
+        table.setPlaceholder(new Label(AppSettings.language().getItem("eventListPlaceholder")));
+
+        nameColumn.setText(AppSettings.language().getItem("eventManager_nameColumnHeader"));
+        shortNameColumn.setText(AppSettings.language().getItem("eventManager_shortNameColumnHeader"));
+        subjectColumn.setText(AppSettings.language().getItem("subjectManager_subjectColumnHeader"));
+        resourceColumn.setText(AppSettings.language().getItem("subjectManager_resourceColumnHeader"));
+        weekColumn.setText(AppSettings.language().getItem("subjectManager_weekColumnHeader"));
+        durationColumn.setText(AppSettings.language().getItem("subjectManager_durationColumnHeader"));
+        incompatibilitiesColumn.setText(AppSettings.language().getItem("subjectManager_incompatibilitiesColumnHeader"));
+
+        addButton.setText(AppSettings.language().getItem("eventManager_addEventButton"));
+        editButton.setText(AppSettings.language().getItem("eventManager_editEventButton"));
+        removeButton.setText(AppSettings.language().getItem("eventManager_removeEventButton"));
     }
 
-    private void initializeContentLanguage() {
-        eventTable.setPlaceholder(new Label(AppSettings.language().getItem("eventListPlaceholder")));
-
-        eventTable_nameColumn.setText(AppSettings.language().getItem("eventManager_nameColumnHeader"));
-        eventTable_shortNameColumn.setText(AppSettings.language().getItem("eventManager_shortNameColumnHeader"));
-        eventTable_subjectColumn.setText(AppSettings.language().getItem("subjectManager_subjectColumnHeader"));
-        eventTable_resourceColumn.setText(AppSettings.language().getItem("subjectManager_resourceColumnHeader"));
-        eventTable_weekColumn.setText(AppSettings.language().getItem("subjectManager_weekColumnHeader"));
-        eventTable_durationColumn.setText(AppSettings.language().getItem("subjectManager_durationColumnHeader"));
-        eventTable_incompatibilitiesColumn.setText(AppSettings.language().getItem("subjectManager_incompatibilitiesColumnHeader"));
-
-        addEventButton.setText(AppSettings.language().getItem("eventManager_addEventButton"));
-        editEventButton.setText(AppSettings.language().getItem("eventManager_editEventButton"));
-        removeEventButton.setText(AppSettings.language().getItem("eventManager_removeEventButton"));
+    @Override
+    protected void setupTable() {
+        addColumns();
+        configureColumns();
+        fillTable(JavaConverters.asJavaCollection(eventDatabase.getElements()));
     }
 
-    private void setupViews() {
-        //because we'll be using ids from the DB itself, it should be secure to use get() without checking
-        eventTable_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        eventTable_shortNameColumn.setCellValueFactory(new PropertyValueFactory<>("shortName"));
-        eventTable_subjectColumn.setCellValueFactory(cell -> {
+    private void addColumns(){
+        addColumn(nameColumn);
+        addColumn(shortNameColumn);
+        addColumn(subjectColumn);
+        addColumn(resourceColumn);
+        addColumn(weekColumn);
+        addColumn(durationColumn);
+        addColumn(incompatibilitiesColumn);
+    }
+
+    private void configureColumns(){
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        shortNameColumn.setCellValueFactory(new PropertyValueFactory<>("shortName"));
+        subjectColumn.setCellValueFactory(cell -> {
             Subject subject = cell.getValue().getSafeSubject();
             if(subject != null) return new SimpleStringProperty(subject.getName());
             else return new SimpleStringProperty();
         });
-        eventTable_resourceColumn.setCellValueFactory(cell -> {
+        resourceColumn.setCellValueFactory(cell -> {
             Resource resource = cell.getValue().getSafeNeededResource();
             if(resource != null) return new SimpleStringProperty(resource.getName());
             else return new SimpleStringProperty();
         });
-        eventTable_weekColumn.setCellValueFactory(new PropertyValueFactory<>("week"));
-        eventTable_durationColumn.setCellValueFactory(cell ->
-            new SimpleStringProperty(Duration.asPrettyString(cell.getValue().getDuration()))
+        weekColumn.setCellValueFactory(new PropertyValueFactory<>("week"));
+        durationColumn.setCellValueFactory(cell ->
+                new SimpleStringProperty(Duration.asPrettyString(cell.getValue().getDuration()))
         );
-        eventTable_incompatibilitiesColumn.setCellValueFactory(cell ->
-            new SimpleStringProperty(String.valueOf(cell.getValue().getIncompatibilities().size()))
+        incompatibilitiesColumn.setCellValueFactory(cell ->
+                new SimpleStringProperty(String.valueOf(cell.getValue().getIncompatibilities().size()))
         );
-
-        eventTable.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(eventDatabase.getElements())));
     }
 
-    private void bindActions() {
-        removeEventButton.setOnAction(event -> removeSelectedEvent());
+    @Override
+    protected void addButtonAction(ActionEvent e) {
+
     }
 
-    private void removeSelectedEvent() {
-        Event event = eventTable.getSelectionModel().getSelectedItem();
+    @Override
+    protected void editButtonAction(ActionEvent e) {
+
+    }
+
+    @Override
+    protected void removeButtonAction(ActionEvent e) {
+        Event event = table.getSelectionModel().getSelectedItem();
 
         if(event != null){
-
             Subject subject = event.getSafeSubject();
             if(subject != null){
                 subject.removeEvent(event.getID());
             }
 
-            for(Event e : JavaConverters.asJavaCollection(event.getIncompatibilities())){
-                e.removeIncompatibility(event);
+            for(Event ev : JavaConverters.asJavaCollection(event.getIncompatibilities())){
+                ev.removeIncompatibility(event);
             }
 
-            eventTable.getItems().remove(event);
-
-            mainController.removeEvent(event);
-
+            removeRow(event);
+            getMainController().removeEvent(event);
             eventDatabase.removeElement(event);
         }
     }

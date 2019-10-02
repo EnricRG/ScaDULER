@@ -529,6 +529,8 @@ public class MainController implements Initializable {
         }
     }
 
+
+
     private void promptCourseForm() {
         StageController stageController = new CourseFormController(this);
 
@@ -574,51 +576,42 @@ public class MainController implements Initializable {
 
 
     private void promptCourseManager(){
-        Stage prompt = Utils.promptBoundWindow(
+        Utils.promptBoundWindow(
                 AppSettings.language().getItem("courseManager_windowTitle"),
                 manageButtons_courses.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.ManageCoursesPanel()),
+                new ViewFactory<>(FXMLPaths.EntityManagerPanel()),
                 new CourseManagerController(this)
-        );
-
-        prompt.show();
+        ).show();
     }
 
     public void promptResourceManager(Window owner) {
-
-        Stage prompt = Utils.promptBoundWindow(
+        Utils.promptBoundWindow(
                 AppSettings.language().getItem("manageResources_windowTitle"),
                 owner,
                 Modality.WINDOW_MODAL,
                 new ViewFactory(FXMLPaths.ManageResourcesPanel())
-        );
-
-        prompt.show();
+        ).show();
     }
 
     private void promptSubjectManager(){
-        Stage prompt = Utils.promptBoundWindow(
+        Utils.promptBoundWindow(
                 AppSettings.language().getItem("subjectManager_windowTitle"),
                 manageButtons_subjects.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.ManageSubjectsPanel()),
+                new ViewFactory<>(FXMLPaths.EntityManagerPanel()),
                 new SubjectManagerController(this)
-        );
-
-        prompt.show();
+        ).show();
     }
 
     private void promptEventManager() {
-        Stage prompt = Utils.promptBoundWindow(
+        Utils.promptBoundWindow(
                 AppSettings.language().getItem("eventManager_windowTitle"),
                 manageButtons_events.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.ManageEventsPanel()),
+                new ViewFactory<>(FXMLPaths.EntityManagerPanel()),
                 new EventManagerController(this)
-        );
-
-        prompt.show();
+        ).show();
     }
 
     //TODO: remove this method, it has only debugging purposes.

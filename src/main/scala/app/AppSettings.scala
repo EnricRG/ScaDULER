@@ -12,10 +12,8 @@ object FXMLPaths {
     val EventForm: String = "src/main/fxml/event_form.fxml"
     val EventIncompatibilityFrom: String = "src/main/fxml/event_incompatibility_manager.fxml"
 
+    val EntityManagerPanel: String = "src/main/fxml/entity_manager.fxml"
     val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
-    val ManageCoursesPanel: String = "src/main/fxml/course_manager.fxml"
-    val ManageSubjectsPanel: String = "src/main/fxml/subject_manager.fxml"
-    val ManageEventsPanel: String = "src/main/fxml/event_manager.fxml"
 
     val GenericSchedule: String = "src/main/fxml/schedule_view.fxml"
     val DualWeekGenericSchedule: String = "src/main/fxml/dual_week_schedule_view.fxml"
