@@ -65,15 +65,7 @@ public abstract class FormController extends ChildStageController implements Ini
      * @return true when a warning is shown to the user, false otherwise.
      */
     protected boolean warnings() {
-        Warning warning = checkWarnings();
-        if(warning == null){
-            hideWarnings();
-            return false;
-        }
-        else{
-            popUpWarning(warning);
-            return true;
-        }
+        return warnings(checkWarnings());
     }
 
     /** Checks if @p warning is a valid Warning, and shows it to the user if it is.
