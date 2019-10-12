@@ -43,9 +43,18 @@ public abstract class EntityManagerController<E> extends ChildStageController {
 
     /** Should be used to initialize interaction fields (i.e. buttons, lists). */
     protected void bindActions(){
-        addButton.setOnAction(this::addButtonAction);
-        editButton.setOnAction(this::editButtonAction);
-        removeButton.setOnAction(this::removeButtonAction);
+        addButton.setOnAction(event -> {
+            addButtonAction(event);
+            event.consume();
+        });
+        editButton.setOnAction(event -> {
+            editButtonAction(event);
+            event.consume();
+        });
+        removeButton.setOnAction(event -> {
+            removeButtonAction(event);
+            event.consume();
+        });
     }
 
     protected abstract void addButtonAction(ActionEvent event);

@@ -9,6 +9,7 @@ import control.form.EventFormController;
 import control.form.SubjectFormController;
 import control.manage.CourseManagerController;
 import control.manage.EventManagerController;
+import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
 import control.schedule.*;
 import factory.CourseScheduleViewFactory;
@@ -590,7 +591,8 @@ public class MainController implements Initializable {
                 AppSettings.language().getItem("manageResources_windowTitle"),
                 owner,
                 Modality.WINDOW_MODAL,
-                new ViewFactory(FXMLPaths.ManageResourcesPanel())
+                new ViewFactory<>(FXMLPaths.ManageResourcesPanel()),
+                new ResourceManagerController(this)
         ).show();
     }
 

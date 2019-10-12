@@ -2,11 +2,12 @@ package control.manage;
 
 import app.AppSettings;
 import app.MainApp;
+import control.MainController;
+import control.form.FormController;
 import control.schedule.ResourceScheduleController;
 import factory.DualWeekScheduleViewFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,16 +20,17 @@ import javafx.stage.Stage;
 import misc.Warning;
 import model.Resource;
 import scala.collection.JavaConverters;
+import service.ResourceDatabase;
 import util.Utils;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 
-public class ResourceManagerController implements Initializable {
+public class ResourceManagerController extends FormController {
+
+    private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
 
     public TextField searchResourceField;
 
@@ -45,20 +47,20 @@ public class ResourceManagerController implements Initializable {
     public Button minusOneButton;
     public Button plusOneButton;
 
-    public Label warningTag;
-
     private List<Resource> resources = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().resourceDatabase().getElements()));
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeContentLanguage();
-        setupTableView();
-        initializeWarningSystem();
-        bindActions();
+    public ResourceManagerController(MainController mainController){
+        super(mainController);
+    }
+    public ResourceManagerController(Stage stage, MainController mainController){
+        super(stage, mainController);
     }
 
-    private void initializeContentLanguage() {
+    @Override
+    protected void initializeContentLanguage() {
         searchResourceField.setPromptText(AppSettings.language().getItem("manageResources_searchResourceField"));
+
+        resourceTable.setPlaceholder(new Label(AppSettings.language().getItem("resourceTable_placeholder")));
 
         resourceTable_nameColumn.setText(AppSettings.language().getItem("manageResources_nameColumn"));
         resourceTable_quantityColumn.setText(AppSettings.language().getItem("manageResources_quantityColumn"));
@@ -70,25 +72,10 @@ public class ResourceManagerController implements Initializable {
         resourceQuantityField.setPromptText(AppSettings.language().getItem("manageResources_quantityField"));
         minusOneButton.setText(AppSettings.language().getItem("manageResources_subButton"));
         plusOneButton.setText(AppSettings.language().getItem("manageResources_sumButton"));
-
-        resourceTable.setPlaceholder(new Label(AppSettings.language().getItem("resourceTable_placeholder")));
     }
 
-    private Node generateResourceManageButton(TableCell<Resource, Void> c){
-        HBox hbox = new HBox();
-        Button button = new Button(AppSettings.language().getItem("manage"));
-        hbox.setAlignment(Pos.CENTER);
-        hbox.setMaxWidth(USE_COMPUTED_SIZE);
-        hbox.getChildren().add(button);
-        HBox.setHgrow(button, Priority.ALWAYS);
-        button.setPadding(new Insets(1));
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setMaxHeight(Double.MAX_VALUE);
-        button.setOnAction(event -> manageResourceAvailability(c.getTableRow().getItem()));
-        return hbox;
-    }
-
-    private void setupTableView() {
+    @Override
+    protected void setupViews() {
         resourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         resourceTable_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -113,23 +100,8 @@ public class ResourceManagerController implements Initializable {
         resourceTable.getItems().addAll(resources);
     }
 
-    private void manageResourceAvailability(Resource resource) {
-        Stage manager = Utils.promptBoundWindow(
-                AppSettings.language().getItem("manageResources_availabilityPrompt"),
-                resourceTable.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new DualWeekScheduleViewFactory<>(new ResourceScheduleController(resource))
-        );
-
-        manager.show();
-    }
-
-    private void initializeWarningSystem() {
-        hideWarnings();
-        warningTag.setText("");
-    }
-
-    private void bindActions() {
+    @Override
+    protected void bindActions() {
         searchResourceField.setOnKeyTyped(event -> {
             filterResourceTable(searchResourceField.getText().trim().toLowerCase());
             event.consume();
@@ -150,6 +122,29 @@ public class ResourceManagerController implements Initializable {
             incrementByOne();
             event.consume();
         });
+    }
+
+    private Node generateResourceManageButton(TableCell<Resource, Void> c){
+        HBox hbox = new HBox();
+        Button button = new Button(AppSettings.language().getItem("manage"));
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setMaxWidth(USE_COMPUTED_SIZE);
+        hbox.getChildren().add(button);
+        HBox.setHgrow(button, Priority.ALWAYS);
+        button.setPadding(new Insets(1));
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setMaxHeight(Double.MAX_VALUE);
+        button.setOnAction(event -> manageResourceAvailability(c.getTableRow().getItem()));
+        return hbox;
+    }
+
+    private void manageResourceAvailability(Resource resource) {
+        Utils.promptBoundWindow(
+                AppSettings.language().getItem("manageResources_availabilityPrompt"),
+                resourceTable.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new DualWeekScheduleViewFactory<>(new ResourceScheduleController(resource))
+        ).show();
     }
 
     private void incrementByOne() {
@@ -174,30 +169,26 @@ public class ResourceManagerController implements Initializable {
         resourceTable.setItems(filteredResources);
     }
 
-    private void addResource() {
-        Warning warning = null;
-        String name = resourceNameField.getText().trim();
-        Integer quantity = Integer.MIN_VALUE;
-        try{
-            quantity = Integer.parseInt(resourceQuantityField.getText());
-        } catch (NumberFormatException nfe){
-            warning = new Warning(AppSettings.language().getItem("warning_resourceQuantityNaN"));
-        }
-
-        //if Integer parsing went ok, check if input is correctly formatted.
-        warning = (warning == null) ? resourceCanBeCreated(name, quantity) : warning;
-
-        if (warning == null) { //if no errors
-            hideWarnings(); //no warnings to be shown
-
-            Resource r = MainApp.getDatabase().resourceDatabase().createResource()._2;
-            r.setName(name);
-            r.setQuantity(quantity);
+    private void addResource(){
+        if(!warnings()){
+            Resource r = resourceDatabase.createResource()._2;
+            r.setName(resourceNameField.getText().trim());
+            r.setQuantity(getQuantityFieldValue());
 
             updateCourseInTableView(r);
             clearInputFields();
         }
-        else popUpWarning(warning);
+    }
+
+    //post: return quantity field value if it is a number, Integer.MIN_VALUE otherwise
+    private int getQuantityFieldValue(){
+        try{
+            int quantity;
+            quantity = Integer.parseInt(resourceQuantityField.getText());
+            return quantity;
+        } catch (NumberFormatException nfe){
+            return Integer.MIN_VALUE;
+        }
     }
 
     private void clearInputFields() {
@@ -218,34 +209,29 @@ public class ResourceManagerController implements Initializable {
         }
     }
 
-    private void deleteResource() {
-        Warning warning = null;
-
+    private void deleteResource(){
         ObservableList<Resource> selection = resourceTable.getSelectionModel().getSelectedItems();
 
-        warning = resourcesCanBeDeleted(selection);
-
-        if (warning == null) { //if no errors
-            hideWarnings();
-            //this order is mandatory, if changed resources will not update properly.
+        if(!warnings(resourcesCanBeDeleted(selection))){
             selection.forEach(resource -> MainApp.getDatabase().resourceDatabase().removeElement(resource));
             resources.removeAll(selection);
             resourceTable.getItems().removeAll(selection);
         }
-        else popUpWarning(warning);
     }
 
-    private Warning resourcesCanBeDeleted(ObservableList<Resource> selection) {
-        if(selection.isEmpty()){
-            return new Warning(AppSettings.language().getItem("warning_resourcesNotSelected"));
-        }
-        else return null;
+    @Override
+    protected Warning checkWarnings(){
+        return resourceCanBeCreated();
     }
 
     //pre: name and quantity not null
-    private Warning resourceCanBeCreated(String name, Integer quantity) {
-        if(name.isBlank())
+    private Warning resourceCanBeCreated() {
+        Integer quantity = getQuantityFieldValue();
+        if(resourceNameField.getText().trim().isBlank())
             return new Warning(AppSettings.language().getItem("warning_resourceNameCannotBeEmpty"));
+        else if(quantity.equals(Integer.MIN_VALUE)){
+            return new Warning(AppSettings.language().getItem("warning_resourceQuantityNaN"));
+        }
         else if(quantity.compareTo(AppSettings.minQuantityPerResource()) < 0)  //if quantity is lower than minimum required.
             return new Warning(
                     quantity +
@@ -254,13 +240,10 @@ public class ResourceManagerController implements Initializable {
         else return null;
     }
 
-    private void hideWarnings(){ warningTag.setVisible(false); }
-    private void showWarnings(){ warningTag.setVisible(true); }
-
-    private void popUpWarning(Warning warning) {
-        warningTag.setText(warning.toString());
-        showWarnings();
+    private Warning resourcesCanBeDeleted(ObservableList<Resource> selection) {
+        if(selection.isEmpty()){
+            return new Warning(AppSettings.language().getItem("warning_resourcesNotSelected"));
+        }
+        else return null;
     }
-
-
 }
