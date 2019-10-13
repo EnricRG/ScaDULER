@@ -451,7 +451,7 @@ public class MainController implements Initializable {
     }
 
     public boolean promptChoice(String title, String message){
-        ChoiceAlertController controller = new ChoiceAlertController(message);
+        BinaryChoiceAlertController controller = new BinaryChoiceAlertController(message);
 
         Stage alert = Utils.promptBoundWindow(
                 title,
@@ -463,7 +463,7 @@ public class MainController implements Initializable {
 
         alert.showAndWait();
 
-        return ChoiceAlertController.accepted;
+        return controller.accepted();
     }
 
     private void addUnassignedEvents() {

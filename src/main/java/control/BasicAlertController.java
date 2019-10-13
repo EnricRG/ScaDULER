@@ -11,10 +11,10 @@ import java.util.ResourceBundle;
 
 public class BasicAlertController implements Initializable {
 
-    public static boolean accepted = false;
+    protected boolean accepted = false;
 
     public Label message;
-    public Button button;
+    public Button acceptButton;
 
     private final String text;
 
@@ -30,11 +30,20 @@ public class BasicAlertController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         message.setText(text);
-        button.setText(AppSettings.language().getItem("acceptButton"));
-        button.setOnAction(event -> {
+        acceptButton.setText(AppSettings.language().getItem("acceptButton"));
+
+        acceptButton.setOnAction(event -> {
             accepted = true;
             event.consume();
-            ((Stage)button.getScene().getWindow()).close();
+            ((Stage) acceptButton.getScene().getWindow()).close();
         });
+    }
+
+    public boolean accepted(){
+        return accepted;
+    }
+
+    public boolean rejected(){
+        return !accepted();
     }
 }
