@@ -77,11 +77,9 @@ public class ScheduleIntervalController {
     }
 
     public void addEvent(Event event, int hint) {
-        AssignedEventViewController assignedView = new AssignedEventViewController(this,event);
+        AssignedEventViewController assignedView = new AssignedEventViewController(this, event, interval);
 
         try{new ViewFactory<>(FXMLPaths.AssignedEvent()).load(assignedView);} catch (IOException ioe){ ioe.printStackTrace(); }
-
-        assignedView.setHour(interval);
 
         if(hint < 0) boundingBox.getChildren().add(assignedView.hourPane);
         else boundingBox.getChildren().add(hint, assignedView.hourPane);

@@ -3,24 +3,32 @@ package control.schedule;
 import app.AppSettings;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.Region;
 import model.Event;
 
 public class AssignedEventViewController extends EventViewController {
 
     private final ScheduleIntervalController intervalController;
+    private final Integer interval;
 
     public TitledPane hourPane;
 
-    public AssignedEventViewController(ScheduleIntervalController intervalController, Event event) {
+    public AssignedEventViewController(ScheduleIntervalController intervalController, Event event, Integer interval) {
         super(event);
         this.intervalController = intervalController;
+        this.interval = interval;
     }
 
-    public AssignedEventViewController(ScheduleIntervalController intervalController, EventViewController oldController) {
-        this(intervalController, oldController.getEvent());
+    @Override
+    protected void initializeEventView(){
+        setHour(interval);
+        super.initializeEventView();
+        initializeBoxSize();
+        bindBoxSize();
+        setEventColor();
     }
 
-    public void setHour(Integer interval){
+    private void setHour(Integer interval){
         hourPane.setText(computeHour(interval));
     }
 
@@ -32,25 +40,21 @@ public class AssignedEventViewController extends EventViewController {
         return String.format("%02d:%02d",hours,minutes);
     }
 
-    @Override
-    protected void initializeEventView(){
-        super.initializeEventView();
-        initializeBoxSize();
-        bindBoxSize();
-        setEventColor();
-    }
-
     private void initializeBoxSize() {
         hourPane.setMaxWidth(Double.MAX_VALUE);
-        double maxHeight = getEvent().getDuration()*intervalController.getBoundingRegion().getHeight();
-        hourPane.setMaxHeight(maxHeight);
-        hourPane.setPrefHeight(maxHeight);
-        hourPane.setMinHeight(maxHeight);
+        resizeBox();
+        hourPane.setPrefHeight(Region.USE_COMPUTED_SIZE);
+    }
+
+    private void resizeBox(){
+        double height = getEvent().getDuration()*intervalController.getBoundingRegion().getHeight();
+        hourPane.setMaxHeight(height);
+        hourPane.setMinHeight(height);
     }
 
     private void bindBoxSize() {
         intervalController.getBoundingRegion().heightProperty().addListener((observable, oldValue, newValue) -> {
-            initializeBoxSize(); //TODO improvable redundant job
+            resizeBox();
         });
     }
 
@@ -73,8 +77,6 @@ public class AssignedEventViewController extends EventViewController {
             event.consume();
         });
     }
-
-    public ScheduleIntervalController getIntervalController() { return intervalController; }
 
     @Override
     public Node getNode() {

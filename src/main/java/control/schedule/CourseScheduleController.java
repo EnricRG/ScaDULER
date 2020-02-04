@@ -87,15 +87,21 @@ public class CourseScheduleController implements Initializable {
         secondQuarterController.fillQuarter();
     }
 
-    public void hideWarnings(){ warningTag.setVisible(false); }
-    private void showWarnings(){ warningTag.setVisible(true); }
+    public void hideWarnings(){
+        warningTag.setVisible(false);
+    }
+    private void showWarnings(){
+        warningTag.setVisible(true);
+    }
 
     public void popUpWarning(Warning warning) {
         warningTag.setText(warning.toString());
         showWarnings();
     }
 
-    public Course getCourse() { return course; }
+    public Course getCourse() {
+        return course;
+    }
 
     public QuarterScheduleController getVisibleQuarterController() {
         return tabPane.getSelectionModel().getSelectedItem() == firstQuarterTab ? firstQuarterController : secondQuarterController;
