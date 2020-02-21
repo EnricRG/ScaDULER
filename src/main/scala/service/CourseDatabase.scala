@@ -21,4 +21,6 @@ class CourseDatabase extends Database[Course] {
 
     def deleteCourse(cid: ID): Unit = deleteElement(cid)
     def deleteCourse(c: Course): Unit = deleteElement(c)
+
+    def getCourses: Iterable[Course] = getElements
 }

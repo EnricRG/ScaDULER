@@ -1,5 +1,5 @@
 package file
 
 class MCFReader {
-    def
+    //def
 }

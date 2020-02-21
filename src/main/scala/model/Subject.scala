@@ -13,10 +13,9 @@ class Subject(id: ID) extends Identifiable(id) with Serializable {
     private var name: String = ""
     private var shortName: String = ""
     private var description: String = ""
-    private val events: mutable.Map[ID,Event] = new mutable.HashMap
+    private var course: Course = NoCourse
     private var color: Color = new Color(DefaultColor)
-    //var linkedCourses: ListBuffer[Course] = new ListBuffer
-    //var linkedCourseResources: ListBuffer[CourseResource] = new ListBuffer
+    private val events: mutable.Map[ID,Event] = new mutable.HashMap
 
     def getName: String = name
     def setName(n: String): Unit = name = n
@@ -27,11 +26,18 @@ class Subject(id: ID) extends Identifiable(id) with Serializable {
     def getDescription: String = description
     def setDescription(desc: String): Unit = description = desc
 
-    //this can be abstracted and use a generic type for color
-    def getColor: paint.Color = color.toColor
-    def setColor(c: paint.Color): paint.Color = {
-        val oldColor = color.toColor
-        color = new Color(c)
+    def getCourse: Course = course
+    def setCourse(c: Course): Course = {
+        val oldCourse = course;
+        course = c
+        oldCourse
+    }
+    def unsetCourse(): Unit = course = NoCourse
+
+    def getColor: Color = color
+    def setColor(c: Color): Color = {
+        val oldColor = color
+        color = c
         oldColor
     }
 

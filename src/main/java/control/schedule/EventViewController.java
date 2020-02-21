@@ -41,7 +41,7 @@ public abstract class EventViewController implements Initializable {
     protected void setEventColor(){
         mainBox.setStyle("-fx-background-color: #" + event.getEventType().color().toString().substring(2) + ";");
         Subject eventSubject = event.getSubject().isDefined() ? event.getSubject().get() : null;
-        if(eventSubject != null) mainBox.setStyle(mainBox.getStyle() + "-fx-border-width: 2; -fx-border-color: #" + eventSubject.getColor().toString().substring(2) + ";");
+        if(eventSubject != null) mainBox.setStyle(mainBox.getStyle() + "-fx-border-width: 2; -fx-border-color: #" + eventSubject.getColor().toColor().toString().substring(2) + ";");
     }
 
     protected abstract void initializeBehavior();

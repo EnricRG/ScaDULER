@@ -14,6 +14,7 @@ class Language(val items: Map[String,String]) {
 object DefaultLanguage extends Language {
     override val items = Map(
 
+        "noCourse" -> "No Course",
         "firstQuarter" -> "First Quarter",
         "secondQuarter" -> "Second Quarter",
 
@@ -137,6 +138,7 @@ object DefaultLanguage extends Language {
         "subjectForm_subjectDescriptionField" -> "Write a description about the contents of this subject.",
         "subjectForm_subjectColorTag" -> "Subject Color:",
         "subjectForm_subjectColorExplanation" -> "This color will be used to draw a thin frame around the events of the subject",
+        "subjectForm_subjectCourseTag" -> "Course:",
         "subjectForm_generateEventsTag" -> "Generate Subject Events (optional):",
         "subjectForm_eventType" -> "Event type",
         "subjectForm_eventWeek" -> "Event Week",

@@ -12,6 +12,7 @@ import misc.Duration;
 import misc.Warning;
 import model.*;
 import scala.collection.JavaConverters;
+import service.CourseDatabase;
 import service.EventDatabase;
 import service.ResourceDatabase;
 import service.SubjectDatabase;
@@ -32,6 +33,9 @@ public class SubjectFormController extends FormController {
     public Label subjectColorTag;
     public Label subjectColorExplanation;
     public ColorPicker subjectColorPicker;
+
+    public Label subjectCourseTag;
+    public ComboBox<Course> subjectCoursePicker;
 
     public Label generateEventsTag;
     public ComboBox<EventType> generateEvents_eventTypeSelector;
@@ -60,6 +64,7 @@ public class SubjectFormController extends FormController {
     public Button createSubjectButton;
 
     private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
+    private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
     private EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
     private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
 
@@ -83,6 +88,8 @@ public class SubjectFormController extends FormController {
 
         subjectColorTag.setText(AppSettings.language().getItem("subjectForm_subjectColorTag"));
         subjectColorExplanation.setText(AppSettings.language().getItem("subjectForm_subjectColorExplanation"));
+
+        subjectCourseTag.setText(AppSettings.language().getItem("subjectForm_subjectCourseTag"));
 
         generateEventsTag.setText(AppSettings.language().getItem("subjectForm_generateEventsTag"));
 
@@ -115,6 +122,19 @@ public class SubjectFormController extends FormController {
 
     @Override
     protected void setupViews() {
+        subjectCoursePicker.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(courseDatabase.getCourses())));
+        subjectCoursePicker.getItems().add(0, NoCourse.noCourse());
+        //FIXME: When selected, name is not shown correctly
+        subjectCoursePicker.setCellFactory(param -> new ListCell<>(){
+                    @Override
+                    protected void updateItem(Course item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if(empty || item == null) setGraphic(null);
+                        else setText(item.getName());
+                    }
+                }
+        );
+
         generateEvents_eventTypeSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(EventTypes.commonEventTypes())));
 
         generateEvents_durationSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Duration.getDurations().toBuffer())));
@@ -295,7 +315,8 @@ public class SubjectFormController extends FormController {
             subject.setName(subjectNameField.getText());
             subject.setShortName(subjectShortNameField.getText());
             subject.setDescription(subjectDescriptionField.getText());
-            subject.setColor(subjectColorPicker.getValue());
+            subject.setColor(new Color(subjectColorPicker.getValue()));
+            subject.setCourse(subjectCoursePicker.getValue());
 
             for(Event e : eventTable.getItems()){
                 subject.addEvent(e.getID(), e);
