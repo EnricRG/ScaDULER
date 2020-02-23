@@ -1,4 +1,4 @@
-package control.manage;
+package control.form;
 
 import app.AppSettings;
 import app.MainApp;
@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class EventIncompatibilityManagerController extends StageController implements Initializable {
+public class EventIncompatibilityFormController extends StageController implements Initializable {
 
     private final ArrayList<Event> incompatibilities;
 
@@ -37,7 +37,7 @@ public class EventIncompatibilityManagerController extends StageController imple
     private final EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
     private final ArrayList<Event> allEvents = new ArrayList<>(JavaConverters.asJavaCollection(eventDatabase.getElements()));
 
-    public EventIncompatibilityManagerController(ArrayList<Event> incompatibilities){
+    public EventIncompatibilityFormController(ArrayList<Event> incompatibilities){
         super();
         this.incompatibilities = incompatibilities;
         allEvents.removeAll(incompatibilities);

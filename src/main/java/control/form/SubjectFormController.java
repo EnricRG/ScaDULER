@@ -1,22 +1,28 @@
 package control.form;
 
 import app.AppSettings;
+import app.FXMLPaths;
 import app.MainApp;
 import control.MainController;
+import control.StageController;
+import factory.ViewFactory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import misc.Duration;
+import misc.EventTypeIncompatibility;
 import misc.Warning;
 import model.*;
 import scala.collection.JavaConverters;
 import service.EventDatabase;
 import service.ResourceDatabase;
 import service.SubjectDatabase;
+import util.Utils;
 
-import java.util.Collection;
+import java.util.*;
 
 public class SubjectFormController extends FormController {
 
@@ -64,6 +70,8 @@ public class SubjectFormController extends FormController {
     private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
     private EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
     private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
+
+    private Collection<EventTypeIncompatibility> eventTypeIncompatibilities = new HashSet<>();
 
     public SubjectFormController(MainController mainController){
         super(mainController);
@@ -202,6 +210,20 @@ public class SubjectFormController extends FormController {
             event.consume();
         });
 
+        manageEventTypeIncompatibilitiesButton.setOnAction(event -> {
+            StageController incompatibilityFormController = new SubjectEventIncompatibilityFormController(eventTypeIncompatibilities);
+
+            incompatibilityFormController.setStage(Utils.promptBoundWindow(
+                    AppSettings.language().getItem("eventForm_manageIncompatibilities"),
+                    manageEventTypeIncompatibilitiesButton.getScene().getWindow(),
+                    Modality.WINDOW_MODAL,
+                    new ViewFactory<>(FXMLPaths.SubjectIncompatibilityForm()),
+                    incompatibilityFormController
+            ));
+
+            incompatibilityFormController.show();
+        });
+
         deleteSelectedEventsButton.setOnAction(event -> {
             deleteSubjectEvents(eventTable.getSelectionModel().getSelectedItems());
             event.consume();
@@ -301,10 +323,25 @@ public class SubjectFormController extends FormController {
             subject.setDescription(subjectDescriptionField.getText());
             subject.setColor(new Color(subjectColorPicker.getValue()));
 
+            Map<EventType, List<Event>> eventsByType = new HashMap<>();
+
+            for(EventType et: JavaConverters.asJavaCollection(EventTypes.commonEventTypes())){
+                eventsByType.put(et, new ArrayList<>());
+            }
+
             for(Event e : eventTable.getItems()){
                 subject.addEvent(e.getID(), e);
                 e.setSubject(subject);
+                eventsByType.get(e.getEventType()).add(e);
                 getMainController().addUnassignedEvent(e);
+            }
+
+            for(EventTypeIncompatibility eti : eventTypeIncompatibilities){
+                for(Event e1 : eventsByType.get(eti.getFirstType())){
+                    for(Event e2: eventsByType.get(eti.getSecondType())){
+                        e1.addIncompatibility(e2);
+                    }
+                }
             }
 
             subjectDatabase.setAsFinished(subject.getID());

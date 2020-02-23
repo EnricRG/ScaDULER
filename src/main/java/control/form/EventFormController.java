@@ -5,7 +5,6 @@ import app.FXMLPaths;
 import app.MainApp;
 import control.MainController;
 import control.StageController;
-import control.manage.EventIncompatibilityManagerController;
 import factory.ViewFactory;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
@@ -159,7 +158,7 @@ public class EventFormController extends FormController {
     }
 
     private void manageIncompatibilities(ArrayList<Event> incompatibilities) {
-        StageController managerController = new EventIncompatibilityManagerController(incompatibilities);
+        StageController managerController = new EventIncompatibilityFormController(incompatibilities);
 
         managerController.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItem("eventForm_manageIncompatibilities"),

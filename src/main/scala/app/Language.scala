@@ -157,6 +157,8 @@ object DefaultLanguage extends Language {
         "subjectForm_deleteAllEventsButton" -> "Delete All Events",
         "subjectForm_createSubjectButton" -> "Create Subject",
 
+        "subjectEventIncompatibilityForm_informationTag" -> "Choose which incompatibilities you want: ",
+
         "eventForm_windowTitle" -> "New Event",
         "eventForm_eventName" -> "Event name:",
         "eventForm_eventNameHelp" -> "Full Event name",
