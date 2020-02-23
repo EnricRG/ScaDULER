@@ -11,7 +11,7 @@ import util.Utils;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class DualWeekScheduleViewController<C1 extends ScheduleController, C2 extends ScheduleController> implements Initializable {
+public class DualWeekScheduleViewController<C1 extends WeekScheduleController, C2 extends WeekScheduleController> implements Initializable {
 
     protected C1 firstWeekController;
     protected C2 secondWeekController;

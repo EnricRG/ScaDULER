@@ -16,7 +16,7 @@ import java.util.Map;
 public class ScheduleIntervalController {
 
     private final QuarterScheduleController quarterScheduleController;
-    private final ScheduleController weekController;
+    private final WeekScheduleController weekController;
     private final Region boundingRegion;
 
     private final Map<Long, AssignedEventViewController> eventViewControllers = new HashMap<>();
@@ -26,7 +26,7 @@ public class ScheduleIntervalController {
 
     private final Integer week;
 
-    public ScheduleIntervalController(QuarterScheduleController quarterScheduleController, ScheduleController weekController, Region regionBelow, Integer week, Integer interval){
+    public ScheduleIntervalController(QuarterScheduleController quarterScheduleController, WeekScheduleController weekController, Region regionBelow, Integer week, Integer interval){
         this.quarterScheduleController = quarterScheduleController;
         this.weekController = weekController;
         this.boundingRegion = regionBelow;

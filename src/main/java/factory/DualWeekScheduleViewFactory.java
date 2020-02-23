@@ -2,12 +2,12 @@ package factory;
 
 import app.FXMLPaths;
 import control.schedule.DualWeekScheduleViewController;
-import control.schedule.ScheduleController;
+import control.schedule.WeekScheduleController;
 import javafx.scene.Node;
 
 import java.io.IOException;
 
-public class DualWeekScheduleViewFactory<C extends DualWeekScheduleViewController<C1,C2>, C1 extends ScheduleController, C2 extends ScheduleController>
+public class DualWeekScheduleViewFactory<C extends DualWeekScheduleViewController<C1,C2>, C1 extends WeekScheduleController, C2 extends WeekScheduleController>
     extends ViewFactory<C>{
 
     public DualWeekScheduleViewFactory(C controller){

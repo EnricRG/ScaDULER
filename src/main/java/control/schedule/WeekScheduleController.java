@@ -3,7 +3,6 @@ package control.schedule;
 import app.AppSettings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -16,7 +15,7 @@ import util.Utils;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ScheduleController implements Initializable {
+public class WeekScheduleController implements Initializable {
 
     protected static final String HEADER_CSS_STYLE = "-fx-border-width: 0 0 2 0; -fx-border-color: gray;";
     protected static final String INNER_CELL_CSS_BORDER = "-fx-border-width: 1 0 0 0;";

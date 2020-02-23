@@ -8,7 +8,7 @@ import model.Resource;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ResourceScheduleController extends DualWeekScheduleViewController<ScheduleController, ScheduleController> {
+public class ResourceScheduleController extends DualWeekScheduleViewController<WeekScheduleController, WeekScheduleController> {
 
     private class CellEventHandler implements EventHandler<MouseEvent>{
 
@@ -53,7 +53,7 @@ public class ResourceScheduleController extends DualWeekScheduleViewController<S
 
 
     public ResourceScheduleController(Resource resource){
-        super(new ScheduleController(), new ScheduleController());
+        super(new WeekScheduleController(), new WeekScheduleController());
         this.resource = resource;
     }
 
@@ -65,9 +65,9 @@ public class ResourceScheduleController extends DualWeekScheduleViewController<S
 
     private void initializeCustomBehavior() {
         for(int week = 0; week <= 1; week++) {
-            ScheduleController c = week < 1 ? this.firstWeekController : this.secondWeekController;
+            WeekScheduleController c = week < 1 ? this.firstWeekController : this.secondWeekController;
             for (Node cell : c.getInnerCells()) {
-                Integer interval = ScheduleController.computeInterval(c.gridPane, cell);
+                Integer interval = WeekScheduleController.computeInterval(c.gridPane, cell);
                 setState(cell, week, interval);
                 configureCell(cell, week, interval);
             }

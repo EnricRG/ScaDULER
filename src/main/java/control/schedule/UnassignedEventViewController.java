@@ -5,18 +5,18 @@ import model.Event;
 
 public class UnassignedEventViewController extends EventViewController {
 
-    protected final MainController controller;
+    protected final MainController mainController;
 
-    public UnassignedEventViewController(MainController controller, Event event) {
+    public UnassignedEventViewController(MainController mainController, Event event) {
         super(event);
-        this.controller = controller;
+        this.mainController = mainController;
     }
 
     @Override
     protected void initializeBehavior() {
         mainBox.setOnDragDetected(event -> {
             mainBox.startFullDrag();
-            this.controller.startEventDrag(getEvent(), MainController.EventDrag.FROM_UNASSIGNED, this, null);
+            this.mainController.startEventDrag(getEvent(), MainController.EventDrag.FROM_UNASSIGNED, this, null);
             event.consume();
         });
     }

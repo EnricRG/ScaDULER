@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class QuarterScheduleController extends DualWeekScheduleViewController<ScheduleController, ScheduleController>{
+public class QuarterScheduleController extends DualWeekScheduleViewController<WeekScheduleController, WeekScheduleController>{
 
     private final Quarter quarter;
     private final MainController mainController;
@@ -27,7 +27,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
     private Map<Integer, ScheduleIntervalController> secondWeekEventViews = new HashMap<>(); //map that holds the EventViews at each interval
 
     public QuarterScheduleController(MainController mainController, CourseScheduleController courseController, Quarter quarter) {
-        super(new ScheduleController(), new ScheduleController());
+        super(new WeekScheduleController(), new WeekScheduleController());
         this.mainController = mainController;
         this.quarter = quarter;
         this.courseController = courseController;
@@ -42,7 +42,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
 
     private void initializeCustomListeners() {
         for(int week = 0; week <= 1; week++){
-            ScheduleController weekController = week == 0 ? firstWeekController : secondWeekController;
+            WeekScheduleController weekController = week == 0 ? firstWeekController : secondWeekController;
             ArrayList<Node> innerCells = new ArrayList<>(weekController.getInnerCells());
             for(int interval = 0; interval < innerCells.size(); interval++){
                 Node cell = innerCells.get(interval);
@@ -54,7 +54,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
 
                 addIntervalViewToWeekController(intervalController, weekController, cell);
 
-                setupCellBehavior(cell, week, ScheduleController.computeInterval(weekController.gridPane, cell), intervalController);
+                setupCellBehavior(cell, week, WeekScheduleController.computeInterval(weekController.gridPane, cell), intervalController);
             }
         }
     }
@@ -122,7 +122,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<Sc
         quarter.getSchedule().removeEvent(scheduleEvent.getWeek().toWeekNumber(), scheduleEvent.getStartInterval(), scheduleEvent); //TODO improvable call
     }
 
-    private void addIntervalViewToWeekController(ScheduleIntervalController intervalController, ScheduleController weekController, Node cell) {
+    private void addIntervalViewToWeekController(ScheduleIntervalController intervalController, WeekScheduleController weekController, Node cell) {
         Node visibleBox = intervalController.getBoundingBox();
         weekController.overPane.getChildren().add(visibleBox);
         visibleBox.setLayoutX(cell.getLayoutX());
