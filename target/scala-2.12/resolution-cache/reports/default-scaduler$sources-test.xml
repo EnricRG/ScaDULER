@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="default"
+		module="scaduler$sources"
+		revision="0.1"
+		conf="test"
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, pom, scala-tool"
+		date="20200204161316"/>
+	<dependencies>
+		<module organisation="org.json4s" name="json4s-jackson_2.12">
+			<revision name="3.6.7" status="release" pubdate="20190627012811" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/json4s/json4s" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="12">
+				<license name="Apache-2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="3001" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.json4s\json4s-jackson_2.12\ivy-3.6.7.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/json4s/json4s-jackson_2.12/3.6.7/json4s-jackson_2.12-3.6.7.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="3.6.7" rev-constraint-default="3.6.7" rev-constraint-dynamic="3.6.7" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="json4s-jackson_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="6555" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.json4s\json4s-jackson_2.12\srcs\json4s-jackson_2.12-3.6.7-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/json4s/json4s-jackson_2.12/3.6.7/json4s-jackson_2.12-3.6.7-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.fasterxml.jackson.core" name="jackson-databind">
+			<revision name="2.9.8" status="release" pubdate="20181215225940" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://github.com/FasterXML/jackson" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="15">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="23761" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.fasterxml.jackson.core\jackson-databind\ivy-2.9.8.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.9.8/jackson-databind-2.9.8.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="2.9.8" rev-constraint-default="2.9.8" rev-constraint-dynamic="2.9.8" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="jackson-databind" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="996534" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.fasterxml.jackson.core\jackson-databind\srcs\jackson-databind-2.9.8-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.9.8/jackson-databind-2.9.8-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.fasterxml.jackson.core" name="jackson-core">
+			<revision name="2.9.8" status="release" pubdate="20181215221934" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/FasterXML/jackson-core" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="14">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="23044" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.fasterxml.jackson.core\jackson-core\ivy-2.9.8.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.9.8/jackson-core-2.9.8.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="2.9.8" rev-constraint-default="2.9.8" rev-constraint-dynamic="2.9.8" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="jackson-core" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="336570" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.fasterxml.jackson.core\jackson-core\srcs\jackson-core-2.9.8-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.9.8/jackson-core-2.9.8-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.json4s" name="json4s-core_2.12">
+			<revision name="3.6.7" status="release" pubdate="20190627012709" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/json4s/json4s" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="17">
+				<license name="Apache-2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="3130" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.json4s\json4s-core_2.12\ivy-3.6.7.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/json4s/json4s-core_2.12/3.6.7/json4s-core_2.12-3.6.7.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="3.6.7" rev-constraint-default="3.6.7" rev-constraint-dynamic="3.6.7" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="json4s-core_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="42517" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.json4s\json4s-core_2.12\srcs\json4s-core_2.12-3.6.7-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/json4s/json4s-core_2.12/3.6.7/json4s-core_2.12-3.6.7-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.json4s" name="json4s-ast_2.12">
+			<revision name="3.6.7" status="release" pubdate="20190627012450" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/json4s/json4s" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="13">
+				<license name="Apache-2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="2681" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.json4s\json4s-ast_2.12\ivy-3.6.7.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/json4s/json4s-ast_2.12/3.6.7/json4s-ast_2.12-3.6.7.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="3.6.7" rev-constraint-default="3.6.7" rev-constraint-dynamic="3.6.7" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="json4s-ast_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="6950" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.json4s\json4s-ast_2.12\srcs\json4s-ast_2.12-3.6.7-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/json4s/json4s-ast_2.12/3.6.7/json4s-ast_2.12-3.6.7-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe.akka" name="akka-actor_2.12">
+			<revision name="2.4.20" status="release" pubdate="20170810185310" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://akka.io/" extra-info.apiURL="http://doc.akka.io/api/akka/2.4.20" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="11">
+				<license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="3139" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.typesafe.akka\akka-actor_2.12\ivy-2.4.20.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.12/2.4.20/akka-actor_2.12-2.4.20.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="2.4.20" rev-constraint-default="2.4.20" rev-constraint-dynamic="2.4.20" callerrev="0.1" extra-info.apiURL="http://doc.akka.io/api/akka/2.4.20"/>
+				<artifacts>
+					<artifact name="akka-actor_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="410364" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.typesafe.akka\akka-actor_2.12\srcs\akka-actor_2.12-2.4.20-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.12/2.4.20/akka-actor_2.12-2.4.20-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang.modules" name="scala-java8-compat_2.12">
+			<revision name="0.8.0" status="release" pubdate="20161030001227" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="18">
+				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="3072" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.scala-lang.modules\scala-java8-compat_2.12\ivy-0.8.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-java8-compat_2.12/0.8.0/scala-java8-compat_2.12-0.8.0.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="0.8.0" rev-constraint-default="0.8.0" rev-constraint-dynamic="0.8.0" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="scala-java8-compat_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="63853" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.scala-lang.modules\scala-java8-compat_2.12\srcs\scala-java8-compat_2.12-0.8.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-java8-compat_2.12/0.8.0/scala-java8-compat_2.12-0.8.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe" name="config">
+			<revision name="1.3.0" status="release" pubdate="20150508174611" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/typesafehub/config" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="16">
+				<license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="2910" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.typesafe\config\ivy-1.3.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/typesafe/config/1.3.0/config-1.3.0.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="1.3.0" rev-constraint-default="1.3.0" rev-constraint-dynamic="1.3.0" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="config" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="167084" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.typesafe\config\srcs\config-1.3.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/typesafe/config/1.3.0/config-1.3.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.fasterxml.jackson.core" name="jackson-annotations">
+			<revision name="2.9.0" status="release" pubdate="20170730055340" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://github.com/FasterXML/jackson" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="10">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="7030" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.fasterxml.jackson.core\jackson-annotations\ivy-2.9.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.9.0/jackson-annotations-2.9.0.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="2.9.0" rev-constraint-default="2.9.0" rev-constraint-dynamic="2.9.0" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="jackson-annotations" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="68177" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.fasterxml.jackson.core\jackson-annotations\srcs\jackson-annotations-2.9.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.9.0/jackson-annotations-2.9.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.json4s" name="json4s-scalap_2.12">
+			<revision name="3.6.7" status="release" pubdate="20190627012846" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/json4s/json4s" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="9">
+				<license name="Apache-2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="2690" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.json4s\json4s-scalap_2.12\ivy-3.6.7.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/json4s/json4s-scalap_2.12/3.6.7/json4s-scalap_2.12-3.6.7.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="3.6.7" rev-constraint-default="3.6.7" rev-constraint-dynamic="3.6.7" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="json4s-scalap_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="18647" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.json4s\json4s-scalap_2.12\srcs\json4s-scalap_2.12-3.6.7-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/json4s/json4s-scalap_2.12/3.6.7/json4s-scalap_2.12-3.6.7-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.openjfx" name="javafx-fxml">
+			<revision name="12.0.1" status="release" pubdate="20190422214415" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="7">
+				<license name="GPLv2+CE" url="https://openjdk.java.net/legal/gplv2+ce.html"/>
+				<metadata-artifact status="no" details="" size="2683" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-fxml\ivy-12.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/openjfx/javafx-fxml/12.0.1/javafx-fxml-12.0.1.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="12.0.1" rev-constraint-default="12.0.1" rev-constraint-dynamic="12.0.1" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="javafx-fxml" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="98942" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-fxml\srcs\javafx-fxml-12.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/openjfx/javafx-fxml/12.0.1/javafx-fxml-12.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.openjfx" name="javafx-swing">
+			<revision name="12.0.1" status="release" pubdate="20190422214508" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="6">
+				<license name="GPLv2+CE" url="https://openjdk.java.net/legal/gplv2+ce.html"/>
+				<metadata-artifact status="no" details="" size="2685" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-swing\ivy-12.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/openjfx/javafx-swing/12.0.1/javafx-swing-12.0.1.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="12.0.1" rev-constraint-default="12.0.1" rev-constraint-dynamic="12.0.1" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="javafx-swing" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="60210" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-swing\srcs\javafx-swing-12.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/openjfx/javafx-swing/12.0.1/javafx-swing-12.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.openjfx" name="javafx-web">
+			<revision name="12.0.1" status="release" pubdate="20190422214537" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="2">
+				<license name="GPLv2+CE" url="https://openjdk.java.net/legal/gplv2+ce.html"/>
+				<metadata-artifact status="no" details="" size="2825" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-web\ivy-12.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/openjfx/javafx-web/12.0.1/javafx-web-12.0.1.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="12.0.1" rev-constraint-default="12.0.1" rev-constraint-dynamic="12.0.1" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="javafx-web" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="521402" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-web\srcs\javafx-web-12.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/openjfx/javafx-web/12.0.1/javafx-web-12.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.openjfx" name="javafx-media">
+			<revision name="12.0.1" status="release" pubdate="20190422214453" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="3">
+				<license name="GPLv2+CE" url="https://openjdk.java.net/legal/gplv2+ce.html"/>
+				<metadata-artifact status="no" details="" size="2685" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-media\ivy-12.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/openjfx/javafx-media/12.0.1/javafx-media-12.0.1.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="12.0.1" rev-constraint-default="12.0.1" rev-constraint-dynamic="12.0.1" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="javafx-media" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="396317" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-media\srcs\javafx-media-12.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/openjfx/javafx-media/12.0.1/javafx-media-12.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.openjfx" name="javafx-controls">
+			<revision name="12.0.1" status="release" pubdate="20190422214357" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="8">
+				<license name="GPLv2+CE" url="https://openjdk.java.net/legal/gplv2+ce.html"/>
+				<metadata-artifact status="no" details="" size="2691" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-controls\ivy-12.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/openjfx/javafx-controls/12.0.1/javafx-controls-12.0.1.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="12.0.1" rev-constraint-default="12.0.1" rev-constraint-dynamic="12.0.1" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="javafx-controls" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1419810" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-controls\srcs\javafx-controls-12.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/openjfx/javafx-controls/12.0.1/javafx-controls-12.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.openjfx" name="javafx-graphics">
+			<revision name="12.0.1" status="release" pubdate="20190422214431" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="5">
+				<license name="GPLv2+CE" url="https://openjdk.java.net/legal/gplv2+ce.html"/>
+				<metadata-artifact status="no" details="" size="2687" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-graphics\ivy-12.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/openjfx/javafx-graphics/12.0.1/javafx-graphics-12.0.1.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="12.0.1" rev-constraint-default="12.0.1" rev-constraint-dynamic="12.0.1" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="javafx-graphics" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="4882096" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-graphics\srcs\javafx-graphics-12.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/openjfx/javafx-graphics/12.0.1/javafx-graphics-12.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.openjfx" name="javafx-base">
+			<revision name="12.0.1" status="release" pubdate="20190422214342" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="4">
+				<license name="GPLv2+CE" url="https://openjdk.java.net/legal/gplv2+ce.html"/>
+				<metadata-artifact status="no" details="" size="2501" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-base\ivy-12.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/openjfx/javafx-base/12.0.1/javafx-base-12.0.1.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="12.0.1" rev-constraint-default="12.0.1" rev-constraint-dynamic="12.0.1" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="javafx-base" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="584798" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.openjfx\javafx-base\srcs\javafx-base-12.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/openjfx/javafx-base/12.0.1/javafx-base-12.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-library">
+			<revision name="2.12.8" status="release" pubdate="20181204111556" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.12.8/" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="1">
+				<license name="Apache-2.0" url="https://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="2688" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.scala-lang\scala-library\ivy-2.12.8.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.8/scala-library-2.12.8.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="2.12.8" rev-constraint-default="2.12.8" rev-constraint-dynamic="2.12.8" callerrev="0.1" extra-info.apiURL="http://www.scala-lang.org/api/2.12.8/"/>
+				<artifacts>
+					<artifact name="scala-library" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1020924" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\org.scala-lang\scala-library\srcs\scala-library-2.12.8-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.8/scala-library-2.12.8-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.thoughtworks.paranamer" name="paranamer">
+			<revision name="2.8" status="release" pubdate="20150826132928" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="0">
+				<license name="BSD" url="LICENSE.txt"/>
+				<metadata-artifact status="no" details="" size="4296" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.thoughtworks.paranamer\paranamer\ivy-2.8.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/thoughtworks/paranamer/paranamer/2.8/paranamer-2.8.pom"/>
+				<caller organisation="default" name="scaduler$sources" conf="test, compile, runtime" rev="2.8" rev-constraint-default="2.8" rev-constraint-dynamic="2.8" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="paranamer" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="27125" time="0" location="C:\Users\EnricRyzen-PC\.ivy2\cache\com.thoughtworks.paranamer\paranamer\srcs\paranamer-2.8-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/thoughtworks/paranamer/paranamer/2.8/paranamer-2.8-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>

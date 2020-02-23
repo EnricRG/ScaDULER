@@ -2,4 +2,9 @@ desktop.ini
 .idea/
 ScaDULER.iml
 bin/
-target/
+out/
+project/*.*
+!project/*.sbt
+!project/build.properties
+!target/
+temp/
