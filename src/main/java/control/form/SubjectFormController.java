@@ -50,6 +50,8 @@ public class SubjectFormController extends FormController {
 
     public Button generateEventsButton;
 
+    public Button manageEventTypeIncompatibilitiesButton;
+
     public TableView<Event> eventTable; //table contains Event IDs, not Events itself
     public TableColumn<Event, String> eventTable_nameColumn;
     public TableColumn<Event, String> eventTable_resourceColumn;
@@ -102,6 +104,8 @@ public class SubjectFormController extends FormController {
         selectResourceListView.setPlaceholder(new Label(AppSettings.language().getItem("subjectForm_resourcePlaceholder")));
 
         generateEventsButton.setText(AppSettings.language().getItem("subjectForm_generateEventsButton"));
+
+        manageEventTypeIncompatibilitiesButton.setText(AppSettings.language().getItem("subjectForm_manageEventTypeIncompatibilitiesButton"));
 
         eventTable.setPlaceholder(new Label(AppSettings.language().getItem("subjectForm_evenTablePlaceHolder")));
         eventTable_nameColumn.setText(AppSettings.language().getItem("subjectForm_eventTableNameColumn"));
@@ -295,7 +299,7 @@ public class SubjectFormController extends FormController {
             subject.setName(subjectNameField.getText());
             subject.setShortName(subjectShortNameField.getText());
             subject.setDescription(subjectDescriptionField.getText());
-            subject.setColor(subjectColorPicker.getValue());
+            subject.setColor(new Color(subjectColorPicker.getValue()));
 
             for(Event e : eventTable.getItems()){
                 subject.addEvent(e.getID(), e);

@@ -149,6 +149,7 @@ object DefaultLanguage extends Language {
         "subjectForm_resourceSearchBar" -> "filter resources by name",
         "subjectForm_resourcePlaceholder" -> "No resources",
         "subjectForm_generateEventsButton" -> "Generate Events",
+        "subjectForm_manageEventTypeIncompatibilitiesButton" -> "Manage Event Type Incompatibilities...",
         "subjectForm_evenTablePlaceHolder" -> "No Events created yet",
         "subjectForm_eventTableNameColumn" -> "Name",
         "subjectForm_eventTableResourceColumn" -> "Resource",
