@@ -33,3 +33,8 @@ class Course(id: ID) extends Identifiable(id) with Serializable {
     //WARNING danger, future implementations may allow repeated events appear in this iterable.
     def getAllEvents: Iterable[Event] = getFirstQuarterEvents ++ getSecondQuarterEvents
 }
+
+object NoCourse extends Course(-1){
+    setName(AppSettings.language.getItem("noCourse"))
+    def noCourse: Course = this //Be careful
+} //non bd object

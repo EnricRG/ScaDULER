@@ -56,13 +56,15 @@
                                        </font>
                                     </Label>
                                     <ColorPicker fx:id="subjectColorPicker" />
+                                    <Label fx:id="subjectCourseTag" layoutX="45.0" layoutY="10.0" text="Course" />
+                                    <ComboBox fx:id="subjectCoursePicker" prefWidth="150.0" promptText="Course" />
                                  </children>
                               </VBox>
                            </children>
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="430.0" spacing="5.0" style="-fx-border-color: lightgray;" VBox.vgrow="ALWAYS">
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" spacing="5.0" style="-fx-border-color: lightgray;" VBox.vgrow="ALWAYS">
                      <children>
                         <Label fx:id="generateEventsTag" text="Generate Subject Events:" />
                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">

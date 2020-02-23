@@ -13,6 +13,7 @@ class Subject(id: ID) extends Identifiable(id) with Serializable {
     private var name: String = ""
     private var shortName: String = ""
     private var description: String = ""
+    private var course: Course = NoCourse
     private var color: Color = new Color(DefaultColor)
     private val events: mutable.Map[ID,Event] = new mutable.HashMap
 
@@ -29,8 +30,15 @@ class Subject(id: ID) extends Identifiable(id) with Serializable {
     def setColor(c: Color): Color = {
         val oldColor = color
         color = c
-        oldColor
     }
+
+    def getCourse: Course = course
+    def setCourse(c: Course): Course = {
+        val oldCourse = course;
+        course = c
+        oldCourse
+    }
+    def unsetCourse(): Unit = course = NoCourse
 
     def getEvents: Iterable[Event] = events.values
     def getEventIDs: Iterable[ID] = events.keys

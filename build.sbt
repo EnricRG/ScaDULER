@@ -30,6 +30,9 @@ libraryDependencies +=
 libraryDependencies += "org.json4s" % "json4s-jackson_2.12" % "3.6.7"
 libraryDependencies += "org.json4s" % "json4s-jackson_2.12" % "3.6.7"
 
+// https://mvnrepository.com/artifact/com.opencsv/opencsv
+//libraryDependencies += "com.opencsv" % "opencsv" % "5.1"
+
 //addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 //libraryDependencies += "org.scalafx" %% "scalafxml-core-sfx8" % "0.4"
