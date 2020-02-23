@@ -39,6 +39,8 @@
                <children>
                   <VBox spacing="4.0">
                      <children>
+                        <Label fx:id="subjectCourseTag" text="Course" />
+                        <ComboBox fx:id="subjectCoursePicker" prefWidth="150.0" />
                         <Label fx:id="eventSubjectTag" layoutX="10.0" layoutY="10.0" text="Subject (Optional):" />
                         <HBox>
                            <children>

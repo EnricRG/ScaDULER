@@ -23,7 +23,7 @@ import service.ResourceDatabase;
 import service.SubjectDatabase;
 import util.Utils;
 
-import java.util.Collection;
+import java.util.*;
 
 public class SubjectFormController extends FormController {
 
@@ -136,16 +136,6 @@ public class SubjectFormController extends FormController {
     protected void setupViews() {
         subjectCoursePicker.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(courseDatabase.getCourses())));
         subjectCoursePicker.getItems().add(0, NoCourse.noCourse());
-        //FIXME: When selected, name is not shown correctly
-        subjectCoursePicker.setCellFactory(param -> new ListCell<>(){
-                    @Override
-                    protected void updateItem(Course item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if(empty || item == null) setGraphic(null);
-                        else setText(item.getName());
-                    }
-                }
-        );
 
         generateEvents_eventTypeSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(EventTypes.commonEventTypes())));
 
@@ -344,8 +334,7 @@ public class SubjectFormController extends FormController {
             subject.setColor(new Color(subjectColorPicker.getValue()));
             subject.setCourse(subjectCoursePicker.getValue());
 
-            Map<EventType, List<Event>> eventsByType = new HashMap<>();
-
+            HashMap<EventType, List<Event>> eventsByType = new HashMap<>();
             for(EventType et: JavaConverters.asJavaCollection(EventTypes.commonEventTypes())){
                 eventsByType.put(et, new ArrayList<>());
             }
@@ -353,6 +342,7 @@ public class SubjectFormController extends FormController {
             for(Event e : eventTable.getItems()){
                 subject.addEvent(e.getID(), e);
                 e.setSubject(subject);
+                e.setCourse(subjectCoursePicker.getValue());
                 eventsByType.get(e.getEventType()).add(e);
                 getMainController().addUnassignedEvent(e);
             }

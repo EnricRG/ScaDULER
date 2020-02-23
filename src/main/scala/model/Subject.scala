@@ -30,6 +30,7 @@ class Subject(id: ID) extends Identifiable(id) with Serializable {
     def setColor(c: Color): Color = {
         val oldColor = color
         color = c
+        oldColor
     }
 
     def getCourse: Course = course

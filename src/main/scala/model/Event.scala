@@ -67,6 +67,8 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     private val incompatibilities: mutable.Set[Event] = new mutable.HashSet[Event]
     private var precedences: ListBuffer[Precedence] = new ListBuffer
 
+    private var course: Course = NoCourse
+
     def getStartInterval: Int = startInterval
     def assign(interval: Int): Unit = startInterval = interval
     def unassign(): Unit = startInterval = -1
@@ -115,8 +117,6 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
 
     //def getPrecedent
 
-    /*def getResourceName: String = neededResource match{
-        case r if r != null => r.name
-        case _ => ""
-    }*/
+    def getCourse: Course = course
+    def setCourse(c: Course): Unit = course = c
 }

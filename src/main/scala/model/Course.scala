@@ -32,9 +32,13 @@ class Course(id: ID) extends Identifiable(id) with Serializable {
     def getSecondQuarterEvents: Iterable[Event] = secondQuarter.getSchedule.getEvents
     //WARNING danger, future implementations may allow repeated events appear in this iterable.
     def getAllEvents: Iterable[Event] = getFirstQuarterEvents ++ getSecondQuarterEvents
+
+    override def toString: String = name
 }
 
 object NoCourse extends Course(-1){
     setName(AppSettings.language.getItem("noCourse"))
     def noCourse: Course = this //Be careful
+
+    override def toString: String = name
 } //non bd object
