@@ -3,7 +3,7 @@ desktop.ini
 ScaDULER.iml
 bin/
 out/
-!project/*.*
+project/*.*
 !project/*.sbt
 !project/build.properties
 target/
