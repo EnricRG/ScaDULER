@@ -1,28 +1,25 @@
 package app
 
 object FXMLPaths {
-    val MainInterface: String = "src/main/fxml/main_border_pane.fxml"
-    val UnassignedEvent: String = "src/main/fxml/unassigned_event_box.fxml"
-    val AssignedEvent: String = "src/main/fxml/assigned_event_box.fxml"
-    val CoursePanel: String = "src/main/fxml/course_grid.fxml"
+    val MainInterface: String = "src/main/fxml/app/main_border_pane.fxml"
+    val UnassignedEvent: String = "src/main/fxml/app/unassigned_event_box.fxml"
+    val AssignedEvent: String = "src/main/fxml/app/assigned_event_box.fxml"
 
-    val CourseForm: String = "src/main/fxml/course_form.fxml"
-    val CourseResourceManagerForm: String = "src/main/fxml/course_resource_manager.fxml"
-    val SubjectForm: String = "src/main/fxml/subject_form.fxml"
-    val SubjectIncompatibilityForm = "src/main/fxml/subject_event_incompatibility_manager.fxml"
-    val EventForm: String = "src/main/fxml/event_form.fxml"
-    val EventIncompatibilityFrom: String = "src/main/fxml/event_incompatibility_manager.fxml"
+    val CourseForm: String = "src/main/fxml/form/course_form.fxml"
+    val SubjectForm: String = "src/main/fxml/form/subject_form.fxml"
+    val SubjectIncompatibilityForm = "src/main/fxml/form/subject_event_incompatibility_manager.fxml"
+    val EventForm: String = "src/main/fxml/form/event_form.fxml"
+    val EventIncompatibilityFrom: String = "src/main/fxml/form/event_incompatibility_manager.fxml"
 
-    val EntityManagerPanel: String = "src/main/fxml/entity_manager.fxml"
-    val ManageResourcesPanel: String = "src/main/fxml/resource_manager.fxml"
+    val EntityManagerPanel: String = "src/main/fxml/manage/entity_manager.fxml"
+    val ManageResourcesPanel: String = "src/main/fxml/manage/resource_manager.fxml"
 
-    val GenericSchedule: String = "src/main/fxml/schedule_view.fxml"
-    val DualWeekGenericSchedule: String = "src/main/fxml/dual_week_schedule_view.fxml"
+    val GenericSchedule: String = "src/main/fxml/schedule/schedule_view.fxml"
+    val DualWeekGenericSchedule: String = "src/main/fxml/schedule/dual_week_schedule_view.fxml"
+    val CourseSchedule: String = "src/main/fxml/schedule/course_schedule_view.fxml"
 
-    val CourseSchedule: String = "src/main/fxml/course_schedule_view.fxml"
-
-    val BasicAlert: String = "src/main/fxml/basic_alert.fxml"
-    val ChoiceAlert: String = "src/main/fxml/choice_alert.fxml"
+    val BasicAlert: String = "src/main/fxml/alert/basic_alert.fxml"
+    val ChoiceAlert: String = "src/main/fxml/alert/choice_alert.fxml"
 }
 
 object AppSettings {
