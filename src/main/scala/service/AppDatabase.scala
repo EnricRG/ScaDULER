@@ -26,3 +26,8 @@ class AppDatabase (eventDBInitializer: Option[EventDatabase#Initializer] = None,
     }
 
 }
+
+class ReadOnlyAppDatabase(val eventDatabase: ReadOnlyEventDatabase,
+                          val subjectDatabase: ReadOnlySubjectDatabase,
+                          val courseDatabase: ReadOnlyCourseDatabase,
+                          val resourceDatabase: ReadOnlyResourceDatabase)

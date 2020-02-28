@@ -38,3 +38,7 @@ class SubjectDatabase extends Database[Subject] {
     def getFinishedSubjectsIDs: Iterable[Long] = getIDs.filter(isFinished)
     def getFinishedSubjects: Iterable[Subject] = getFinishedSubjectsIDs.map(getElement(_).get)
 }
+
+class ReadOnlySubjectDatabase(subjectDatabase: SubjectDatabase){
+
+}

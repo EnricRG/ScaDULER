@@ -24,3 +24,7 @@ class CourseDatabase extends Database[Course] {
 
     def getCourses: Iterable[Course] = getElements
 }
+
+class ReadOnlyCourseDatabase(courseDatabase: CourseDatabase){
+
+}

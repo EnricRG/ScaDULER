@@ -22,3 +22,7 @@ class ResourceDatabase extends Database[Resource]{
     def deleteResource(rid: ID): Unit = deleteElement(rid)
     def deleteResource(r: Resource): Unit = deleteElement(r.getID)
 }
+
+class ReadOnlyResourceDatabase(resourceDatabase: ResourceDatabase){
+
+}

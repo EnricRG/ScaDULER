@@ -5,6 +5,7 @@ import java.util.regex.Pattern
 
 import app.AppSettings
 import file.imprt.blueprint.{EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import service.ReadOnlyAppDatabase
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -18,7 +19,7 @@ case class LineImportJob(subject: SubjectBlueprint,
                          errors: List[ImportError],
                          finished: Boolean)
 
-class MCFImportReader(file: File, database: ReadOnlyDatabase) extends ImportReader {
+class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportReader {
 
     val MCFVersion: String = "1.1"
     val Separator: Char = ';'
