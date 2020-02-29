@@ -44,13 +44,13 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
     private def readLine(row: Int, values: Array[String], headers: Array[String]): LineImportJob ={
         val errors = new ArrayBuffer[ImportError]()
 
-        val (shortName, shortNameErrors, emptyShortName) = getShortName(values.apply(0).trim, row, 1, headers.apply(0))
+        val (shortName, shortNameErrors, emptyShortName) = getStringField(values.apply(0).trim, row, 1, headers.apply(0))
         if(shortNameErrors.nonEmpty) errors ++= shortNameErrors
 
-        val (name, nameErrors, emptyName) = getName(values.apply(1).trim, row, 2, headers.apply(1))
+        val (name, nameErrors, emptyName) = getStringField(values.apply(1).trim, row, 2, headers.apply(1))
         if(nameErrors.nonEmpty) errors ++= nameErrors
 
-        val (course, courseErrors, emptyCourse) = getCourse(values.apply(2).trim, row, 3, headers.apply(2))
+        val (course, courseErrors, emptyCourse) = getStringField(values.apply(2).trim, row, 3, headers.apply(2))
         if(courseErrors.nonEmpty) errors ++= courseErrors
 
         val (semester, semesterErrors, emptySemester) = getSemester(values.apply(3).trim, row, 4, headers.apply(3))
@@ -65,56 +65,42 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         val (hgp, hgpErrors, emptyHgp) = getHg(values.apply(6).trim, row, 7, headers.apply(6))
         if(hgpErrors.nonEmpty) errors ++= hgpErrors
 
-        //TODO ngg
-        //TODO ngm
-        //TODO ngp
-        //TODO labs._1
-        //TODO labs._2
+        val (ngg, nggErrors, emptyNgg) = getNumericField(values.apply(7).trim, row, 8, headers.apply(7))
+        if(nggErrors.nonEmpty) errors ++= nggErrors
+
+        val (ngm, ngmErrors, emptyNgm) = getNumericField(values.apply(8).trim, row, 9, headers.apply(8))
+        if(ngmErrors.nonEmpty) errors ++= ngmErrors
+
+        val (ngp, ngpErrors, emptyNgp) = getNumericField(values.apply(9).trim, row, 10, headers.apply(9))
+        if(ngpErrors.nonEmpty) errors ++= ngpErrors
+
+        val (resourceCapacity, rCErrors, emptyRC) = getNumericField(values.apply(10).trim, row, 11, headers.apply(10)+"(1)")
+        if(rCErrors.nonEmpty) errors ++= rCErrors
+
+        val (resourceName, rNErrors, emptyRN) = getStringField(values.apply(11).trim, row, 12, headers.apply(11)+"(2)")
+        if(rNErrors.nonEmpty) errors ++= rNErrors
+
         //TODO additional info
+
+        //TODO check semantic errors
+        //TODO - check if course exists
 
         //TODO create entities
 
         LineImportJob(null,List(),null,List(), finished = false) //TODO finish this
     }
 
-    //returns (shortName, errors, shortName.isEmpty)
-    def getShortName(rawShortName: String, row: Int, field: Int, header: String): (String, ArrayBuffer[ImportError], Boolean) = {
+    //returns (processedString, errors, string.isEmpty)
+    def getStringField(rawString: String, row: Int, field: Int, header: String): (String, ArrayBuffer[ImportError], Boolean) = {
         val errors = new ArrayBuffer[ImportError]()
         var isEmpty = false
 
-        if (rawShortName.isEmpty) {
-            errors += EmptyShortNameError(row, field, header, rawShortName)
+        if (rawString.isEmpty) {
+            errors += EmptyFieldError(row, field, header, rawString)
             isEmpty = true
         }
 
-        (rawShortName, errors, isEmpty) //no processing on the field is required.
-    }
-
-    //returns (name, errors, name.isEmpty)
-    def getName(rawName: String, row: Int, field: Int, header: String): (String, ArrayBuffer[ImportError], Boolean) = {
-        val errors = new ArrayBuffer[ImportError]()
-        var isEmpty = false
-
-        if (rawName.isEmpty) {
-            errors += EmptyNameError(row, field, header, rawName)
-            isEmpty = true
-        }
-
-        (rawName, errors, isEmpty) //no processing on the field is required.
-    }
-
-    //returns (course, errors, course.isEmpty)
-    def getCourse(rawCourse: String, row: Int, field: Int, header: String): (String, ArrayBuffer[ImportError], Boolean) = {
-        val errors = new ArrayBuffer[ImportError]()
-        var isEmpty = false
-
-        if (rawCourse.isEmpty) {
-            errors += EmptyCourseError(row, field, header, rawCourse)
-            isEmpty = true
-        }
-        //TODO check if course exists
-
-        (rawCourse, errors, isEmpty) //no processing on the field is required.
+        (rawString, errors, isEmpty) //no processing on the field is required.
     }
 
     //returns (semester, errors, semester.isEmpty)
@@ -200,6 +186,29 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         (splits.toList, errors.toList)
     }
 
+    def getNumericField(rawNumber: String, row: Int, field: Int, header: String): (Int, List[ImportError], Boolean) = {
+        val errors = new ArrayBuffer[ImportError]
+        var isEmpty = false
+
+        val number = try{
+            val intNumber = rawNumber.toInt
+            if(intNumber < 1) {
+                errors += NumberOutOfRangeError(row, field, header, rawNumber)
+                isEmpty = true
+                1
+            }
+            else intNumber
+        }
+        catch{
+            case e: NumberFormatException => {
+                errors += NumberFormatError(row, field, header, rawNumber)
+                isEmpty = true
+            }
+            1
+        }
+
+        (number, errors.toList, isEmpty)
+    }
 
     def flattenImportJobs(lineImportJobs: List[LineImportJob]): ImportJob = {
         val subjects: ArrayBuffer[SubjectBlueprint] = new mutable.ArrayBuffer
