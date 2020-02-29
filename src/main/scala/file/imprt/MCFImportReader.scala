@@ -1,7 +1,6 @@
 package file.imprt
 
 import java.io.File
-import java.util.regex.Pattern
 
 import app.AppSettings
 import file.imprt.blueprint.{EventBlueprint, ResourceBlueprint, SubjectBlueprint}
@@ -12,6 +11,13 @@ import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 /** MCF VERSION 1.1 */
+
+object test extends App{
+    override def main(args: Array[String]): Unit = {
+        val reader = new MCFImportReader(new File("test.mcf"), null)
+        reader.read
+    }
+}
 
 case class LineImportJob(subject: SubjectBlueprint,
                          events: List[EventBlueprint],
@@ -28,14 +34,15 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
 
     override def read: MCFImportReader = {
         val source = Source.fromFile(file)
-        val rawLines: Iterator[String] = try source.getLines() finally source.close()
 
-        val lines = rawLines.zipWithIndex.map{ case (s, i) => (i, s.split(Separator)) }.toList //all file lines
-        val headers = lines.head //only headers line
+        try {
+            val lines = source.getLines().zipWithIndex.map { case (s, i) => (i, s.split(Separator.toString, -1)) }.toList //all file lines
+            val headers = lines.head //only headers line
+            val lineImportJobs = for ((row, line) <- lines.tail) yield readLine(row + 1, line, headers._2)
 
-        val lineImportJobs = for ((row, line) <- lines.tail) yield readLine(row+1, line, headers._2)
-
-        importJob = flattenImportJobs(lineImportJobs)
+            importJob = flattenImportJobs(lineImportJobs)
+        }
+        finally source.close()
 
         this
     }
@@ -65,22 +72,34 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         val (hgp, hgpErrors, emptyHgp) = getHg(values.apply(6).trim, row, 7, headers.apply(6))
         if(hgpErrors.nonEmpty) errors ++= hgpErrors
 
-        val (ngg, nggErrors, emptyNgg) = getNumericField(values.apply(7).trim, row, 8, headers.apply(7))
-        if(nggErrors.nonEmpty) errors ++= nggErrors
+        val (ngg, nggErrors, emptyNgg) = getIntegerField(values.apply(7).trim, row, 8, headers.apply(7))
+        if(nggErrors.nonEmpty && !emptyHgg) errors ++= nggErrors
 
-        val (ngm, ngmErrors, emptyNgm) = getNumericField(values.apply(8).trim, row, 9, headers.apply(8))
-        if(ngmErrors.nonEmpty) errors ++= ngmErrors
+        val (ngm, ngmErrors, emptyNgm) = getIntegerField(values.apply(8).trim, row, 9, headers.apply(8))
+        if(ngmErrors.nonEmpty && !emptyHgm) errors ++= ngmErrors
 
-        val (ngp, ngpErrors, emptyNgp) = getNumericField(values.apply(9).trim, row, 10, headers.apply(9))
-        if(ngpErrors.nonEmpty) errors ++= ngpErrors
+        val (ngp, ngpErrors, emptyNgp) = getIntegerField(values.apply(9).trim, row, 10, headers.apply(9))
+        if(ngpErrors.nonEmpty && !emptyHgp) errors ++= ngpErrors
 
-        val (resourceCapacity, rCErrors, emptyRC) = getNumericField(values.apply(10).trim, row, 11, headers.apply(10)+"(1)")
+        val (resourceCapacity, rCErrors, emptyRC) = getIntegerField(values.apply(10).trim, row, 11, headers.apply(10)+"(1)")
         if(rCErrors.nonEmpty) errors ++= rCErrors
 
         val (resourceName, rNErrors, emptyRN) = getStringField(values.apply(11).trim, row, 12, headers.apply(11)+"(2)")
         if(rNErrors.nonEmpty) errors ++= rNErrors
 
-        //TODO additional info
+        val students = getUncheckedIntegerField(values.apply(12).trim)
+        val credits = getUncheckedIntegerField(values.apply(13).trim)
+        val cgg = getUncheckedDoubleField(values.apply(14).trim)
+        val cgm = getUncheckedDoubleField(values.apply(15).trim)
+        val cgp = getUncheckedDoubleField(values.apply(16).trim)
+        val shared = values.apply(17).trim
+
+        println(
+            List(shortName, name, course, semester, hgg, hgm, hgp, ngg, ngm, ngp,
+                resourceCapacity, resourceName, students, credits, cgg, cgm, cgp, if(shared.isEmpty) "EMPTY" else shared).mkString(", ")
+        )
+        println("Errors: " + errors.length)
+        errors.foreach(e => println(e.message))
 
         //TODO check semantic errors
         //TODO - check if course exists
@@ -109,7 +128,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         var isEmpty = false
 
         val semester = if (rawSemester.isEmpty) {
-            errors += EmptySemesterError(row, field, header, rawSemester)
+            errors += EmptyFieldError(row, field, header, rawSemester)
             isEmpty = true
             1
         }
@@ -186,14 +205,14 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         (splits.toList, errors.toList)
     }
 
-    def getNumericField(rawNumber: String, row: Int, field: Int, header: String): (Int, List[ImportError], Boolean) = {
+    def getIntegerField(rawNumber: String, row: Int, field: Int, header: String): (Int, List[ImportError], Boolean) = {
         val errors = new ArrayBuffer[ImportError]
         var isEmpty = false
 
         val number = try{
             val intNumber = rawNumber.toInt
             if(intNumber < 1) {
-                errors += NumberOutOfRangeError(row, field, header, rawNumber)
+                errors += NumberOutOfRangeError(row, field, header, rawNumber, 1)
                 isEmpty = true
                 1
             }
@@ -208,6 +227,22 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         }
 
         (number, errors.toList, isEmpty)
+    }
+
+    def getUncheckedIntegerField(rawNumber: String): Int = {
+        getUncheckedDoubleField(rawNumber).toInt
+    }
+
+    def getUncheckedDoubleField(rawNumber: String): Double = {
+        try{
+            val intNumber = rawNumber.toDouble
+            if(intNumber < 0) -1
+            else intNumber
+        }
+        catch{
+            case e: NumberFormatException => -2
+            case _: Throwable => -3
+        }
     }
 
     def flattenImportJobs(lineImportJobs: List[LineImportJob]): ImportJob = {
