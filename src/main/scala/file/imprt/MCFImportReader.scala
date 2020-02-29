@@ -3,7 +3,9 @@ package file.imprt
 import java.io.File
 
 import app.AppSettings
-import file.imprt.blueprint.{EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import file.imprt.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import model.Weeks.Week
+import model.{EventType, Resource, TheoryEvent, Weeks}
 import service.ReadOnlyAppDatabase
 
 import scala.collection.mutable
@@ -21,6 +23,7 @@ object test extends App{
 
 case class LineImportJob(subject: SubjectBlueprint,
                          events: List[EventBlueprint],
+                         course: CourseBlueprint,
                          resource: ResourceBlueprint,
                          errors: List[ImportError],
                          finished: Boolean)
@@ -29,6 +32,9 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
 
     val MCFVersion: String = "1.1"
     val Separator: Char = ';'
+
+    lazy val createdResources: mutable.HashMap[String, ResourceBlueprint] = new mutable.HashMap
+    lazy val createdCourses: mutable.HashMap[String, CourseBlueprint] = new mutable.HashMap
 
     private var importJob: ImportJob = _
 
@@ -94,19 +100,50 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         val cgp = getUncheckedDoubleField(values.apply(16).trim)
         val shared = values.apply(17).trim
 
-        println(
-            List(shortName, name, course, semester, hgg, hgm, hgp, ngg, ngm, ngp,
-                resourceCapacity, resourceName, students, credits, cgg, cgm, cgp, if(shared.isEmpty) "EMPTY" else shared).mkString(", ")
-        )
-        println("Errors: " + errors.length)
-        errors.foreach(e => println(e.message))
+        if(emptyShortName || emptyName || emptyCourse || emptySemester) {
+            //TODO subject cannot be created because it misses one of the mandatory fiels
+            LineImportJob(null, List(), null, null, errors.toList, finished = false)
+        }
+        else if(database.subjectDatabase.getSubjectByName(name).isEmpty) {
+            //TODO subject already exists
+            LineImportJob(null, List(), null, null, errors.toList, finished = false)
+        }
+        else{
+            val subjectEntity = new SubjectBlueprint
+            subjectEntity.shortName = shortName
+            subjectEntity.name = name
 
-        //TODO check semantic errors
-        //TODO - check if course exists
+            val courseEntity = createdCourses.get(course) match {
+                case Some(c) => c
+                case None =>
+                    val newCourse = new CourseBlueprint
+                    newCourse.name = course
+                    newCourse
+            }
+            subjectEntity.desiredCourse = courseEntity
+            subjectEntity.desiredQuarter = semester
 
-        //TODO create entities
+            val resourceEntity = createdResources.get(resourceName) match {
+                case Some(r) => r
+                case None =>
+                    val newResource = new ResourceBlueprint
+                    newResource.name = resourceName
+                    newResource.quantity = 1
+                    newResource.capacity = resourceCapacity
+                    newResource
+            }
 
-        LineImportJob(null,List(),null,List(), finished = false) //TODO finish this
+            val splitHgg: Boolean = hgg.length > 1
+            val theoryEvents = hgg.map{ //FIXME event number does not correspond to its authentic value
+                case (dur,period) => generateEvents(subjectEntity, TheoryEvent, dur, period, None, if(splitHgg) 1 else ngg)
+                case _ => List()
+            }
+
+            //TODO hgm
+            //TODO hgp
+
+            LineImportJob(subjectEntity, subjectEntity.events.toList, courseEntity, resourceEntity, errors.toList, finished = true) //TODO finish this
+        }
     }
 
     //returns (processedString, errors, string.isEmpty)
@@ -243,6 +280,28 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
             case e: NumberFormatException => -2
             case _: Throwable => -3
         }
+    }
+
+    def generateEvents(subject: SubjectBlueprint, eventType: EventType, duration: Int, periodicity: Int,
+                       resource: Option[ResourceBlueprint], nEvents: Int): List[EventBlueprint] = {
+        if(nEvents > 0){
+            val events = new ArrayBuffer[EventBlueprint]
+            (1 to nEvents).foreach(number => {
+                val event = new EventBlueprint
+
+                //TODO ??? should be event week
+
+                event.name = String.format("%s (%s-%d) (%s)", subject.name, eventType.toString, number, ???.toString)
+                event.shortName = String.format("%s (%s %d) (%s)", subject.shortName, eventType.toShortString, number, ???.toString)
+                event.neededResource = resource
+                event.eventType = eventType
+                event.subject = Some(subject)
+                event.periodicity = Weeks.Periodicity.fromInt(periodicity)
+                event.duration = duration
+            })
+            events.toList
+        }
+        else List()
     }
 
     def flattenImportJobs(lineImportJobs: List[LineImportJob]): ImportJob = {

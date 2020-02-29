@@ -1,5 +1,7 @@
 package file.imprt.blueprint
 
-import model.Resource
-
-class ResourceBlueprint extends Resource(-1)
+class ResourceBlueprint{
+    var name: String = _
+    var quantity: Int = _
+    var capacity: Int = _
+}

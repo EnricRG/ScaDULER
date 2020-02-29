@@ -1,5 +1,11 @@
 package file.imprt.blueprint
 
-import model.Subject
+import scala.collection.mutable
 
-class SubjectBlueprint extends Subject(-1)
+class SubjectBlueprint{
+    var name: String = _
+    var shortName: String = _
+    var desiredCourse: CourseBlueprint = _
+    var desiredQuarter: Int = _
+    val events: mutable.Set[EventBlueprint] = new mutable.HashSet
+}
