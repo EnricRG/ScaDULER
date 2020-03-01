@@ -46,6 +46,7 @@ public class ResourceScheduleController extends DualWeekScheduleViewController<W
 
     private boolean dragging = false;
 
+    private static final String EDITING_STATE = "-fx-background-color: gold;";
     private static final String SET_STATE = "-fx-background-color: steelblue;";
 
     protected Resource resource;
