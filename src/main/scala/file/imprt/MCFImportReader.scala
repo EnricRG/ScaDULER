@@ -4,8 +4,7 @@ import java.io.File
 
 import app.AppSettings
 import file.imprt.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
-import model.Weeks.Week
-import model.{EventType, Resource, TheoryEvent, Weeks}
+import model._
 import service.ReadOnlyAppDatabase
 
 import scala.collection.mutable
@@ -13,13 +12,6 @@ import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 /** MCF VERSION 1.1 */
-
-object test extends App{
-    override def main(args: Array[String]): Unit = {
-        val reader = new MCFImportReader(new File("test.mcf"), null)
-        reader.read
-    }
-}
 
 case class LineImportJob(subject: SubjectBlueprint,
                          events: List[EventBlueprint],
@@ -42,7 +34,8 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         val source = Source.fromFile(file)
 
         try {
-            val lines = source.getLines().zipWithIndex.map { case (s, i) => (i, s.split(Separator.toString, -1)) }.toList //all file lines
+            val filteredLines = source.getLines().filterNot(_.forall(_ == Separator))
+            val lines = filteredLines.zipWithIndex.map { case (s, i) => (i, s.split(Separator.toString, -1)) }.toList //all file lines
             val headers = lines.head //only headers line
             val lineImportJobs = for ((row, line) <- lines.tail) yield readLine(row + 1, line, headers._2)
 
@@ -101,13 +94,12 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         val shared = values.apply(17).trim
 
         if(emptyShortName || emptyName || emptyCourse || emptySemester) {
-            //TODO subject cannot be created because it misses one of the mandatory fiels
             LineImportJob(null, List(), null, null, errors.toList, finished = false)
         }
-        else if(database.subjectDatabase.getSubjectByName(name).isEmpty) {
-            //TODO subject already exists
+        /*else if(database.subjectDatabase.getSubjectByName(name).isEmpty) {
+            //TODO check if subject already exists
             LineImportJob(null, List(), null, null, errors.toList, finished = false)
-        }
+        }*/
         else{
             val subjectEntity = new SubjectBlueprint
             subjectEntity.shortName = shortName
@@ -123,6 +115,8 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
             subjectEntity.desiredCourse = courseEntity
             subjectEntity.desiredQuarter = semester
 
+            //TODO subject additional info
+
             val resourceEntity = createdResources.get(resourceName) match {
                 case Some(r) => r
                 case None =>
@@ -133,16 +127,30 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                     newResource
             }
 
-            val splitHgg: Boolean = hgg.length > 1
-            val theoryEvents = hgg.map{ //FIXME event number does not correspond to its authentic value
-                case (dur,period) => generateEvents(subjectEntity, TheoryEvent, dur, period, None, if(splitHgg) 1 else ngg)
-                case _ => List()
+            val theoryEvents: List[EventBlueprint] = if(hgg.length > 1){
+                hgg.indices.flatMap(number => generateEvents(subjectEntity, TheoryEvent,
+                    hgg.apply(number)._1, hgg.apply(number)._2, None, number+1, number+1)).toList
             }
+            else if (hgg.isEmpty) List()
+            else generateEvents(subjectEntity, TheoryEvent, hgg.head._1, hgg.head._2, None, 1, ngg)
 
-            //TODO hgm
-            //TODO hgp
+            val problemsEvents: List[EventBlueprint] = if(hgm.length > 1){
+                hgm.indices.flatMap(number => generateEvents(subjectEntity, ProblemsEvent,
+                    hgm.apply(number)._1, hgm.apply(number)._2, None, number+1, number+1)).toList
+            }
+            else if (hgm.isEmpty) List()
+            else generateEvents(subjectEntity, ProblemsEvent, hgm.head._1, hgm.head._2, None, 1, ngm)
 
-            LineImportJob(subjectEntity, subjectEntity.events.toList, courseEntity, resourceEntity, errors.toList, finished = true) //TODO finish this
+            val labEvents: List[EventBlueprint] = if(hgp.length > 1){
+                hgp.indices.flatMap(number => generateEvents(subjectEntity, LaboratoryEvent,
+                    hgp.apply(number)._1, hgp.apply(number)._2, Some(resourceEntity), number+1, number+1)).toList
+            }
+            else if (hgp.isEmpty) List()
+            else generateEvents(subjectEntity, LaboratoryEvent, hgp.head._1, hgp.head._2, None, 1, ngp)
+
+            subjectEntity.events ++= (theoryEvents ++ problemsEvents ++ labEvents)
+
+            LineImportJob(subjectEntity, subjectEntity.events.toList, courseEntity, resourceEntity, errors.toList, finished = true)
         }
     }
 
@@ -283,21 +291,23 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
     }
 
     def generateEvents(subject: SubjectBlueprint, eventType: EventType, duration: Int, periodicity: Int,
-                       resource: Option[ResourceBlueprint], nEvents: Int): List[EventBlueprint] = {
-        if(nEvents > 0){
+                       resource: Option[ResourceBlueprint], start: Int, end: Int): List[EventBlueprint] = {
+        if(start > 0 && end-start >= 0){
             val events = new ArrayBuffer[EventBlueprint]
-            (1 to nEvents).foreach(number => {
+            (start to end).foreach(number => {
                 val event = new EventBlueprint
 
                 //TODO ??? should be event week
 
-                event.name = String.format("%s (%s-%d) (%s)", subject.name, eventType.toString, number, ???.toString)
-                event.shortName = String.format("%s (%s %d) (%s)", subject.shortName, eventType.toShortString, number, ???.toString)
+                //event.name = String.format("%s (%s-%d) (%s)", subject.name, eventType.toString, number, ???.toString)
+                //event.shortName = String.format("%s (%s %d) (%s)", subject.shortName, eventType.toShortString, number, ???.toString)
                 event.neededResource = resource
                 event.eventType = eventType
                 event.subject = Some(subject)
                 event.periodicity = Weeks.Periodicity.fromInt(periodicity)
                 event.duration = duration
+
+                events += event
             })
             events.toList
         }
