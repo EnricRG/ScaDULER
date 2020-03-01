@@ -5,6 +5,7 @@ import actors.{MasterActor, Messages}
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import javafx.application.Application
 import service.AppDatabase
 import solver.InstanceData
 
@@ -25,7 +26,7 @@ object MainApp extends App {
 
     override def main(args: Array[String]): Unit = {
         init()
-        MainInterface.main(Array())
+        Application.launch(classOf[MainInterface], args: _*)
         exit()
     }
 

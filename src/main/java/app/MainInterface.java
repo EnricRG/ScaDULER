@@ -16,10 +16,12 @@ public class MainInterface extends javafx.application.Application{
 
     private static MainController mainController;
 
+    //TODO remove this method, deprecated
     public static void main(String[] args) {
         Application.launch(MainInterface.class, args);
     }
 
+    //TODO update this method to use Utils
     @Override
     public void start(Stage stage) throws Exception {
         URL url = new File(FXMLPaths.MainInterface()).toURI().toURL();
