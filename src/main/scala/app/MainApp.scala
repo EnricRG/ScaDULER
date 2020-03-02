@@ -25,7 +25,9 @@ object MainApp extends App {
     def setDatabase(appDatabase: AppDatabase): Unit = database = appDatabase
 
     override def main(args: Array[String]): Unit = {
+        println("Pre Init")
         init()
+        println("Post Init")
         Application.launch(classOf[MainInterface], args: _*)
         exit()
     }

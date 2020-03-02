@@ -4,8 +4,8 @@ import model.EventType
 import model.Weeks.Periodicity
 
 class EventBlueprint{
-    var name: String = _
-    var shortName: String = _
+    var name: String = ""
+    var shortName: String = ""
     var neededResource: Option[ResourceBlueprint] = _
     var eventType: EventType = _
     var subject: Option[SubjectBlueprint] = _

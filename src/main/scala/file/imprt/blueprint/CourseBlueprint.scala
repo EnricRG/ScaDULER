@@ -1,5 +1,5 @@
 package file.imprt.blueprint
 
 class CourseBlueprint{
-    var name: String = _
+    var name: String = ""
 }

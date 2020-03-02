@@ -1,9 +1,6 @@
 package control;
 
-import app.AppSettings;
-import app.AssignmentViabilityChecker;
-import app.FXMLPaths;
-import app.MainApp;
+import app.*;
 import control.form.CourseFormController;
 import control.form.EventFormController;
 import control.form.SubjectFormController;
@@ -14,6 +11,8 @@ import control.manage.SubjectManagerController;
 import control.schedule.*;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
+import file.imprt.ImportJob;
+import file.imprt.MCFImportReader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -56,6 +55,10 @@ public class MainController implements Initializable {
     public MenuItem fileMenu_save;
     /** Save item in File menu */
     public MenuItem fileMenu_saveAs;
+
+    public Menu fileMenu_importMenu;
+    public MenuItem importMenu_newFile;
+
     /** Save item in File menu */
     public MenuItem fileMenu_close;
 
@@ -340,6 +343,8 @@ public class MainController implements Initializable {
         fileMenu_save.setOnAction(event -> saveToFile());
         fileMenu_saveAs.setOnAction(event -> saveToNewFile());
 
+        importMenu_newFile.setOnAction(event -> importNewFile());
+
         addButtons_course.setOnAction(actionEvent -> promptCourseForm());
         addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
         addButtons_event.setOnAction(actionEvent -> promptEventForm());
@@ -426,6 +431,35 @@ public class MainController implements Initializable {
             } finally {
                 try { if(oin != null) oin.close(); } catch (IOException ioe){ ioe.printStackTrace(); }
             }
+        }
+    }
+
+    private void importNewFile() {
+        File f = new FileChooser().showOpenDialog(fileMenu_open.getStyleableNode().getScene().getWindow());
+
+        if(f != null){
+            String extension = Utils.getFileExtension(f.getName());
+
+            //TODO factory
+            //TODO make it language specific
+            if(extension == null) promptAlert("Error", "The file does not have an extension.");
+            else if(extension.equals(MCFImportReader.MCFFileExtension())){
+                importFromMCF(f);
+            }
+            else promptAlert("Error", "Unknown file extension.");
+        }
+    }
+
+    private void importFromMCF(File f) {
+        MCFImportReader reader = new MCFImportReader(f, MainApp.getDatabase().getReadOnlyDatabase());
+
+        ImportJob importJob = reader.read().getImportJob();
+
+        if(importJob.errors().nonEmpty()){
+            //TODO print errors to new window
+        }
+        else{
+            EntityManager.importEntities(importJob, this);
         }
     }
 

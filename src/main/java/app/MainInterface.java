@@ -24,15 +24,19 @@ public class MainInterface extends javafx.application.Application{
     //TODO update this method to use Utils
     @Override
     public void start(Stage stage) throws Exception {
+        System.out.println("Loading main controller...");
         URL url = new File(FXMLPaths.MainInterface()).toURI().toURL();
         FXMLLoader loader = new FXMLLoader(url);
         Parent root = loader.load();
 
         mainController = loader.getController();
 
+        System.out.println("Main Controller Loaded");
+
         stage.setTitle(AppSettings.applicationTitle());
         stage.setScene(new Scene(root));
         stage.show();
+        System.out.println("Loaded");
     }
 
     public static void promptAlert(String title, String message){

@@ -20,10 +20,13 @@ case class LineImportJob(subject: SubjectBlueprint,
                          errors: List[ImportError],
                          finished: Boolean)
 
-class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportReader {
-
+object MCFImportReader{
+    val MCFFileExtension: String = "mcf"
     val MCFVersion: String = "1.1"
     val Separator: Char = ';'
+}
+
+class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportReader {
 
     lazy val createdResources: mutable.HashMap[String, ResourceBlueprint] = new mutable.HashMap
     lazy val createdCourses: mutable.HashMap[String, CourseBlueprint] = new mutable.HashMap
@@ -34,8 +37,8 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         val source = Source.fromFile(file)
 
         try {
-            val filteredLines = source.getLines().filterNot(_.forall(_ == Separator))
-            val lines = filteredLines.zipWithIndex.map { case (s, i) => (i, s.split(Separator.toString, -1)) }.toList //all file lines
+            val filteredLines = source.getLines().filterNot(_.forall(_ == MCFImportReader.Separator))
+            val lines = filteredLines.zipWithIndex.map { case (s, i) => (i, s.split(MCFImportReader.Separator.toString, -1)) }.toList //all file lines
             val headers = lines.head //only headers line
             val lineImportJobs = for ((row, line) <- lines.tail) yield readLine(row + 1, line, headers._2)
 
@@ -110,6 +113,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                 case None =>
                     val newCourse = new CourseBlueprint
                     newCourse.name = course
+                    createdCourses.put(newCourse.name, newCourse)
                     newCourse
             }
             subjectEntity.desiredCourse = courseEntity
@@ -124,6 +128,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                     newResource.name = resourceName
                     newResource.quantity = 1
                     newResource.capacity = resourceCapacity
+                    createdResources.put(newResource.name, newResource)
                     newResource
             }
 
@@ -146,7 +151,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                     hgp.apply(number)._1, hgp.apply(number)._2, Some(resourceEntity), number+1, number+1)).toList
             }
             else if (hgp.isEmpty) List()
-            else generateEvents(subjectEntity, LaboratoryEvent, hgp.head._1, hgp.head._2, None, 1, ngp)
+            else generateEvents(subjectEntity, LaboratoryEvent, hgp.head._1, hgp.head._2, Some(resourceEntity), 1, ngp)
 
             subjectEntity.events ++= (theoryEvents ++ problemsEvents ++ labEvents)
 
@@ -317,17 +322,21 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
     def flattenImportJobs(lineImportJobs: List[LineImportJob]): ImportJob = {
         val subjects: ArrayBuffer[SubjectBlueprint] = new mutable.ArrayBuffer
         val events: ArrayBuffer[EventBlueprint] = new mutable.ArrayBuffer
-        val resources: ArrayBuffer[ResourceBlueprint] = new mutable.ArrayBuffer
+        //val courses: ArrayBuffer[CourseBlueprint] = new mutable.ArrayBuffer
+        //val resources: ArrayBuffer[ResourceBlueprint] = new mutable.ArrayBuffer
         val errors: ArrayBuffer[ImportError] = new mutable.ArrayBuffer
 
-        lineImportJobs.foreach(lij => {
+        lineImportJobs.foreach(lij => if (lij.finished) {
             subjects += lij.subject
             events ++= lij.events
-            resources += lij.resource
+            //if (courses.forall(!_.name.equals(lij.course.name))) courses += lij.course
+            //if (resources.forall(!_.name.equals(lij.resource.name))) resources += lij.resource
             errors ++= lij.errors
         })
 
-        ImportJob(subjects.toList, events.toList, resources.toList, List(), errors.toList, finished = true)
+        ImportJob(subjects.toList, events.toList,
+            createdResources.values.toList, createdCourses.values.toList,
+            errors.toList, finished = true)
     }
 
     override def getImportJob: ImportJob = importJob

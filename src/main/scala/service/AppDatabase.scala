@@ -25,6 +25,8 @@ class AppDatabase (eventDBInitializer: Option[EventDatabase#Initializer] = None,
         case None => new ResourceDatabase
     }
 
+    def getReadOnlyDatabase: ReadOnlyAppDatabase = null
+
 }
 
 class ReadOnlyAppDatabase(val eventDatabase: ReadOnlyEventDatabase,

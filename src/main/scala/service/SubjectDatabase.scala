@@ -13,7 +13,7 @@ class SubjectDatabase extends Database[Subject] {
 
     def this(initializer: SubjectDatabase#Initializer) = this
 
-    def createSubject(): (ID, Subject) = {
+    def createSubject: (ID, Subject) = {
         val id = reserveNextId
         val subject = new Subject(id)
         addElement(id, subject)

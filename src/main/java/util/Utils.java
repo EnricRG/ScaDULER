@@ -66,4 +66,11 @@ public class Utils {
             tabPane.setTabMaxWidth((tabPane.getWidth() / 2) - 20);
         };
     }
+
+    public static String getFileExtension(String fileName){
+        int extension_start = fileName.lastIndexOf('.');
+
+        if(extension_start > 0) return fileName.substring(extension_start+1);
+        else return null;
+    }
 }
