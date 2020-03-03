@@ -124,7 +124,7 @@ public class MainController implements Initializable {
                                        int hint) {
 
         AssignmentViabilityChecker viabilityChecker = new AssignmentViabilityChecker(courseScheduleController.getCourse(),
-                quarterScheduleController.getQuarter(), eventDrag.getEvent().getWeek(),
+                quarterScheduleController.getQuarterData(), eventDrag.getEvent().getWeek(),
                 intervalController.getWeek(), intervalController.getInterval(),
                 eventDrag.getEvent()
         );

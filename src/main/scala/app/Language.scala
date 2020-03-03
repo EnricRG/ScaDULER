@@ -9,12 +9,14 @@ class Language(val items: Map[String,String]) {
     def this() = this(List())
 
     def getItem(key: String): String = items.getOrElse(key, ItemNotFound)
+    def getItemOrElse(key: String, default: String): String = items.getOrElse(key, default)
 }
 
 object DefaultLanguage extends Language {
     override val items = Map(
 
         "noCourse" -> "No Course",
+        "noQuarter" -> "No Quarter",
         "firstQuarter" -> "First Quarter",
         "secondQuarter" -> "Second Quarter",
 

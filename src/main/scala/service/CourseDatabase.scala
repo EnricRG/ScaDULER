@@ -1,6 +1,6 @@
 package service
 
-import model.{Course, Quarter}
+import model.{Course, QuarterData}
 
 import scala.collection.mutable
 

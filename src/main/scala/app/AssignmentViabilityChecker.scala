@@ -2,9 +2,9 @@ package app
 
 import model.Weeks.{AWeek, BWeek, EveryWeek, Week}
 import misc.Warning
-import model.{Course, Event, Quarter, Weeks}
+import model.{Course, Event, QuarterData, Weeks}
 
-class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: Week, droppedWeek: Int, interval: Int, event: Event) {
+class AssignmentViabilityChecker(course: Course, quarter: QuarterData, eventWeek: Week, droppedWeek: Int, interval: Int, event: Event) {
 
     private val courseDatabase = MainApp.getDatabase.courseDatabase
 
@@ -21,12 +21,12 @@ class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: We
 
     def getWarning: Warning = warning.orNull
 
-    def getQuarterEvents(course: Course, quarter: Quarter): Iterable[Event] = {
+    def getQuarterEvents(course: Course, quarter: QuarterData): Iterable[Event] = {
         if (quarter == course.firstQuarter) courseDatabase.getElements.map(_.firstQuarter).flatMap(_.getSchedule.getEvents)
         else courseDatabase.getElements.map(_.secondQuarter).flatMap(_.getSchedule.getEvents)
     }
 
-    def checkEventIncompatibilities(course: Course, quarter: Quarter, event: Event, interval: Int): Option[Warning] = {
+    def checkEventIncompatibilities(course: Course, quarter: QuarterData, event: Event, interval: Int): Option[Warning] = {
         val quarterEvents = getQuarterEvents(course, quarter)
 
         val incompatibilityClashes = quarterEvents.
@@ -52,7 +52,7 @@ class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: We
 
     def weekOverlap(week1: Week, week2: Week): Boolean = week1 == Weeks.EveryWeek || week2 == EveryWeek || week1 == week2
 
-    def checkResourceAvailability(course: Course, quarter: Quarter, event: Event, week: Week, interval: Int): Option[Warning] = {
+    def checkResourceAvailability(course: Course, quarter: QuarterData, event: Event, week: Week, interval: Int): Option[Warning] = {
         if(event.needsResource) {
 
             val availabilityMap = for (i <- interval until interval + event.getDuration) yield event.getNeededResource.getAvailability.isAvailable(week.toWeekNumber, i)

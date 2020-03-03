@@ -45,7 +45,7 @@ object EntityManager {
 
         importJob.subjects.foreach(sb => {
             val subject = subjectDatabase.createSubject._2
-            setSubjectFromBlueprint(subject, sb, courseMapper(sb.desiredCourse))
+            setSubjectFromBlueprint(subject, sb, courseMapper(sb.course))
             subjectDatabase.setAsFinished(subject.getID)
             subjectMapper.put(sb, subject)
         })
@@ -74,12 +74,12 @@ object EntityManager {
         r.setQuantity(rb.quantity)
     }
 
-    private def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint, desiredCourse: Course): Unit = {
+    private def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint, c: Course): Unit = {
         s.setName(sb.name)
         s.setShortName(sb.shortName)
-        //TODO complete copy
-        //s.setDesiredCourse(desiredCourse)
-        //s.setDesiredQuarter(sb.desiredQuarter)
+        s.setCourse(c)
+        s.setQuarter(sb.quarter)
+        sb.additionalInformation.foreach(pair => s.setAdditionalField(pair._1, pair._2))
     }
 
     private def setEventFromBlueprint(e: Event, eb: EventBlueprint, s: Subject, r: Option[Resource]): Unit = {

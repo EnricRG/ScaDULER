@@ -4,7 +4,7 @@ import control.MainController;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import model.Event;
-import model.Quarter;
+import model.QuarterData;
 import model.Weeks;
 import scala.collection.JavaConverters;
 
@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class QuarterScheduleController extends DualWeekScheduleViewController<WeekScheduleController, WeekScheduleController>{
 
-    private final Quarter quarter;
+    private final QuarterData quarterData;
     private final MainController mainController;
 
     private final CourseScheduleController courseController;
@@ -26,10 +26,10 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
     private Map<Integer, ScheduleIntervalController> firstWeekEventViews = new HashMap<>(); //map that holds the EventViews at each interval
     private Map<Integer, ScheduleIntervalController> secondWeekEventViews = new HashMap<>(); //map that holds the EventViews at each interval
 
-    public QuarterScheduleController(MainController mainController, CourseScheduleController courseController, Quarter quarter) {
+    public QuarterScheduleController(MainController mainController, CourseScheduleController courseController, QuarterData quarterData) {
         super(new WeekScheduleController(), new WeekScheduleController());
         this.mainController = mainController;
-        this.quarter = quarter;
+        this.quarterData = quarterData;
         this.courseController = courseController;
     }
 
@@ -67,7 +67,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
     }
 
     public void fillQuarter() {
-        for(Event e: JavaConverters.asJavaCollection(quarter.getSchedule().getEvents())){
+        for(Event e: JavaConverters.asJavaCollection(quarterData.getSchedule().getEvents())){
             //unassignEvent(e);
             processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, e.getWeek().toWeekNumber(), e.getStartInterval());
         }
@@ -95,7 +95,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
         //else error, no week like this exists
 
         eventsAtInterval.put(scheduleEvent.getID(), interval);
-        quarter.getSchedule().addEvent(scheduleWeek, interval, scheduleEvent); //scheduleWeek is a dummy parameter here
+        quarterData.getSchedule().addEvent(scheduleWeek, interval, scheduleEvent); //scheduleWeek is a dummy parameter here
     }
 
     private void assignEventI(Event event, Map<Integer, ScheduleIntervalController> weekIntervals, Integer interval, int hint){
@@ -119,7 +119,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
         //else error, no week like this exists
 
         eventsAtInterval.remove(scheduleEvent.getID());
-        quarter.getSchedule().removeEvent(scheduleEvent.getWeek().toWeekNumber(), scheduleEvent.getStartInterval(), scheduleEvent); //TODO improvable call
+        quarterData.getSchedule().removeEvent(scheduleEvent.getWeek().toWeekNumber(), scheduleEvent.getStartInterval(), scheduleEvent); //TODO improvable call
     }
 
     private void addIntervalViewToWeekController(ScheduleIntervalController intervalController, WeekScheduleController weekController, Node cell) {
@@ -139,7 +139,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
         courseController.notifyEventDrop(this, intervalController, hint);
     }
 
-    public Quarter getQuarter() { return quarter; }
+    public QuarterData getQuarterData() { return quarterData; }
 
     public CourseScheduleController getCourseController() {
         return courseController;

@@ -50,21 +50,23 @@
                               <VBox alignment="TOP_CENTER" spacing="5.0">
                                  <children>
                                     <Label fx:id="subjectColorTag" text="Subject Color" />
-                                    <Label fx:id="subjectColorExplanation" maxWidth="150.0" text="This color will be used to draw a thin frame around the events of the subject" textAlignment="CENTER" wrapText="true">
+                                    <Label fx:id="subjectColorExplanation" maxWidth="150.0" minHeight="60.0" text="This color will be used to draw a thin frame around the events of the subject" textAlignment="CENTER" wrapText="true">
                                        <font>
                                           <Font name="System Italic" size="12.0" />
                                        </font>
                                     </Label>
-                                    <ColorPicker fx:id="subjectColorPicker" />
+                                    <ColorPicker fx:id="subjectColorPicker" minHeight="25.0" />
                                     <Label fx:id="subjectCourseTag" layoutX="45.0" layoutY="10.0" text="Course" />
                                     <ComboBox fx:id="subjectCoursePicker" prefWidth="150.0" promptText="Course" />
+                                    <Label fx:id="subjectQuarterTag" layoutX="62.0" layoutY="118.0" text="Quarter" />
+                                    <ComboBox fx:id="subjectQuarterPicker" layoutX="10.0" layoutY="140.0" prefWidth="150.0" promptText="Quarter" />
                                  </children>
                               </VBox>
                            </children>
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" spacing="5.0" style="-fx-border-color: lightgray;" VBox.vgrow="ALWAYS">
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" style="-fx-border-color: lightgray;" VBox.vgrow="ALWAYS">
                      <children>
                         <Label fx:id="generateEventsTag" text="Generate Subject Events:" />
                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
@@ -100,7 +102,7 @@
                            <children>
                               <Label fx:id="selectResourceTag" text="Select the resource that these generated Events will need:" />
                               <TextField fx:id="selectResourceSearchBar" promptText="search bar" />
-                              <ListView fx:id="selectResourceListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                              <ListView fx:id="selectResourceListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="150.0" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                         <HBox alignment="CENTER" VBox.vgrow="NEVER">

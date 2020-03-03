@@ -43,6 +43,9 @@ public class SubjectFormController extends FormController {
     public Label subjectCourseTag;
     public ComboBox<Course> subjectCoursePicker;
 
+    public Label subjectQuarterTag;
+    public ComboBox<Quarter> subjectQuarterPicker;
+
     public Label generateEventsTag;
     public ComboBox<EventType> generateEvents_eventTypeSelector;
     public Label generateEvents_rangeTag;
@@ -100,6 +103,7 @@ public class SubjectFormController extends FormController {
         subjectColorExplanation.setText(AppSettings.language().getItem("subjectForm_subjectColorExplanation"));
 
         subjectCourseTag.setText(AppSettings.language().getItem("subjectForm_subjectCourseTag"));
+        subjectQuarterTag.setText(AppSettings.language().getItem("subjectForm_subjectQuarterTag"));
 
         generateEventsTag.setText(AppSettings.language().getItem("subjectForm_generateEventsTag"));
 
@@ -136,6 +140,9 @@ public class SubjectFormController extends FormController {
     protected void setupViews() {
         subjectCoursePicker.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(courseDatabase.getCourses())));
         subjectCoursePicker.getItems().add(0, NoCourse.noCourse());
+
+        subjectQuarterPicker.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Quarters.quarters())));
+        subjectQuarterPicker.getItems().add(0, NoQuarter.noQuarter());
 
         generateEvents_eventTypeSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(EventTypes.commonEventTypes())));
 
@@ -333,6 +340,7 @@ public class SubjectFormController extends FormController {
             subject.setDescription(subjectDescriptionField.getText());
             subject.setColor(new Color(subjectColorPicker.getValue()));
             subject.setCourse(subjectCoursePicker.getValue());
+            subject.setQuarter(subjectQuarterPicker.getValue());
 
             HashMap<EventType, List<Event>> eventsByType = new HashMap<>();
             for(EventType et: JavaConverters.asJavaCollection(EventTypes.commonEventTypes())){

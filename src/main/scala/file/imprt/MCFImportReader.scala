@@ -100,7 +100,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
             LineImportJob(null, List(), null, null, errors.toList, finished = false)
         }
         /*else if(database.subjectDatabase.getSubjectByName(name).isEmpty) {
-            //TODO check if subject already exists
+            //TODO check if subject already exists. This shouldn't be done because application allows repeated subjects.
             LineImportJob(null, List(), null, null, errors.toList, finished = false)
         }*/
         else{
@@ -116,10 +116,15 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                     createdCourses.put(newCourse.name, newCourse)
                     newCourse
             }
-            subjectEntity.desiredCourse = courseEntity
-            subjectEntity.desiredQuarter = semester
+            subjectEntity.course = courseEntity
+            subjectEntity.quarter = semester
 
-            //TODO subject additional info
+            subjectEntity.additionalInformation.update("students", students)
+            subjectEntity.additionalInformation.update("credits", credits)
+            subjectEntity.additionalInformation.update("cgg", cgg)
+            subjectEntity.additionalInformation.update("cgm", cgm)
+            subjectEntity.additionalInformation.update("cgp", cgp)
+            subjectEntity.additionalInformation.update("shared", shared)
 
             val resourceEntity = createdResources.get(resourceName) match {
                 case Some(r) => r
@@ -173,31 +178,33 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
     }
 
     //returns (semester, errors, semester.isEmpty)
-    def getSemester(rawSemester: String, row: Int, field: Int, header: String): (Int, ArrayBuffer[ImportError], Boolean) = {
+    def getSemester(rawSemester: String, row: Int, field: Int, header: String): (Quarter, ArrayBuffer[ImportError], Boolean) = {
         val errors = new ArrayBuffer[ImportError]()
         var isEmpty = false
 
         val semester = if (rawSemester.isEmpty) {
             errors += EmptyFieldError(row, field, header, rawSemester)
             isEmpty = true
-            1
+            FirstQuarter
         }
         else{
             try{
                 val intSemester = rawSemester.toInt
-                if(intSemester < 1 || intSemester > 2) {
-                    errors += WrongSemesterNumberError(row, field, header, rawSemester)
-                    isEmpty = true
-                    1
+                intSemester match{
+                    case 1 => FirstQuarter
+                    case 2 => SecondQuarter
+                    case _ =>
+                        errors += WrongSemesterNumberError(row, field, header, rawSemester)
+                        isEmpty = true
+                        NoQuarter
                 }
-                else intSemester
             }
             catch{
                 case e: NumberFormatException => {
                     errors += NumberFormatError(row, field, header, rawSemester)
                     isEmpty = true
                 }
-                1
+                FirstQuarter
             }
         }
 
