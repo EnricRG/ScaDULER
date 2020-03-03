@@ -5,6 +5,7 @@ import actors.{MasterActor, Messages}
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import javafx.application.Application
 import service.AppDatabase
 import solver.InstanceData
 
@@ -24,8 +25,10 @@ object MainApp extends App {
     def setDatabase(appDatabase: AppDatabase): Unit = database = appDatabase
 
     override def main(args: Array[String]): Unit = {
+        println("Pre Init")
         init()
-        MainInterface.main(Array())
+        println("Post Init")
+        Application.launch(classOf[MainInterface], args: _*)
         exit()
     }
 

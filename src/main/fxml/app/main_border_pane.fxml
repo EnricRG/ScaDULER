@@ -38,6 +38,12 @@
                                           <MenuItem fx:id="fileMenu_save" mnemonicParsing="false" text="Save" />
                                           <MenuItem fx:id="fileMenu_saveAs" mnemonicParsing="false" text="Save as..." />
                                           <SeparatorMenuItem mnemonicParsing="false" />
+                                          <Menu fx:id="fileMenu_importMenu" mnemonicParsing="false" text="Import">
+                                            <items>
+                                              <MenuItem fx:id="importMenu_newFile" mnemonicParsing="false" text="To new file" />
+                                            </items>
+                                          </Menu>
+                                          <SeparatorMenuItem mnemonicParsing="false" />
                                           <MenuItem fx:id="fileMenu_close" disable="true" mnemonicParsing="false" text="Close" />
                                        </items>
                                     </Menu>

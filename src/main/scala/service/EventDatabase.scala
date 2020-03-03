@@ -24,3 +24,7 @@ class EventDatabase extends Database[Event] {
 
     def getUnassignedEvents: Iterable[Event] = getElements.filter(_.isUnassigned)
 }
+
+class ReadOnlyEventDatabase(eventDatabase: EventDatabase){
+
+}
