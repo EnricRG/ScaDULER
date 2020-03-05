@@ -1,5 +1,6 @@
 package util;
 
+import app.AppSettings;
 import factory.ViewFactory;
 import javafx.beans.InvalidationListener;
 import javafx.fxml.Initializable;
@@ -72,5 +73,9 @@ public class Utils {
 
         if(extension_start > 0) return fileName.substring(extension_start+1);
         else return null;
+    }
+
+    public static int computeInterval(int day, int dayInterval) {
+        return day * AppSettings.timeSlotsPerDay() + dayInterval;
     }
 }

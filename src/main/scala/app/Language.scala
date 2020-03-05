@@ -126,6 +126,11 @@ object DefaultLanguage extends Language {
         "resourceTable_placeholder" -> "No resources",
         "manageResources_availabilityPrompt" -> "Manage Availability",
 
+        "resourceAvailability_selectedIntervalsTag" -> "Selected intervals:",
+        "resourceAvailability_setButton" -> "Set",
+        "resourceAvailability_deselectExplanation" -> "To deselect intervals, you can press right click over them, or press Esc key to deselect them all.",
+        "resourceAvailability_deselectButton" -> "Deselect All",
+
         "manageCourseResources_windowTitle" -> "Manage Course Resources",
         "manageCourseResources_firstQuarter" -> "First Quarter",
         "manageCourseResources_secondQuarter" -> "Second Quarter",

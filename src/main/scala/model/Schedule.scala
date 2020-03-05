@@ -13,6 +13,7 @@ class Schedule[T](intervals: Int) extends Serializable {
     def getValueAtIntervalOrElseUpdate(interval: Int, el: => T): T = if(interval < intervals) timeline.getOrElseUpdate(interval, el) else el
 
     def updateInterval(interval: Int, element: T): Unit = if(interval < intervals) timeline.update(interval, element)
+    def removeInterval(interval: Int): Unit = timeline.remove(interval)
 
     //I did this because I could.
     def applyToInterval(interval: Int, function: => (T => Any)): Option[Any] = getValueAtInterval(interval) match{

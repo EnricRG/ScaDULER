@@ -1,18 +1,23 @@
 package control.manage;
 
 import app.AppSettings;
+import app.FXMLPaths;
 import app.MainApp;
+import com.sun.javafx.webkit.KeyCodeMap;
 import control.MainController;
 import control.form.FormController;
-import control.schedule.ResourceScheduleController;
-import factory.DualWeekScheduleViewFactory;
+import control.schedule.ResourceAvailabilityController;
+import factory.ViewFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
@@ -139,12 +144,25 @@ public class ResourceManagerController extends FormController {
     }
 
     private void manageResourceAvailability(Resource resource) {
-        Utils.promptBoundWindow(
+        ResourceAvailabilityController controller = new ResourceAvailabilityController(resource);
+
+        Stage stage = Utils.promptBoundWindow(
                 AppSettings.language().getItem("manageResources_availabilityPrompt"),
                 resourceTable.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
-                new DualWeekScheduleViewFactory<>(new ResourceScheduleController(resource))
-        ).show();
+                new ViewFactory<>(FXMLPaths.ResourceAvailabilityManager()),
+                controller
+        );
+
+        controller.setStage(stage);
+
+        stage.getScene().setOnKeyReleased(keyEvent -> {
+            if(keyEvent.getCode() == KeyCode.ESCAPE) controller.clearSelection();
+            else if(keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE)
+                controller.unsetSelection();
+        });
+
+        controller.show();
     }
 
     private void incrementByOne() {

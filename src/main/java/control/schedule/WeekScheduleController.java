@@ -1,6 +1,9 @@
 package control.schedule;
 
 import app.AppSettings;
+import control.schedule.cell.BasicScheduleCell;
+import control.schedule.cell.ScheduleCell;
+import control.schedule.cell.ScheduleCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -34,8 +37,18 @@ public class WeekScheduleController implements Initializable {
     public Label thursdayTag;
     public Label fridayTag;
 
-    private ObservableList<Node> headers = FXCollections.observableArrayList();
-    private ObservableList<Node> innerCells = FXCollections.observableArrayList();
+    private ScheduleCellFactory factory;
+
+    private ObservableList<ScheduleCell> headers = FXCollections.observableArrayList();
+    private ObservableList<ScheduleCell> innerCells = FXCollections.observableArrayList();
+
+    public WeekScheduleController(){
+        this(null);
+    }
+
+    public WeekScheduleController(ScheduleCellFactory csf){
+        factory = csf;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -50,39 +63,39 @@ public class WeekScheduleController implements Initializable {
 
         //first row
         for(int column = 0; column < numberOfColumns; column++){
-            Node node = Utils.getNodeByColumnAndRow(column,0,gridPane);
+            ScheduleCell cell = (ScheduleCell) Utils.getNodeByColumnAndRow(column,0,gridPane);
 
-            if(node != null) node.setStyle(HEADER_CSS_STYLE);
+            if(cell != null) cell.setStyle(HEADER_CSS_STYLE);
             else {
-                Node newNode = new HBox();
-                newNode.setStyle(HEADER_CSS_STYLE);
-                gridPane.add(newNode, column, 0);
+                ScheduleCell newCell =  new BasicScheduleCell(0, column);
+                newCell.setStyle(HEADER_CSS_STYLE);
+                gridPane.add(newCell, column, 0);
             }
 
-            headers.add(node);
+            headers.add(cell);
         }
 
         //skipping first row that contains the headers
         //I nested the loops this way to get all intervals sorted by its global interval number
         for(int column = 0; column < numberOfColumns; column++){
             for(int row = 1; row < numberOfRows; row++){
-                Node node = Utils.getNodeByColumnAndRow(column,row,gridPane);
+                ScheduleCell cell = (ScheduleCell) Utils.getNodeByColumnAndRow(column,row,gridPane);
 
-                if(node == null){ //fill grid cell
-                    node = new HBox();
-                    gridPane.add(node, column, row);
+                if(cell == null){ //fill grid cell
+                    cell = factory == null || column < 1 ? new BasicScheduleCell(row, column) : factory.newCell(row, column);
+                    gridPane.add(cell, column, row);
                 }
 
                 if(row % 2 != 0){ //o'clock hours
-                    node.setStyle(O_CLOCK_CSS_BORDER_STYLE);
+                    cell.setStyle(O_CLOCK_CSS_BORDER_STYLE);
                 }
                 else{ //half hours
-                    node.setStyle(HALF_HOUR_CSS_BORDER_STYLE);
+                    cell.setStyle(HALF_HOUR_CSS_BORDER_STYLE);
                 }
 
                 if(column > 0){ //avoid changing hour column behavior
-                    innerCells.add(node);
-                    setupCellBehavior(node);
+                    innerCells.add(cell);
+                    setupCellBehavior(cell);
                 }
             }
         }
@@ -107,7 +120,7 @@ public class WeekScheduleController implements Initializable {
         fridayTag.setText(AppSettings.language().getItem("friday"));
     }
 
-    public ObservableList<Node> getInnerCells() { return innerCells; }
+    public ObservableList<ScheduleCell> getInnerCells() { return innerCells; }
 
     //pre: gridPane != null && cell != null && gridPane.getChildren().contains(cell)
     public static Integer computeInterval(GridPane gridPane, Node cell){
