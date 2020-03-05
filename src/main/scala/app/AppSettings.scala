@@ -13,6 +13,7 @@ object FXMLPaths {
 
     val EntityManagerPanel: String = "src/main/fxml/manage/entity_manager.fxml"
     val ManageResourcesPanel: String = "src/main/fxml/manage/resource_manager.fxml"
+    val ResourceAvailabilityManager: String = "src/main/fxml/manage/resource_availability_manager.fxml"
 
     val GenericSchedule: String = "src/main/fxml/schedule/schedule_view.fxml"
     val DualWeekGenericSchedule: String = "src/main/fxml/schedule/dual_week_schedule_view.fxml"

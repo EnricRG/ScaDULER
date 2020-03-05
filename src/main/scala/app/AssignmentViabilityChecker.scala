@@ -68,10 +68,10 @@ class AssignmentViabilityChecker(course: Course, quarter: Quarter, eventWeek: We
             def checkWeeklyAvailability(week: Week): Option[Warning] = {
                 val concurrentEvents = quarterEvents.filter(x => x != event && x.isAssigned && weekOverlap(week, x.getWeek) && overlap(x.getStartInterval,x.getDuration,interval,event.getDuration))
 
-                val resourceAvailability = for(i <- interval until interval + event.getDuration) yield (i,event.getNeededResource.getQuantity - concurrentEvents.count(x => overlap(i, 1, x.getStartInterval, x.getDuration)))
+                val resourceAvailability = for(i <- interval until interval + event.getDuration) yield (i,event.getNeededResource.getQuantityAt(week, interval) - concurrentEvents.count(x => overlap(i, 1, x.getStartInterval, x.getDuration)))
 
                 for((inter, resourceAvailableQuantity) <- resourceAvailability) {
-                    if(resourceAvailableQuantity == 0) {
+                    if(resourceAvailableQuantity <= 0) {
                         val relativeMinutes = (if (interval < inter) AppSettings.TimeSlotDuration * (inter - interval) else 0).toString
                         return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceWillBeUnavailable"), event.getNeededResource.getName, relativeMinutes)))
                     }

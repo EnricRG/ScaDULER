@@ -57,21 +57,29 @@ object MiniZincInstance{
             for(r <- instance.resources) {
 
                 //source: https://stackoverflow.com/questions/28286089/scala-group-consecutive-elements-in-list-where-function-is-true
-                def pack(xs: List[Int]): List[List[Int]] = xs match {
+                def pack[T](xs: List[T], f: T => Boolean): List[List[T]] = xs match {
                     case Nil => Nil
                     case _ =>
-                        val (first, rest) = xs.span(_ >= 0)
-                        first :: pack(rest.dropWhile(_ < 0))
+                        val (first, rest) = xs.span(f(_))
+                        first :: pack(rest.dropWhile(!f(_)),f)
                 }
 
                 //post-condition of getAvailableIntervalsOrElse ensures that the list is sorted
 
                 def generateEventTuples(r: Resource, week: Week): List[(Int, Int, Resource)] = {
                     val weekAuxEvents: ListBuffer[(Int,Int,Resource)] = new ListBuffer
+                    val max = r.getMaxQuantity
                     for(d <- 0 until AppSettings.days) {
-                        val packedWeekIntervals = pack(r.getUnavailableIntervalsOrElse(week.toWeekNumber, d, -1).toList)
+                        /*val packedWeekIntervals = pack(r.getUnavailableIntervalsOrElse(week.toWeekNumber, d, -1).toList, ((x: Int) => x>=0))
                         for (consecutiveIntervals <- packedWeekIntervals if consecutiveIntervals.nonEmpty) {
-                            weekAuxEvents ++= (for (i <- 1 to r.getQuantity) yield (consecutiveIntervals.head + ModelIndexDeviation, consecutiveIntervals.length, r)).toList
+                            weekAuxEvents ++= (for (i <- 1 to r.getMaxQuantity) yield (consecutiveIntervals.head + ModelIndexDeviation, consecutiveIntervals.length, r)).toList
+                        }*/
+
+                        for(quantity <- 0 until max) {
+                            val packedIntervalsWithQuantity = pack(r.getIntervalsWithQuantityOrElse(week.toWeekNumber, d, quantity, -1).toList, (x: Int) => x >= 0)
+                            for(consecutiveIntervals <- packedIntervalsWithQuantity if consecutiveIntervals.nonEmpty){
+                                weekAuxEvents ++= (1 to max-quantity).map(_ => (consecutiveIntervals.head + ModelIndexDeviation, consecutiveIntervals.length, r))
+                            }
                         }
                     }
                     weekAuxEvents.toList
@@ -108,7 +116,7 @@ object MiniZincInstance{
         val nDays = instance.nDays
         val dayDuration = instance.dayDuration
         val nResources = instance.nResources
-        val resourceQuantity = instance.resources.map(_.getQuantity)
+        val resourceQuantity = instance.resources.map(_.getMaxQuantity)
         val nEvents = instance.nEvents + resourceAvailabilityFillerAux.nPreassignedEventsAux
         val eventDuration = instance.events.map(_.getDuration) ++ resourceAvailabilityFillerAux.eventDurationAux
         val eventWeek = instance.events.map(_.getWeek.toShortString) ++ resourceAvailabilityFillerAux.eventWeekAux
