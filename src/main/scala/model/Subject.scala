@@ -19,7 +19,7 @@ class Subject(id: ID) extends Identifiable(id) with Serializable {
     private var color: Color = new Color(DefaultColor)
     private val events: mutable.Map[ID,Event] = new mutable.HashMap
     private val additionalInformation: mutable.Map[String, Any] = new mutable.HashMap
-    private val eventTypeIncompatibilities: mutable.Set[EventTypeIncompatibility] = new mutable.TreeSet
+    private val eventTypeIncompatibilities: mutable.Set[EventTypeIncompatibility] = new mutable.HashSet
 
     def getName: String = name
     def setName(n: String): Unit = name = n
