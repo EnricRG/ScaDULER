@@ -37,8 +37,8 @@ int: dayDuration;
 int: nTimes = dayDuration*nDays; 
 set of int: Times = 1..nTimes; 
 
-enum WEEK = {A,B,W}; %A week, B week or weekly event
-
+enum WEEK = {A, B, W}; %A week, B week or Weekly event
+enum PERIODICITY = {WE, BI}; %WEekly or BIweekly event (Biweekly = once every two week)
 
 %%% Resources
 %  Resources used by Events at a certain Time.
@@ -58,9 +58,22 @@ set of int: Events = 1..nEvents;
 % eventDuration[e] = i if event e has duration i.
 array[Events] of int: eventDuration;
 
-% For each Event we know in which week it must be performed.
-% eventWeek[e] = w if event e must be performed during week w.
-array[Events] of WEEK: eventWeek;
+%%%%%%%%%%%%%%%%%%%%%%%%%%% NEW %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Some events can have predefined execution weeks.
+int: nPredefinedEventWeeks;
+set of int: PredefinedEventWeeks = 1..nPredefinedEventWeeks;
+
+% predefinedWeekEventNumber[n] = e if predefinition n refers to event e.
+array[PredefinedEventWeeks] of Events: predefinedWeekEventNumber;
+% predefinedEventWeek[n] = w if predefinition n assigns the event predefinedWeekEventNumber[n] to be executed during week w.
+array[PredefinedEventWeeks] of WEEK: predefinedEventWeek;
+
+% For each Event we know its periodicity.
+% eventPeriodicity[e] = p if event e must be performed with periodicity p.
+array[Events] of PERIODICITY: eventPeriodicity;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% NEW %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Array containing which events cannot run in parallel for reasons not concerning a resource clash.
 % eventExlusions[e1,e2] = true when both events cannot run in parallel for external reasons.
@@ -97,6 +110,14 @@ array[Precedences] of Events: successors;
 % eventStart[e] = t if event e is assigned to start at time t.
 array[Events] of var Times: eventStart;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%% NEW %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Tells us at which week the event must be performed.
+% eventWeek[e] = w if event e must be perfomed on week w.
+array[Events] of var WEEK: eventWeek;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%% Auxiliary variables
 
 % Determines in which day the event is running. 
@@ -113,6 +134,14 @@ constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDurat
 
 %%% Hard constraints
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%% NEW %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Preassigned weeks. For all preassignations, the preassigned event runs on preassigned week.
+constraint forall(p in PredefinedEventWeeks)
+  (eventWeek[predefinedWeekEventNumber[p]] = predefinedEventWeek[p]);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %Preassigned times. For all preassignations, the preassigned event starts at preassigned time.
 constraint forall(p in PreassignedEvents) 
   (eventStart[preassignedEventNumbers[p]] = preassignedEventStarts[p]);
@@ -125,6 +154,16 @@ constraint forall(prec in Precedences)
 % Because eventExclusions is a symmetric matrix, we can skip a part of the matrix.
 constraint forall(e1 in Events, e2 in e1+1..nEvents) 
   ( eventExclusions[e1,e2] -> no_overlap(eventStart[e1], eventDuration[e1], eventStart[e2], eventDuration[e2]) );
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% NEW %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Assign week to event.
+constraint forall(e in Events)
+  (eventPeriodicity[e] = WE -> eventWeek[e] = W);
+constraint forall(e in Events)
+  (eventPeriodicity[e] = BI -> eventWeek[e] = A \/ eventWeek[e] = B);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % For every Time t, the resource requirements are not exceeded.
 % Optimizable: reduce event array instead of resource requirements array
