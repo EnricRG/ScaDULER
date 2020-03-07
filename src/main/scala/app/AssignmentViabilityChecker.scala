@@ -109,10 +109,20 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
         else None
     }
 
+    def checkCourseAndQuarter(course: Course, quarter: QuarterData, event: Event): Option[Warning] = {
+        if(event.getCourse != course)
+            Some(new Warning(AppSettings.language.getItem("warning_courseNotMatching")))
+        else if (quarter.getQuarter != event.getQuarter)
+            Some(new Warning(AppSettings.language.getItem("warning_quarterNotMatching")))
+        else None
+    }
+
     def checkViability():Unit = {
 
         //TODO check precedences
         //if (warning != null) warning = checkEventPrecedences(course, quarter, event, week, interval)
+
+        warning = checkCourseAndQuarter(course, quarter, event)
 
         if (warning.isEmpty) warning = checkBorders(event, interval)
 

@@ -38,8 +38,8 @@ class Course(id: ID) extends Identifiable(id) with Serializable {
 
     var name: String = ""
     var description: String = ""
-    var firstQuarter: QuarterData = new QuarterData
-    var secondQuarter: QuarterData = new QuarterData
+    var firstQuarter: QuarterData = new QuarterData(FirstQuarter)
+    var secondQuarter: QuarterData = new QuarterData(SecondQuarter)
 
     def getName: String = name
     def setName(n: String): Unit = name = n

@@ -286,5 +286,7 @@ object DefaultLanguage extends Language {
         "warning_eventWeekCannotBeEmpty" -> "week cannot be empty.", //obsolete
         "warning_courseCannotBeEmpty" -> "course cannot be empty.",
         "warning_quarterCannotBeEmpty" -> "quarter cannot be empty.",
+        "warning_courseNotMatching" -> "this is not the course of this event.",
+        "warning_quarterNotMatching" -> "this is not the quarter of this event.",
     )
 }
