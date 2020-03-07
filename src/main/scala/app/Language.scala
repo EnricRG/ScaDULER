@@ -182,7 +182,8 @@ object DefaultLanguage extends Language {
         "eventForm_eventShortNameHelp" -> "Event name abbreviation",
         "eventForm_eventDescription" -> "Event description (Optional):",
         "eventForm_eventDescriptionHelp" -> "Detailed Event description",
-        "eventForm_eventCourseTag" -> "Course (Optional):",
+        "eventForm_eventCourseTag" -> "Course:",
+        "eventForm_eventQuarterTag" -> "Quarter:",
         "eventForm_eventSubjectTag" -> "Subject (Optional):",
         "eventForm_eventDurationTag" -> "Duration:",
         "eventForm_eventTypeTag" -> "Event type:",
@@ -283,5 +284,7 @@ object DefaultLanguage extends Language {
         "warning_eventTypeCannotBeEmpty" -> "event type cannot be empty.",
         "warning_eventPeriodicityCannotBeEmpty" -> "periodicity cannot be empty.",
         "warning_eventWeekCannotBeEmpty" -> "week cannot be empty.", //obsolete
+        "warning_courseCannotBeEmpty" -> "course cannot be empty.",
+        "warning_quarterCannotBeEmpty" -> "quarter cannot be empty.",
     )
 }

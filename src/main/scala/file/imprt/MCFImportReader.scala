@@ -318,6 +318,8 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                 event.subject = Some(subject)
                 event.periodicity = periodicity
                 event.duration = duration
+                event.course = subject.course
+                event.quarter = subject.quarter
 
                 events += event
             })

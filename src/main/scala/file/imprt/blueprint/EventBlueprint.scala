@@ -1,6 +1,6 @@
 package file.imprt.blueprint
 
-import model.EventType
+import model.{EventType, Quarter}
 import model.Weeks.Periodicity
 
 class EventBlueprint{
@@ -11,4 +11,6 @@ class EventBlueprint{
     var subject: Option[SubjectBlueprint] = _
     var periodicity: Periodicity = _
     var duration: Int = _
+    var course: CourseBlueprint = _ //unused
+    var quarter: Quarter = _ //unused
 }

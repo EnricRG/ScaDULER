@@ -54,15 +54,18 @@ object EntityManager {
         EventTypes.commonEventTypes.foreach(et => eventsByType.put(et, new ArrayBuffer))
         importJob.events.foreach(eb =>{
             val event = eventDatabase.createEvent._2
+
             setEventFromBlueprint(event, eb,
                 subjectMapper(eb.subject.get),
-                resourceMapper.get(eb.neededResource.orNull))
+                courseMapper(eb.course),
+                resourceMapper.get(eb.neededResource.orNull)
+            )
+
             eventsByType(event.getEventType) += event
             mc.addUnassignedEvent(event)
         })
 
         //TODO manage event incompatibilities
-        println(importJob.subjects.length)
     }
 
     private def setCourseFromBlueprint(c: Course, cb: CourseBlueprint): Unit = {
@@ -82,15 +85,16 @@ object EntityManager {
         sb.additionalInformation.foreach(pair => s.setAdditionalField(pair._1, pair._2))
     }
 
-    private def setEventFromBlueprint(e: Event, eb: EventBlueprint, s: Subject, r: Option[Resource]): Unit = {
+    private def setEventFromBlueprint(e: Event, eb: EventBlueprint, s: Subject, c: Course, r: Option[Resource]): Unit = {
         e.setName(eb.name)
         e.setShortName(eb.shortName)
         e.setEventType(eb.eventType)
         e.setDuration(eb.duration)
         e.setSubject(s)
         if(r.nonEmpty) e.setNeededResource(r.get)
-        //TODO complete copy
-        //e.setPeriodicity(eb.periodicity)
+        e.setPeriodicity(eb.periodicity)
+        e.setCourse(c)
+        e.setQuarter(eb.quarter)
     }
 }
 

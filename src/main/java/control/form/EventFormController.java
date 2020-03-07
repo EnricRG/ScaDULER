@@ -21,7 +21,6 @@ import service.ResourceDatabase;
 import service.SubjectDatabase;
 import util.Utils;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class EventFormController extends FormController {
@@ -38,6 +37,9 @@ public class EventFormController extends FormController {
 
     public Label eventCourseTag;
     public ComboBox<Course> eventCourseBox;
+
+    public Label eventQuarterTag;
+    public ComboBox<Quarter> eventQuarterBox;
 
     public Label eventSubjectTag;
     public ComboBox<Subject> eventSubjectBox;
@@ -88,6 +90,8 @@ public class EventFormController extends FormController {
 
         eventCourseTag.setText(AppSettings.language().getItem("eventForm_eventCourseTag"));
 
+        eventQuarterTag.setText(AppSettings.language().getItem("eventForm_eventQuarterTag"));
+
         eventSubjectTag.setText(AppSettings.language().getItem("eventForm_eventSubjectTag"));
 
         eventDurationTag.setText(AppSettings.language().getItem("eventForm_eventDurationTag"));
@@ -106,6 +110,10 @@ public class EventFormController extends FormController {
     @Override
     protected void setupViews() {
         eventCourseBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(courseDatabase.getCourses())));
+        eventCourseBox.getItems().add(0, NoCourse.noCourse());
+
+        eventQuarterBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Quarters.quarters())));
+        eventQuarterBox.getItems().add(0, NoQuarter.noQuarter());
 
         eventSubjectBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(subjectDatabase.getFinishedSubjects())));
         eventSubjectBox.setConverter(new StringConverter<>() {
@@ -188,11 +196,11 @@ public class EventFormController extends FormController {
             event.setName(eventNameField.getText().trim());
             event.setShortName(eventShortNameField.getText().trim());
             event.setDescription(eventDescriptionField.getText().trim());
+            event.setCourse(eventCourseBox.getValue());
+            event.setQuarter(eventQuarterBox.getValue());
             event.setDuration(eventDurationBox.getValue().toInt());
             event.setEventType(eventTypeBox.getValue());
             event.setPeriodicity(eventPeriodicityBox.getValue());
-            //TODO this is maybe unnecessary, model and assignments also set it.
-            if(eventPeriodicityBox.getValue() == Weeks.weekly()) event.setWeek(Weeks.getEveryWeek());
 
             for(Event e: incompatibilities) event.addIncompatibility(e);
 
@@ -219,6 +227,12 @@ public class EventFormController extends FormController {
     protected Warning checkWarnings() {
         if(eventNameField.getText().isBlank()){
             return new Warning(AppSettings.language().getItem("warning_eventNameCannotBeEmpty"));
+        }
+        else if(eventCourseBox.getValue() == null){
+            return new Warning(AppSettings.language().getItem("warning_courseCannotBeEmpty"));
+        }
+        else if(eventQuarterBox.getValue() == null){
+            return new Warning(AppSettings.language().getItem("warning_quarterCannotBeEmpty"));
         }
         else if(eventDurationBox.getValue() == null){
             return new Warning(AppSettings.language().getItem("warning_durationCannotBeEmpty"));

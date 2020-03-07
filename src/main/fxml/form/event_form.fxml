@@ -41,6 +41,8 @@
                      <children>
                         <Label fx:id="eventCourseTag" text="Course" />
                         <ComboBox fx:id="eventCourseBox" prefWidth="150.0" />
+                        <Label fx:id="eventQuarterTag" layoutX="10.0" layoutY="10.0" text="Quarter" />
+                        <ComboBox fx:id="eventQuarterBox" layoutX="10.0" layoutY="32.0" prefWidth="150.0" />
                         <Label fx:id="eventSubjectTag" layoutX="10.0" layoutY="10.0" text="Subject (Optional):" />
                         <HBox>
                            <children>
