@@ -39,8 +39,8 @@
                <children>
                   <VBox spacing="4.0">
                      <children>
-                        <Label fx:id="subjectCourseTag" text="Course" />
-                        <ComboBox fx:id="subjectCoursePicker" prefWidth="150.0" />
+                        <Label fx:id="eventCourseTag" text="Course" />
+                        <ComboBox fx:id="eventCourseBox" prefWidth="150.0" />
                         <Label fx:id="eventSubjectTag" layoutX="10.0" layoutY="10.0" text="Subject (Optional):" />
                         <HBox>
                            <children>
@@ -52,8 +52,10 @@
                         <ComboBox fx:id="eventDurationBox" prefWidth="100.0" />
                         <Label fx:id="eventTypeTag" text="Event type:" />
                         <ComboBox fx:id="eventTypeBox" prefWidth="150.0" />
-                        <Label fx:id="eventWeekTag" text="Week:" />
-                        <ComboBox fx:id="eventWeekBox" prefWidth="150.0" />
+                        <Label fx:id="eventPeriodicityTag" text="Periodicity:" />
+                        <ComboBox fx:id="eventPeriodicityBox" prefWidth="150.0" />
+                        <Label fx:id="eventWeekTag" layoutX="10.0" layoutY="210.0" text="Week (optional):" />
+                        <ComboBox fx:id="eventWeekBox" layoutX="10.0" layoutY="231.0" prefWidth="150.0" />
                         <Label fx:id="eventResourceTag" text="Resource (Optional):" />
                         <HBox>
                            <children>

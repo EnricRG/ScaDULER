@@ -15,11 +15,13 @@ import misc.Duration;
 import misc.Warning;
 import model.*;
 import scala.collection.JavaConverters;
+import service.CourseDatabase;
 import service.EventDatabase;
 import service.ResourceDatabase;
 import service.SubjectDatabase;
 import util.Utils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class EventFormController extends FormController {
@@ -34,6 +36,9 @@ public class EventFormController extends FormController {
     public TextArea eventDescriptionField;
     public CheckBox wrapEventDescriptionCheckbox;
 
+    public Label eventCourseTag;
+    public ComboBox<Course> eventCourseBox;
+
     public Label eventSubjectTag;
     public ComboBox<Subject> eventSubjectBox;
     public Button unassignSubjectButton;
@@ -43,6 +48,9 @@ public class EventFormController extends FormController {
 
     public Label eventTypeTag;
     public ComboBox<EventType> eventTypeBox;
+
+    public Label eventPeriodicityTag;
+    public ComboBox<Weeks.Periodicity> eventPeriodicityBox;
 
     public Label eventWeekTag;
     public ComboBox<Weeks.Week> eventWeekBox;
@@ -56,6 +64,7 @@ public class EventFormController extends FormController {
 
     public Button createEventButton;
 
+    private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
     private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
     private EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
     private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
@@ -80,11 +89,15 @@ public class EventFormController extends FormController {
         eventDescriptionField.setPromptText(AppSettings.language().getItem("eventForm_eventDescriptionHelp"));
         wrapEventDescriptionCheckbox.setText(AppSettings.language().getItem("form_wrapDescription"));
 
+        eventCourseTag.setText(AppSettings.language().getItem("eventForm_eventCourseTag"));
+
         eventSubjectTag.setText(AppSettings.language().getItem("eventForm_eventSubjectTag"));
 
         eventDurationTag.setText(AppSettings.language().getItem("eventForm_eventDurationTag"));
 
         eventTypeTag.setText(AppSettings.language().getItem("eventForm_eventTypeTag"));
+
+        eventPeriodicityTag.setText(AppSettings.language().getItem("eventForm_eventPeriodicityTag"));
 
         eventWeekTag.setText(AppSettings.language().getItem("eventForm_eventWeekTag"));
 
@@ -97,6 +110,8 @@ public class EventFormController extends FormController {
 
     @Override
     protected void setupViews() {
+        eventCourseBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(courseDatabase.getCourses())));
+
         eventSubjectBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(subjectDatabase.getFinishedSubjects())));
         eventSubjectBox.setConverter(new StringConverter<>() {
             @Override
@@ -114,6 +129,8 @@ public class EventFormController extends FormController {
         eventDurationBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Duration.getDurations())));
 
         eventTypeBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(EventTypes.allEventTypes())));
+
+        eventPeriodicityBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.periodicityList())));
 
         eventWeekBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.weekList())));
 
@@ -180,13 +197,18 @@ public class EventFormController extends FormController {
             event.setDescription(eventDescriptionField.getText().trim());
             event.setDuration(eventDurationBox.getValue().toInt());
             event.setEventType(eventTypeBox.getValue());
-            event.setWeek(eventWeekBox.getValue());
+            event.setPeriodicity(eventPeriodicityBox.getValue());
+            if(eventWeekBox.getValue() != null) event.setWeek(eventWeekBox.getValue());
+            else if(eventPeriodicityBox.getValue() == Weeks.weekly()) event.setWeek(Weeks.getEveryWeek());
+
             for(Event e: incompatibilities) event.addIncompatibility(e);
 
             Resource resource = eventResourceBox.getValue();
             if(resource != null){
                 event.setNeededResource(resource);
             }
+
+            if(eventCourseBox.getValue() != null) event.setCourse(eventCourseBox.getValue());
 
             Subject subject = eventSubjectBox.getValue();
             if(subject != null) {
@@ -211,8 +233,11 @@ public class EventFormController extends FormController {
         else if(eventTypeBox.getValue() == null){
             return new Warning(AppSettings.language().getItem("warning_eventTypeCannotBeEmpty"));
         }
-        else if(eventWeekBox.getValue() == null){
-            return new Warning(AppSettings.language().getItem("warning_eventWeekCannotBeEmpty"));
+        else if(eventPeriodicityBox.getValue() == null){
+            return new Warning(AppSettings.language().getItem("warning_eventPeriodicityCannotBeEmpty"));
+        }
+        else if(eventWeekBox.getValue() != null && eventPeriodicityBox.getValue() != eventWeekBox.getValue().periodicity()){
+            return new Warning(AppSettings.language().getItem("warning_eventPeriodicityDoesNotMatchWeek"));
         }
         else return null;
     }

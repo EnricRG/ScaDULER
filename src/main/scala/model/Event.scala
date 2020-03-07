@@ -2,7 +2,7 @@ package model
 
 import app.AppSettings
 import javafx.scene.paint
-import Weeks.{EveryWeek, Week}
+import Weeks.{EveryWeek, Periodicity, Week, Weekly}
 import service.{ID, Identifiable}
 
 import scala.collection.mutable
@@ -62,7 +62,8 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     private var neededResource: Option[Resource] = None
     private var eventType: EventType = _
     private var subject: Option[Subject] = None
-    private var week: Week = EveryWeek
+    private var periodicity: Periodicity = _
+    private var week: Week = _
     private var duration: Int = AppSettings.maxEventDuration
     private val incompatibilities: mutable.Set[Event] = new mutable.HashSet[Event]
     private var precedences: ListBuffer[Precedence] = new ListBuffer
@@ -98,6 +99,9 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     def getNeededResource: Resource = neededResource.orNull
     def getSafeNeededResource: Resource = getNeededResource
     def setNeededResource(nr: Resource): Unit = neededResource = Some(nr)
+
+    def getPeriodicity: Periodicity = periodicity
+    def setPeriodicity(periodicity: Periodicity): Unit = this.periodicity = periodicity
 
     def getWeek: Week = week
     def setWeek(week: Week): Unit = this.week = week

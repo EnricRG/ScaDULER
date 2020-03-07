@@ -45,6 +45,9 @@ object DefaultLanguage extends Language {
         "pcRoom" -> "PC Room",
         //////////////////////
 
+        "weekly" -> "Weekly",
+        "biweekly" -> "Biweekly",
+
         "aWeek" -> "A Week",
         "bWeek" -> "B Week",
         "everyWeek" -> "Every Week",
@@ -175,9 +178,11 @@ object DefaultLanguage extends Language {
         "eventForm_eventShortNameHelp" -> "Event name abbreviation",
         "eventForm_eventDescription" -> "Event description (Optional):",
         "eventForm_eventDescriptionHelp" -> "Detailed Event description",
+        "eventForm_eventCourseTag" -> "Course (Optional):",
         "eventForm_eventSubjectTag" -> "Subject (Optional):",
         "eventForm_eventDurationTag" -> "Duration:",
         "eventForm_eventTypeTag" -> "Event type:",
+        "eventForm_eventPeriodicityTag" -> "Event periodicity:",
         "eventForm_eventWeekTag" -> "Event week:",
         "eventForm_eventResourceTag" -> "Needed Resource (Optional):",
         "eventForm_confirmationButton" -> "Create Event",
@@ -254,7 +259,9 @@ object DefaultLanguage extends Language {
         "warning_resourceQuantityMin" -> " is lower than the minimum allowed quantity",
         "warning_resourcesNotSelected" -> "No resource has been selected.",
         "warning_eventTypeNotSelected" -> "No event type has been selected.",
-        "warning_weekNotSelected" -> "No event week has been selected.",
+        "warning_periodicityNotSelected" -> "No periodicity has been selected.",
+        "warning_eventPeriodicityDoesNotMatchWeek" -> "Selected week does not match with periodicity.",
+        "warning_weekNotSelected" -> "No event week has been selected.", //obsolete
         "warning_durationNotSelected" -> "No duration has been selected.",
         "warning_courseAlreadyExists" -> "A Course with this name already exists.",
         "warning_subjectNameCannotBeEmpty" -> "Subject Name cannot be empty.",
@@ -269,6 +276,7 @@ object DefaultLanguage extends Language {
         "warning_eventNameCannotBeEmpty" -> "event name cannot be empty.",
         "warning_durationCannotBeEmpty" -> "event duration cannot be empty.",
         "warning_eventTypeCannotBeEmpty" -> "event type cannot be empty.",
-        "warning_eventWeekCannotBeEmpty" -> "week cannot be empty.",
+        "warning_eventPeriodicityCannotBeEmpty" -> "periodicity cannot be empty.",
+        "warning_eventWeekCannotBeEmpty" -> "week cannot be empty.", //obsolete
     )
 }
