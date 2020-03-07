@@ -302,21 +302,21 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         }
     }
 
-    def generateEvents(subject: SubjectBlueprint, eventType: EventType, duration: Int, periodicity: Int,
+    def generateEvents(subject: SubjectBlueprint, eventType: EventType, duration: Int, periodicityInt: Int,
                        resource: Option[ResourceBlueprint], start: Int, end: Int): List[EventBlueprint] = {
         if(start > 0 && end-start >= 0){
             val events = new ArrayBuffer[EventBlueprint]
             (start to end).foreach(number => {
                 val event = new EventBlueprint
 
-                //TODO ??? should be event week
+                val periodicity = Weeks.Periodicity.fromInt(periodicityInt)
 
-                //event.name = String.format("%s (%s-%d) (%s)", subject.name, eventType.toString, number, ???.toString)
-                //event.shortName = String.format("%s (%s %d) (%s)", subject.shortName, eventType.toShortString, number, ???.toString)
+                event.name = "%s (%s-%d) (%s)".format(subject.name, eventType.toString, number, periodicity.toShortString)
+                event.shortName = "%s (%s %d) (%s)".format(subject.shortName, eventType.toShortString, number, periodicity.toShortString)
                 event.neededResource = resource
                 event.eventType = eventType
                 event.subject = Some(subject)
-                event.periodicity = Weeks.Periodicity.fromInt(periodicity)
+                event.periodicity = periodicity
                 event.duration = duration
 
                 events += event

@@ -69,6 +69,7 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     private var precedences: ListBuffer[Precedence] = new ListBuffer
 
     private var course: Course = NoCourse
+    private var quarter: Quarter = NoQuarter
 
     def getStartInterval: Int = startInterval
     def assign(week: Week, interval: Int): Unit = {
@@ -133,4 +134,7 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
 
     def getCourse: Course = course
     def setCourse(c: Course): Unit = course = c
+
+    def getQuarter: Quarter = quarter
+    def setQuarter(q: Quarter): Unit = quarter = q
 }
