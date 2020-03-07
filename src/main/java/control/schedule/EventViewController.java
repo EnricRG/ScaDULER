@@ -34,7 +34,7 @@ public abstract class EventViewController implements Initializable {
                 String.format("[%s] %s",event.getShortName(), event.getName()) :
                 String.format("%s", event.getName())
         );
-        eventDisplayAdditionalInfo.setText(String.format("(%s) (%s)", event.getEventType(), event.getWeek()));
+        eventDisplayAdditionalInfo.setText(String.format("(%s) (%s)", event.getEventType(), event.getPeriodicity()));
         setEventColor();
     }
 

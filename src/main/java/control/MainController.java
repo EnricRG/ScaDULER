@@ -123,9 +123,11 @@ public class MainController implements Initializable {
                                        ScheduleIntervalController intervalController,
                                        int hint) {
 
-        AssignmentViabilityChecker viabilityChecker = new AssignmentViabilityChecker(courseScheduleController.getCourse(),
-                quarterScheduleController.getQuarterData(), eventDrag.getEvent().getWeek(),
-                intervalController.getWeek(), intervalController.getInterval(),
+        AssignmentViabilityChecker viabilityChecker = new AssignmentViabilityChecker(
+                courseScheduleController.getCourse(),
+                quarterScheduleController.getQuarterData(),
+                intervalController.getWeek(),
+                intervalController.getInterval(),
                 eventDrag.getEvent()
         );
 
@@ -160,7 +162,8 @@ public class MainController implements Initializable {
 
         for(EventAssignment ea : eventAssignments){
             Event event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
-            ScheduleIntervalController intervalController = quarterScheduleController.getVisibleIntervalControllerAt(event.getWeek().toWeekNumber(), ea.interval());
+            ScheduleIntervalController intervalController =
+                    quarterScheduleController.getVisibleIntervalControllerAt(ea.week().toWeekNumber(), ea.interval());
 
             startEventDrag(
                     event,

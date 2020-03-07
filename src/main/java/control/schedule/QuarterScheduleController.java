@@ -61,14 +61,13 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
 
     private void setupCellBehavior(Node cell, int week, Integer interval, ScheduleIntervalController intervalController) {
         cell.setOnMouseDragReleased(dragEvent -> {
-            System.out.println("Dropped here: " + week + " " + interval + " " + mainController.getEventDrag().getEvent().getID()); //TODO remove this line
+            System.out.println("Dropped here: " + week + " " + interval + " " + mainController.getEventDrag().getEvent().getID()); //TODO remove this print
             courseController.notifyEventDrop(this, intervalController, -1);
         });
     }
 
     public void fillQuarter() {
         for(Event e: JavaConverters.asJavaCollection(quarterData.getSchedule().getEvents())){
-            //unassignEvent(e);
             processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, e.getWeek().toWeekNumber(), e.getStartInterval());
         }
         //FIXME this will need a fix
@@ -80,22 +79,25 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
     }
 
     //pre event not assigned to this quarter
-    //TODO fix cell, actually the quarter does not know to which
+    //TODO improve call performance vs readability: Call only getWeek() once
     public void assignEvent(Event scheduleEvent, int scheduleWeek, Integer interval, int hint) {
-        if(scheduleEvent.getWeek() == Weeks.getEveryWeek()){
+        Weeks.Week eventWeek = scheduleEvent.getPeriodicity() == Weeks.weekly() ?
+            Weeks.getEveryWeek() : (scheduleWeek == Weeks.getAWeek().toWeekNumber() ? Weeks.getAWeek() : Weeks.getBWeek());
+
+        if(eventWeek == Weeks.getEveryWeek()){//scheduleEvent.getWeek() == Weeks.getEveryWeek()){
             assignEventI(scheduleEvent, firstWeekEventViews, interval, hint);
             assignEventI(scheduleEvent, secondWeekEventViews, interval, hint);
         }
-        else if(scheduleEvent.getWeek() == Weeks.getAWeek()){
+        else if(eventWeek == Weeks.getAWeek()){
             assignEventI(scheduleEvent, firstWeekEventViews, interval, hint);
         }
-        else if(scheduleEvent.getWeek() == Weeks.getBWeek()){
+        else if(eventWeek == Weeks.getBWeek()){
             assignEventI(scheduleEvent, secondWeekEventViews, interval, hint);
         }
         //else error, no week like this exists
 
         eventsAtInterval.put(scheduleEvent.getID(), interval);
-        quarterData.getSchedule().addEvent(scheduleWeek, interval, scheduleEvent); //scheduleWeek is a dummy parameter here
+        quarterData.getSchedule().addEvent(eventWeek, interval, scheduleEvent); //scheduleWeek is a dummy parameter here
     }
 
     private void assignEventI(Event event, Map<Integer, ScheduleIntervalController> weekIntervals, Integer interval, int hint){
@@ -108,7 +110,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
 
     //pre: event assigned to this quarter
     public void unassignEvent(Event scheduleEvent) {
-        Weeks.Week week = scheduleEvent.getWeek();
+        Weeks.Week week = scheduleEvent.getWeek(); //event will have an assigned week
 
         if(week == Weeks.getEveryWeek()){
             firstWeekEventViews.get(scheduleEvent.getStartInterval()).removeAssignment(scheduleEvent);
@@ -119,7 +121,8 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
         //else error, no week like this exists
 
         eventsAtInterval.remove(scheduleEvent.getID());
-        quarterData.getSchedule().removeEvent(scheduleEvent.getWeek().toWeekNumber(), scheduleEvent.getStartInterval(), scheduleEvent); //TODO improvable call
+        //TODO improvable call, there's no need to pass the first parameter.
+        quarterData.getSchedule().removeEvent(scheduleEvent.getStartInterval(), scheduleEvent);
     }
 
     private void addIntervalViewToWeekController(ScheduleIntervalController intervalController, WeekScheduleController weekController, Node cell) {
@@ -145,6 +148,8 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
         return courseController;
     }
 
+    //if week is EveryWeek.toWeekNumber, it will still work as intended because it will assign to both weeks.
+    //I don't know if I like this behavior, but it works and it's intended.
     public ScheduleIntervalController getVisibleIntervalControllerAt(int week, int interval) {
         Map<Integer, ScheduleIntervalController> weekViews =
                 week == Weeks.getAWeek().toWeekNumber() ? firstWeekEventViews : secondWeekEventViews;

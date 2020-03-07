@@ -155,7 +155,7 @@ object DefaultLanguage extends Language {
         "subjectForm_generateEventsTag" -> "Generate Subject Events (optional):",
         "subjectForm_eventType" -> "Event type",
         "subjectForm_eventPeriodicity" -> "Periodicity",
-        "subjectForm_eventWeek" -> "Week (Optional)",
+        "subjectForm_eventWeek" -> "Week (Optional)", //obsolete
         "subjectForm_eventDuration" -> "Event Duration",
         "subjectForm_rangeTag" -> "Range:",
         "subjectForm_rangeLowerBound" -> "Start",
@@ -187,7 +187,7 @@ object DefaultLanguage extends Language {
         "eventForm_eventDurationTag" -> "Duration:",
         "eventForm_eventTypeTag" -> "Event type:",
         "eventForm_eventPeriodicityTag" -> "Event periodicity:",
-        "eventForm_eventWeekTag" -> "Event week:",
+        "eventForm_eventWeekTag" -> "Event week:", //obsolete
         "eventForm_eventResourceTag" -> "Needed Resource (Optional):",
         "eventForm_confirmationButton" -> "Create Event",
         "eventForm_manageIncompatibilities" -> "Manage Incompatibilities",
@@ -264,7 +264,7 @@ object DefaultLanguage extends Language {
         "warning_resourcesNotSelected" -> "No resource has been selected.",
         "warning_eventTypeNotSelected" -> "No event type has been selected.",
         "warning_periodicityNotSelected" -> "No periodicity has been selected.",
-        "warning_eventPeriodicityDoesNotMatchWeek" -> "Selected week does not match with periodicity.",
+        "warning_eventPeriodicityDoesNotMatchWeek" -> "Selected week does not match with periodicity.", //obsolete
         "warning_weekNotSelected" -> "No event week has been selected.", //obsolete
         "warning_periodicityNotSelected" -> "No periodicity has been selected.",
         "warning_durationNotSelected" -> "No duration has been selected.",

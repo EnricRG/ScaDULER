@@ -52,9 +52,6 @@ public class EventFormController extends FormController {
     public Label eventPeriodicityTag;
     public ComboBox<Weeks.Periodicity> eventPeriodicityBox;
 
-    public Label eventWeekTag;
-    public ComboBox<Weeks.Week> eventWeekBox;
-
     public Label eventResourceTag;
     public ComboBox<Resource> eventResourceBox;
     public Button unassignResourceButton;
@@ -99,8 +96,6 @@ public class EventFormController extends FormController {
 
         eventPeriodicityTag.setText(AppSettings.language().getItem("eventForm_eventPeriodicityTag"));
 
-        eventWeekTag.setText(AppSettings.language().getItem("eventForm_eventWeekTag"));
-
         eventResourceTag.setText(AppSettings.language().getItem("eventForm_eventResourceTag"));
 
         manageIncompatibilitiesButton.setText(AppSettings.language().getItem("eventForm_manageIncompatibilities") + "...");
@@ -131,8 +126,6 @@ public class EventFormController extends FormController {
         eventTypeBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(EventTypes.allEventTypes())));
 
         eventPeriodicityBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.periodicityList())));
-
-        eventWeekBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.weekList())));
 
         eventResourceBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(resourceDatabase.getElements())));
         eventResourceBox.setConverter(new StringConverter<>() {
@@ -198,8 +191,8 @@ public class EventFormController extends FormController {
             event.setDuration(eventDurationBox.getValue().toInt());
             event.setEventType(eventTypeBox.getValue());
             event.setPeriodicity(eventPeriodicityBox.getValue());
-            if(eventWeekBox.getValue() != null) event.setWeek(eventWeekBox.getValue());
-            else if(eventPeriodicityBox.getValue() == Weeks.weekly()) event.setWeek(Weeks.getEveryWeek());
+            //TODO this is maybe unnecessary, model and assignments also set it.
+            if(eventPeriodicityBox.getValue() == Weeks.weekly()) event.setWeek(Weeks.getEveryWeek());
 
             for(Event e: incompatibilities) event.addIncompatibility(e);
 
@@ -235,9 +228,6 @@ public class EventFormController extends FormController {
         }
         else if(eventPeriodicityBox.getValue() == null){
             return new Warning(AppSettings.language().getItem("warning_eventPeriodicityCannotBeEmpty"));
-        }
-        else if(eventWeekBox.getValue() != null && eventPeriodicityBox.getValue() != eventWeekBox.getValue().periodicity()){
-            return new Warning(AppSettings.language().getItem("warning_eventPeriodicityDoesNotMatchWeek"));
         }
         else return null;
     }

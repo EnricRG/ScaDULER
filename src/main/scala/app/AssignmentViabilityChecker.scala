@@ -1,12 +1,16 @@
 package app
 
-import model.Weeks.{AWeek, BWeek, EveryWeek, Week}
+import model.Weeks.{AWeek, BWeek, EveryWeek, Periodicity, Week, Weekly}
 import misc.Warning
 import model.{Course, Event, QuarterData, Weeks}
 
-class AssignmentViabilityChecker(course: Course, quarter: QuarterData, eventWeek: Week, droppedWeek: Int, interval: Int, event: Event) {
+class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWeek: Int, interval: Int, event: Event) {
 
     private val courseDatabase = MainApp.getDatabase.courseDatabase
+
+    private val eventWeek = if(event.getPeriodicity == Weekly) EveryWeek
+                            else if(droppedWeek == AWeek.toWeekNumber) AWeek
+                            else BWeek
 
     private var checked: Boolean = false
     private var viable: Boolean = false
@@ -26,11 +30,11 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, eventWeek
         else courseDatabase.getElements.map(_.secondQuarter).flatMap(_.getSchedule.getEvents)
     }
 
-    def checkEventIncompatibilities(course: Course, quarter: QuarterData, event: Event, interval: Int): Option[Warning] = {
+    def checkEventIncompatibilities(course: Course, quarter: QuarterData, event: Event, targetWeek: Week, interval: Int): Option[Warning] = {
         val quarterEvents = getQuarterEvents(course, quarter)
 
         val incompatibilityClashes = quarterEvents.
-            filter(x => x != event && x.isAssigned && event.getIncompatibilities.contains(x) && weekOverlap(event.getWeek, x.getWeek) && overlap(x.getStartInterval,x.getDuration,interval,event.getDuration))
+            filter(x => x != event && x.isAssigned && event.getIncompatibilities.contains(x) && weekOverlap(targetWeek, x.getWeek) && overlap(x.getStartInterval,x.getDuration,interval,event.getDuration))
 
         if(incompatibilityClashes.isEmpty)
             None
@@ -52,10 +56,10 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, eventWeek
 
     def weekOverlap(week1: Week, week2: Week): Boolean = week1 == Weeks.EveryWeek || week2 == EveryWeek || week1 == week2
 
-    def checkResourceAvailability(course: Course, quarter: QuarterData, event: Event, week: Week, interval: Int): Option[Warning] = {
+    def checkResourceAvailability(course: Course, quarter: QuarterData, event: Event, targetWeek: Week, interval: Int): Option[Warning] = {
         if(event.needsResource) {
 
-            val availabilityMap = for (i <- interval until interval + event.getDuration) yield event.getNeededResource.getAvailability.isAvailable(week.toWeekNumber, i)
+            val availabilityMap = for (i <- interval until interval + event.getDuration) yield event.getNeededResource.getAvailability.isAvailable(targetWeek.toWeekNumber, i)
 
             if (!availabilityMap.toList.contains(true))
                 return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceNeverUnavailable"), event.getNeededResource.getName)))
@@ -79,7 +83,7 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, eventWeek
                 None
             }
 
-            if(event.getWeek != EveryWeek) checkWeeklyAvailability(event.getWeek) match{
+            if(targetWeek != EveryWeek) checkWeeklyAvailability(targetWeek) match{
                 case Some(x) => return Some(x)
                 case _ =>
             }
@@ -105,23 +109,14 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, eventWeek
         else None
     }
 
-    def checkWeeks(eventWeek: Week, droppedWeek: Int): Option[Warning] = {
-        if(eventWeek != Weeks.EveryWeek && event.getWeek.toWeekNumber != droppedWeek)
-            Some(new Warning(AppSettings.language.getItem("warning_weekMatchError")))
-        else
-            None
-    }
-
     def checkViability():Unit = {
 
-        //TODO
+        //TODO check precedences
         //if (warning != null) warning = checkEventPrecedences(course, quarter, event, week, interval)
-
-        if (warning.isEmpty) warning = checkWeeks(eventWeek, droppedWeek)
 
         if (warning.isEmpty) warning = checkBorders(event, interval)
 
-        if (warning.isEmpty) warning = checkEventIncompatibilities(course, quarter, event, interval)
+        if (warning.isEmpty) warning = checkEventIncompatibilities(course, quarter, event, eventWeek, interval)
 
         if (warning.isEmpty) warning = checkResourceAvailability(course, quarter, event, eventWeek, interval)
 

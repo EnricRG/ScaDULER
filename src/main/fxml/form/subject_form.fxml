@@ -86,7 +86,6 @@
                         <HBox spacing="20.0">
                            <children>
                               <ComboBox fx:id="generateEvents_periodicitySelector" prefWidth="150.0" promptText="periodicity" />
-                              <ComboBox fx:id="generateEvents_weekSelector" layoutX="10.0" layoutY="10.0" prefWidth="150.0" promptText="week (optional)" />
                               <ComboBox fx:id="generateEvents_durationSelector" prefWidth="150.0" promptText="duration" />
                            </children>
                         </HBox>

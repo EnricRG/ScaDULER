@@ -53,7 +53,6 @@ public class SubjectFormController extends FormController {
     public TextField generateEvents_rangeUpperBound;
     public Button generateEvents_equalButton;
     public ComboBox<Weeks.Periodicity> generateEvents_periodicitySelector;
-    public ComboBox<Weeks.Week> generateEvents_weekSelector;
     public ComboBox<Duration> generateEvents_durationSelector;
     public Label generationExampleTag;
     public Label generationExampleLabel;
@@ -114,7 +113,6 @@ public class SubjectFormController extends FormController {
         generateEvents_rangeUpperBound.setPromptText(AppSettings.language().getItem("subjectForm_rangeUpperBound"));
 
         generateEvents_periodicitySelector.setPromptText(AppSettings.language().getItem("subjectForm_eventPeriodicity"));
-        generateEvents_weekSelector.setPromptText(AppSettings.language().getItem("subjectForm_eventWeek"));
         generateEvents_durationSelector.setPromptText(AppSettings.language().getItem("subjectForm_eventDuration"));
 
         generationExampleTag.setText(AppSettings.language().getItem("subjectForm_generationExampleTag"));
@@ -160,7 +158,6 @@ public class SubjectFormController extends FormController {
         );
 
         generateEvents_periodicitySelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.periodicityList())));
-        generateEvents_weekSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.weekList())));
 
         selectResourceListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         selectResourceListView.setCellFactory(param -> new ListCell<>() {
@@ -203,14 +200,6 @@ public class SubjectFormController extends FormController {
             equalizeRangeValues();
             event.consume();
         });
-        generateEvents_weekSelector.setOnAction(event -> {
-            computeGenerationExample(
-                    subjectNameField.getText(),
-                    generateEvents_eventTypeSelector.getValue(),
-                    generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
-                    1);
-            event.consume();
-        });
 
         selectResourceSearchBar.setOnKeyTyped(keyEvent -> {
             filterResourceList(selectResourceSearchBar.getText());
@@ -224,7 +213,6 @@ public class SubjectFormController extends FormController {
                     getRangeLowerBound(),
                     getRangeUpperBound(),
                     generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
-                    generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
                     generateEvents_durationSelector.getSelectionModel().getSelectedItem(),
                     selectResourceListView.getSelectionModel().getSelectedItem()
             );
@@ -318,8 +306,8 @@ public class SubjectFormController extends FormController {
     }
 
     private void generateEvents(String subjectName, String subjectShortName, EventType eventType, int rangeStart, int rangeEnd,
-                                Weeks.Periodicity periodicity, Weeks.Week week, Duration duration, Resource neededResource) {
-        if(!warnings(checkEventGenerationWarnings(eventType, rangeStart, rangeEnd, periodicity, week, duration, neededResource))) {
+                                Weeks.Periodicity periodicity, Duration duration, Resource neededResource) {
+        if(!warnings(checkEventGenerationWarnings(eventType, rangeStart, rangeEnd, periodicity, duration, neededResource))) {
             for(int i = rangeStart; i<=rangeEnd; i++){
                 Event event = eventDatabase.createEvent()._2;
 
@@ -329,7 +317,6 @@ public class SubjectFormController extends FormController {
                 event.setEventType(eventType);
                 event.setNeededResource(neededResource);
                 event.setPeriodicity(periodicity);
-                if(week != null) event.setWeek(week);
                 event.setDuration(duration.toInt());
 
                 eventTable.getItems().add(event);
@@ -390,8 +377,8 @@ public class SubjectFormController extends FormController {
         return null;
     }
 
-    private Warning checkEventGenerationWarnings(EventType eventType, int rangeStart, int rangeEnd, Weeks.Periodicity periodicity,
-                                                 Weeks.Week week, Duration duration, Resource neededResource) {
+    private Warning checkEventGenerationWarnings(EventType eventType, int rangeStart, int rangeEnd,
+                                                 Weeks.Periodicity periodicity, Duration duration, Resource neededResource) {
         if(neededResource == null){
             return new Warning(AppSettings.language().getItem("warning_resourcesNotSelected"));
         }

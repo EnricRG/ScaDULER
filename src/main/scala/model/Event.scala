@@ -71,8 +71,15 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     private var course: Course = NoCourse
 
     def getStartInterval: Int = startInterval
-    def assign(interval: Int): Unit = startInterval = interval
-    def unassign(): Unit = startInterval = -1
+    def assign(week: Week, interval: Int): Unit = {
+        startInterval = interval
+        this.week = week
+    }
+    def unassign(): Unit = {
+        startInterval = -1
+        week = null //TODO use options here would help.
+    }
+    //TODO should be more robust, check week
     def isAssigned: Boolean = startInterval >= 0
     def isUnassigned: Boolean = !isAssigned
 
@@ -103,7 +110,10 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     def getPeriodicity: Periodicity = periodicity
     def setPeriodicity(periodicity: Periodicity): Unit = this.periodicity = periodicity
 
-    def getWeek: Week = week
+    def getWeek: Week = {
+        if(isUnassigned) throw new UnsupportedOperationException("unassigned week")
+        week
+    }
     def setWeek(week: Week): Unit = this.week = week
 
     def getDuration: Int = duration

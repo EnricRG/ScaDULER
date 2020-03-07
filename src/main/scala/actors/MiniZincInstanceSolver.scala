@@ -57,7 +57,7 @@ class MiniZincInstanceSolver extends Actor{
 
                     //adapt to application indexing
                     val adaptedAssignments = assignments.get
-                        .map(x => EventAssignment(x.eventID-indexDeviation, x.interval-indexDeviation))
+                        .map(x => EventAssignment(x.eventID-indexDeviation, x.week, x.interval-indexDeviation))
 
                     sender ! Solution(adaptedAssignments)
                 }
@@ -72,22 +72,19 @@ class MiniZincInstanceSolver extends Actor{
     }
 
     def parseMiniZincOutput(lineStream: Stream[String]): Option[List[EventAssignment]] = {
-        lineStream.take(2).toList match{
-            case x: List[String] if x.head.contains("UNSATISFIABLE") => None
-            case x: List[String] if x.head.contains("---") => None
-            case x: List[String] => {
-                if(x.head.isBlank) None
-                else {
-                    val events = x.head.split(",").map(_.toInt).toList
-                    val starts = x.last.split(",").map(_.toInt).toList
-                    val assignmentList = events.zip(starts).map(x => EventAssignment(x._1, x._2))
-                    Some(assignmentList)
-                }
-            }
-            case _ => {
-                println("Error")
-                None
-            }
+        lineStream.head match{
+            case line if line.contains("UNSATISFIABLE") => None //no solution
+            case line if line.contains("---") => None //unexpected minizinc output
+            case line if line.isBlank => None //no minizinc output
+            case line if line.contains("SOLUTION") =>
+                val solution = lineStream.takeWhile(!_.contains("ENDSOLUTION")).drop(2) //drop 'SOLUTION' and length lines
+                val assignments = solution.map(line => line.slice(1, line.length-1).split(","))
+                  .map( list =>
+                        EventAssignment(list.apply(0).toInt, MiniZincInstance.reverseParse(list.apply(1)), list.apply(2).toInt)
+                  ).toList
+
+                Some(assignments)
+            case _ => None //unknown error
         }
     }
 }

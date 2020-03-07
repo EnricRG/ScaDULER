@@ -58,15 +58,6 @@ set of int: Events = 1..nEvents;
 % eventDuration[e] = i if event e has duration i.
 array[Events] of int: eventDuration;
 
-% Some events can have predefined execution weeks.
-int: nPredefinedEventWeeks;
-set of int: PredefinedEventWeeks = 1..nPredefinedEventWeeks;
-
-% predefinedWeekEventNumber[n] = e if predefinition n refers to event e.
-array[PredefinedEventWeeks] of Events: predefinedWeekEventNumber;
-% predefinedEventWeek[n] = w if predefinition n assigns the event predefinedWeekEventNumber[n] to be executed during week w.
-array[PredefinedEventWeeks] of WEEK: predefinedEventWeek;
-
 % For each Event we know its periodicity.
 % eventPeriodicity[e] = p if event e must be performed with periodicity p.
 array[Events] of PERIODICITY: eventPeriodicity;
@@ -79,6 +70,15 @@ array[Events, Events] of bool: eventExclusions;
 % Type of resource this event needs to be performed.
 % resourceNeeded[e,r] = true when event e needs resource r.
 array[Events, Resources] of bool: resourceNeeded;
+
+% Some events can have predefined execution weeks.
+int: nPredefinedEventWeeks;
+set of int: PredefinedEventWeeks = 1..nPredefinedEventWeeks;
+
+% predefinedWeekEventNumbers[n] = e if predefinition n refers to event e.
+array[PredefinedEventWeeks] of Events: predefinedWeekEventNumbers;
+% predefinedEventWeek[n] = w if predefinition n assigns the event predefinedWeekEventNumber[n] to be executed during week w.
+array[PredefinedEventWeeks] of WEEK: predefinedEventWeek;
 
 % Some events can have preassigned start times.
 int: nPreassignedEvents;
@@ -128,7 +128,7 @@ constraint forall(e in Events) (dayOfEvent[e] = ( (eventStart[e]-1) div dayDurat
 
 %Preassigned weeks. For all preassignations, the preassigned event runs on preassigned week.
 constraint forall(p in PredefinedEventWeeks)
-  (eventWeek[predefinedWeekEventNumber[p]] = predefinedEventWeek[p]);
+  (eventWeek[predefinedWeekEventNumbers[p]] = predefinedEventWeek[p]);
 
 %Preassigned times. For all preassignations, the preassigned event starts at preassigned time.
 constraint forall(p in PreassignedEvents) 
@@ -170,6 +170,6 @@ constraint forall(e in Events) ( within(eventStart[e]+eventDuration[e]-1, eventS
 solve :: int_search(eventStart, first_fail, indomain_min, complete)
   satisfy;
 
-output ["\(nEvents)"] ++ ["\n"] ++ ["(\(e),\(eventStart[e]),\(eventWeek[e]))\n" | e in Events];
+output ["SOLUTION\n"] ++ ["\(nEvents)"] ++ ["\n"] ++ ["(\(e),\(eventWeek[e]),\(eventStart[e]))\n" | e in Events] ++ ["ENDSOLUTION"];
 
 

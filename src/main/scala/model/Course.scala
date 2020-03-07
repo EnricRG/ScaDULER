@@ -3,7 +3,8 @@ package model
 import app.AppSettings
 import service.{ID, Identifiable}
 
-trait Quarter
+@SerialVersionUID(1L)
+trait Quarter extends Serializable
 
 object NoQuarter extends Quarter{
     def noQuarter: Quarter = this

@@ -4,17 +4,20 @@ import app.AppSettings
 
 object Weeks extends Serializable {
 
+    @SerialVersionUID(1L)
     sealed abstract class Week extends Serializable {
         def toString: String
-        def toShortString: String
+        def toShortString: String //FIXME BAD IDEA! MINIZINC DEPENDS ON THIS, SHOULD NOT BE LANGUAGE DEPENDANT!
         def toWeekNumber: Int
         def periodicity: Periodicity
     }
 
+    @SerialVersionUID(1L)
     sealed abstract class Periodicity extends Serializable{
         def toString: String
         def toShortString: String
     }
+
     object Periodicity{
         def fromInt(n: Int): Periodicity =  n match {
             case 2 => Biweekly
@@ -25,10 +28,12 @@ object Weeks extends Serializable {
         def weekly: Periodicity = Weekly
         def biweekly: Periodicity = Biweekly
     }
+
     case object Weekly extends Periodicity{
         override def toString: String = AppSettings.language.getItem("weekly")
         override def toShortString: String = AppSettings.language.getItem("shortWeekly")
     }
+
     case object Biweekly extends Periodicity{
         override def toString: String = AppSettings.language.getItem("biweekly")
         override def toShortString: String = AppSettings.language.getItem("shortBiweekly")
@@ -54,6 +59,11 @@ object Weeks extends Serializable {
         override def toWeekNumber: Int = 2
         override def periodicity: Periodicity = Weekly
     }
+
+    def fromWeekNumber(i: Int): Week =
+        if (i == AWeek.toWeekNumber) AWeek
+        else if (i == BWeek.toWeekNumber) BWeek
+        else EveryWeek
 
     def periodicityList: List[Periodicity] = List(Weekly, Biweekly)
     def weekList: List[Week] = List(EveryWeek,AWeek,BWeek)
