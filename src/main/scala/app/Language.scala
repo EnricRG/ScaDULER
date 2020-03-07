@@ -47,6 +47,8 @@ object DefaultLanguage extends Language {
 
         "weekly" -> "Weekly",
         "biweekly" -> "Biweekly",
+        "shortWeekly" -> "W",
+        "shortBiweekly" -> "B",
 
         "aWeek" -> "A Week",
         "bWeek" -> "B Week",
@@ -149,9 +151,11 @@ object DefaultLanguage extends Language {
         "subjectForm_subjectColorTag" -> "Subject Color:",
         "subjectForm_subjectColorExplanation" -> "This color will be used to draw a thin frame around the events of the subject",
         "subjectForm_subjectCourseTag" -> "Course:",
+        "subjectForm_subjectQuarterTag" -> "Quarter:",
         "subjectForm_generateEventsTag" -> "Generate Subject Events (optional):",
         "subjectForm_eventType" -> "Event type",
-        "subjectForm_eventWeek" -> "Event Week",
+        "subjectForm_eventPeriodicity" -> "Periodicity",
+        "subjectForm_eventWeek" -> "Week (Optional)",
         "subjectForm_eventDuration" -> "Event Duration",
         "subjectForm_rangeTag" -> "Range:",
         "subjectForm_rangeLowerBound" -> "Start",
@@ -262,6 +266,7 @@ object DefaultLanguage extends Language {
         "warning_periodicityNotSelected" -> "No periodicity has been selected.",
         "warning_eventPeriodicityDoesNotMatchWeek" -> "Selected week does not match with periodicity.",
         "warning_weekNotSelected" -> "No event week has been selected.", //obsolete
+        "warning_periodicityNotSelected" -> "No periodicity has been selected.",
         "warning_durationNotSelected" -> "No duration has been selected.",
         "warning_courseAlreadyExists" -> "A Course with this name already exists.",
         "warning_subjectNameCannotBeEmpty" -> "Subject Name cannot be empty.",

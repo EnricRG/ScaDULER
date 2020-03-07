@@ -52,6 +52,7 @@ public class SubjectFormController extends FormController {
     public TextField generateEvents_rangeLowerBound;
     public TextField generateEvents_rangeUpperBound;
     public Button generateEvents_equalButton;
+    public ComboBox<Weeks.Periodicity> generateEvents_periodicitySelector;
     public ComboBox<Weeks.Week> generateEvents_weekSelector;
     public ComboBox<Duration> generateEvents_durationSelector;
     public Label generationExampleTag;
@@ -112,6 +113,7 @@ public class SubjectFormController extends FormController {
         generateEvents_rangeLowerBound.setPromptText(AppSettings.language().getItem("subjectForm_rangeLowerBound"));
         generateEvents_rangeUpperBound.setPromptText(AppSettings.language().getItem("subjectForm_rangeUpperBound"));
 
+        generateEvents_periodicitySelector.setPromptText(AppSettings.language().getItem("subjectForm_eventPeriodicity"));
         generateEvents_weekSelector.setPromptText(AppSettings.language().getItem("subjectForm_eventWeek"));
         generateEvents_durationSelector.setPromptText(AppSettings.language().getItem("subjectForm_eventDuration"));
 
@@ -157,6 +159,7 @@ public class SubjectFormController extends FormController {
                 }
         );
 
+        generateEvents_periodicitySelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.periodicityList())));
         generateEvents_weekSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.weekList())));
 
         selectResourceListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -183,7 +186,7 @@ public class SubjectFormController extends FormController {
             computeGenerationExample(
                     subjectNameField.getText(),
                     generateEvents_eventTypeSelector.getValue(),
-                    generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
+                    generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
                     1);
             keyEvent.consume();
         });
@@ -192,7 +195,7 @@ public class SubjectFormController extends FormController {
             computeGenerationExample(
                     subjectNameField.getText(),
                     generateEvents_eventTypeSelector.getValue(),
-                    generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
+                    generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
                     1);
             event.consume();
         });
@@ -204,7 +207,7 @@ public class SubjectFormController extends FormController {
             computeGenerationExample(
                     subjectNameField.getText(),
                     generateEvents_eventTypeSelector.getValue(),
-                    generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
+                    generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
                     1);
             event.consume();
         });
@@ -220,6 +223,7 @@ public class SubjectFormController extends FormController {
                     generateEvents_eventTypeSelector.getValue(),
                     getRangeLowerBound(),
                     getRangeUpperBound(),
+                    generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
                     generateEvents_weekSelector.getSelectionModel().getSelectedItem(),
                     generateEvents_durationSelector.getSelectionModel().getSelectedItem(),
                     selectResourceListView.getSelectionModel().getSelectedItem()
@@ -256,18 +260,18 @@ public class SubjectFormController extends FormController {
         });
     }
 
-    private boolean canGenerateExample(String subjectName, EventType eventType, Weeks.Week week) {
-        return subjectName != null && eventType != null && week != null;
+    private boolean canGenerateExample(String subjectName, EventType eventType, Weeks.Periodicity periodicity) {
+        return subjectName != null && eventType != null && periodicity != null;
     }
 
     private void equalizeRangeValues() {
         generateEvents_rangeUpperBound.setText(generateEvents_rangeLowerBound.getText());
     }
 
-    private void computeGenerationExample(String subjectName, EventType eventType, Weeks.Week week, int number) {
-        if(canGenerateExample(subjectName, eventType, week)) {
+    private void computeGenerationExample(String subjectName, EventType eventType, Weeks.Periodicity periodicity, int number) {
+        if(canGenerateExample(subjectName, eventType, periodicity)) {
             generationExampleLabel.setText(
-                    String.format("%s (%s-%d) (%s)", subjectName, eventType.toString(), number, week.toShortString())
+                    String.format("%s (%s-%d) (%s)", subjectName, eventType.toString(), number, periodicity.toShortString())
             );
         }
     }
@@ -314,16 +318,18 @@ public class SubjectFormController extends FormController {
     }
 
     private void generateEvents(String subjectName, String subjectShortName, EventType eventType, int rangeStart, int rangeEnd,
-                                Weeks.Week week, Duration duration, Resource neededResource) {
-        if(!warnings(checkEventGenerationWarnings(eventType, rangeStart, rangeEnd, week, duration, neededResource))) {
+                                Weeks.Periodicity periodicity, Weeks.Week week, Duration duration, Resource neededResource) {
+        if(!warnings(checkEventGenerationWarnings(eventType, rangeStart, rangeEnd, periodicity, week, duration, neededResource))) {
             for(int i = rangeStart; i<=rangeEnd; i++){
                 Event event = eventDatabase.createEvent()._2;
 
-                event.setName(String.format("%s\n(%s-%d) (%s)", subjectName, eventType.toString(), i, week.toShortString()));
-                event.setShortName(String.format("%s (%s %d) (%s)", subjectShortName, eventType.toShortString(), i, week.toShortString()));
+                //TODO abstract string pattern
+                event.setName(String.format("%s (%s-%d) (%s)", subjectName, eventType.toString(), i, periodicity.toShortString()));
+                event.setShortName(String.format("%s (%s %d) (%s)", subjectShortName, eventType.toShortString(), i, periodicity.toShortString()));
                 event.setEventType(eventType);
                 event.setNeededResource(neededResource);
-                event.setWeek(week);
+                event.setPeriodicity(periodicity);
+                if(week != null) event.setWeek(week);
                 event.setDuration(duration.toInt());
 
                 eventTable.getItems().add(event);
@@ -384,7 +390,8 @@ public class SubjectFormController extends FormController {
         return null;
     }
 
-    private Warning checkEventGenerationWarnings(EventType eventType, int rangeStart, int rangeEnd, Weeks.Week week, Duration duration, Resource neededResource) {
+    private Warning checkEventGenerationWarnings(EventType eventType, int rangeStart, int rangeEnd, Weeks.Periodicity periodicity,
+                                                 Weeks.Week week, Duration duration, Resource neededResource) {
         if(neededResource == null){
             return new Warning(AppSettings.language().getItem("warning_resourcesNotSelected"));
         }
@@ -394,8 +401,8 @@ public class SubjectFormController extends FormController {
         else if(eventType == null){
             return new Warning(AppSettings.language().getItem("warning_eventTypeNotSelected"));
         }
-        else if(week == null){
-            return new Warning(AppSettings.language().getItem("warning_weekNotSelected"));
+        else if(periodicity == null){
+            return new Warning(AppSettings.language().getItem("warning_periodicityNotSelected"));
         }
         else if(duration == null){
             return new Warning(AppSettings.language().getItem("warning_durationNotSelected"));

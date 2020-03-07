@@ -13,6 +13,7 @@ object Weeks extends Serializable {
 
     sealed abstract class Periodicity extends Serializable{
         def toString: String
+        def toShortString: String
     }
     object Periodicity{
         def fromInt(n: Int): Periodicity =  n match {
@@ -26,9 +27,11 @@ object Weeks extends Serializable {
     }
     case object Weekly extends Periodicity{
         override def toString: String = AppSettings.language.getItem("weekly")
+        override def toShortString: String = AppSettings.language.getItem("shortWeekly")
     }
     case object Biweekly extends Periodicity{
         override def toString: String = AppSettings.language.getItem("biweekly")
+        override def toShortString: String = AppSettings.language.getItem("shortBiweekly")
     }
 
     case object AWeek extends Week{
