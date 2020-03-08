@@ -80,7 +80,6 @@ public class SubjectManagerController extends EntityManagerController<Subject> {
 
         if(subject != null){
             removeRow(subject);
-            //TODO: remove event incompatibilities from subject events.
             for(Event ev : JavaConverters.asJavaCollection(subject.getEvents()))
                 getMainController().removeEvent(ev);
             subjectDatabase.removeSubject(subject);

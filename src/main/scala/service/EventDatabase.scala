@@ -16,6 +16,7 @@ class EventDatabase extends Database[Event] {
         addElement(id, event)
     }
 
+    //TODO removing an event should remove all its incompatibilities
     def removeEvent(eid: ID): Unit = removeElement(eid)
     def removeEvent(e: Event): Unit = removeElement(e.getID)
 
