@@ -5,9 +5,12 @@ import java.io.{File, PrintWriter}
 import actors.Messages.MiniZincMessages.MiniZincSolveRequest
 import actors.Messages.{NoSolution, Solution}
 import akka.actor.Actor
+import model.Weeks.Week
 import solver.{EventAssignment, MiniZincConstants, MiniZincInstance}
 
 import scala.sys.process.Process
+
+case class MiniZincEventAssignment(eventID: Int, week: Week, interval: Int)
 
 class MiniZincInstanceSolver extends Actor{
 
@@ -50,16 +53,16 @@ class MiniZincInstanceSolver extends Actor{
             }
 
             if(success) try {
-                val assignments = parseMiniZincOutput(minizinc_process.lineStream)
+                val minizincAssignments = parseMiniZincOutput(minizinc_process.lineStream)
 
-                if(assignments.isDefined) {
+                if(minizincAssignments.isDefined) {
                     val indexDeviation = MiniZincInstance.ModelIndexDeviation
 
                     //adapt to application indexing
-                    val adaptedAssignments = assignments.get
-                        .map(x => EventAssignment(x.eventID-indexDeviation, x.week, x.interval-indexDeviation))
+                    val assignments = minizincAssignments.get
+                        .map(x => EventAssignment(instanceData.eventMapping(x.eventID), x.week, x.interval-indexDeviation))
 
-                    sender ! Solution(adaptedAssignments)
+                    sender ! Solution(assignments)
                 }
                 else sender ! NoSolution
             } catch{
@@ -71,7 +74,7 @@ class MiniZincInstanceSolver extends Actor{
             sender ! None
     }
 
-    def parseMiniZincOutput(lineStream: Stream[String]): Option[List[EventAssignment]] = {
+    def parseMiniZincOutput(lineStream: Stream[String]): Option[List[MiniZincEventAssignment]] = {
         lineStream.head match{
             case line if line.contains("UNSATISFIABLE") => None //no solution
             case line if line.contains("---") => None //unexpected minizinc output
@@ -79,8 +82,11 @@ class MiniZincInstanceSolver extends Actor{
             case line if line.contains("SOLUTION") =>
                 val solution = lineStream.takeWhile(!_.contains("ENDSOLUTION")).drop(2) //drop 'SOLUTION' and length lines
                 val assignments = solution.map(line => line.slice(1, line.length-1).split(","))
-                  .map( list =>
-                        EventAssignment(list.apply(0).toInt, MiniZincInstance.reverseParse(list.apply(1)), list.apply(2).toInt)
+                  .map( list => MiniZincEventAssignment(
+                            list.apply(0).toInt,
+                            MiniZincInstance.reverseParse(list.apply(1)),
+                            list.apply(2).toInt
+                        )
                   ).toList
 
                 Some(assignments)

@@ -44,13 +44,14 @@ object MainApp extends App {
     }
 
     def solve(timeout: Double): Unit = {
+        val assignableEvents = database.eventDatabase.getElements.filter(_.isAssignable)
         val instanceData = InstanceData(
             AppSettings.days,
             AppSettings.timeSlotsPerDay,
             database.resourceDatabase.getElements.size,
             database.resourceDatabase.getElements.toList,
-            database.eventDatabase.getElements.size,
-            database.eventDatabase.getElements.toList.sortBy(_.getID)
+            assignableEvents.size,
+            assignableEvents.toList.sortBy(_.getID)
         )
 
         solving = true

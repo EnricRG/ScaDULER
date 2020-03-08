@@ -3,6 +3,7 @@ package solver
 import app.AppSettings
 import model.Weeks.{AWeek, BWeek, Biweekly, EveryWeek, Periodicity, Week, Weekly}
 import model.Resource
+import service.ID
 
 import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
@@ -25,7 +26,8 @@ case class MiniZincInstanceData(nDays: Int, //unused
                                 preassignedEventStarts: List[Int],
                                 nPrecedences: Int,
                                 predecessors: List[Int],
-                                successors: List[Int]){
+                                successors: List[Int],
+                                eventMapping: Map[Int, ID]){
 
     def asDZNString: String = {
         val SemiColon = MiniZincConstants.SemiColon
@@ -39,8 +41,8 @@ case class MiniZincInstanceData(nDays: Int, //unused
         "eventDuration = " + eventDuration.mkString("[", ",", "]") + SemiColon + LineJump +
         //"eventWeek = " + eventWeek.mkString("[", ",", "]") + SemiColon + LineJump +
         "eventPeriodicity = " + eventPeriodicity.mkString("[", "," ,"]") + SemiColon + LineJump +
-        "eventExclusions = " + eventExclusions.map(_.mkString(",")).mkString("[|", "|", "|]") + SemiColon + LineJump + //This is wrong, one | missing at the end
-        "resourceNeeded = " + resourceNeeded.map(_.mkString(",")).mkString("[|", "|", "|]") + SemiColon + LineJump + //This is wrong, one | missing at the end
+        "eventExclusions = " + eventExclusions.map(_.mkString(",")).mkString("[|", "|", "|]") + SemiColon + LineJump +
+        "resourceNeeded = " + (if(resourceNeeded.isEmpty) "[]" else resourceNeeded.map(_.mkString(",")).mkString("[|", "|", "|]")) + SemiColon + LineJump +
         "nPredefinedEventWeeks = " + nPredefinedEventWeeks + SemiColon + LineJump +
         "predefinedWeekEventNumbers = " + predefinedWeekEventNumbers.mkString("[", ",", "]") + SemiColon + LineJump +
         "predefinedEventWeek = " + predefinedEventWeek.mkString("[", ",", "]") + SemiColon + LineJump +
@@ -171,7 +173,8 @@ object MiniZincInstance{
             nEvents, eventDuration /*,eventWeek*/, eventPeriodicity, totalEventExclusions, resourceNeeded, //event parameters
             nPredefinedEventWeeks, predefinedWeekEventNumbers, predefinedEventWeek, //week pre-assignation parameters
             nPreassignedEvents, preassignedEventNumbers, preassignedEventStarts, //start pre-assignation parameters
-            nPrecedences, predecessors,successors //precedences parameters
+            nPrecedences, predecessors,successors, //precedences parameters
+            instance.events.indices.map(index => (index+ModelIndexDeviation, instance.events.apply(index).getID)).toMap
         )
     }
 

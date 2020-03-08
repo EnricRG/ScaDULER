@@ -1,5 +1,6 @@
 package solver
 
 import model.Weeks.Week
+import service.ID
 
-case class EventAssignment(eventID: Int, week: Week, interval: Int)
+case class EventAssignment(eventID: ID, week: Week, interval: Int)

@@ -150,7 +150,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
 
     //if week is EveryWeek.toWeekNumber, it will still work as intended because it will assign to both weeks.
     //I don't know if I like this behavior, but it works and it's intended.
-    public ScheduleIntervalController getVisibleIntervalControllerAt(int week, int interval) {
+    public ScheduleIntervalController getIntervalControllerAt(int week, int interval) {
         Map<Integer, ScheduleIntervalController> weekViews =
                 week == Weeks.getAWeek().toWeekNumber() ? firstWeekEventViews : secondWeekEventViews;
 

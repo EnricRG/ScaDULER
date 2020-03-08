@@ -132,7 +132,6 @@ public class MainController implements Initializable {
         );
 
         if(viabilityChecker.isAViableAssignment()){ //if event can be assigned there
-            //TODO split between quarters. First quarter assignments shouldn't affect second quarter and viceversa.
             //TODO soft violation of viability. Allow to assign even if its not viable.
             courseScheduleController.hideWarnings();
             quarterScheduleController.processEventDrop(
@@ -158,13 +157,13 @@ public class MainController implements Initializable {
     }
 
     public void processEventAssignments(Collection<EventAssignment> eventAssignments){
-        CourseScheduleController courseScheduleController = getVisibleCourse();
-        QuarterScheduleController quarterScheduleController = courseScheduleController.getVisibleQuarterController();
-
         for(EventAssignment ea : eventAssignments){
             Event event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
+
+            CourseScheduleController courseScheduleController = getEventCourseController(event);
+            QuarterScheduleController quarterScheduleController = courseScheduleController.getQuarterController(event.getQuarter());
             ScheduleIntervalController intervalController =
-                    quarterScheduleController.getVisibleIntervalControllerAt(ea.week().toWeekNumber(), ea.interval());
+                    quarterScheduleController.getIntervalControllerAt(ea.week().toWeekNumber(), ea.interval());
 
             startEventDrag(
                     event,
@@ -178,6 +177,11 @@ public class MainController implements Initializable {
                     intervalController,
                     -1);
         }
+    }
+
+    private CourseScheduleController getEventCourseController(Event event) {
+        //TODO highly improvable, better data structure
+        return tabCourseMap.get(courseTabMap.get(event.getCourse().getID()));
     }
 
     private CourseScheduleController getVisibleCourse() {

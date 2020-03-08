@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import misc.Warning;
-import model.Course;
+import model.*;
 import util.Utils;
 
 import java.net.URL;
@@ -105,5 +105,10 @@ public class CourseScheduleController implements Initializable {
 
     public QuarterScheduleController getVisibleQuarterController() {
         return tabPane.getSelectionModel().getSelectedItem() == firstQuarterTab ? firstQuarterController : secondQuarterController;
+    }
+
+    public QuarterScheduleController getQuarterController(Quarter quarter) {
+        return quarter == Quarters.firstQuarter() ? firstQuarterController :
+                quarter == Quarters.secondQuarter() ? secondQuarterController : null;
     }
 }

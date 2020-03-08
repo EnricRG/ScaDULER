@@ -18,6 +18,9 @@ object SecondQuarter extends Quarter{
 }
 
 object Quarters{
+    def firstQuarter: Quarter = FirstQuarter
+    def secondQuarter: Quarter  = SecondQuarter
+    def noQuarter: Quarter  = NoQuarter
     val quarters: List[Quarter] = List(FirstQuarter,SecondQuarter)
 }
 
