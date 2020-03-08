@@ -3,7 +3,6 @@ package control.manage;
 import app.AppSettings;
 import app.FXMLPaths;
 import app.MainApp;
-import com.sun.javafx.webkit.KeyCodeMap;
 import control.MainController;
 import control.form.FormController;
 import control.schedule.ResourceAvailabilityController;
@@ -13,11 +12,9 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
@@ -41,12 +38,12 @@ public class ResourceManagerController extends FormController {
 
     public TableView<Resource> resourceTable;
     public TableColumn<Resource, String> resourceTable_nameColumn;
-    public TableColumn<Resource, Integer> resourceTable_quantityColumn;
+    public TableColumn<Resource, Integer> resourceTable_capacityColumn;
     public TableColumn<Resource, Void> resourceTable_availabilityColumn;
 
     public Button addResourceButton;
     public TextField resourceNameField;
-    public TextField resourceQuantityField;
+    public TextField resourceCapacityField;
 
     public Button deleteResourceButton;
     public Button minusOneButton;
@@ -68,13 +65,13 @@ public class ResourceManagerController extends FormController {
         resourceTable.setPlaceholder(new Label(AppSettings.language().getItem("resourceTable_placeholder")));
 
         resourceTable_nameColumn.setText(AppSettings.language().getItem("manageResources_nameColumn"));
-        resourceTable_quantityColumn.setText(AppSettings.language().getItem("manageResources_quantityColumn"));
+        resourceTable_capacityColumn.setText(AppSettings.language().getItem("manageResources_capacityColumn"));
         resourceTable_availabilityColumn.setText(AppSettings.language().getItem("manageResources_availabilityColumn"));
 
         addResourceButton.setText(AppSettings.language().getItem("manageResources_addButton"));
         deleteResourceButton.setText(AppSettings.language().getItem("manageResources_deleteButton"));
 
-        resourceQuantityField.setPromptText(AppSettings.language().getItem("manageResources_quantityField"));
+        resourceCapacityField.setPromptText(AppSettings.language().getItem("manageResources_capacityField"));
         minusOneButton.setText(AppSettings.language().getItem("manageResources_subButton"));
         plusOneButton.setText(AppSettings.language().getItem("manageResources_sumButton"));
     }
@@ -84,7 +81,7 @@ public class ResourceManagerController extends FormController {
         resourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         resourceTable_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        resourceTable_quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        resourceTable_capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
 
         resourceTable_availabilityColumn.setCellFactory(param ->  new TableCell<>(){
 
@@ -167,13 +164,13 @@ public class ResourceManagerController extends FormController {
 
     private void incrementByOne() {
         ObservableList<Resource> selection = resourceTable.getSelectionModel().getSelectedItems();
-        selection.forEach(resource -> resource.incrementQuantity(1));
+        selection.forEach(resource -> resource.incrementCapacity(1));
         updateTableView();
     }
 
     private void decrementByOne() {
         ObservableList<Resource> selection = resourceTable.getSelectionModel().getSelectedItems();
-        selection.forEach(resource -> resource.decrementQuantity(1));
+        selection.forEach(resource -> resource.decrementCapacity(1));
         updateTableView();
     }
 
@@ -191,19 +188,19 @@ public class ResourceManagerController extends FormController {
         if(!warnings()){
             Resource r = resourceDatabase.createResource()._2;
             r.setName(resourceNameField.getText().trim());
-            r.setQuantity(getQuantityFieldValue());
+            r.setCapacity(getCapacityFieldValue());
 
             updateCourseInTableView(r);
             clearInputFields();
         }
     }
 
-    //post: return quantity field value if it is a number, Integer.MIN_VALUE otherwise
-    private int getQuantityFieldValue(){
+    //post: return capacity field value if it is a number, Integer.MIN_VALUE otherwise
+    private int getCapacityFieldValue(){
         try{
-            int quantity;
-            quantity = Integer.parseInt(resourceQuantityField.getText());
-            return quantity;
+            int capacity;
+            capacity = Integer.parseInt(resourceCapacityField.getText());
+            return capacity;
         } catch (NumberFormatException nfe){
             return Integer.MIN_VALUE;
         }
@@ -211,7 +208,7 @@ public class ResourceManagerController extends FormController {
 
     private void clearInputFields() {
         resourceNameField.clear();
-        resourceQuantityField.clear();
+        resourceCapacityField.clear();
     }
 
     private void updateTableView(){
@@ -242,19 +239,19 @@ public class ResourceManagerController extends FormController {
         return resourceCanBeCreated();
     }
 
-    //pre: name and quantity not null
+    //pre: name and capacity not null
     private Warning resourceCanBeCreated() {
-        Integer quantity = getQuantityFieldValue();
+        Integer capacity = getCapacityFieldValue();
         if(resourceNameField.getText().trim().isBlank())
             return new Warning(AppSettings.language().getItem("warning_resourceNameCannotBeEmpty"));
-        else if(quantity.equals(Integer.MIN_VALUE)){
-            return new Warning(AppSettings.language().getItem("warning_resourceQuantityNaN"));
+        else if(capacity.equals(Integer.MIN_VALUE)){
+            return new Warning(AppSettings.language().getItem("warning_resourceCapacityNaN"));
         }
-        else if(quantity.compareTo(AppSettings.minQuantityPerResource()) < 0)  //if quantity is lower than minimum required.
+        else if(capacity.compareTo(AppSettings.minCapacityPerResource()) < 0)  //if capacity is lower than minimum required.
             return new Warning(
-                    quantity +
-                    AppSettings.language().getItem("warning_resourceQuantityMin") +
-                    " (" + AppSettings.minQuantityPerResource() + ").");
+                    capacity +
+                    AppSettings.language().getItem("warning_resourceCapacityMin") +
+                    " (" + AppSettings.minCapacityPerResource() + ").");
         else return null;
     }
 

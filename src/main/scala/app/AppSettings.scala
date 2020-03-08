@@ -42,7 +42,7 @@ object AppSettings {
     var maxEventDuration: Int = 5
     var eventViewColumnPercentage: Double = 0.9
 
-    var minQuantityPerResource: Int = 1
+    var minCapacityPerResource: Int = 1
 
     var defaultTimeout: Double = 10 //seconds
 

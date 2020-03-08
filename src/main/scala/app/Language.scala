@@ -121,15 +121,15 @@ object DefaultLanguage extends Language {
         "manageResources_windowTitle" -> "Manage Resources",
         "manageResources_searchResourceField" -> "search resources",
         "manageResources_nameColumn" -> "Name",
-        "manageResources_quantityColumn" -> "Quantity",
+        "manageResources_capacityColumn" -> "Capacity",
         "manageResources_availabilityColumn" -> "Availability",
         "manageResources_availableQuantityColumn" -> "Available\nQuantity",
         "manageResources_addButton" -> "Add Resource",
         "manageResources_modifyButton" -> "Modify Resource",
         "manageResources_deleteButton" -> "Delete Resource",
-        "manageResources_quantityField" -> "quantity", //obsolete
-        "manageResources_subButton" -> "-1", //obsolete
-        "manageResources_sumButton" -> "+1", //obsolete
+        "manageResources_capacityField" -> "capacity",
+        "manageResources_subButton" -> "-1",
+        "manageResources_sumButton" -> "+1",
         "resourceTable_placeholder" -> "No resources",
         "manageResources_availabilityPrompt" -> "Manage Availability",
 
@@ -268,8 +268,8 @@ object DefaultLanguage extends Language {
         "warning_firstQuarterResourcesCannotBeEmpty" -> "First quarter has no resources.",
         "warning_secondQuarterResourcesCannotBeEmpty" -> "Second quarter has no resources.",
         "warning_resourceNameCannotBeEmpty" -> "Resource name cannot be empty.",
-        "warning_resourceQuantityNaN" -> "The quantity is not a number.",
-        "warning_resourceQuantityMin" -> " is lower than the minimum allowed quantity",
+        "warning_resourceCapacityNaN" -> "The capacity is not a number.",
+        "warning_resourceCapacityMin" -> " is lower than the minimum allowed quantity",
         "warning_resourcesNotSelected" -> "No resource has been selected.",
         "warning_eventTypeNotSelected" -> "No event type has been selected.",
         "warning_periodicityNotSelected" -> "No periodicity has been selected.",

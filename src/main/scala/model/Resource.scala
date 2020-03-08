@@ -11,6 +11,7 @@ class Resource(id: ID) extends Identifiable(id) with Serializable {
 
     private var name: String = ""
     private var quantity: Int = -1
+    private var capacity: Int = 0
     private val availability: ResourceSchedule = new ResourceSchedule(AppSettings.timeSlots)
 
     def getAvailability(week: Int, interval: Int): Int =
@@ -25,11 +26,10 @@ class Resource(id: ID) extends Identifiable(id) with Serializable {
     def getName: String = name
     def setName(s: String): Unit = name = s
 
-    //TODO remove all this methods
-    def getQuantity: Int = quantity
-    def setQuantity(q: Int): Unit = quantity = q
-    def incrementQuantity(incr: Int): Unit = quantity += incr
-    def decrementQuantity(decr: Int): Unit = if( quantity - decr >= AppSettings.minQuantityPerResource ) quantity -= decr
+    def getCapacity: Int = capacity
+    def setCapacity(c: Int): Unit = capacity = c
+    def incrementCapacity(incr: Int): Unit = capacity += incr
+    def decrementCapacity(decr: Int): Unit = if( capacity - decr >= AppSettings.minCapacityPerResource ) capacity -= decr
 
     def getMaxQuantity: Int = availability.getMax
     def getQuantityAt(week: Week, interval: Int): Int = availability.get(week.toWeekNumber, interval)
