@@ -84,7 +84,7 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     def isAssigned: Boolean = startInterval >= 0
     def isUnassigned: Boolean = !isAssigned
     def isAssignable: Boolean = {
-        course != NoCourse && quarter != NoQuarter
+        isUnassigned && course != NoCourse && quarter != NoQuarter
         //fields such as eventType or periodicity aren't checked because it's impossible for the user not set them.
     }
 

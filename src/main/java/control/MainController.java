@@ -168,7 +168,7 @@ public class MainController implements Initializable {
             startEventDrag(
                     event,
                     EventDrag.FROM_UNASSIGNED,
-                    unassignedEventsMap.get((long)ea.eventID()),
+                    unassignedEventsMap.get(ea.eventID()),
                     intervalController);
 
             processEventAssignment(

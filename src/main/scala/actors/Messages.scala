@@ -14,6 +14,6 @@ object Messages{
     case class Solution(assignments: Iterable[EventAssignment]) extends Message
 
     object MiniZincMessages{
-        case class MiniZincSolveRequest(data: MiniZincInstanceData)
+        case class MiniZincSolveRequest(data: MiniZincInstanceData, append: String = "")
     }
 }

@@ -23,9 +23,9 @@ class MiniZincInstanceSolver extends Actor{
     }
 
     override def receive = {
-        case MiniZincSolveRequest(instanceData) => {
+        case MiniZincSolveRequest(instanceData, append) => {
 
-            val file = new File(MiniZincConstants.PredefinedDZNFilePath)
+            val file = new File(MiniZincConstants.predefinedDZNFilePath(append))
             file.getParentFile.mkdirs()
 
             val writer = new PrintWriter(file)
@@ -37,7 +37,7 @@ class MiniZincInstanceSolver extends Actor{
                 writer.close()
             }
 
-            val minizinc_call = generateMiniZincCall(MiniZincConstants.PredefinedDZNFilePath)
+            val minizinc_call = generateMiniZincCall(MiniZincConstants.predefinedDZNFilePath(append))
 
             var minizinc_process: scala.sys.process.ProcessBuilder = null
 
@@ -58,7 +58,6 @@ class MiniZincInstanceSolver extends Actor{
                 if(minizincAssignments.isDefined) {
                     val indexDeviation = MiniZincInstance.ModelIndexDeviation
 
-                    //adapt to application indexing
                     val assignments = minizincAssignments.get
                         .map(x => EventAssignment(instanceData.eventMapping(x.eventID), x.week, x.interval-indexDeviation))
 

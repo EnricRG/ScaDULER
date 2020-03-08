@@ -97,16 +97,19 @@ object MainApp extends App {
                         e.isDefined && !e.get.isAssigned
                     })
 
-                println(realAssignments)
-
-                //TODO notify user if realAssignments has 0 assignments
-
-                val accepted: Boolean = MainInterface.promptChoice(
-                    AppSettings.language.getItem("solver_solutionFoundWindowTitle"),
-                    AppSettings.language.getItem("solver_solutionFoundText")
+                //TODO should be language dependant
+                if(realAssignments.isEmpty) MainInterface.promptAlert(
+                    "No assignments",
+                    "A solution with 0 assignments was found. Check remaining event properties if any."
                 )
+                else{
+                    val accepted: Boolean = MainInterface.promptChoice(
+                        AppSettings.language.getItem("solver_solutionFoundWindowTitle"),
+                        AppSettings.language.getItem("solver_solutionFoundText")
+                    )
 
-                if(accepted) MainInterface.processAssignments(JavaConverters.asJavaCollection(realAssignments))
+                    if(accepted) MainInterface.processAssignments(JavaConverters.asJavaCollection(realAssignments))
+                }
             }
             case None => {
                 MainInterface.promptAlert(
