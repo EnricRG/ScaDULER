@@ -3,7 +3,8 @@ package app
 import control.MainController
 import file.imprt.ImportJob
 import file.imprt.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
-import model.{Course, Event, EventType, EventTypes, Resource, Subject}
+import misc.{EventTypeIncompatibilities, EventTypeIncompatibility}
+import model.{ComputerEvent, Course, Event, EventType, EventTypes, LaboratoryEvent, Resource, Subject, TheoryEvent}
 import service.{AppDatabase, CourseDatabase, EventDatabase, ResourceDatabase, SubjectDatabase}
 
 import scala.collection.mutable
@@ -65,7 +66,21 @@ object EntityManager {
             mc.addUnassignedEvent(event)
         })
 
-        //TODO manage event incompatibilities
+        //TODO this should be done on the import level, and only persist them here
+        val eventTypeIncompatibilities = List(
+            new EventTypeIncompatibility(TheoryEvent, TheoryEvent),
+            new EventTypeIncompatibility(TheoryEvent, LaboratoryEvent),
+            new EventTypeIncompatibility(TheoryEvent, ComputerEvent)
+        )
+
+        eventTypeIncompatibilities.foreach( incompatibility =>
+            eventsByType(incompatibility.getFirstType).foreach( e1 =>
+                eventsByType(incompatibility.getSecondType).foreach( e2 =>
+                    e1.addIncompatibility(e2)
+                )
+            )
+        )
+
     }
 
     private def setCourseFromBlueprint(c: Course, cb: CourseBlueprint): Unit = {

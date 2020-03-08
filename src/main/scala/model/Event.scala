@@ -125,7 +125,7 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     def setDuration(duration: Int): Unit = this.duration = duration
 
     def getIncompatibilities: Set[Event] = incompatibilities.toSet
-    def addIncompatibility(e: Event): Unit = {
+    def addIncompatibility(e: Event): Unit = if(e != this){
         incompatibilities.add(e)
         if(!e.getIncompatibilities.contains(this)) e.addIncompatibility(this)
     }
