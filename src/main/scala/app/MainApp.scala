@@ -97,10 +97,9 @@ object MainApp extends App {
                         e.isDefined && !e.get.isAssigned
                     })
 
-                //TODO should be language dependant
                 if(realAssignments.isEmpty) MainInterface.promptAlert(
-                    "No assignments",
-                    "A solution with 0 assignments was found. Check remaining event properties if any."
+                    AppSettings.language.getItem("noAssignments_windowTitle"),
+                    AppSettings.language.getItem("noAssignments_message")
                 )
                 else{
                     val accepted: Boolean = MainInterface.promptChoice(

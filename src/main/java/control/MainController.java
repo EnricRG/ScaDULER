@@ -721,7 +721,7 @@ public class MainController implements Initializable {
         }
 
         //create tab with course grid if possible. If not, create empty tab.
-        final Tab newTab = courseTabContent == null ? new Tab(c.name()) : new Tab(c.name(), courseTabContent);
+        final Tab newTab = courseTabContent == null ? new Tab(c.getName()) : new Tab(c.getName(), courseTabContent);
 
         //mapping the course to the tab
         courseTabMap.put(c.getID(), newTab);

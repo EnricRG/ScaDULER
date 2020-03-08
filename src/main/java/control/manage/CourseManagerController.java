@@ -51,7 +51,7 @@ public class CourseManagerController extends EntityManagerController<Course> {
     }
 
     private void configureColumns(){
-        nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().name()));
+        nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
         descriptionColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDescription()));
     }
 

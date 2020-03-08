@@ -96,8 +96,6 @@ object DefaultLanguage extends Language {
         "runButtons_stop" -> "Stop",
 
         "softViabilityCheckBox" -> "Soft Viability Check",
-        "nonViableAssignments_windowTitle" -> "Non viable events assigned",
-        "nonViableAssignments_message" -> "Non viable events have been assigned. There must not be any in order to continue with the autocompletion of this schedule. Would you like to unassign them all?",
 
         "optional_tag" -> "(Optional)",
 
@@ -245,6 +243,12 @@ object DefaultLanguage extends Language {
 
         "solverError_WindowTitle" -> "Solver Error",
         "solverError_solverError" -> "Unknown error when running process: Solver",
+
+        "nonViableAssignments_windowTitle" -> "Non viable events assigned",
+        "nonViableAssignments_message" -> "Non viable events have been assigned. There must not be any in order to continue with the autocompletion of this schedule. Would you like to unassign them all?",
+
+        "noAssignments_windowTitle" -> "No assignments",
+        "noAssignments_message" -> "A solution with 0 assignments was found. Check remaining event properties if any.",
 
         "timeout_windowTitle" -> "Timeout expired",
         "timeout_timeoutMessage" -> "The solver did not find any solution for your schedule in the specified amount of time",

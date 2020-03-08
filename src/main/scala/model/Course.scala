@@ -35,14 +35,16 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
     def getSchedule: EventSchedule = schedule
 }
 
-//TODO: update to new database model
 @SerialVersionUID(1L)
 class Course(id: ID) extends Identifiable(id) with Serializable {
 
-    var name: String = ""
-    var description: String = ""
-    var firstQuarter: QuarterData = new QuarterData(FirstQuarter)
-    var secondQuarter: QuarterData = new QuarterData(SecondQuarter)
+    private var name: String = ""
+    private var description: String = ""
+    private var firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
+    private var secondQuarterData: QuarterData = new QuarterData(SecondQuarter)
+
+    def getFirstQuarterData: QuarterData = firstQuarterData
+    def getSecondQuarterData: QuarterData = secondQuarterData
 
     def getName: String = name
     def setName(n: String): Unit = name = n
@@ -50,8 +52,8 @@ class Course(id: ID) extends Identifiable(id) with Serializable {
     def getDescription: String = description
     def setDescription(d: String): Unit = description = d
 
-    def getFirstQuarterEvents: Iterable[Event] = firstQuarter.getSchedule.getEvents
-    def getSecondQuarterEvents: Iterable[Event] = secondQuarter.getSchedule.getEvents
+    def getFirstQuarterEvents: Iterable[Event] = firstQuarterData.getSchedule.getEvents
+    def getSecondQuarterEvents: Iterable[Event] = secondQuarterData.getSchedule.getEvents
     //WARNING danger, future implementations may allow repeated events appear in this iterable.
     def getAllEvents: Iterable[Event] = getFirstQuarterEvents ++ getSecondQuarterEvents
 
@@ -60,7 +62,7 @@ class Course(id: ID) extends Identifiable(id) with Serializable {
 
 object NoCourse extends Course(-1){
     setName(AppSettings.language.getItem("noCourse"))
-    def noCourse: Course = this //Be careful
 
-    override def toString: String = name
+    def noCourse: Course = this
+    override def toString: String = getName
 } //non bd object

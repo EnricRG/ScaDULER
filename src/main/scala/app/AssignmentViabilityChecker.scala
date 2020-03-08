@@ -26,8 +26,8 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
     def getWarning: Warning = warning.orNull
 
     def getQuarterEvents(course: Course, quarter: QuarterData): Iterable[Event] = {
-        if (quarter == course.firstQuarter) courseDatabase.getElements.map(_.firstQuarter).flatMap(_.getSchedule.getEvents)
-        else courseDatabase.getElements.map(_.secondQuarter).flatMap(_.getSchedule.getEvents)
+        if (quarter == course.getFirstQuarterData) courseDatabase.getElements.map(_.getFirstQuarterData).flatMap(_.getSchedule.getEvents)
+        else courseDatabase.getElements.map(_.getSecondQuarterData).flatMap(_.getSchedule.getEvents)
     }
 
     def checkEventIncompatibilities(course: Course, quarter: QuarterData, event: Event, targetWeek: Week, interval: Int): Option[Warning] = {
