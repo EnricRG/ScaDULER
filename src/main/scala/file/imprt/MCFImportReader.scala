@@ -16,7 +16,7 @@ import scala.io.Source
 case class LineImportJob(subject: SubjectBlueprint,
                          events: List[EventBlueprint],
                          course: CourseBlueprint,
-                         resource: ResourceBlueprint,
+                         resource: Option[ResourceBlueprint],
                          errors: List[ImportError],
                          finished: Boolean)
 
@@ -37,7 +37,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         val source = Source.fromFile(file)
 
         try {
-            val filteredLines = source.getLines().filterNot(_.forall(_ == MCFImportReader.Separator))
+            val filteredLines = source.getLines().filterNot(l => l.forall(_ == MCFImportReader.Separator) /*|| l.trim.isEmpty*/)
             val lines = filteredLines.zipWithIndex.map { case (s, i) => (i, s.split(MCFImportReader.Separator.toString, -1)) }.toList //all file lines
             val headers = lines.head //only headers line
             val lineImportJobs = for ((row, line) <- lines.tail) yield readLine(row + 1, line, headers._2)
@@ -84,10 +84,10 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         if(ngpErrors.nonEmpty && !emptyHgp) errors ++= ngpErrors
 
         val (resourceCapacity, rCErrors, emptyRC) = getIntegerField(values.apply(10).trim, row, 11, headers.apply(10)+"(1)")
-        if(rCErrors.nonEmpty) errors ++= rCErrors
+        if(rCErrors.nonEmpty && !emptyHgp) errors ++= rCErrors
 
         val (resourceName, rNErrors, emptyRN) = getStringField(values.apply(11).trim, row, 12, headers.apply(11)+"(2)")
-        if(rNErrors.nonEmpty) errors ++= rNErrors
+        if(rNErrors.nonEmpty && !emptyHgp) errors ++= rNErrors
 
         val students = getUncheckedIntegerField(values.apply(12).trim)
         val credits = getUncheckedIntegerField(values.apply(13).trim)
@@ -126,7 +126,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
             subjectEntity.additionalInformation.update("cgp", cgp)
             subjectEntity.additionalInformation.update("shared", shared)
 
-            val resourceEntity = createdResources.get(resourceName) match {
+            val resourceEntity = if (emptyHgp) None else Some(createdResources.get(resourceName) match {
                 case Some(r) => r
                 case None =>
                     val newResource = new ResourceBlueprint
@@ -135,7 +135,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                     newResource.capacity = resourceCapacity
                     createdResources.put(newResource.name, newResource)
                     newResource
-            }
+            })
 
             val theoryEvents: List[EventBlueprint] = if(hgg.length > 1){
                 hgg.indices.flatMap(number => generateEvents(subjectEntity, TheoryEvent,
@@ -153,10 +153,10 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
 
             val labEvents: List[EventBlueprint] = if(hgp.length > 1){
                 hgp.indices.flatMap(number => generateEvents(subjectEntity, LaboratoryEvent,
-                    hgp.apply(number)._1, hgp.apply(number)._2, Some(resourceEntity), number+1, number+1)).toList
+                    hgp.apply(number)._1, hgp.apply(number)._2, resourceEntity, number+1, number+1)).toList
             }
             else if (hgp.isEmpty) List()
-            else generateEvents(subjectEntity, LaboratoryEvent, hgp.head._1, hgp.head._2, Some(resourceEntity), 1, ngp)
+            else generateEvents(subjectEntity, LaboratoryEvent, hgp.head._1, hgp.head._2, resourceEntity, 1, ngp)
 
             subjectEntity.events ++= (theoryEvents ++ problemsEvents ++ labEvents)
 
@@ -241,7 +241,8 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
             }
 
             val duration = try{
-                val intDuration = (durationText.toDouble*AppSettings.TimeSlotsPerHour).toInt
+                val intDuration = (durationText.replace(",", ".").toDouble
+                                    * AppSettings.TimeSlotsPerHour).toInt
 
                 if(intDuration < 1 || intDuration > AppSettings.maxEventDuration) {
                     errors += OutOfRangeEventDurationError(row, field, header, durationText)
@@ -332,8 +333,18 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         val subjects: ArrayBuffer[SubjectBlueprint] = new mutable.ArrayBuffer
         val events: ArrayBuffer[EventBlueprint] = new mutable.ArrayBuffer
         //val courses: ArrayBuffer[CourseBlueprint] = new mutable.ArrayBuffer
-        //val resources: ArrayBuffer[ResourceBlueprint] = new mutable.ArrayBuffer
+        val resources: ArrayBuffer[ResourceBlueprint] = new mutable.ArrayBuffer
         val errors: ArrayBuffer[ImportError] = new mutable.ArrayBuffer
+
+        //TODO improvable, could be created at start and add all event when reading lines, improves performance.
+        //Auxiliary resource to model theory room occupation
+        val theoryResource = new ResourceBlueprint
+        theoryResource.name = "Aula Teoria/Problemes"
+        theoryResource.quantity = 1
+        //TODO theoryResource.capacity = ?
+        resources += theoryResource
+
+        resources ++= createdResources.values
 
         lineImportJobs.foreach(lij => if (lij.finished) {
             subjects += lij.subject
@@ -343,8 +354,10 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
             errors ++= lij.errors
         })
 
+        events.foreach(e => if(e.eventType == TheoryEvent || e.eventType == ProblemsEvent) e.neededResource = Some(theoryResource))
+
         ImportJob(subjects.toList, events.toList,
-            createdResources.values.toList, createdCourses.values.toList,
+            resources.toList, createdCourses.values.toList,
             errors.toList, finished = true)
     }
 

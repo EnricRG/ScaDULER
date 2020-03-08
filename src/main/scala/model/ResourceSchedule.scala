@@ -38,7 +38,7 @@ class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Int](inte
         if (week == EveryWeek.toWeekNumber) {
             val aAvailability = get(AWeek.toWeekNumber, interval)
             val bAvailability = get(BWeek.toWeekNumber, interval)
-            aAvailability > 0 && aAvailability == bAvailability
+            aAvailability > 0 && bAvailability > 0
         }
         else get(week, interval) > 0
     }

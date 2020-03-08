@@ -58,7 +58,8 @@ class MiniZincInstanceSolver extends Actor{
                 if(minizincAssignments.isDefined) {
                     val indexDeviation = MiniZincInstance.ModelIndexDeviation
 
-                    val assignments = minizincAssignments.get
+                    //TODO this take() shouldn't be handled here, minizinc should only output assigned values.
+                    val assignments = minizincAssignments.get.take(instanceData.nEvents-instanceData.nPreassignedEvents)
                         .map(x => EventAssignment(instanceData.eventMapping(x.eventID), x.week, x.interval-indexDeviation))
 
                     sender ! Solution(assignments)

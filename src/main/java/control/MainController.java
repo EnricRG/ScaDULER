@@ -11,6 +11,7 @@ import control.manage.SubjectManagerController;
 import control.schedule.*;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
+import file.imprt.ImportError;
 import file.imprt.ImportJob;
 import file.imprt.MCFImportReader;
 import javafx.fxml.Initializable;
@@ -465,6 +466,9 @@ public class MainController implements Initializable {
 
         if(importJob.errors().nonEmpty()){
             //TODO print errors to new window
+            for(ImportError e: JavaConverters.asJavaCollection(importJob.errors())){
+                System.out.println(e.message());
+            }
         }
         else{
             EntityManager.importEntities(importJob, this);

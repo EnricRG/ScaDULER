@@ -53,12 +53,13 @@ class MasterActor extends Actor{
             val secondQuarterSolver = context.system.actorOf(Props(new MiniZincInstanceSolver))
 
             implicit val timeout: Timeout = new Timeout(time seconds)
-            val firstQuarterFuture = firstQuarterSolver ? MiniZincSolveRequest(MiniZincInstance.fromInstanceData(firstQuarterInstance),"1")
-            val secondQuarterFuture = secondQuarterSolver ? MiniZincSolveRequest(MiniZincInstance.fromInstanceData(secondQuarterInstance),"2")
 
+            val firstQuarterFuture = firstQuarterSolver ? MiniZincSolveRequest(MiniZincInstance.fromInstanceData(firstQuarterInstance),"1")
             //master thread stops here
-            //FIXME race condition here, and shouldn't. This calls are synchronous.
             val response1 = getResponseFromFuture(firstQuarterFuture, timeout)
+            //Fixed race condition making the calls synchronous. TODO redesign this code
+            val secondQuarterFuture = secondQuarterSolver ? MiniZincSolveRequest(MiniZincInstance.fromInstanceData(secondQuarterInstance),"2")
+            //master thread stops here
             val response2 = getResponseFromFuture(secondQuarterFuture, timeout)
 
             if(response1.get.isSuccess && response2.get.isSuccess){

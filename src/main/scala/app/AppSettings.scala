@@ -39,7 +39,7 @@ object AppSettings {
     var days: Int = 5
     var timeSlots: Int = timeSlotsPerDay*days
 
-    var maxEventDuration: Int = 4
+    var maxEventDuration: Int = 5
     var eventViewColumnPercentage: Double = 0.9
 
     var minQuantityPerResource: Int = 1

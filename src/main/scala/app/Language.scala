@@ -125,9 +125,9 @@ object DefaultLanguage extends Language {
         "manageResources_addButton" -> "Add Resource",
         "manageResources_modifyButton" -> "Modify Resource",
         "manageResources_deleteButton" -> "Delete Resource",
-        "manageResources_quantityField" -> "quantity",
-        "manageResources_subButton" -> "-1",
-        "manageResources_sumButton" -> "+1",
+        "manageResources_quantityField" -> "quantity", //obsolete
+        "manageResources_subButton" -> "-1", //obsolete
+        "manageResources_sumButton" -> "+1", //obsolete
         "resourceTable_placeholder" -> "No resources",
         "manageResources_availabilityPrompt" -> "Manage Availability",
 
