@@ -95,6 +95,10 @@ object DefaultLanguage extends Language {
         "runButtons_timeoutTooltip" -> "Seconds until the solver stops searching valid assignments",
         "runButtons_stop" -> "Stop",
 
+        "softViabilityCheckBox" -> "Soft Viability Check",
+        "nonViableAssignments_windowTitle" -> "Non viable events assigned",
+        "nonViableAssignments_message" -> "Non viable events have been assigned. There must not be any in order to continue with the autocompletion of this schedule. Would you like to unassign them all?",
+
         "optional_tag" -> "(Optional)",
 
         "rightPane_eventSearch" -> "Enter Event name",

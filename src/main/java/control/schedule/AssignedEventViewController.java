@@ -4,19 +4,24 @@ import app.AppSettings;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import model.Event;
 
 public class AssignedEventViewController extends EventViewController {
 
+    public static final Color NON_VIABLE_COLOR = Color.LIGHTCORAL;
+
     private final ScheduleIntervalController intervalController;
     private final Integer interval;
+    private final boolean viable;
 
     public TitledPane hourPane;
 
-    public AssignedEventViewController(ScheduleIntervalController intervalController, Event event, Integer interval) {
+    public AssignedEventViewController(ScheduleIntervalController intervalController, Event event, Integer interval, boolean viable) {
         super(event);
         this.intervalController = intervalController;
         this.interval = interval;
+        this.viable = viable;
     }
 
     @Override
@@ -62,6 +67,10 @@ public class AssignedEventViewController extends EventViewController {
     protected void setEventColor() {
         hourPane.setStyle("-fx-color: #" + event.getEventType().color().toString().substring(2) + ";");
         super.setEventColor();
+        if(!viable) {
+            String originalStyle = mainBox.getStyle().replace("-fx-background-color: #" + event.getEventType().color().toString().substring(2) + ";", "");
+            mainBox.setStyle(originalStyle + "-fx-background-color: #" + NON_VIABLE_COLOR.toString().substring(2) + ";");
+        }
     }
 
     @Override

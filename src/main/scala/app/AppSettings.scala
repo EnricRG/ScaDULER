@@ -48,4 +48,6 @@ object AppSettings {
 
     var tempPath: String = "temp/"
 
+    var softViabilityCheck: Boolean = true
+
 }

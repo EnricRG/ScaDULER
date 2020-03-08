@@ -103,6 +103,8 @@ public class MainController implements Initializable {
     public TextField runButtons_timeoutField;
     public Button runButtons_stop;
 
+    public CheckBox softViabilityCheckBox;
+
     public TabPane courseTabs;
     public Tab courseTabs_addTab;
 
@@ -119,6 +121,8 @@ public class MainController implements Initializable {
     private Map<Long, Tab> courseTabMap = new HashMap<>();
     private Map<Long, Node> eventViewMap = new HashMap<>();
 
+    private Map<Long, Event> nonViableEventAssignments = new HashMap<>();
+
     public void processEventAssignment(CourseScheduleController courseScheduleController,
                                        QuarterScheduleController quarterScheduleController,
                                        ScheduleIntervalController intervalController,
@@ -132,20 +136,23 @@ public class MainController implements Initializable {
                 eventDrag.getEvent()
         );
 
-        if(viabilityChecker.isAViableAssignment()){ //if event can be assigned there
-            //TODO soft violation of viability. Allow to assign even if its not viable.
+        if(viabilityChecker.isAViableAssignment() || AppSettings.softViabilityCheck()){ //if event can be assigned there
+
             courseScheduleController.hideWarnings();
             quarterScheduleController.processEventDrop(
                     eventDrag.getEvent(),
                     eventDrag.dragSource,
                     hint,
                     intervalController.getWeek(),
-                    intervalController.getInterval()
+                    intervalController.getInterval(),
+                    viabilityChecker.isAViableAssignment()
             );
             eventQuartersMap.put(eventDrag.getEvent().getID(), quarterScheduleController);
+            if(!viabilityChecker.isAViableAssignment()) nonViableEventAssignments.put(eventDrag.getEvent().getID(), eventDrag.getEvent());
             assignmentDone(eventDrag);
         }
-        else {
+
+        if(!viabilityChecker.isAViableAssignment()) {
             Warning warning = viabilityChecker.getWarning();
             courseScheduleController.popUpWarning(warning);
         }
@@ -154,6 +161,7 @@ public class MainController implements Initializable {
     public void processEventUnassignment(QuarterScheduleController quarterScheduleController, Event event){
         quarterScheduleController.unassignEvent(event);
         eventQuartersMap.remove(event.getID());
+        nonViableEventAssignments.remove(event.getID());
         addUnassignedEvent(event);
     }
 
@@ -313,6 +321,8 @@ public class MainController implements Initializable {
         viewButtons_eventList.setText(AppSettings.language().getItem("viewButtons_eventList"));
         //viewButtons_unfinishedEventsList.setText(AppSettings.language().getItem("viewButtons_unfinishedEventsList"));
 
+        softViabilityCheckBox.setText(AppSettings.language().getItem("softViabilityCheckBox"));
+
         runButtons_title.setText(AppSettings.language().getItem("runButtons_title"));
         runButtons_solve.setText(AppSettings.language().getItem("runButtons_solve"));
         runButtons_optimize.setText(AppSettings.language().getItem("runButtons_optimize"));
@@ -373,7 +383,7 @@ public class MainController implements Initializable {
         runButtons_timeoutField.setText(String.valueOf(AppSettings.defaultTimeout()));
 
         runButtons_solve.setOnAction(event -> {
-            MainApp.solve(getTimeoutFieldValue());
+            solve();
             event.consume();
         });
         runButtons_stop.setOnAction(event -> {
@@ -381,10 +391,36 @@ public class MainController implements Initializable {
             event.consume();
         });
 
+        //TODO this should be done on a setUpViews method.
+        softViabilityCheckBox.setSelected(AppSettings.softViabilityCheck());
+
+        softViabilityCheckBox.setOnAction(actionEvent -> {
+            AppSettings.softViabilityCheck_$eq(softViabilityCheckBox.isSelected());
+            actionEvent.consume();
+        });
+
         rightPane_eventSearch.setOnKeyTyped(event-> {
             filterRightPane(rightPane_eventSearch.getText().trim());
             event.consume();
         });
+    }
+
+    private void solve() {
+        if(nonViableEventAssignments.isEmpty()) MainApp.solve(getTimeoutFieldValue());
+        else{
+            boolean accepted = promptChoice(
+                    AppSettings.language().getItem("nonViableAssignments_windowTitle"),
+                    AppSettings.language().getItem("nonViableAssignments_message")
+            );
+
+            if(accepted){
+                for(Event e: new ArrayList<>(nonViableEventAssignments.values())){
+                    processEventUnassignment(eventQuartersMap.get(e.getID()), e);
+                }
+                //nonViableEventAssignments.clear(); //this is not necessary, code above has the same effect.
+                solve(); //recursion hehe
+            }
+        }
     }
 
     private void filterRightPane(String text) {

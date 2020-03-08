@@ -76,8 +76,8 @@ public class ScheduleIntervalController {
         quarterScheduleController.startEventDrag(event, MainController.EventDrag.FROM_ASSIGNED, assignedEventViewController, this);
     }
 
-    public void addEvent(Event event, int hint) {
-        AssignedEventViewController assignedView = new AssignedEventViewController(this, event, interval);
+    public void addEvent(Event event, int hint, boolean viable) {
+        AssignedEventViewController assignedView = new AssignedEventViewController(this, event, interval, viable);
 
         try{new ViewFactory<>(FXMLPaths.AssignedEvent()).load(assignedView);} catch (IOException ioe){ ioe.printStackTrace(); }
 
