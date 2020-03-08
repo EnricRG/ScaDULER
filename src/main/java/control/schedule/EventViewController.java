@@ -30,7 +30,7 @@ public abstract class EventViewController implements Initializable {
 
     protected void initializeEventView() {
         eventDisplayName.setText(
-            !event.getShortName().isBlank() ?
+            !event.getShortName().trim().isEmpty() ?
                 String.format("[%s] %s",event.getShortName(), event.getName()) :
                 String.format("%s", event.getName())
         );

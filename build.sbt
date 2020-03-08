@@ -10,7 +10,7 @@ scalaVersion := "2.12.8"
 //libraryDependencies += "org.scalafx" %% "scalafx" % "12.0.1-R17"
 
 resolvers += Resolver.url("bintray-sbt-plugins", url("http://dl.bintray.com/sbt/sbt-plugin-releases"))(Resolver.ivyStylePatterns)
-
+/*
 // Determine OS version of JavaFX binaries
 lazy val osName = System.getProperty("os.name") match {
   case n if n.startsWith("Linux")   => "linux"
@@ -23,7 +23,7 @@ lazy val javaFXModules = Seq("base", "controls", "fxml", "graphics", "media", "s
 libraryDependencies ++= javaFXModules.map( m =>
   "org.openjfx" % s"javafx-$m" % "12.0.1" classifier osName
 )
-
+*/
 libraryDependencies +=
   "com.typesafe.akka" %% "akka-actor" % "2.4.20"
 

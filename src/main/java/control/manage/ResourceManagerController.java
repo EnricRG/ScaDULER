@@ -83,7 +83,7 @@ public class ResourceManagerController extends FormController {
         resourceTable_nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         resourceTable_capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
 
-        resourceTable_availabilityColumn.setCellFactory(param ->  new TableCell<>(){
+        resourceTable_availabilityColumn.setCellFactory(param ->  new TableCell<Resource, Void>(){
 
 
             @Override
@@ -136,7 +136,7 @@ public class ResourceManagerController extends FormController {
         button.setPadding(new Insets(1));
         button.setMaxWidth(Double.MAX_VALUE);
         button.setMaxHeight(Double.MAX_VALUE);
-        button.setOnAction(event -> manageResourceAvailability(c.getTableRow().getItem()));
+        button.setOnAction(event -> manageResourceAvailability((Resource) c.getTableRow().getItem()));
         return hbox;
     }
 
@@ -179,7 +179,7 @@ public class ResourceManagerController extends FormController {
         ObservableList<Resource> filteredResources = FXCollections.observableArrayList(resources);
 
         //if search field is not blank, remove all rows that resource's name does not contain fields content as a substring
-        if(!text.isBlank()) filteredResources.removeIf(resource -> !resource.getName().toLowerCase().contains(text));
+        if(!text.trim().isEmpty()) filteredResources.removeIf(resource -> !resource.getName().toLowerCase().contains(text));
 
         resourceTable.setItems(filteredResources);
     }
@@ -242,7 +242,7 @@ public class ResourceManagerController extends FormController {
     //pre: name and capacity not null
     private Warning resourceCanBeCreated() {
         Integer capacity = getCapacityFieldValue();
-        if(resourceNameField.getText().trim().isBlank())
+        if(resourceNameField.getText().trim().isEmpty())
             return new Warning(AppSettings.language().getItem("warning_resourceNameCannotBeEmpty"));
         else if(capacity.equals(Integer.MIN_VALUE)){
             return new Warning(AppSettings.language().getItem("warning_resourceCapacityNaN"));

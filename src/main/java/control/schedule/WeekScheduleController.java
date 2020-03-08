@@ -10,7 +10,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import util.Utils;
@@ -19,6 +18,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class WeekScheduleController implements Initializable {
+
+    public static final int NUMBER_OF_ROWS = 23;
+    public static final int NUMBER_OF_COLUMNS = 6;
 
     protected static final String HEADER_CSS_STYLE = "-fx-border-width: 0 0 2 0; -fx-border-color: gray;";
     protected static final String INNER_CELL_CSS_BORDER = "-fx-border-width: 1 0 0 0;";
@@ -58,11 +60,9 @@ public class WeekScheduleController implements Initializable {
     }
 
     private void initializeGrid() {
-        int numberOfRows = gridPane.getRowCount();
-        int numberOfColumns = gridPane.getColumnCount();
 
         //first row
-        for(int column = 0; column < numberOfColumns; column++){
+        for(int column = 0; column < NUMBER_OF_COLUMNS; column++){
             ScheduleCell cell = (ScheduleCell) Utils.getNodeByColumnAndRow(column,0,gridPane);
 
             if(cell != null) cell.setStyle(HEADER_CSS_STYLE);
@@ -77,8 +77,8 @@ public class WeekScheduleController implements Initializable {
 
         //skipping first row that contains the headers
         //I nested the loops this way to get all intervals sorted by its global interval number
-        for(int column = 0; column < numberOfColumns; column++){
-            for(int row = 1; row < numberOfRows; row++){
+        for(int column = 0; column < NUMBER_OF_COLUMNS; column++){
+            for(int row = 1; row < NUMBER_OF_ROWS; row++){
                 ScheduleCell cell = (ScheduleCell) Utils.getNodeByColumnAndRow(column,row,gridPane);
 
                 if(cell == null){ //fill grid cell

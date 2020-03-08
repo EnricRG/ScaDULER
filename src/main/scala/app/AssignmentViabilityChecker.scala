@@ -42,8 +42,8 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
             val eventShortName = event.getShortName
             val incompatibilityShortName = incompatibilityClashes.head.getShortName
             Some(new Warning(String.format(AppSettings.language.getItem("warning_incompatibleEvents"),
-                if(eventShortName.isBlank) event.getName else eventShortName,
-                if(incompatibilityShortName.isBlank) incompatibilityClashes.head.getName else incompatibilityShortName))
+                if(eventShortName.trim.isEmpty) event.getName else eventShortName,
+                if(incompatibilityShortName.trim.isEmpty) incompatibilityClashes.head.getName else incompatibilityShortName))
             )
         }
     }

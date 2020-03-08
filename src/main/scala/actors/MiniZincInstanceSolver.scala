@@ -78,7 +78,7 @@ class MiniZincInstanceSolver extends Actor{
         lineStream.head match{
             case line if line.contains("UNSATISFIABLE") => None //no solution
             case line if line.contains("---") => None //unexpected minizinc output
-            case line if line.isBlank => None //no minizinc output
+            case line if line.trim.isEmpty => None //no minizinc output
             case line if line.contains("SOLUTION") =>
                 val solution = lineStream.takeWhile(!_.contains("ENDSOLUTION")).drop(2) //drop 'SOLUTION' and length lines
                 val assignments = solution.map(line => line.slice(1, line.length-1).split(","))

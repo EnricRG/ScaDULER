@@ -451,7 +451,7 @@ public class MainController implements Initializable {
     }
 
     private void openFile(){
-        File f = new FileChooser().showOpenDialog(fileMenu_open.getStyleableNode().getScene().getWindow());
+        File f = new FileChooser().showOpenDialog(fileMenu_open.getGraphic().getScene().getWindow());
 
         //TODO prompt warning if changes haven't been saved.
         if(f != null){
@@ -480,7 +480,7 @@ public class MainController implements Initializable {
     }
 
     private void importNewFile() {
-        File f = new FileChooser().showOpenDialog(fileMenu_open.getStyleableNode().getScene().getWindow());
+        File f = new FileChooser().showOpenDialog(fileMenu_open.getGraphic().getScene().getWindow());
 
         if(f != null){
             String extension = Utils.getFileExtension(f.getName());
@@ -577,7 +577,7 @@ public class MainController implements Initializable {
     }
 
     private void saveToNewFile() {
-        File f = new FileChooser().showSaveDialog(fileMenu_saveAs.getStyleableNode().getScene().getWindow());
+        File f = new FileChooser().showSaveDialog(fileMenu_saveAs.getGraphic().getScene().getWindow());
 
         if(f != null){
             userProjectFile = f;

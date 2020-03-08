@@ -147,7 +147,7 @@ public class SubjectFormController extends FormController {
         generateEvents_eventTypeSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(EventTypes.commonEventTypes())));
 
         generateEvents_durationSelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Duration.getDurations().toBuffer())));
-        generateEvents_durationSelector.setCellFactory(param -> new ListCell<>(){
+        generateEvents_durationSelector.setCellFactory(param -> new ListCell<Duration>(){
                     @Override
                     protected void updateItem(Duration item, boolean empty) {
                         super.updateItem(item, empty);
@@ -160,7 +160,7 @@ public class SubjectFormController extends FormController {
         generateEvents_periodicitySelector.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.periodicityList())));
 
         selectResourceListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        selectResourceListView.setCellFactory(param -> new ListCell<>() {
+        selectResourceListView.setCellFactory(param -> new ListCell<Resource>() {
             @Override
             protected void updateItem(Resource resource, boolean empty) {
                 super.updateItem(resource, empty);
@@ -275,14 +275,14 @@ public class SubjectFormController extends FormController {
     private void filterResourceList(String filter) {
         ObservableList<Resource> resources = FXCollections.observableArrayList(JavaConverters.asJavaCollection(resourceDatabase.getElements()));
 
-        if(!filter.isBlank()) resources.removeIf(resource -> !resource.getName().toLowerCase().contains(filter.trim().toLowerCase()));
+        if(!filter.trim().isEmpty()) resources.removeIf(resource -> !resource.getName().toLowerCase().contains(filter.trim().toLowerCase()));
 
         selectResourceListView.setItems(resources);
     }
 
     private int getNumberFromField(TextField textField){
         int number = 1;
-        if(!textField.getText().isBlank()) {
+        if(!textField.getText().trim().isEmpty()) {
             try {
                 number = Integer.parseInt(textField.getText());
             } catch (NumberFormatException npe){
@@ -368,10 +368,10 @@ public class SubjectFormController extends FormController {
     }
 
     private Warning checkSubjectCreationWarnings() {
-        if(subjectNameField.getText().isBlank()){
+        if(subjectNameField.getText().trim().isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_subjectNameCannotBeEmpty"));
         }
-        else if(subjectShortNameField.getText().isBlank()){
+        else if(subjectShortNameField.getText().trim().isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_subjectShortNameCannotBeEmpty"));
         }
         return null;

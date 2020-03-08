@@ -116,7 +116,7 @@ public class EventFormController extends FormController {
         eventQuarterBox.getItems().add(0, NoQuarter.noQuarter());
 
         eventSubjectBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(subjectDatabase.getFinishedSubjects())));
-        eventSubjectBox.setConverter(new StringConverter<>() {
+        eventSubjectBox.setConverter(new StringConverter<Subject>() {
             @Override
             public String toString(Subject object) {
                 if (object == null) return null;
@@ -136,7 +136,7 @@ public class EventFormController extends FormController {
         eventPeriodicityBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(Weeks.periodicityList())));
 
         eventResourceBox.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(resourceDatabase.getElements())));
-        eventResourceBox.setConverter(new StringConverter<>() {
+        eventResourceBox.setConverter(new StringConverter<Resource>() {
             @Override
             public String toString(Resource object) {
                 if (object == null) return null;
@@ -225,7 +225,7 @@ public class EventFormController extends FormController {
 
     @Override
     protected Warning checkWarnings() {
-        if(eventNameField.getText().isBlank()){
+        if(eventNameField.getText().trim().isEmpty()){
             return new Warning(AppSettings.language().getItem("warning_eventNameCannotBeEmpty"));
         }
         else if(eventCourseBox.getValue() == null){

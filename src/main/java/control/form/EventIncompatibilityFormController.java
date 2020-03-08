@@ -79,7 +79,7 @@ public class EventIncompatibilityFormController extends StageController implemen
         ObservableList<Event> filteredResources = FXCollections.observableArrayList(allEvents);
 
         //if search field is not blank, remove all rows that event's name does not contain field's content as a substring
-        if(!text.isBlank()) filteredResources.removeIf(event -> !event.getName().toLowerCase().contains(text.toLowerCase()));
+        if(!text.trim().isEmpty()) filteredResources.removeIf(event -> !event.getName().toLowerCase().contains(text.toLowerCase()));
 
         generalEventTable.setItems(filteredResources);
     }
