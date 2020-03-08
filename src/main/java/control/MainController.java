@@ -132,7 +132,8 @@ public class MainController implements Initializable {
         );
 
         if(viabilityChecker.isAViableAssignment()){ //if event can be assigned there
-            //TODO allow multiple course assignments
+            //TODO split between quarters. First quarter assignments shouldn't affect second quarter and viceversa.
+            //TODO soft violation of viability. Allow to assign even if its not viable.
             courseScheduleController.hideWarnings();
             quarterScheduleController.processEventDrop(
                     eventDrag.getEvent(),
