@@ -116,7 +116,7 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     def setPeriodicity(periodicity: Periodicity): Unit = this.periodicity = periodicity
 
     def getWeek: Week = {
-        if(isUnassigned) throw new UnsupportedOperationException("unassigned week")
+        //if(isUnassigned) throw new UnsupportedOperationException("unassigned week")
         week
     }
     def setWeek(week: Week): Unit = this.week = week

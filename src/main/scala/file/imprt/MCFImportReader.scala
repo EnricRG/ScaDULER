@@ -137,23 +137,27 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                     newResource
             })
 
+            //TODO collapse all cases to single line (the one inside first if statement).
+            /*val theoryEvent = (1 to ngg).flatMap(n => hgg.indices.flatMap(number =>
+                generateEvents(subjectEntity, TheoryEvent, hgg.apply(number)._1, hgg.apply(number)._2, None, n, n))
+            ).toList*/
             val theoryEvents: List[EventBlueprint] = if(hgg.length > 1){
-                hgg.indices.flatMap(number => generateEvents(subjectEntity, TheoryEvent,
-                    hgg.apply(number)._1, hgg.apply(number)._2, None, number+1, number+1)).toList
+                (1 to ngg).flatMap(n => hgg.indices.flatMap(number => generateEvents(subjectEntity, TheoryEvent,
+                    hgg.apply(number)._1, hgg.apply(number)._2, None, n, n))).toList
             }
             else if (hgg.isEmpty) List()
             else generateEvents(subjectEntity, TheoryEvent, hgg.head._1, hgg.head._2, None, 1, ngg)
 
             val problemsEvents: List[EventBlueprint] = if(hgm.length > 1){
-                hgm.indices.flatMap(number => generateEvents(subjectEntity, ProblemsEvent,
-                    hgm.apply(number)._1, hgm.apply(number)._2, None, number+1, number+1)).toList
+                (1 to ngm).flatMap(n => hgm.indices.flatMap(number => generateEvents(subjectEntity, ProblemsEvent,
+                    hgm.apply(number)._1, hgm.apply(number)._2, None, number+1, number+1))).toList
             }
             else if (hgm.isEmpty) List()
             else generateEvents(subjectEntity, ProblemsEvent, hgm.head._1, hgm.head._2, None, 1, ngm)
 
             val labEvents: List[EventBlueprint] = if(hgp.length > 1){
-                hgp.indices.flatMap(number => generateEvents(subjectEntity, LaboratoryEvent,
-                    hgp.apply(number)._1, hgp.apply(number)._2, resourceEntity, number+1, number+1)).toList
+                (1 to ngp).flatMap(n => hgp.indices.flatMap(number => generateEvents(subjectEntity, LaboratoryEvent,
+                    hgp.apply(number)._1, hgp.apply(number)._2, resourceEntity, number+1, number+1))).toList
             }
             else if (hgp.isEmpty) List()
             else generateEvents(subjectEntity, LaboratoryEvent, hgp.head._1, hgp.head._2, resourceEntity, 1, ngp)
