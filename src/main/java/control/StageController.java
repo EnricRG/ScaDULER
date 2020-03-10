@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 public abstract class StageController implements Initializable{
 
     /** Controlled Stage. */
-    private Stage stage = null;
+    protected Stage stage = null;
 
     /** Creates an instance of StageController without initializing the stage. */
     public StageController(){}

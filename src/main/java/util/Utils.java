@@ -18,19 +18,21 @@ import java.io.IOException;
 
 public class Utils {
 
+    public static <C extends Initializable> Scene loadScene(ViewFactory<C> viewFactory, C controller){
+        try{
+            return new Scene((Parent) (controller == null ? viewFactory.load() : viewFactory.load(controller)));
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+            return new Scene(new VBox());
+        }
+    }
+
     public static Stage promptBoundWindow(String title, Window owner, Modality modality, ViewFactory<?> viewFactory){
         return promptBoundWindow(title, owner, modality, viewFactory, null);
     }
 
     public static <C extends Initializable> Stage promptBoundWindow(String title, Window owner, Modality modality, ViewFactory<C> viewFactory, C controller){
-        Scene scene;
-
-        try{
-            scene = new Scene((Parent) (controller == null ? viewFactory.load() : viewFactory.load(controller)));
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-            scene = new Scene(new VBox());
-        }
+        Scene scene = loadScene(viewFactory, controller);
 
         Stage stage = new Stage();
 
