@@ -26,10 +26,10 @@ object DefaultLanguage extends Language {
         "problemEvent" -> "Problem",
         "specialEvent" -> "Special",
         "theoryEventShort" -> "T.",
-        "labEventShort" -> "Lab.",
+        "labEventShort" -> "L.",
         "computerEventShort" -> "PC",
-        "problemEventShort" -> "Prob.",
-        "specialEventShort" -> "Spec.",
+        "problemEventShort" -> "P.",
+        "specialEventShort" -> "S.",
 
         "monday" -> "Monday",
         "tuesday" -> "Tuesday",
