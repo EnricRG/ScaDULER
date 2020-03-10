@@ -93,9 +93,9 @@ public class EventIncompatibilityFormController extends StageController implemen
             generalEventTable.getSelectionModel().selectAll();
             event.consume();
         });
-        eventSearchBox.setOnKeyTyped(event -> {
+        eventSearchBox.setOnKeyTyped(keyEvent -> {
             filterGeneralEventTable(eventSearchBox.getText().trim());
-            event.consume();
+            //keyEvent.consume();
         });
         addButton.setOnAction(event -> {
             addSelectedIncompatibilities();

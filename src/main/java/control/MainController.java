@@ -399,9 +399,9 @@ public class MainController extends StageController {
             actionEvent.consume();
         });
 
-        rightPane_eventSearch.setOnKeyTyped(event-> {
+        rightPane_eventSearch.setOnKeyTyped(keyEvent-> {
             filterRightPane(rightPane_eventSearch.getText().trim());
-            event.consume();
+            //keyEvent.consume();
         });
     }
 

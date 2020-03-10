@@ -243,7 +243,7 @@ public class ResourceAvailabilityController extends StageController{
         quantityField.setOnKeyReleased(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.ENTER) setSelectionFromQuantityField();
             else if(keyEvent.getCode() == KeyCode.ESCAPE) setButton.requestFocus();
-            keyEvent.consume();
+            //keyEvent.consume();
         });
 
         for(int week = 0; week <= 1; week++) {

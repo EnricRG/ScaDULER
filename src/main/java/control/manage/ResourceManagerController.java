@@ -104,9 +104,9 @@ public class ResourceManagerController extends FormController {
 
     @Override
     protected void bindActions() {
-        searchResourceField.setOnKeyTyped(event -> {
+        searchResourceField.setOnKeyTyped(keyEvent -> {
             filterResourceTable(searchResourceField.getText().trim().toLowerCase());
-            event.consume();
+            //keyEvent.consume();
         });
         addResourceButton.setOnAction(event -> {
             addResource();

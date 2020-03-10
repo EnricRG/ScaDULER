@@ -185,10 +185,18 @@ public class SubjectFormController extends FormController {
                     generateEvents_eventTypeSelector.getValue(),
                     generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
                     1);
-            keyEvent.consume();
+            //keyEvent.consume();
         });
 
         generateEvents_eventTypeSelector.setOnAction(event -> {
+            computeGenerationExample(
+                    subjectNameField.getText(),
+                    generateEvents_eventTypeSelector.getValue(),
+                    generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
+                    1);
+            event.consume();
+        });
+        generateEvents_periodicitySelector.setOnAction(event -> {
             computeGenerationExample(
                     subjectNameField.getText(),
                     generateEvents_eventTypeSelector.getValue(),
@@ -203,7 +211,7 @@ public class SubjectFormController extends FormController {
 
         selectResourceSearchBar.setOnKeyTyped(keyEvent -> {
             filterResourceList(selectResourceSearchBar.getText());
-            keyEvent.consume();
+            //keyEvent.consume();
         });
         generateEventsButton.setOnAction(event -> {
             generateEvents(
