@@ -2,7 +2,7 @@ package model
 
 import app.AppSettings
 import javafx.scene.paint
-import Weeks.{EveryWeek, Periodicity, Week, Weekly}
+import model.Weeks.{Periodicity, Week}
 import service.{ID, Identifiable}
 
 import scala.collection.mutable
@@ -18,13 +18,13 @@ abstract class EventType extends Serializable {
 object TheoryEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("theoryEvent")
     override def toShortString: String = AppSettings.language.getItem("theoryEventShort")
-    override def color: paint.Color = paint.Color.web("#CABDBF")
+    override def color: paint.Color = paint.Color.SKYBLUE
 }
 
 object LaboratoryEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("labEvent")
     override def toShortString: String = AppSettings.language.getItem("labEventShort")
-    override def color: paint.Color = paint.Color.web("#FBE983")
+    override def color: paint.Color = paint.Color.LIGHTGREEN
 }
 
 object ComputerEvent extends EventType {
@@ -36,7 +36,7 @@ object ComputerEvent extends EventType {
 object ProblemsEvent extends EventType {
     override def toString: String = AppSettings.language.getItem("problemEvent")
     override def toShortString: String = AppSettings.language.getItem("problemEventShort")
-    override def color: paint.Color = TheoryEvent.color
+    override def color: paint.Color = paint.Color.DARKSALMON
 }
 
 object SpecialEvent extends EventType {
