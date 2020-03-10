@@ -14,6 +14,8 @@ import factory.ViewFactory;
 import file.imprt.ImportError;
 import file.imprt.ImportJob;
 import file.imprt.MCFImportReader;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -399,9 +401,8 @@ public class MainController extends StageController {
             actionEvent.consume();
         });
 
-        rightPane_eventSearch.setOnKeyTyped(keyEvent-> {
+        rightPane_eventSearch.textProperty().addListener((observable, oldValue, newValue) -> {
             filterRightPane(rightPane_eventSearch.getText().trim());
-            //keyEvent.consume();
         });
     }
 

@@ -179,13 +179,12 @@ public class SubjectFormController extends FormController {
 
     @Override
     protected void bindActions() {
-        subjectNameField.setOnKeyTyped(keyEvent -> {
+        subjectNameField.textProperty().addListener((observable, oldValue, newValue) -> {
             computeGenerationExample(
                     subjectNameField.getText(),
                     generateEvents_eventTypeSelector.getValue(),
                     generateEvents_periodicitySelector.getSelectionModel().getSelectedItem(),
                     1);
-            //keyEvent.consume();
         });
 
         generateEvents_eventTypeSelector.setOnAction(event -> {
@@ -209,9 +208,8 @@ public class SubjectFormController extends FormController {
             event.consume();
         });
 
-        selectResourceSearchBar.setOnKeyTyped(keyEvent -> {
+        selectResourceSearchBar.textProperty().addListener((observable, oldValue, newValue) -> {
             filterResourceList(selectResourceSearchBar.getText());
-            //keyEvent.consume();
         });
         generateEventsButton.setOnAction(event -> {
             generateEvents(

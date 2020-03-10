@@ -3,11 +3,15 @@ package control.form;
 import app.AppSettings;
 import app.MainApp;
 import control.StageController;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import model.Event;
 import scala.collection.JavaConverters;
 import service.EventDatabase;
@@ -93,9 +97,8 @@ public class EventIncompatibilityFormController extends StageController implemen
             generalEventTable.getSelectionModel().selectAll();
             event.consume();
         });
-        eventSearchBox.setOnKeyTyped(keyEvent -> {
-            filterGeneralEventTable(eventSearchBox.getText().trim());
-            //keyEvent.consume();
+        eventSearchBox.textProperty().addListener((observable, oldValue, newValue) -> {
+                filterGeneralEventTable(eventSearchBox.getText().trim());
         });
         addButton.setOnAction(event -> {
             addSelectedIncompatibilities();
