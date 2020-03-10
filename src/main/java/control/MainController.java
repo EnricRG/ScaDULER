@@ -14,9 +14,6 @@ import factory.ViewFactory;
 import file.imprt.ImportError;
 import file.imprt.ImportJob;
 import file.imprt.MCFImportReader;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -29,6 +26,8 @@ import javafx.stage.Window;
 import misc.Warning;
 import model.Course;
 import model.Event;
+import model.Quarter;
+import model.Quarters;
 import scala.collection.JavaConverters;
 import service.AppDatabase;
 import service.CourseDatabase;
@@ -124,6 +123,7 @@ public class MainController extends StageController {
     private Map<Long, Node> eventViewMap = new HashMap<>();
 
     private Map<Long, Event> nonViableEventAssignments = new HashMap<>();
+    private boolean selectingTabs;
 
     public void processEventAssignment(CourseScheduleController courseScheduleController,
                                        QuarterScheduleController quarterScheduleController,
@@ -699,6 +699,21 @@ public class MainController extends StageController {
         ).show();
     }
 
+    public void selectQuarterTabs(Quarter quarter){
+        if(!selectingTabs) {
+            selectingTabs = true;
+            ArrayList<Tab> temporalCourseTabs = new ArrayList<>(courseTabs.getTabs());
+            temporalCourseTabs.remove(courseTabs_addTab);
+            for(Tab t: temporalCourseTabs){
+                CourseScheduleController courseController = tabCourseMap.get(t);
+                Tab quarterTab = quarter == Quarters.firstQuarter() ?
+                        courseController.firstQuarterTab : courseController.secondQuarterTab;
+                if(!quarterTab.isSelected()) courseController.tabPane.getSelectionModel().select(quarterTab);
+            }
+            selectingTabs = false;
+        }
+    }
+
     //TODO: remove this method, it has only debugging purposes.
     public void addCourseTab(){
         Course c = courseDatabase.createCourse()._2;
@@ -735,11 +750,11 @@ public class MainController extends StageController {
 
         //FIXME: Last tab can be closed, and shouldn't.
 
+        tabCourseMap.put(newTab, controller);
+
         //Add tab at the end and select it.
         courseTabs.getTabs().add(reload ? courseTabs.getTabs().size() : courseTabs.getTabs().size()-1, newTab);
         courseTabs.getSelectionModel().select(newTab);
-
-        tabCourseMap.put(newTab, controller);
 
         enableTabClosing();
     }
