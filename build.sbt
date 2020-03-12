@@ -9,6 +9,7 @@ resolvers += Resolver.url("bintray-sbt-plugins", url("http://dl.bintray.com/sbt/
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4.20"
 libraryDependencies += "org.json4s" % "json4s-jackson_2.12" % "3.6.7"
+libraryDependencies += "org.openjfx" % "javafx" % "12" pomOnly()
 
 assemblyJarName in assembly := "ScaDULER.jar"
 mainClass in assembly := Some("app.MainApp")

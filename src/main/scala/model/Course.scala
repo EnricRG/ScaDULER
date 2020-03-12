@@ -7,7 +7,7 @@ import service.{ID, Identifiable}
 trait Quarter extends Serializable
 
 object NoQuarter extends Quarter{
-    def noQuarter: Quarter = this
+    def noQuarter: Quarter = this //should not be used
     override def toString: String = AppSettings.language.getItem("noQuarter")
 }
 object FirstQuarter extends Quarter{
@@ -19,8 +19,8 @@ object SecondQuarter extends Quarter{
 
 object Quarters{
     def firstQuarter: Quarter = FirstQuarter
-    def secondQuarter: Quarter  = SecondQuarter
-    def noQuarter: Quarter  = NoQuarter
+    def secondQuarter: Quarter = SecondQuarter
+    def noQuarter: Quarter = NoQuarter
     val quarters: List[Quarter] = List(FirstQuarter,SecondQuarter)
 }
 

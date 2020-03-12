@@ -68,7 +68,7 @@ object EntityManager {
 
         //TODO this should be done on the import level, and only persist them here
         val eventTypeIncompatibilities = List(
-            new EventTypeIncompatibility(TheoryEvent, TheoryEvent),
+            //new EventTypeIncompatibility(TheoryEvent, TheoryEvent),
             new EventTypeIncompatibility(TheoryEvent, LaboratoryEvent),
             new EventTypeIncompatibility(TheoryEvent, ComputerEvent)
         )
