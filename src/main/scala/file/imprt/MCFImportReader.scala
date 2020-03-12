@@ -130,7 +130,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                 case Some(r) => r
                 case None =>
                     val newResource = new ResourceBlueprint
-                    newResource.name = resourceName
+                    newResource.name = resourceName + "_" + values.apply(3)
                     newResource.quantity = 1
                     newResource.capacity = resourceCapacity
                     createdResources.put(newResource.name, newResource)
