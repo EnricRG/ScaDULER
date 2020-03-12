@@ -2,6 +2,7 @@ package control.schedule;
 
 import control.MainController;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Region;
 import model.Event;
 import model.QuarterData;
@@ -61,8 +62,10 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
 
     private void setupCellBehavior(Node cell, int week, Integer interval, ScheduleIntervalController intervalController) {
         cell.setOnMouseDragReleased(dragEvent -> {
-            System.out.println("Dropped here: " + week + " " + interval + " " + mainController.getEventDrag().getEvent().getID()); //TODO remove this print
-            courseController.notifyEventDrop(this, intervalController, -1);
+            if(dragEvent.getButton() == MouseButton.PRIMARY) {
+                System.out.println("Dropped here: " + week + " " + interval + " " + mainController.getEventDrag().getEvent().getID()); //TODO remove this print
+                courseController.notifyEventDrop(this, intervalController, -1);
+            }
         });
     }
 
