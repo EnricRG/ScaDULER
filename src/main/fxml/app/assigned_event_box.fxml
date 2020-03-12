@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TitledPane fx:id="hourPane" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1.0" prefWidth="200.0" text="Start Hour" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<TitledPane fx:id="hourPane" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1.0" prefWidth="200.0" text="Start Hour" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1">
    <font>
       <Font size="9.0" />
    </font>
