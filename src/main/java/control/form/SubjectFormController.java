@@ -349,7 +349,8 @@ public class SubjectFormController extends FormController {
             for(Event e : eventTable.getItems()){
                 subject.addEvent(e.getID(), e);
                 e.setSubject(subject);
-                e.setCourse(subjectCoursePicker.getValue());
+                e.setCourse(subject.getCourse());
+                e.setQuarter(subject.getQuarter());
                 eventsByType.get(e.getEventType()).add(e);
                 getMainController().addUnassignedEvent(e);
             }

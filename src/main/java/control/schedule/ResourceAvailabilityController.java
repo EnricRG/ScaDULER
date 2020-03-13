@@ -273,7 +273,6 @@ public class ResourceAvailabilityController extends StageController{
     private void incrementSelectionIn(int amount) {
         for(ResourceAvailabilityCell cell : selection){
             resource.getAvailability().increment(cell.week, cell.interval, amount);
-            System.out.println(resource.getAvailability(cell.week, cell.interval));
             cell.setQuantity(resource.getAvailability(cell.week, cell.interval), true);
         }
     }
@@ -284,7 +283,6 @@ public class ResourceAvailabilityController extends StageController{
         for(ResourceAvailabilityCell cell : selection){
             if(quantity <= 0) resource.getAvailability().unset(cell.week, cell.interval);
             else resource.getAvailability().set(cell.week, cell.interval, quantity);
-            System.out.println(resource.getAvailability(cell.week, cell.interval));
             cell.setQuantity(quantity, true);
         }
     }
