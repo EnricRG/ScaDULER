@@ -66,7 +66,8 @@ public class AssignedEventViewController extends EventViewController {
     @Override
     protected void setEventColor() {
         hourPane.setStyle("-fx-color: #" + event.getEventType().color().toString().substring(2) + ";");
-        super.setEventColor();
+        //super.setEventColor();
+        super.setEventColorFrame();
         if(!viable) {
             String originalStyle = mainBox.getStyle().replace("-fx-background-color: #" + event.getEventType().color().toString().substring(2) + ";", "");
             mainBox.setStyle(originalStyle + "-fx-background-color: #" + NON_VIABLE_COLOR.toString().substring(2) + ";");

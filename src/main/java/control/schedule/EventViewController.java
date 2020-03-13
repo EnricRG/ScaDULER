@@ -31,15 +31,19 @@ public abstract class EventViewController implements Initializable {
     protected void initializeEventView() {
         eventDisplayName.setText(
             !event.getShortName().trim().isEmpty() ?
-                String.format("[%s] %s",event.getShortName(), event.getName()) :
+                String.format("[%s]",event.getShortName()) :
                 String.format("%s", event.getName())
         );
         eventDisplayAdditionalInfo.setText(String.format("(%s) (%s)", event.getEventType(), event.getPeriodicity()));
         setEventColor();
+        setEventColorFrame();
     }
 
     protected void setEventColor(){
         mainBox.setStyle("-fx-background-color: #" + event.getEventType().color().toString().substring(2) + ";");
+    }
+
+    protected void setEventColorFrame(){
         Subject eventSubject = event.getSubject().isDefined() ? event.getSubject().get() : null;
         if(eventSubject != null) mainBox.setStyle(mainBox.getStyle() + "-fx-border-width: 2; -fx-border-color: #" + eventSubject.getColor().toJFXColor().toString().substring(2) + ";");
     }

@@ -1,5 +1,6 @@
 package control.schedule;
 
+import app.AssignmentViabilityChecker;
 import control.MainController;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -71,7 +72,10 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
 
     public void fillQuarter() {
         for(Event e: JavaConverters.asJavaCollection(quarterData.getSchedule().getEvents())){
-            processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, e.getWeek().toWeekNumber(), e.getStartInterval(), true);
+            //TODO optimize this, save viability state on persistence.
+            //FIXME
+            AssignmentViabilityChecker checker = new AssignmentViabilityChecker(courseController.getCourse(), quarterData, e.getWeek().toWeekNumber(), e.getStartInterval(), e);
+            processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, e.getWeek().toWeekNumber(), e.getStartInterval(), checker.isAViableAssignment());
         }
         //FIXME this will need a fix
     }
@@ -83,6 +87,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
 
     //pre event not assigned to this quarter
     //TODO improve call performance vs readability: Call only getWeek() once
+    //TODO improve call redundancy. No need to call addEvent when reloading the course.
     public void assignEvent(Event scheduleEvent, int scheduleWeek, Integer interval, int hint, boolean viable) {
         Weeks.Week eventWeek = scheduleEvent.getPeriodicity() == Weeks.weekly() ?
             Weeks.getEveryWeek() : (scheduleWeek == Weeks.getAWeek().toWeekNumber() ? Weeks.getAWeek() : Weeks.getBWeek());
