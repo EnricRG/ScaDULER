@@ -2,7 +2,7 @@ package app
 
 import control.MainController
 import file.imprt.ImportJob
-import file.imprt.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import misc.{EventTypeIncompatibilities, EventTypeIncompatibility}
 import model.{ComputerEvent, Course, Event, EventType, EventTypes, LaboratoryEvent, Resource, Subject, TheoryEvent}
 import service.{AppDatabase, CourseDatabase, EventDatabase, ResourceDatabase, SubjectDatabase}

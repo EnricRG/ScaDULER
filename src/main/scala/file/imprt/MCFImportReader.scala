@@ -3,7 +3,7 @@ package file.imprt
 import java.io.File
 
 import app.AppSettings
-import file.imprt.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import model._
 import service.ReadOnlyAppDatabase
 
@@ -131,7 +131,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
                 case None =>
                     val newResource = new ResourceBlueprint
                     newResource.name = resourceName + "_" + values.apply(3)
-                    newResource.quantity = 1
+                    newResource.quantity = 1 //TODO remove resource quantity
                     newResource.capacity = resourceCapacity
                     createdResources.put(newResource.name, newResource)
                     newResource
@@ -344,7 +344,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
         //Auxiliary resource to model theory room occupation
         val theoryResource = new ResourceBlueprint
         theoryResource.name = "Aula Teoria/Problemes"
-        theoryResource.quantity = 1
+        theoryResource.quantity = 1 //TODO temove resource quantity
         //TODO theoryResource.capacity = ?
         resources += theoryResource
 

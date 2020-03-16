@@ -1,4 +1,4 @@
-package file.imprt.blueprint
+package model.blueprint
 
 import model.{EventType, Quarter}
 import model.Weeks.Periodicity

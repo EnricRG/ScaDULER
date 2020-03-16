@@ -10,7 +10,7 @@ import scala.collection.mutable
 class Resource(id: ID) extends Identifiable(id) with Serializable {
 
     private var name: String = ""
-    private var quantity: Int = -1
+    private var quantity: Int = -1 //TODO delete this when proper serialization is implemented.
     private var capacity: Int = 0
     private val availability: ResourceSchedule = new ResourceSchedule(AppSettings.timeSlots)
 

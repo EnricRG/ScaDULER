@@ -1,6 +1,6 @@
 package file.imprt
 
-import file.imprt.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 
 case class ImportJob(subjects: List[SubjectBlueprint],
                      events: List[EventBlueprint],
