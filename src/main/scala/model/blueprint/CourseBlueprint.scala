@@ -1,4 +1,4 @@
-package file.imprt.blueprint
+package model.blueprint
 
 class CourseBlueprint{
     var name: String = ""

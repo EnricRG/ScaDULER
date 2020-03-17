@@ -1,6 +1,7 @@
 package service
 
 import model.Resource
+import model.blueprint.ResourceBlueprint
 
 import scala.collection.mutable
 
@@ -27,6 +28,11 @@ class ResourceDatabase extends Database[Resource]{
         val resource = new Resource(id)
         index(resource)
         addElement(id, resource)
+    }
+    def createResourceFromBlueprint(rb: ResourceBlueprint): (ID, Resource) = {
+        val ret = createResource
+        Resource.setResourceFromBlueprint(ret._2, rb)
+        ret
     }
 
     def removeResource(rid: ID): Unit = { removeElement(rid); deindex(getElement(rid).orNull) }

@@ -1,7 +1,8 @@
 package app
 
 import control.MainController
-import file.imprt.ImportJob
+import file.imprt.{ImportJob, ResourceImporter}
+import javax.management.NotificationEmitter
 import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import misc.{EventTypeIncompatibilities, EventTypeIncompatibility}
 import model.{ComputerEvent, Course, Event, EventType, EventTypes, LaboratoryEvent, Resource, Subject, TheoryEvent}
@@ -9,6 +10,7 @@ import service.{AppDatabase, CourseDatabase, EventDatabase, ResourceDatabase, Su
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.util.{Failure, Success}
 
 object EntityManager {
 
@@ -109,6 +111,14 @@ object EntityManager {
         e.setPeriodicity(eb.periodicity)
         e.setCourse(c)
         e.setQuarter(eb.quarter)
+    }
+
+    def importResources(importer: ResourceImporter): Iterable[Resource] = {
+        importer.getResourceBlueprints match {
+            case Success(resourceBlueprints) =>
+                resourceBlueprints.map(resourceDatabase.createResourceFromBlueprint(_)._2).toList
+            case Failure(e) => List() //TODO finish error handling
+        }
     }
 }
 
