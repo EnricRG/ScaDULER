@@ -1,56 +1,33 @@
 package file.imprt
 import java.io.File
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.databind.{JsonNode, JsonSerializer, ObjectMapper, SerializerProvider}
+import com.fasterxml.jackson.databind.ObjectMapper
+import model.ResourceSchedule
 import model.blueprint.ResourceBlueprint
 
-import scala.util.{Success, Try}
-
-@JsonSerialize(using = classOf[ResourceAvailabilityIntervalSerializer])
-case class ResourceAvailabilityInterval(@JsonProperty("w") week: Int,
-                                        @JsonProperty("d") day: Int,
-                                        @JsonProperty("s") start: Int,
-                                        @JsonProperty("e") end: Int,
-                                        @JsonProperty("q") quantity: Int) extends Serializable
-
-class ResourceAvailabilityIntervalSerializer extends JsonSerializer[ResourceAvailabilityInterval]{
-    override def serialize(value: ResourceAvailabilityInterval, gen: JsonGenerator, serializers: SerializerProvider): Unit = {
-        gen.writeStartObject()
-        gen.writeNumberField("w", value.week)
-        gen.writeNumberField("d", value.day)
-        gen.writeNumberField("s", value.start)
-        gen.writeNumberField("e", value.end)
-        gen.writeNumberField("q", value.quantity)
-        gen.writeEndObject()
-    }
-}
-
-class SRFResource() extends Serializable {
-
-    @JsonProperty("n")
-    var name: String = _
-
-    @JsonProperty("c")
-    var capacity: Int = _
-
-    @JsonProperty("a")
-    var availabilityIntervals: Array[ResourceAvailabilityInterval] = _
-}
+import scala.util.Try
 
 object test extends App{
     override def main(args: Array[String]): Unit = {
-        val mapper = new ObjectMapper()
-        val x = new SRFResource
-        x.name = "jaja"
-        x.capacity = 3
-        x.availabilityIntervals = Array(ResourceAvailabilityInterval(1,1,4,5,2), ResourceAvailabilityInterval(1,2,1,2,2))
-        //println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(x))
+        val writer = new SRFImporter(new File("jajayes.txt"))
+        val x = new ResourceBlueprint
+        val y = new ResourceBlueprint
+        x.name = "111"
+        y.name = "222"
+        x.capacity = 4
+        y.capacity = 2
+        x.availability = new ResourceSchedule(110)
+        y.availability = new ResourceSchedule(110)
+        x.availability.set(0, 5, 2)
+        x.availability.set(1, 5, 3)
+        y.availability.set(0, 2, 5)
+        y.availability.set(1, 4, 3)
 
-        val y = mapper.readValue(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(x), classOf[SRFResource])
-        println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(y))
+        writer.writeResourceBlueprints(List(x,y))
+
+        val reader = new SRFImporter(new File("jajayes.txt"))
+
+        reader.getResourceBlueprints.get.foreach(r => println(r.name + " " + r.capacity + " " + r.availability.getMax))
     }
 }
 
@@ -58,6 +35,10 @@ class SRFImporter(file: File) extends ResourceImporter {
 
     override def getResourceBlueprints: Try[Iterable[ResourceBlueprint]] = {
         Try(new ObjectMapper().readValue(file, classOf[Array[ResourceBlueprint]]))
+    }
+
+    def writeResourceBlueprints(rbi: Iterable[ResourceBlueprint]): Try[_] = {
+        Try(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, rbi.toArray))
     }
 
     /*override def getResourceBlueprints: Try[Iterable[ResourceBlueprint]] = {

@@ -1,10 +1,12 @@
 package model
 
 import app.AppSettings
-import Weeks.{AWeek, BWeek, EveryWeek}
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
+import model.Weeks.{AWeek, BWeek, EveryWeek}
 
 @SerialVersionUID(1L)
-class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Int](intervalsPerWeek){
+class ResourceSchedule(@JsonProperty("ipw") intervalsPerWeek: Int)
+    extends DualWeekSchedule[Int](intervalsPerWeek){
 
     def get(week: Int, interval: Int): Int = week match{
         case 0 | 2 => getFirstWeekSchedule.getValueAtIntervalOrElse(interval,0)
@@ -43,6 +45,7 @@ class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Int](inte
         else get(week, interval) > 0
     }
 
+    @JsonIgnore
     def getMax: Int = (getFirstWeekSchedule.getAllElements ++ getSecondWeekSchedule.getAllElements ++ List(0)).max
 
     def getIntervalsWith(week: Int, day:Int, quantity: Int, el: Int): Iterable[Int] =
