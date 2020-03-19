@@ -8,6 +8,14 @@ import model.Weeks.{AWeek, BWeek, EveryWeek}
 class ResourceSchedule(@JsonProperty("ipw") intervalsPerWeek: Int)
     extends DualWeekSchedule[Int](intervalsPerWeek){
 
+    private def getIntervalsPerWeek: Int = intervalsPerWeek
+
+    def this(rs: ResourceSchedule) = {
+        this(rs.getIntervalsPerWeek)
+        rs.firstWeekSchedule.getAllPairs.foreach(pair => firstWeekSchedule.updateInterval(pair._1, pair._2))
+        rs.secondWeekSchedule.getAllPairs.foreach(pair => secondWeekSchedule.updateInterval(pair._1, pair._2))
+    }
+
     def get(week: Int, interval: Int): Int = week match{
         case 0 | 2 => getFirstWeekSchedule.getValueAtIntervalOrElse(interval,0)
         case 1 => getSecondWeekSchedule.getValueAtIntervalOrElse(interval,0)

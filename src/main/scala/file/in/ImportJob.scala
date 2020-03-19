@@ -1,4 +1,4 @@
-package file.imprt
+package file.in
 
 import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 

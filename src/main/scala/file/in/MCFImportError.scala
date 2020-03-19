@@ -1,4 +1,4 @@
-package file.imprt
+package file.in
 
 abstract class MCFImportError(row: Int, field: Int, header: String, value: String) extends ImportError{
     def message: String = "Import error at row " + row + " when reading field " + header + " (column " + field + ")"

@@ -1,7 +1,11 @@
 package app
 
+import java.io.{File, IOException}
+
 import control.MainController
-import file.imprt.{ImportJob, ResourceImporter}
+import exception.FileFormatException
+import file.in.{ImportJob, ResourceImporter}
+import file.out.ResourceExporter
 import javax.management.NotificationEmitter
 import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import misc.{EventTypeIncompatibilities, EventTypeIncompatibility}
@@ -113,12 +117,15 @@ object EntityManager {
         e.setQuarter(eb.quarter)
     }
 
+    @throws(classOf[IOException])
+    @throws(classOf[FileFormatException])
     def importResources(importer: ResourceImporter): Iterable[Resource] = {
-        importer.getResourceBlueprints match {
-            case Success(resourceBlueprints) =>
-                resourceBlueprints.map(resourceDatabase.createResourceFromBlueprint(_)._2).toList
-            case Failure(e) => List() //TODO finish error handling
-        }
+        importer.readResourceBlueprints.map(resourceDatabase.createResourceFromBlueprint(_)._2).toList
+    }
+
+    @throws(classOf[IOException])
+    def exportResources(exporter: ResourceExporter, resources: Iterable[Resource]): Unit = {
+        exporter.writeResourceBlueprints(resources.map(ResourceBlueprint.fromResource))
     }
 }
 

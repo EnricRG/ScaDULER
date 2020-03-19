@@ -45,6 +45,6 @@ object Resource{
     def setResourceFromBlueprint(r: Resource, rb: ResourceBlueprint): Unit = {
         r.setName(rb.name)
         r.setCapacity(rb.capacity)
-        if(rb.availability != null) r.setAvailability(rb.availability)
+        if(rb.availability != null) r.setAvailability(new ResourceSchedule(rb.availability))
     }
 }

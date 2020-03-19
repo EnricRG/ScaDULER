@@ -3,6 +3,11 @@ package model
 import java.util
 
 import com.fasterxml.jackson.annotation.{JsonGetter, JsonIgnore, JsonProperty, JsonSetter}
+import com.fasterxml.jackson.databind.annotation.{JsonDeserialize, JsonSerialize}
+import com.fasterxml.jackson.databind.deser.std.NumberDeserializers.IntegerDeserializer
+import com.fasterxml.jackson.databind.deser.std.{StdKeyDeserializer, StdKeyDeserializers}
+import com.fasterxml.jackson.databind.ser.std.NumberSerializers.IntegerSerializer
+import com.fasterxml.jackson.databind.ser.std.{StdKeySerializer, StdKeySerializers}
 
 import scala.collection.{JavaConverters, mutable}
 
@@ -30,6 +35,9 @@ class Schedule[T](@JsonProperty("i") intervals: Int) extends Serializable {
     @JsonIgnore
     def getAllElements: Iterable[T] = timeline.toSeq.sortBy(_._1).map(_._2)
 
+    @JsonIgnore
+    def getAllPairs: Iterable[(Int, T)] = timeline.toSeq.sortBy(_._1)
+
     override def toString: String = timeline.toString
 
     /*** JSON Serialization and Deserialization ***/
@@ -40,6 +48,7 @@ class Schedule[T](@JsonProperty("i") intervals: Int) extends Serializable {
 
     @JsonProperty("t")
     @JsonGetter
+    @JsonDeserialize(keyAs = classOf[Int])
     private def getJavaTimeline: util.Map[Int, T] = JavaConverters.mapAsJavaMap(timeline)
 
     @JsonProperty("t")

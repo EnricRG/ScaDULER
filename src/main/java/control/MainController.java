@@ -9,11 +9,14 @@ import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
 import control.schedule.*;
+import exception.FileFormatException;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
-import file.imprt.ImportError;
-import file.imprt.ImportJob;
-import file.imprt.MCFImportReader;
+import file.in.ImportError;
+import file.in.ImportJob;
+import file.in.MCFImportReader;
+import file.in.SRFImporter;
+import file.out.SRFExporter;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -31,6 +34,7 @@ import model.Quarters;
 import scala.collection.JavaConverters;
 import service.AppDatabase;
 import service.CourseDatabase;
+import service.ResourceDatabase;
 import solver.EventAssignment;
 import util.Utils;
 
@@ -278,6 +282,7 @@ public class MainController extends StageController {
     private boolean debug = true;
 
     private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
+    private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
 
 
     @Override
@@ -532,21 +537,45 @@ public class MainController extends StageController {
         File f = new FileChooser().showOpenDialog(stage.getScene().getWindow());
 
         if(f != null){
-            String extension = Utils.getFileExtension(f.getName());
-
-            //TODO factory
-            //TODO make it language specific
-            if(extension == null) promptAlert("Error", "The file does not have an extension.");
-            else if(extension.equals(MCFImportReader.MCFFileExtension())){
-                importFromMCF(f);
+            //TODO importer factory
+            try {
+                EntityManager.importResources(new SRFImporter(f));
             }
-            else promptAlert("Error", "Unknown file extension.");
+            catch (IOException ioe) {
+                promptAlert(
+                    AppSettings.language().getItemOrElse("error_windowTitle", "Error"),
+                    AppSettings.language().getItemOrElse("readFileError_explanation",
+                            "Error reading the file. Is it being used by another program?")
+                );
+            }
+            catch (FileFormatException ffe) {
+                promptAlert(
+                        AppSettings.language().getItem("unknownFileFormat_windowTitle"),
+                        AppSettings.language().getItem("unknownFileFormat_explanation")
+                );
+            }
         }
     }
 
     private void exportResources() {
         //TODO implement method
         System.out.println("Export resources");
+        File f = new FileChooser().showSaveDialog(stage.getScene().getWindow());
+
+        if(f != null){
+            //TODO exporter factory
+            try {
+                //TODO select resources
+                EntityManager.exportResources(new SRFExporter(f), resourceDatabase.getElements());
+            }
+            catch (IOException ioe) {
+                promptAlert(
+                        AppSettings.language().getItemOrElse("error_windowTitle", "Error"),
+                        AppSettings.language().getItemOrElse("readFileError_explanation",
+                                "Error reading the file. Is it being used by another program?")
+                );
+            }
+        }
     }
 
     private void projectLoaded() {

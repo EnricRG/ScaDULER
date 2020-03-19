@@ -1,4 +1,4 @@
-package file.imprt
+package file.in
 
 trait ImportReader {
     def read: ImportReader

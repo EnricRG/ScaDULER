@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 class DualWeekSchedule[T](intervalsPerWeek: Int) extends Serializable {
 
     @JsonProperty("w1s")
-    private val firstWeekSchedule = new Schedule[T](intervalsPerWeek)
+    protected val firstWeekSchedule = new Schedule[T](intervalsPerWeek)
 
     @JsonProperty("w2s")
-    private val secondWeekSchedule = new Schedule[T](intervalsPerWeek)
+    protected val secondWeekSchedule = new Schedule[T](intervalsPerWeek)
 
 
 
