@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="mainStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:id="mainStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <top>
@@ -41,8 +41,14 @@
                                           <SeparatorMenuItem mnemonicParsing="false" />
                                           <Menu fx:id="fileMenu_importMenu" mnemonicParsing="false" text="Import">
                                             <items>
-                                              <MenuItem fx:id="importMenu_newFile" mnemonicParsing="false" text="To new file" />
+                                              <MenuItem fx:id="importMenu_importSubjects" mnemonicParsing="false" text="Subjects..." />
+                                                <MenuItem fx:id="importMenu_importResources" mnemonicParsing="false" text="Resources..." />
                                             </items>
+                                          </Menu>
+                                          <Menu fx:id="fileMenu_exportMenu" mnemonicParsing="false" text="Export">
+                                             <items>
+                                                <MenuItem fx:id="exportMenu_exportResources" mnemonicParsing="false" text="Resources..." />
+                                             </items>
                                           </Menu>
                                           <SeparatorMenuItem mnemonicParsing="false" />
                                           <MenuItem fx:id="fileMenu_close" disable="true" mnemonicParsing="false" text="Close" />

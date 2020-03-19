@@ -59,7 +59,11 @@ public class MainController extends StageController {
     public MenuItem fileMenu_saveAs;
 
     public Menu fileMenu_importMenu;
-    public MenuItem importMenu_newFile;
+    public MenuItem importMenu_importSubjects;
+    public MenuItem importMenu_importResources;
+
+    public Menu fileMenu_exportMenu;
+    public MenuItem exportMenu_exportResources;
 
     /** Save item in File menu */
     public MenuItem fileMenu_close;
@@ -296,8 +300,15 @@ public class MainController extends StageController {
         menuBar_fileMenu.setText(AppSettings.language().getItem("fileMenu"));
         fileMenu_open.setText(AppSettings.language().getItem("fileMenu_open"));
         fileMenu_save.setText(AppSettings.language().getItem("fileMenu_save"));
+        fileMenu_importMenu.setText(AppSettings.language().getItemOrElse("fileMenu_importMenu", "Import"));
+        fileMenu_exportMenu.setText(AppSettings.language().getItemOrElse("fileMenu_exportMenu", "Export"));
         fileMenu_saveAs.setText(AppSettings.language().getItem("fileMenu_saveAs"));
         fileMenu_close.setText(AppSettings.language().getItem("fileMenu_close"));
+
+        importMenu_importSubjects.setText(AppSettings.language().getItemOrElse("importMenu_importSubjects", "Subjects..."));
+        importMenu_importResources.setText(AppSettings.language().getItemOrElse("importMenu_importResources", "Resources..."));
+
+        exportMenu_exportResources.setText(AppSettings.language().getItemOrElse("importMenu_importResources", "Resources..."));
 
         menuBar_editMenu.setText(AppSettings.language().getItem("editMenu"));
 
@@ -364,7 +375,9 @@ public class MainController extends StageController {
         fileMenu_save.setOnAction(event -> saveToFile());
         fileMenu_saveAs.setOnAction(event -> saveToNewFile());
 
-        importMenu_newFile.setOnAction(event -> importNewFile());
+        importMenu_importSubjects.setOnAction(event -> importSubjects());
+        importMenu_importResources.setOnAction(event -> importResources());
+        exportMenu_exportResources.setOnAction(event -> exportResources());
 
         addButtons_course.setOnAction(actionEvent -> promptCourseForm());
         addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
@@ -480,7 +493,7 @@ public class MainController extends StageController {
         }
     }
 
-    private void importNewFile() {
+    private void importSubjects() {
         File f = new FileChooser().showOpenDialog(stage.getScene().getWindow());
 
         if(f != null){
@@ -510,6 +523,30 @@ public class MainController extends StageController {
         else{
             EntityManager.importEntities(importJob, this);
         }
+    }
+
+    private void importResources() {
+        //TODO implement method
+        System.out.println("Import resources");
+
+        File f = new FileChooser().showOpenDialog(stage.getScene().getWindow());
+
+        if(f != null){
+            String extension = Utils.getFileExtension(f.getName());
+
+            //TODO factory
+            //TODO make it language specific
+            if(extension == null) promptAlert("Error", "The file does not have an extension.");
+            else if(extension.equals(MCFImportReader.MCFFileExtension())){
+                importFromMCF(f);
+            }
+            else promptAlert("Error", "Unknown file extension.");
+        }
+    }
+
+    private void exportResources() {
+        //TODO implement method
+        System.out.println("Export resources");
     }
 
     private void projectLoaded() {
