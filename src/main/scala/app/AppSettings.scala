@@ -12,6 +12,7 @@ object FXMLPaths {
     val EventIncompatibilityFrom: String = "src/main/fxml/form/event_incompatibility_manager.fxml"
 
     val EntityManagerPanel: String = "src/main/fxml/manage/entity_manager.fxml"
+    val EntitySelectorPanel: String = "src/main/fxml/manage/entity_selector.fxml"
     val ManageResourcesPanel: String = "src/main/fxml/manage/resource_manager.fxml"
     val ResourceAvailabilityManager: String = "src/main/fxml/manage/resource_availability_manager.fxml"
 

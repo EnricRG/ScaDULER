@@ -560,12 +560,23 @@ public class MainController extends StageController {
     private void exportResources() {
         //TODO implement method
         System.out.println("Export resources");
-        File f = new FileChooser().showSaveDialog(stage.getScene().getWindow());
+
+        //TODO select resources
+        Stage selector = Utils.promptBoundWindow(
+                "title",
+                stage.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory<>(FXMLPaths.EntitySelectorPanel()),
+                new EntitySelectorController<>(resourceDatabase.getElements())
+        );
+
+        selector.show();
+
+        File f = null; //new FileChooser().showSaveDialog(stage.getScene().getWindow());
 
         if(f != null){
             //TODO exporter factory
             try {
-                //TODO select resources
                 EntityManager.exportResources(new SRFExporter(f), resourceDatabase.getElements());
             }
             catch (IOException ioe) {
