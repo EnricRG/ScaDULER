@@ -26,6 +26,5 @@ class ResourceBlueprint extends Serializable {
     var capacity: Int = _
 
     @JsonProperty("a")
-    //@JsonSerialize(using = classOf[SRFResourceScheduleSerializer])
     var availability: ResourceSchedule = _
 }
