@@ -9,6 +9,7 @@ import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
 import control.schedule.*;
+import control.select.ResourceSelectorController;
 import exception.FileFormatException;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
@@ -561,16 +562,16 @@ public class MainController extends StageController {
         //TODO implement method
         System.out.println("Export resources");
 
-        //TODO select resources
-        Stage selector = Utils.promptBoundWindow(
-                "title",
+        ResourceSelectorController selector = new ResourceSelectorController(resourceDatabase.getElements());
+        selector.setStage(Utils.promptBoundWindow(
+                "title", //TODO title
                 stage.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EntitySelectorPanel()),
-                new EntitySelectorController<>(resourceDatabase.getElements())
-        );
+                selector
+        ));
 
-        selector.show();
+        selector.waitSelection();
 
         File f = null; //new FileChooser().showSaveDialog(stage.getScene().getWindow());
 
