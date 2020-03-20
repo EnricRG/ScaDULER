@@ -7,11 +7,13 @@ import model.Resource
 
 class ResourceSelectorController(resources: Iterable[Resource]) extends EntitySelectorController(resources){
 
-    private def nameColumn = new TableColumn[Resource, String]
-    private def capacityColumn = new TableColumn[Resource, Int]
+    private def nameColumn: TableColumn[Resource, String] =
+        new TableColumn(AppSettings.language.getItemOrElse("name", "Name"))
 
-    override protected def setupTable(): Unit = {
-        super.setupTable()
+    private def capacityColumn: TableColumn[Resource, Int] =
+        new TableColumn(AppSettings.language.getItemOrElse("capacity", "Capacity"))
+
+    override protected def additionalTableSetup(): Unit = {
         addColumns()
         setupColumns()
 
@@ -26,7 +28,7 @@ class ResourceSelectorController(resources: Iterable[Resource]) extends EntitySe
     }
 
     private def setupColumns(): Unit = {
-        nameColumn.setCellValueFactory(new PropertyValueFactory[Resource, String]("name"))
-        capacityColumn.setCellValueFactory(new PropertyValueFactory[Resource, Int]("capacity"))
+        nameColumn.setCellValueFactory(new PropertyValueFactory("name"))
+        capacityColumn.setCellValueFactory(new PropertyValueFactory("capacity"))
     }
 }

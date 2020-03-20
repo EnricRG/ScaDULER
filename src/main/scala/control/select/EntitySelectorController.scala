@@ -47,16 +47,23 @@ class EntitySelectorController[E](entities: Iterable[E]) extends StageController
 
     protected def setupTable(): Unit = {
         selectColumn.setCellValueFactory(_ => new SimpleObjectProperty(new SimpleSelector))
+        additionalTableSetup()
+        fillTable(entities)
     }
+
+    protected def additionalTableSetup(): Unit = { }
 
     protected def bindActions(): Unit = {
         okButton.setOnAction(_ => { canceled = false; close() } )
+        additionalActionBinding()
     }
+
+    protected def additionalActionBinding(): Unit = { }
 
     private def selectedItems: Iterable[E] = {
         (0 until table.getItems.size)
-            .filterNot(i => selectColumn.getCellData(i).isSelected)
-            .map(i => table.getItems.get(i))
+            .filter(selectColumn.getCellData(_).isSelected)
+            .map(table.getItems.get(_))
     }
 
     final def waitSelection: Iterable[E] = {

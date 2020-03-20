@@ -28,10 +28,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import misc.Warning;
-import model.Course;
-import model.Event;
-import model.Quarter;
-import model.Quarters;
+import model.*;
 import scala.collection.JavaConverters;
 import service.AppDatabase;
 import service.CourseDatabase;
@@ -564,21 +561,22 @@ public class MainController extends StageController {
 
         ResourceSelectorController selector = new ResourceSelectorController(resourceDatabase.getElements());
         selector.setStage(Utils.promptBoundWindow(
-                "title", //TODO title
+                AppSettings.language().getItemOrElse("resourceSelector_windowTitle", "Select Resources"),
                 stage.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EntitySelectorPanel()),
                 selector
         ));
 
-        selector.waitSelection();
+        //thread stops here
+        scala.collection.Iterable<Resource> selection = selector.waitSelection();
 
-        File f = null; //new FileChooser().showSaveDialog(stage.getScene().getWindow());
+        File f = new FileChooser().showSaveDialog(stage.getScene().getWindow());
 
         if(f != null){
             //TODO exporter factory
             try {
-                EntityManager.exportResources(new SRFExporter(f), resourceDatabase.getElements());
+                EntityManager.exportResources(new SRFExporter(f), selection);
             }
             catch (IOException ioe) {
                 promptAlert(
