@@ -5,7 +5,7 @@ import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.control.{Label, TableColumn}
 import model.Resource
 
-class ResourceSelectorController(resources: Iterable[Resource]) extends EntitySelectorController(resources){
+class ResourceSelectorController(resources: Iterable[Resource]) extends EntitySelectorController[Resource](resources){
 
     private def nameColumn: TableColumn[Resource, String] =
         new TableColumn(AppSettings.language.getItemOrElse("name", "Name"))
@@ -28,7 +28,7 @@ class ResourceSelectorController(resources: Iterable[Resource]) extends EntitySe
     }
 
     private def setupColumns(): Unit = {
-        nameColumn.setCellValueFactory(new PropertyValueFactory("name"))
-        capacityColumn.setCellValueFactory(new PropertyValueFactory("capacity"))
+        nameColumn.setCellValueFactory(new PropertyValueFactory[Resource, String]("name"))
+        capacityColumn.setCellValueFactory(new PropertyValueFactory[Resource, Int]("capacity"))
     }
 }

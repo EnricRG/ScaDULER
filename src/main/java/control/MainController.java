@@ -571,7 +571,16 @@ public class MainController extends StageController {
         //thread stops here
         scala.collection.Iterable<Resource> selection = selector.waitSelection();
 
-        File f = new FileChooser().showSaveDialog(stage.getScene().getWindow());
+        File f = null;
+
+        if(selection.isEmpty()){
+            /*promptAlert(
+                AppSettings.language().getItemOrElse("noResourcesSelectedError_windowTitle", "No Resources Selected"),
+                AppSettings.language().getItemOrElse("noResourcesSelectedError_explanation",
+                        "No resources have been selected, aborting import job.")
+            );*/
+        }
+        else f = new FileChooser().showSaveDialog(stage.getScene().getWindow());
 
         if(f != null){
             //TODO exporter factory

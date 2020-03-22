@@ -84,8 +84,6 @@ public class ResourceManagerController extends FormController {
         resourceTable_capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
 
         resourceTable_availabilityColumn.setCellFactory(param ->  new TableCell<Resource, Void>(){
-
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
