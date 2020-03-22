@@ -83,7 +83,9 @@ class EntitySelectorController[E](entities: Iterable[E]) extends StageController
     protected def additionalActionBinding(): Unit = { }
 
     private def selectedItems: Iterable[E] = {
-        JavaConverters.collectionAsScalaIterable(table.getItems.filtered(selection.getOrElse(_, false)))
+        JavaConverters.collectionAsScalaIterable(
+            table.getItems.filtered(selection.getOrElse(_, false))
+        )
     }
 
     final def waitSelection: Iterable[E] = {

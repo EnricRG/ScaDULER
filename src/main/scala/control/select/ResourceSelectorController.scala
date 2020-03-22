@@ -7,10 +7,10 @@ import model.Resource
 
 class ResourceSelectorController(resources: Iterable[Resource]) extends EntitySelectorController[Resource](resources){
 
-    private def nameColumn: TableColumn[Resource, String] =
+    private val nameColumn: TableColumn[Resource, String] =
         new TableColumn(AppSettings.language.getItemOrElse("name", "Name"))
 
-    private def capacityColumn: TableColumn[Resource, Int] =
+    private val capacityColumn: TableColumn[Resource, Int] =
         new TableColumn(AppSettings.language.getItemOrElse("capacity", "Capacity"))
 
     override protected def additionalTableSetup(): Unit = {
