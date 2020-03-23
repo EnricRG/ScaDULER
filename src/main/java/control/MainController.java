@@ -29,6 +29,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import misc.Warning;
 import model.*;
+import model.blueprint.ResourceBlueprint;
+import scala.Option;
 import scala.collection.JavaConverters;
 import service.AppDatabase;
 import service.CourseDatabase;
@@ -529,7 +531,6 @@ public class MainController extends StageController {
     }
 
     private void importResources() {
-        //TODO implement method
         System.out.println("Import resources");
 
         File f = new FileChooser().showOpenDialog(stage.getScene().getWindow());
@@ -537,7 +538,26 @@ public class MainController extends StageController {
         if(f != null){
             //TODO importer factory
             try {
-                EntityManager.importResources(new SRFImporter(f));
+                scala.collection.Iterable<ResourceBlueprint> repeated_resources =
+                        EntityManager.importUniqueResources(new SRFImporter(f))._2;
+
+                if(repeated_resources.nonEmpty()){
+                    boolean update_required = promptChoice(
+                        AppSettings.language().getItemOrElse("import_repeatedResourcesFound_windowTitle",
+                        "Repeated resources found"),
+                        AppSettings.language().getItemOrElse("import_repeatedResourcesFound_explanation",
+                        "Repeated resources found when importing. Would you like to discard them, " +
+                                "or update already existing resources with thw new data?")
+                    );
+
+                    if(update_required){
+
+                        for (ResourceBlueprint rb : JavaConverters.asJavaCollection(repeated_resources)) {
+                            Option<Resource> ro = resourceDatabase.getResourceByName(rb.name());
+                            if(ro.nonEmpty()) Resource.setResourceFromBlueprint(ro.get(), rb);
+                        }
+                    }
+                }
             }
             catch (IOException ioe) {
                 promptAlert(

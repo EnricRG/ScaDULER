@@ -1,20 +1,18 @@
 package app
 
-import java.io.{File, IOException}
+import java.io.IOException
 
 import control.MainController
 import exception.FileFormatException
 import file.in.{ImportJob, ResourceImporter}
 import file.out.ResourceExporter
-import javax.management.NotificationEmitter
+import misc.EventTypeIncompatibility
 import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
-import misc.{EventTypeIncompatibilities, EventTypeIncompatibility}
-import model.{ComputerEvent, Course, Event, EventType, EventTypes, LaboratoryEvent, Resource, Subject, TheoryEvent}
-import service.{AppDatabase, CourseDatabase, EventDatabase, ResourceDatabase, SubjectDatabase}
+import model._
+import service._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.util.{Failure, Success}
 
 object EntityManager {
 
@@ -121,6 +119,20 @@ object EntityManager {
     @throws(classOf[FileFormatException])
     def importResources(importer: ResourceImporter): Iterable[Resource] = {
         importer.readResourceBlueprints.map(resourceDatabase.createResourceFromBlueprint(_)._2).toList
+    }
+
+    @throws(classOf[IOException])
+    @throws(classOf[FileFormatException])
+    def importUniqueResources(importer: ResourceImporter): (Iterable[Resource], Iterable[ResourceBlueprint]) = {
+        val resourceNames: Set[String] = resourceDatabase.getElements.map(_.getName).toSet
+
+        val importedResourceBlueprints: Iterable[ResourceBlueprint] = importer.readResourceBlueprints
+        val (existingResourceBlueprints, uniqueResourceBlueprints) =
+            importedResourceBlueprints.partition(rb => resourceNames.contains(rb.name))
+
+        val importedResources = uniqueResourceBlueprints.map(resourceDatabase.createResourceFromBlueprint(_)._2)
+
+        (importedResources, existingResourceBlueprints)
     }
 
     @throws(classOf[IOException])
