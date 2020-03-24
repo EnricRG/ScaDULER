@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="mainStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:id="mainStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <top>
@@ -41,7 +41,8 @@
                                           <SeparatorMenuItem mnemonicParsing="false" />
                                           <Menu fx:id="fileMenu_importMenu" mnemonicParsing="false" text="Import">
                                             <items>
-                                              <MenuItem fx:id="importMenu_newFile" mnemonicParsing="false" text="To new file" />
+                                              <MenuItem fx:id="importMenu_toNewProject" mnemonicParsing="false" text="To a new project" />
+                                                <MenuItem fx:id="importMenu_toActualProject" mnemonicParsing="false" text="To actual project" />
                                             </items>
                                           </Menu>
                                           <SeparatorMenuItem mnemonicParsing="false" />

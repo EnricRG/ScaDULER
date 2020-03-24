@@ -59,7 +59,8 @@ public class MainController extends StageController {
     public MenuItem fileMenu_saveAs;
 
     public Menu fileMenu_importMenu;
-    public MenuItem importMenu_newFile;
+    public MenuItem importMenu_toNewProject;
+    public MenuItem importMenu_toActualProject;
 
     /** Save item in File menu */
     public MenuItem fileMenu_close;
@@ -364,7 +365,7 @@ public class MainController extends StageController {
         fileMenu_save.setOnAction(event -> saveToFile());
         fileMenu_saveAs.setOnAction(event -> saveToNewFile());
 
-        importMenu_newFile.setOnAction(event -> importNewFile());
+        importMenu_toActualProject.setOnAction(event -> importNewFile());
 
         addButtons_course.setOnAction(actionEvent -> promptCourseForm());
         addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
