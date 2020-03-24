@@ -57,7 +57,7 @@ public class CourseScheduleController implements Initializable {
     }
 
     private void initializeTabView() {
-        tabPane.widthProperty().addListener(Utils.bindTabWidthToTabPane(tabPane));
+        tabPane.widthProperty().addListener(Utils.bindTabWidthToTabPane(tabPane, 2));
     }
 
     private void bindActions() {

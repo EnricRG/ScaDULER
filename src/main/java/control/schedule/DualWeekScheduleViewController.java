@@ -33,7 +33,7 @@ public class DualWeekScheduleViewController<C1 extends WeekScheduleController, C
     }
 
     private void initializeTabConstraints() {
-        tabPane.widthProperty().addListener(Utils.bindTabWidthToTabPane(tabPane));
+        tabPane.widthProperty().addListener(Utils.bindTabWidthToTabPane(tabPane, 2));
     }
 
     private void initializeContentLanguage() {
