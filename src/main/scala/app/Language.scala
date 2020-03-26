@@ -10,6 +10,9 @@ class Language(val items: Map[String,String]) {
 
     def getItem(key: String): String = items.getOrElse(key, ItemNotFound)
     def getItemOrElse(key: String, default: String): String = items.getOrElse(key, default)
+
+    def apply(key: String): String = getItem(key)
+    def apply(key: String, default: String): String = getItemOrElse(key, default)
 }
 
 object DefaultLanguage extends Language {

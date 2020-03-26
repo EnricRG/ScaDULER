@@ -8,6 +8,7 @@ import control.manage.CourseManagerController;
 import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
+import control.mcf.MCFErrorViewerController;
 import control.schedule.*;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
@@ -503,6 +504,9 @@ public class MainController extends StageController {
         ImportJob importJob = reader.read().getImportJob();
 
         if(importJob.errors().nonEmpty()){
+
+            showMCFErrors(importJob.errors());
+
             //TODO print errors to new window
             for(ImportError e: JavaConverters.asJavaCollection(importJob.errors())){
                 System.out.println(e.message());
@@ -511,6 +515,20 @@ public class MainController extends StageController {
         else{
             EntityManager.importEntities(importJob, this);
         }
+    }
+
+    private void showMCFErrors(scala.collection.immutable.List<ImportError> errors) {
+        MCFErrorViewerController controller = new MCFErrorViewerController(errors);
+
+        controller.setStage(Utils.promptBoundWindow(
+                AppSettings.language().getItemOrElse("mcf_errorViewer_windowTitle", "Errors found"),
+                stage.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory<>(FXMLPaths.MCFErrorViewer()),
+                controller
+        ));
+
+        controller.show();
     }
 
     private void projectLoaded() {
