@@ -23,6 +23,7 @@ object FXMLPaths {
     val ChoiceAlert: String = "src/main/fxml/alert/choice_alert.fxml"
 
     val MCFErrorViewer: String = "src/main/fxml/import/mcf/mcf_import_error_viewer.fxml"
+    val MCFFinishImportPrompt: String = "src/main/fxml/import/mcf/mcf_finish_import_prompt.fxml"
 }
 
 object AppSettings {

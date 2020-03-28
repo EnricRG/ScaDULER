@@ -9,6 +9,7 @@ import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
 import control.mcf.MCFErrorViewerController;
+import control.mcf.MCFFinishImportPromptController;
 import control.schedule.*;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
@@ -24,11 +25,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import misc.Selection;
 import misc.Warning;
 import model.Course;
 import model.Event;
 import model.Quarter;
 import model.Quarters;
+import scala.Option;
 import scala.collection.JavaConverters;
 import service.AppDatabase;
 import service.CourseDatabase;
@@ -504,16 +507,35 @@ public class MainController extends StageController {
         ImportJob importJob = reader.read().getImportJob();
 
         if(importJob.errors().nonEmpty()){
-
             showMCFErrors(importJob.errors());
-
-            //TODO print errors to new window
-            for(ImportError e: JavaConverters.asJavaCollection(importJob.errors())){
-                System.out.println(e.message());
-            }
         }
         else{
-            EntityManager.importEntities(importJob, this);
+            MCFFinishImportPromptController controller = new MCFFinishImportPromptController(
+                    importJob.subjects().length(),
+                    importJob.courses().length(),
+                    importJob.events().length(),
+                    importJob.resources().length()
+            );
+
+            controller.setStage(Utils.promptBoundWindow(
+                AppSettings.language().getItemOrElse("mcf_finishImport_windowTitle", "Finish Import"),
+                this.stage.getScene().getWindow(),
+                Modality.WINDOW_MODAL,
+                new ViewFactory<>(FXMLPaths.MCFFinishImportPrompt()),
+                controller
+            ));
+
+            controller.showAndWait(); //Thread stops here. Past here, user made a choice
+
+            Option<Selection> selection = controller.getSelection();
+
+            if(selection.nonEmpty() && selection.get() == Selection.ModifyOption()){
+                //TODO prompt modification window
+                //ImportJob modifiedImportJob = modifyImportJob(importJob)
+            }
+            else if(selection.nonEmpty() && selection.get() == Selection.FinishOption()){
+                EntityManager.importEntities(importJob, this);
+            }
         }
     }
 
