@@ -3,9 +3,9 @@ package file.imprt
 import java.io.File
 
 import app.AppSettings
-import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import file.imprt.ImportType.MCFImport
 import model._
-import service.ReadOnlyAppDatabase
+import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -26,7 +26,7 @@ object MCFImportReader{
     val Separator: Char = ';'
 }
 
-class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportReader {
+class MCFImportReader(file: File) extends ImportReader {
 
     lazy val createdResources: mutable.HashMap[String, ResourceBlueprint] = new mutable.HashMap
     lazy val createdCourses: mutable.HashMap[String, CourseBlueprint] = new mutable.HashMap
@@ -362,7 +362,7 @@ class MCFImportReader(file: File, database: ReadOnlyAppDatabase) extends ImportR
 
         ImportJob(subjects.toList, events.toList,
             resources.toList, createdCourses.values.toList,
-            errors.toList, finished = true)
+            errors.toList, finished = true, MCFImport)
     }
 
     override def getImportJob: ImportJob = importJob

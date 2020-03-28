@@ -8,14 +8,12 @@ import control.manage.CourseManagerController;
 import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
+import control.mcf.FinishImportPromptController;
 import control.mcf.MCFErrorViewerController;
-import control.mcf.MCFFinishImportPromptController;
 import control.schedule.*;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
-import file.imprt.ImportError;
-import file.imprt.ImportJob;
-import file.imprt.MCFImportReader;
+import file.imprt.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -33,6 +31,7 @@ import model.Quarter;
 import model.Quarters;
 import scala.Option;
 import scala.collection.JavaConverters;
+import scala.collection.immutable.List;
 import service.AppDatabase;
 import service.CourseDatabase;
 import solver.EventAssignment;
@@ -369,7 +368,7 @@ public class MainController extends StageController {
         fileMenu_save.setOnAction(event -> saveToFile());
         fileMenu_saveAs.setOnAction(event -> saveToNewFile());
 
-        importMenu_toActualProject.setOnAction(event -> importNewFile());
+        importMenu_toActualProject.setOnAction(event -> importToActualProject());
 
         addButtons_course.setOnAction(actionEvent -> promptCourseForm());
         addButtons_subject.setOnAction(actionEvent -> promptSubjectForm());
@@ -485,53 +484,65 @@ public class MainController extends StageController {
         }
     }
 
-    private void importNewFile() {
+    private void importToActualProject() {
         File f = new FileChooser().showOpenDialog(stage.getScene().getWindow());
 
         if(f != null){
             String extension = Utils.getFileExtension(f.getName());
 
-            //TODO factory
-            //TODO make it language specific
-            if(extension == null) promptAlert("Error", "The file does not have an extension.");
-            else if(extension.equals(MCFImportReader.MCFFileExtension())){
-                importFromMCF(f);
+            if(extension == null)
+                promptAlert(
+                    AppSettings.language().getItemOrElse(
+                        "noExtensionError_windowTitle",
+                        "Error"
+                    ),
+                    AppSettings.language().getItemOrElse(
+                        "noExtensionError_explanation",
+                        "The file does not have an extension."
+                ));
+            else if(ImportReaderFactory.unknownExtension(extension))
+                promptAlert(
+                    AppSettings.language().getItemOrElse(
+                            "unknownExtensionError_windowTitle",
+                            "Error"
+                    ),
+                    AppSettings.language().getItemOrElse(
+                            "unknownExtensionError_explanation",
+                            "Unknown file extension."
+                ));
+            else { //its safe to call Option.get because it's a known extension
+                importFromImportReader(
+                    ImportReaderFactory.fromExtension(extension).get()
+                    .withFile(f)
+                    .build()
+                );
             }
-            else promptAlert("Error", "Unknown file extension.");
         }
     }
 
-    private void importFromMCF(File f) {
-        MCFImportReader reader = new MCFImportReader(f, MainApp.getDatabase().getReadOnlyDatabase());
-
+    private void importFromImportReader(ImportReader reader) {
         ImportJob importJob = reader.read().getImportJob();
 
         if(importJob.errors().nonEmpty()){
-            showMCFErrors(importJob.errors());
+            showImportErrors(importJob);
         }
         else{
-            MCFFinishImportPromptController controller = new MCFFinishImportPromptController(
-                    importJob.subjects().length(),
-                    importJob.courses().length(),
-                    importJob.events().length(),
-                    importJob.resources().length()
-            );
+            FinishImportPromptController controller = new FinishImportPromptController(importJob);
 
             controller.setStage(Utils.promptBoundWindow(
-                AppSettings.language().getItemOrElse("mcf_finishImport_windowTitle", "Finish Import"),
+                AppSettings.language().getItemOrElse("finishImport_windowTitle", "Finish Import"),
                 this.stage.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.MCFFinishImportPrompt()),
                 controller
             ));
 
-            controller.showAndWait(); //Thread stops here. Past here, user made a choice
+            controller.showAndWait(); //Thread stops here. Past this line, user made a choice.
 
             Option<Selection> selection = controller.getSelection();
 
             if(selection.nonEmpty() && selection.get() == Selection.ModifyOption()){
-                //TODO prompt modification window
-                //ImportJob modifiedImportJob = modifyImportJob(importJob)
+                EntityManager.importEntities(modifyImportJob(importJob), this);
             }
             else if(selection.nonEmpty() && selection.get() == Selection.FinishOption()){
                 EntityManager.importEntities(importJob, this);
@@ -539,7 +550,18 @@ public class MainController extends StageController {
         }
     }
 
-    private void showMCFErrors(scala.collection.immutable.List<ImportError> errors) {
+    private void showImportErrors(ImportJob importJob) {
+        if(importJob.importType() == ImportType.MCFImportType()) {
+            //TODO if this is ever converted to scala, cast it fancier
+            showMCFErrors((List<MCFImportError>) (List<?>) importJob.errors());
+        }
+    }
+
+    private ImportJob modifyImportJob(ImportJob importJob) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void showMCFErrors(scala.collection.immutable.List<MCFImportError> errors) {
         MCFErrorViewerController controller = new MCFErrorViewerController(errors);
 
         controller.setStage(Utils.promptBoundWindow(

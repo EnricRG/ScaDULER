@@ -5,7 +5,7 @@ import java.util.ResourceBundle
 
 import app.AppSettings
 import control.StageController
-import file.imprt.{ImportError, MCFImportError}
+import file.imprt.MCFImportError
 import javafx.beans.property.{SimpleIntegerProperty, SimpleStringProperty}
 import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
@@ -26,9 +26,6 @@ class MCFErrorViewerController(errors: Iterable[MCFImportError]) extends StageCo
     @FXML var advice: Label = _
     @FXML var cancelButton: Button = _
 
-    //TODO remove this workaround
-    def this(errors: List[ImportError]) = this(errors.asInstanceOf[Iterable[MCFImportError]])
-
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
         initializeContentLanguage()
         setupTable()
@@ -37,8 +34,9 @@ class MCFErrorViewerController(errors: Iterable[MCFImportError]) extends StageCo
 
     def initializeContentLanguage(): Unit = {
         errorsFound.setText(
-            errors.size + " " +
-            AppSettings.language.getItemOrElse("mcf_errorsFound", "Errors have been found")
+            errors.size + " " + (
+            if (errors.size == 1) AppSettings.language.getItemOrElse("mcf_errorFound", "Error have been found")
+            else AppSettings.language.getItemOrElse("mcf_errorsFound", "Errors have been found"))
         )
 
         table.setPlaceholder(

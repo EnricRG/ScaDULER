@@ -7,4 +7,5 @@ case class ImportJob(subjects: List[SubjectBlueprint],
                      resources: List[ResourceBlueprint],
                      courses: List[CourseBlueprint],
                      errors: List[ImportError],
-                     finished: Boolean)
+                     finished: Boolean,
+                     importType: ImportType)

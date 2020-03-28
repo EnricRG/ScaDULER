@@ -5,11 +5,12 @@ import java.util.ResourceBundle
 
 import app.AppSettings
 import control.StageController
+import file.imprt.ImportJob
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import misc.Selection
 
-class MCFFinishImportPromptController(nSubjects: Int, nCourses: Int, nEvents: Int, nResources: Int)
+class FinishImportPromptController(importJob: ImportJob)
     extends StageController {
 
     private var selection: Option[Selection] = None
@@ -35,64 +36,64 @@ class MCFFinishImportPromptController(nSubjects: Int, nCourses: Int, nEvents: In
 
     def initializeContentLanguage(): Unit = {
         entryLine.setText(AppSettings.language.getItemOrElse(
-            "mcf_finishImport_entryLine",
+            "finishImport_entryLine",
             "This file contains the definition of:"
         ))
 
         subjectsLine.setText(
-            nSubjects + " " +
+            importJob.subjects.length + " " +
             AppSettings.language.getItemOrElse(
-                "mcf_finishImport_subjects",
+                "finishImport_subjects",
                 "subjects"
             )
         )
 
         coursesLine.setText(
-            nCourses + " " +
+            importJob.courses.length + " " +
             AppSettings.language.getItemOrElse(
-                "mcf_finishImport_courses",
+                "finishImport_courses",
                 "courses"
             )
         )
 
         eventsLine.setText(
-            nEvents + " " +
+            importJob.events.length + " " +
             AppSettings.language.getItemOrElse(
-                "mcf_finishImport_events",
+                "finishImport_events",
                 "events"
             )
         )
 
         resourcesLine.setText(
-            nResources + " " +
+            importJob.resources.length + " " +
             AppSettings.language.getItemOrElse(
-                "mcf_finishImport_resources",
+                "finishImport_resources",
                 "resources"
             )
         )
 
         completionExplanation.setText(AppSettings.language.getItemOrElse(
-            "mcf_finishImport_completionExplanation",
+            "finishImport_completionExplanation",
             "But some types of events have no association with any resource, nor incompatibilities between them."
         ))
 
         questionToUser.setText(AppSettings.language.getItemOrElse(
-            "mcf_finishImport_question",
+            "finishImport_question",
             "Would you like to enter this settings manually, leave it as it is or cancel the import job?"
         ))
 
         modifyButton.setText(AppSettings.language.getItemOrElse(
-            "mcf_finishImport_modifyButton",
+            "finishImport_modifyButton",
             "Modify manually"
         ))
 
         finishButton.setText(AppSettings.language.getItemOrElse(
-            "mcf_finishImport_finishButton",
+            "finishImport_finishButton",
             "Finish Import"
         ))
 
         cancelButton.setText(AppSettings.language.getItemOrElse(
-            "mcf_finishImport_cancelButton",
+            "finishImport_cancelButton",
             "Cancel Import"
         ))
     }
