@@ -22,6 +22,8 @@ object FXMLPaths {
     val BasicAlert: String = "src/main/fxml/alert/basic_alert.fxml"
     val ChoiceAlert: String = "src/main/fxml/alert/choice_alert.fxml"
 
+    val ModifyImportJob: String = "src/main/fxml/import/modify_import_job_main_frame.fxml"
+
     val MCFErrorViewer: String = "src/main/fxml/import/mcf/mcf_import_error_viewer.fxml"
     val MCFFinishImportPrompt: String = "src/main/fxml/import/mcf/mcf_finish_import_prompt.fxml"
 }

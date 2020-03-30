@@ -1,4 +1,4 @@
-package control.mcf
+package control.imprt.mcf
 
 import java.net.URL
 import java.util.ResourceBundle
@@ -13,7 +13,7 @@ import javafx.scene.control.{Button, Label, TableColumn, TableView}
 
 import scala.collection.JavaConverters
 
-class MCFErrorViewerController(errors: Iterable[MCFImportError]) extends StageController{
+class MCFImportErrorViewerController(errors: Iterable[MCFImportError]) extends StageController{
 
     @FXML var errorsFound: Label = _
 

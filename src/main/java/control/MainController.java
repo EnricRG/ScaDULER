@@ -4,12 +4,13 @@ import app.*;
 import control.form.CourseFormController;
 import control.form.EventFormController;
 import control.form.SubjectFormController;
+import control.imprt.ImportJobEditorController;
+import control.imprt.mcf.FinishImportPromptController;
+import control.imprt.mcf.MCFImportErrorViewerController;
 import control.manage.CourseManagerController;
 import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
-import control.mcf.FinishImportPromptController;
-import control.mcf.MCFErrorViewerController;
 import control.schedule.*;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
@@ -558,11 +559,23 @@ public class MainController extends StageController {
     }
 
     private ImportJob modifyImportJob(ImportJob importJob) {
-        throw new UnsupportedOperationException();
+        ImportJobEditorController controller = new ImportJobEditorController(importJob);
+
+        controller.setStage(Utils.promptBoundWindow(
+            AppSettings.language().getItemOrElse("modifyImportJob_windowTitle", "Modify Import data"),
+            this.stage.getScene().getWindow(),
+            Modality.WINDOW_MODAL,
+            new ViewFactory<>(FXMLPaths.ModifyImportJob()),
+            controller
+        ));
+
+        controller.showAndWait();
+
+        return controller.getImportJob();
     }
 
     private void showMCFErrors(scala.collection.immutable.List<MCFImportError> errors) {
-        MCFErrorViewerController controller = new MCFErrorViewerController(errors);
+        MCFImportErrorViewerController controller = new MCFImportErrorViewerController(errors);
 
         controller.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItemOrElse("mcf_errorViewer_windowTitle", "Errors found"),

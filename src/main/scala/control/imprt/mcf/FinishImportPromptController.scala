@@ -1,4 +1,4 @@
-package control.mcf
+package control.imprt.mcf
 
 import java.net.URL
 import java.util.ResourceBundle
