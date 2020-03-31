@@ -453,7 +453,7 @@ public class MainController extends StageController {
     }
 
     private void openFile(){
-        File f = new FileChooser().showOpenDialog(stage.getScene().getWindow());
+        File f = new FileChooser().showOpenDialog(stage().getScene().getWindow());
 
         //TODO prompt warning if changes haven't been saved.
         if(f != null){
@@ -482,7 +482,7 @@ public class MainController extends StageController {
     }
 
     private void importNewFile() {
-        File f = new FileChooser().showOpenDialog(stage.getScene().getWindow());
+        File f = new FileChooser().showOpenDialog(stage().getScene().getWindow());
 
         if(f != null){
             String extension = Utils.getFileExtension(f.getName());
@@ -579,7 +579,7 @@ public class MainController extends StageController {
     }
 
     private void saveToNewFile() {
-        File f = new FileChooser().showSaveDialog(stage.getScene().getWindow());
+        File f = new FileChooser().showSaveDialog(stage().getScene().getWindow());
 
         if(f != null){
             userProjectFile = f;
