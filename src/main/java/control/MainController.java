@@ -802,7 +802,7 @@ public class MainController extends StageController {
         UnassignedEventViewController controller = new UnassignedEventViewController(this, event);
 
         try{
-            eventView = new ViewFactory<>(FXMLPaths.UnassignedEvent()).load(controller);
+            eventView = new ViewFactory<UnassignedEventViewController>(FXMLPaths.UnassignedEvent()).load(controller);
         } catch (IOException ioe){
             ioe.printStackTrace();
         }
