@@ -14,6 +14,7 @@ import javafx.util.StringConverter;
 import misc.Duration;
 import misc.Warning;
 import model.*;
+import model.blueprint.EventBlueprint;
 import scala.collection.JavaConverters;
 import service.CourseDatabase;
 import service.EventDatabase;
@@ -23,7 +24,7 @@ import util.Utils;
 
 import java.util.ArrayList;
 
-public class EventFormController extends FormController {
+public class EventFormController extends FormController<EventBlueprint> {
 
     public Label eventNameTag;
     public TextField eventNameField;
@@ -244,6 +245,11 @@ public class EventFormController extends FormController {
             return new Warning(AppSettings.language().getItem("warning_eventPeriodicityCannotBeEmpty"));
         }
         else return null;
+    }
+
+    @Override
+    public EventBlueprint waitFormResult() {
+        return null; //TODO
     }
 
 }

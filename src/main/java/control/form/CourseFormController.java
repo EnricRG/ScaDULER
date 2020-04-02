@@ -1,15 +1,13 @@
 package control.form;
 
 import app.AppSettings;
-import app.MainApp;
 import control.MainController;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import misc.Warning;
-import model.Course;
-import service.CourseDatabase;
+import model.blueprint.CourseBlueprint;
 
-public class CourseFormController extends FormController {
+public class CourseFormController extends FormController<CourseBlueprint> {
 
     public Label courseNameTag;
     public TextField courseNameField;
@@ -19,7 +17,7 @@ public class CourseFormController extends FormController {
 
     public Button createCourseButton;
 
-    private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
+    private CourseBlueprint courseBlueprint = null;
 
     public CourseFormController(MainController mainController){
         super(mainController);
@@ -47,25 +45,24 @@ public class CourseFormController extends FormController {
     protected void bindActions() {
         //add course to database and close the window
         createCourseButton.setOnAction(actionEvent -> {
-            if(createCourse()) close();
+            if(!warnings()) {
+                courseBlueprint = createCourse();
+                close();
+            }
             actionEvent.consume();
         });
 
         descriptionWrapCheckBox.selectedProperty().bindBidirectional(courseDescriptionField.wrapTextProperty());
     }
 
-    private boolean createCourse() {
-        if(!warnings()){
-            Course c = courseDatabase.createCourse()._2;
+    //pre: !warnings()
+    private CourseBlueprint createCourse() {
+        CourseBlueprint cb = new CourseBlueprint();
 
-            c.setName(courseNameField.getText());
-            c.setDescription(courseDescriptionField.getText());
+        cb.name_$eq(courseNameField.getText());
+        cb.description_$eq(courseDescriptionField.getText());
 
-            getMainController().addCourseTab(c, false);
-
-            return true;
-        }
-        return false;
+        return cb;
     }
 
     @Override
@@ -73,5 +70,11 @@ public class CourseFormController extends FormController {
         if(courseNameField.getText().trim().isEmpty())
             return new Warning(AppSettings.language().getItem("warning_courseNameCannotBeEmpty"));
         else return null;
+    }
+
+    @Override
+    public CourseBlueprint waitFormResult() {
+        showAndWait();
+        return courseBlueprint;
     }
 }

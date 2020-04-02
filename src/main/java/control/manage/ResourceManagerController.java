@@ -21,6 +21,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import misc.Warning;
 import model.Resource;
+import model.blueprint.ResourceBlueprint;
 import scala.collection.JavaConverters;
 import service.ResourceDatabase;
 import util.Utils;
@@ -30,7 +31,7 @@ import java.util.List;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 
-public class ResourceManagerController extends FormController {
+public class ResourceManagerController extends FormController<ResourceBlueprint> {
 
     private ResourceDatabase resourceDatabase = MainApp.getDatabase().resourceDatabase();
 
@@ -236,6 +237,11 @@ public class ResourceManagerController extends FormController {
     @Override
     protected Warning checkWarnings(){
         return resourceCanBeCreated();
+    }
+
+    @Override
+    public ResourceBlueprint waitFormResult() {
+        return null; //TODO
     }
 
     //pre: name and capacity not null

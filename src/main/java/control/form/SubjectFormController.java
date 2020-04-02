@@ -16,6 +16,7 @@ import misc.Duration;
 import misc.EventTypeIncompatibility;
 import misc.Warning;
 import model.*;
+import model.blueprint.SubjectBlueprint;
 import scala.collection.JavaConverters;
 import service.CourseDatabase;
 import service.EventDatabase;
@@ -25,7 +26,7 @@ import util.Utils;
 
 import java.util.*;
 
-public class SubjectFormController extends FormController {
+public class SubjectFormController extends FormController<SubjectBlueprint> {
 
     public Label subjectNameTag;
     public TextField subjectNameField;
@@ -372,6 +373,11 @@ public class SubjectFormController extends FormController {
     @Override
     protected Warning checkWarnings(){
         return checkSubjectCreationWarnings();
+    }
+
+    @Override
+    public SubjectBlueprint waitFormResult() {
+        return null; //TODO
     }
 
     private Warning checkSubjectCreationWarnings() {

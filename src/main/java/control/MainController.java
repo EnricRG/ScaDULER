@@ -30,6 +30,7 @@ import model.Course;
 import model.Event;
 import model.Quarter;
 import model.Quarters;
+import model.blueprint.CourseBlueprint;
 import scala.Option;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.List;
@@ -692,17 +693,22 @@ public class MainController extends StageController {
 
 
     private void promptCourseForm() {
-        StageController stageController = new CourseFormController(this);
+        CourseFormController courseForm = new CourseFormController(this);
 
-        stageController.setStage(Utils.promptBoundWindow(
-                AppSettings.language().getItem("courseForm_windowTitle"),
-                addButtons_course.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.CourseForm()),
-                stageController
+        courseForm.setStage(Utils.promptBoundWindow(
+            AppSettings.language().getItemOrElse("courseForm_windowTitle", "Create new Course"),
+            addButtons_course.getScene().getWindow(),
+            Modality.WINDOW_MODAL,
+            new ViewFactory<>(FXMLPaths.CourseForm()),
+            courseForm
         ));
 
-        stageController.show();
+        CourseBlueprint cb = courseForm.waitFormResult();
+
+        if(cb != null) {
+            Course c = courseDatabase.createCourseFromBlueprint(cb)._2;
+            addCourseTab(c, false);
+        }
     }
 
     private void promptSubjectForm(){

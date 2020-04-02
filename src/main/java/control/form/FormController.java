@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
  * Provides a common and mostly implemented interface for all ChildStageControllers that manage an entity form window.
  * This way form controllers only have to override a bunch of methods and focus only on implementing its own logic.
  */
-public abstract class FormController extends ChildStageController implements Initializable {
+public abstract class FormController<E> extends ChildStageController implements Initializable {
 
     /** Warning notification field that all forms must have. */
     public Label warningTag;
@@ -102,5 +102,7 @@ public abstract class FormController extends ChildStageController implements Ini
         warningTag.setText(warning.toString());
         showWarnings();
     }
+
+    public abstract E waitFormResult();
 
 }

@@ -1,6 +1,7 @@
 package model
 
 import app.AppSettings
+import model.blueprint.CourseBlueprint
 import service.{ID, Identifiable}
 
 @SerialVersionUID(1L)
@@ -58,6 +59,13 @@ class Course(id: ID) extends Identifiable(id) with Serializable {
     def getAllEvents: Iterable[Event] = getFirstQuarterEvents ++ getSecondQuarterEvents
 
     override def toString: String = name
+}
+
+object Course{
+    def setCourseFromBlueprint(c: Course, cb: CourseBlueprint): Unit = {
+        c.name = cb.name
+        c.description = cb.description
+    }
 }
 
 object NoCourse extends Course(-1){
