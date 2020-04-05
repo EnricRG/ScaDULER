@@ -7,7 +7,7 @@ import service.{ID, Identifiable}
 import scala.collection.mutable
 
 @SerialVersionUID(1L)
-class Resource(id: ID) extends Identifiable(id) with Serializable {
+class Resource(id: ID) extends Identifiable(id) with ResourceLike with Serializable {
 
     private var name: String = ""
     private var quantity: Int = -1 //TODO delete this when proper serialization is implemented.

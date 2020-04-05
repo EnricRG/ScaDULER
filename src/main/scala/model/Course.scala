@@ -37,7 +37,7 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
 }
 
 @SerialVersionUID(1L)
-class Course(id: ID) extends Identifiable(id) with Serializable {
+class Course(id: ID) extends Identifiable(id) with CourseLike with Serializable {
 
     private var name: String = ""
     private var description: String = ""

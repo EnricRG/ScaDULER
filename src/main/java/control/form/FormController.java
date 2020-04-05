@@ -1,8 +1,6 @@
 package control.form;
 
-import control.ChildStageController;
-import control.MainController;
-import javafx.fxml.Initializable;
+import control.StageController;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import misc.Warning;
@@ -15,19 +13,19 @@ import java.util.ResourceBundle;
  * Provides a common and mostly implemented interface for all ChildStageControllers that manage an entity form window.
  * This way form controllers only have to override a bunch of methods and focus only on implementing its own logic.
  */
-public abstract class FormController<E> extends ChildStageController implements Initializable {
+public abstract class FormController<E> extends StageController {
 
     /** Warning notification field that all forms must have. */
     public Label warningTag;
 
     /** {@inheritDoc} */
-    public FormController(MainController mainController){
-        super(mainController);
+    public FormController(){
+        super();
     }
 
     /** {@inheritDoc} */
-    public FormController(Stage stage, MainController mainController) {
-        super(stage, mainController);
+    public FormController(Stage stage) {
+        super(stage);
     }
 
     /** Should be used to initialize static text fields that depend on the application language. */

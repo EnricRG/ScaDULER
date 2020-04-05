@@ -3,6 +3,7 @@ package control;
 import app.*;
 import control.form.CourseFormController;
 import control.form.EventFormController;
+import control.form.FormController2;
 import control.form.SubjectFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
@@ -26,11 +27,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import misc.Selection;
 import misc.Warning;
-import model.Course;
-import model.Event;
-import model.Quarter;
-import model.Quarters;
+import model.*;
 import model.blueprint.CourseBlueprint;
+import model.descriptor.EventDescriptor;
 import scala.Option;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.List;
@@ -693,7 +692,7 @@ public class MainController extends StageController {
 
 
     private void promptCourseForm() {
-        CourseFormController courseForm = new CourseFormController(this);
+        CourseFormController courseForm = new CourseFormController();
 
         courseForm.setStage(Utils.promptBoundWindow(
             AppSettings.language().getItemOrElse("courseForm_windowTitle", "Create new Course"),
@@ -703,10 +702,10 @@ public class MainController extends StageController {
             courseForm
         ));
 
-        CourseBlueprint cb = courseForm.waitFormResult();
+        Option<CourseBlueprint> cb = courseForm.waitFormResult();
 
-        if(cb != null) {
-            Course c = courseDatabase.createCourseFromBlueprint(cb)._2;
+        if(cb.nonEmpty()) {
+            Course c = courseDatabase.createCourseFromBlueprint(cb.get())._2;
             addCourseTab(c, false);
         }
     }
@@ -726,17 +725,36 @@ public class MainController extends StageController {
     }
 
     private void promptEventForm() {
-        StageController stageController = new EventFormController(this);
+        FormController2<EventDescriptor<Subject, Course, Resource, Event>> formController = new EventFormController<>(
+            MainApp.getDatabase().subjectDatabase().getFinishedSubjects(),
+            MainApp.getDatabase().courseDatabase().getCourses(),
+            MainApp.getDatabase().resourceDatabase().getElements(),
+            MainApp.getDatabase().eventDatabase().getElements()
+        );
 
-        stageController.setStage(Utils.promptBoundWindow(
+        formController.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItem("eventForm_windowTitle"),
                 addButtons_event.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EventForm()),
-                stageController
+                formController
         ));
 
-        stageController.show();
+        Option<EventDescriptor<Subject, Course, Resource, Event>> ed = formController.waitFormResult();
+
+        if(ed.nonEmpty()){
+            EventDescriptor<Subject, Course, Resource, Event> eventDescriptor = ed.get();
+
+            Event event = MainApp.getDatabase().eventDatabase().createEvent()._2;
+
+            Event.setEventFromDescriptor(event, ed.get());
+
+            if(eventDescriptor.subject().nonEmpty()){
+                eventDescriptor.subject().get().addEvent(event.getID(), event);
+            }
+
+            addUnassignedEvent(event);
+        }
     }
 
 

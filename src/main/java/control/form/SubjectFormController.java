@@ -83,10 +83,10 @@ public class SubjectFormController extends FormController<SubjectBlueprint> {
     private Collection<EventTypeIncompatibility> eventTypeIncompatibilities = new HashSet<>();
 
     public SubjectFormController(MainController mainController){
-        super(mainController);
+        super();
     }
     public SubjectFormController(Stage stage, MainController mainController){
-        super(stage, mainController);
+        super(stage);
     }
 
     @Override
@@ -353,7 +353,7 @@ public class SubjectFormController extends FormController<SubjectBlueprint> {
                 e.setCourse(subject.getCourse());
                 e.setQuarter(subject.getQuarter());
                 eventsByType.get(e.getEventType()).add(e);
-                getMainController().addUnassignedEvent(e);
+                //TODO remove getMainController().addUnassignedEvent(e);
             }
 
             for(EventTypeIncompatibility eti : eventTypeIncompatibilities){

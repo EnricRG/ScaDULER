@@ -3,6 +3,7 @@ package model
 import app.AppSettings
 import javafx.scene.paint
 import model.Weeks.{Periodicity, Week}
+import model.descriptor.EventDescriptor
 import service.{ID, Identifiable}
 
 import scala.collection.mutable
@@ -53,7 +54,7 @@ object EventTypes extends Serializable {
 case class Precedence(event: Event, isStrict: Boolean)
 
 @SerialVersionUID(1L)
-class Event(id: ID) extends Identifiable(id) with Serializable {
+class Event(id: ID) extends Identifiable(id) with EventLike with Serializable {
 
     private var startInterval: Int = -1
     private var name: String = ""
@@ -125,6 +126,7 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
     def setDuration(duration: Int): Unit = this.duration = duration
 
     def getIncompatibilities: Set[Event] = incompatibilities.toSet
+    //TODO update to take advantage of Set incompatibilities
     def addIncompatibility(e: Event): Unit = if(e != this){
         incompatibilities.add(e)
         if(!e.getIncompatibilities.contains(this)) e.addIncompatibility(this)
@@ -141,4 +143,22 @@ class Event(id: ID) extends Identifiable(id) with Serializable {
 
     def getQuarter: Quarter = quarter
     def setQuarter(q: Quarter): Unit = quarter = q
+}
+
+object Event{
+    def setEventFromDescriptor(event: Event, descriptor: EventDescriptor[Subject, Course, Resource, Event]): Unit = {
+        event.setName(descriptor.name)
+        event.setShortName(descriptor.shortName)
+        event.setDescription(descriptor.description)
+        event.setEventType(descriptor.eventType)
+        event.setDuration(descriptor.duration)
+        event.setPeriodicity(descriptor.periodicity)
+
+        if (descriptor.subject.nonEmpty) event.setSubject(descriptor.subject.get)
+        event.setCourse(descriptor.course)
+        event.setQuarter(descriptor.quarter)
+        if (descriptor.neededResource.nonEmpty) event.setNeededResource(descriptor.neededResource.get)
+
+        descriptor.incompatibilities.foreach(event.addIncompatibility)
+    }
 }

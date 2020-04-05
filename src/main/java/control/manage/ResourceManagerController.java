@@ -53,10 +53,10 @@ public class ResourceManagerController extends FormController<ResourceBlueprint>
     private List<Resource> resources = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().resourceDatabase().getElements()));
 
     public ResourceManagerController(MainController mainController){
-        super(mainController);
+        super();
     }
     public ResourceManagerController(Stage stage, MainController mainController){
-        super(stage, mainController);
+        super(stage);
     }
 
     @Override

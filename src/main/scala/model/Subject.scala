@@ -7,7 +7,7 @@ import service.{ID, Identifiable}
 import scala.collection.mutable
 
 @SerialVersionUID(1L)
-class Subject(id: ID) extends Identifiable(id) with Serializable {
+class Subject(id: ID) extends Identifiable(id) with SubjectLike with Serializable {
 
     def DefaultColor: paint.Color = paint.Color.WHITESMOKE
 
