@@ -3,7 +3,6 @@ package control;
 import app.*;
 import control.form.CourseFormController;
 import control.form.EventFormController;
-import control.form.FormController2;
 import control.form.SubjectFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
@@ -29,8 +28,11 @@ import misc.Selection;
 import misc.Warning;
 import model.*;
 import model.blueprint.CourseBlueprint;
+import model.blueprint.ResourceBlueprint;
 import model.descriptor.EventDescriptor;
 import scala.Option;
+import scala.Tuple2;
+import scala.collection.Iterable;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.List;
 import service.AppDatabase;
@@ -725,7 +727,7 @@ public class MainController extends StageController {
     }
 
     private void promptEventForm() {
-        FormController2<EventDescriptor<Subject, Course, Resource, Event>> formController = new EventFormController<>(
+        EventFormController formController = new EventFormController(
             MainApp.getDatabase().subjectDatabase().getFinishedSubjects(),
             MainApp.getDatabase().courseDatabase().getCourses(),
             MainApp.getDatabase().resourceDatabase().getElements(),
@@ -733,7 +735,7 @@ public class MainController extends StageController {
         );
 
         formController.setStage(Utils.promptBoundWindow(
-                AppSettings.language().getItem("eventForm_windowTitle"),
+                AppSettings.language().getItemOrElse("eventForm_windowTitle", "New Event"),
                 addButtons_event.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EventForm()),
@@ -770,22 +772,38 @@ public class MainController extends StageController {
     }
 
     public void promptResourceManager(Window owner) {
-        Utils.promptBoundWindow(
-                AppSettings.language().getItem("manageResources_windowTitle"),
-                owner,
-                Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.ManageResourcesPanel()),
-                new ResourceManagerController(this)
-        ).show();
+        ResourceManagerController<Resource> controller =
+            new ResourceManagerController<>(MainApp.getDatabase().resourceDatabase().getElements());
+
+        controller.setStage(Utils.promptBoundWindow(
+            AppSettings.language().getItem("manageResources_windowTitle"),
+            owner,
+            Modality.WINDOW_MODAL,
+            new ViewFactory<>(FXMLPaths.ManageResourcesPanel()),
+            controller
+        ));
+
+        Option<Tuple2<Iterable<ResourceBlueprint>, Iterable<Resource>>> formResult = controller.waitFormResult();
+
+        if(formResult.nonEmpty()){
+            Iterable<ResourceBlueprint> addedResources = formResult.get()._1;
+            Iterable<Resource> removedResources = formResult.get()._2;
+
+            for(ResourceBlueprint rb : JavaConverters.asJavaCollection(addedResources))
+                MainApp.getDatabase().resourceDatabase().createResourceFromBlueprint(rb);
+
+            for(Resource r : JavaConverters.asJavaCollection(removedResources))
+                MainApp.getDatabase().resourceDatabase().removeResource(r);
+        }
     }
 
     private void promptSubjectManager(){
         Utils.promptBoundWindow(
-                AppSettings.language().getItem("subjectManager_windowTitle"),
-                manageButtons_subjects.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.EntityManagerPanel()),
-                new SubjectManagerController(this)
+            AppSettings.language().getItem("subjectManager_windowTitle"),
+            manageButtons_subjects.getScene().getWindow(),
+            Modality.WINDOW_MODAL,
+            new ViewFactory<>(FXMLPaths.EntityManagerPanel()),
+            new SubjectManagerController(this)
         ).show();
     }
 

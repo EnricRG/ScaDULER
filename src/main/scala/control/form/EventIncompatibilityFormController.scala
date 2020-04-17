@@ -46,50 +46,41 @@ class EventIncompatibilityFormController[E <: EventLike](
   }
 
   private def initializeContentLanguage(): Unit = {
-    assignedIncompatibilitiesTag.setText(
-      AppSettings.language.getItemOrElse(
-        "manageIncompatibilities_assignIncompatibilities",
-        "Assigned Incompatibilities"))
+    assignedIncompatibilitiesTag.setText(AppSettings.language.getItemOrElse(
+      "manageIncompatibilities_assignIncompatibilities",
+      "Assigned Incompatibilities"))
 
-    incompatibilityTable.setPlaceholder(new Label(
-      AppSettings.language.getItemOrElse(
-        "manageIncompatibilities_incompatibilityTablePlaceholder",
-        "No incompatibilities")))
+    incompatibilityTable.setPlaceholder(new Label(AppSettings.language.getItemOrElse(
+      "manageIncompatibilities_incompatibilityTablePlaceholder",
+      "No incompatibilities")))
 
-    incompatibilityTable_nameColumn.setText(
-      AppSettings.language.getItemOrElse(
-        "manageIncompatibilities_nameColumnHeader",
-        "Name"))
+    incompatibilityTable_nameColumn.setText(AppSettings.language.getItemOrElse(
+      "manageIncompatibilities_nameColumnHeader",
+      "Name"))
 
-    selectAllAssigned.setText(
-      AppSettings.language.getItemOrElse(
-        "manageIncompatibilities_selectAllIncompatibilities",
-        "Select All Incompatibilities"))
+    selectAllAssigned.setText(AppSettings.language.getItemOrElse(
+      "manageIncompatibilities_selectAllIncompatibilities",
+      "Select All Incompatibilities"))
 
-    generalEventListTag.setText(
-      AppSettings.language.getItemOrElse(
-        "manageIncompatibilities_allEventsHeader",
-        "All Events"))
+    generalEventListTag.setText(AppSettings.language.getItemOrElse(
+      "manageIncompatibilities_allEventsHeader",
+      "All Events"))
 
-    eventSearchBox.setPromptText(
-      AppSettings.language.getItemOrElse(
-        "manageIncompatibilities_searchEvent",
-        "Enter event name"))
+    eventSearchBox.setPromptText(AppSettings.language.getItemOrElse(
+      "manageIncompatibilities_searchEvent",
+      "Enter event name"))
 
-    generalEventTable.setPlaceholder(new Label(
-      AppSettings.language.getItemOrElse(
-        "eventListPlaceholder",
-        "No events")))
+    generalEventTable.setPlaceholder(new Label(AppSettings.language.getItemOrElse(
+      "eventListPlaceholder",
+      "No events")))
 
-    generalEventTable_nameColumn.setText(
-      AppSettings.language.getItemOrElse(
-        "manageIncompatibilities_nameColumnHeader",
-        "Name"))
+    generalEventTable_nameColumn.setText(AppSettings.language.getItemOrElse(
+      "manageIncompatibilities_nameColumnHeader",
+      "Name"))
 
-    selectAllUnassigned.setText(
-      AppSettings.language.getItemOrElse(
-        "manageIncompatibilities_selectAllEvents",
-        "Select All Events"))
+    selectAllUnassigned.setText(AppSettings.language.getItemOrElse(
+      "manageIncompatibilities_selectAllEvents",
+      "Select All Events"))
   }
 
   private def setupViews(): Unit = {

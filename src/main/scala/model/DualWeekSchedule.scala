@@ -2,8 +2,8 @@ package model
 
 @SerialVersionUID(1L)
 class DualWeekSchedule[T](intervalsPerWeek: Int) extends Serializable {
-    private val firstWeekSchedule = new Schedule[T](intervalsPerWeek)
-    private val secondWeekSchedule = new Schedule[T](intervalsPerWeek)
+    protected val firstWeekSchedule = new Schedule[T](intervalsPerWeek)
+    protected val secondWeekSchedule = new Schedule[T](intervalsPerWeek)
 
     def getFirstWeekSchedule: Schedule[T] = firstWeekSchedule
     def getSecondWeekSchedule: Schedule[T] = secondWeekSchedule

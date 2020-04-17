@@ -126,7 +126,7 @@ object DefaultLanguage extends Language {
         "manageResources_nameColumn" -> "Name",
         "manageResources_capacityColumn" -> "Capacity",
         "manageResources_availabilityColumn" -> "Availability",
-        "manageResources_availableQuantityColumn" -> "Available\nQuantity",
+        "manageResources_availableQuantityColumn" -> "Available\nQuantity", //obsolete
         "manageResources_addButton" -> "Add Resource",
         "manageResources_modifyButton" -> "Modify Resource",
         "manageResources_deleteButton" -> "Delete Resource",

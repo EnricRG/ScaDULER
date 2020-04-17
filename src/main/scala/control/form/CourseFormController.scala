@@ -24,38 +24,29 @@ class CourseFormController extends FormController2[CourseBlueprint] {
   }
 
   override protected def initializeContentLanguage(): Unit = {
-    courseNameTag.setText(
-      AppSettings.language.getItemOrElse(
-        "courseForm_courseNameTagText",
-        "Course name") + ":")
+    courseNameTag.setText(AppSettings.language.getItemOrElse(
+      "courseForm_courseNameTagText",
+      "Course name") + ":")
 
-    courseNameField.setPromptText(
-      AppSettings.language.getItemOrElse(
-        "courseForm_courseNameFieldText",
-        "Full Course name"))
+    courseNameField.setPromptText(AppSettings.language.getItemOrElse(
+      "courseForm_courseNameFieldText",
+      "Full Course name"))
 
     courseDescriptionTag.setText(
-      AppSettings.language.getItemOrElse(
-        "courseForm_courseDescriptionTagText",
-        "Course description") + " " +
-      AppSettings.language.getItemOrElse(
-        "optional_tag",
-        "(Optional)") + ":")
+      AppSettings.language.getItemOrElse("courseForm_courseDescriptionTagText", "Course description") + " " +
+      AppSettings.language.getItemOrElse("optional_tag", "(Optional)") + ":")
 
-    courseDescriptionField.setPromptText(
-      AppSettings.language.getItemOrElse(
-        "courseForm_courseDescriptionFieldText",
-        "Enter a course description"))
+    courseDescriptionField.setPromptText(AppSettings.language.getItemOrElse(
+      "courseForm_courseDescriptionFieldText",
+      "Enter a course description"))
 
-    descriptionWrapCheckBox.setText(
-      AppSettings.language.getItemOrElse(
-        "form_wrapDescription",
-        "Wrap text on corners"))
+    descriptionWrapCheckBox.setText(AppSettings.language.getItemOrElse(
+      "form_wrapDescription",
+      "Wrap text on corners"))
 
-    createCourseButton.setText(
-      AppSettings.language.getItemOrElse(
-        "courseForm_createCourseButtonText",
-        "Create Course"))
+    createCourseButton.setText(AppSettings.language.getItemOrElse(
+      "courseForm_createCourseButtonText",
+      "Create Course"))
   }
 
   override protected def setupViews(): Unit = {}
@@ -82,10 +73,9 @@ class CourseFormController extends FormController2[CourseBlueprint] {
 
   override protected def checkWarnings: Option[Warning] = {
     if (courseNameField.getText.trim.isEmpty)
-      Some(new Warning(
-        AppSettings.language.getItemOrElse(
-          "warning_courseNameCannotBeEmpty",
-          "Course name cannot be empty") + "."))
+      Some(new Warning(AppSettings.language.getItemOrElse(
+        "warning_courseNameCannotBeEmpty",
+        "Course name cannot be empty") + "."))
     else
       None
   }
