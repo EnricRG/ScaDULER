@@ -7,10 +7,6 @@ package object model{
     @deprecated
     def getName: String
   }
-  trait CourseLike{
-    @deprecated
-    def getName: String
-  }
   trait ResourceLike{
     @deprecated
     def getName: String

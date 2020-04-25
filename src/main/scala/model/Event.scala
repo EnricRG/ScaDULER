@@ -60,7 +60,7 @@ class Event(id: ID) extends Identifiable(id) with EventLike with Serializable {
   private var name: String = ""
   private var shortName: String = ""
   private var description: String = ""
-  private var neededResource: Option[Resource] = None
+  private var _neededResource: Option[Resource] = None
   private var eventType: EventType = _
   private var subject: Option[Subject] = None
   private var periodicity: Periodicity = _
@@ -105,13 +105,14 @@ class Event(id: ID) extends Identifiable(id) with EventLike with Serializable {
   def getEventType: EventType = eventType
   def setEventType(et: EventType): Unit = eventType = et
 
-  def needsResource: Boolean = neededResource match{
+  def needsResource: Boolean = _neededResource match{
     case Some(_) => true
     case _ => false
   }
-  def getNeededResource: Resource = neededResource.orNull
+  def neededResource: Resource = getNeededResource
+  def getNeededResource: Resource = _neededResource.orNull
   def getSafeNeededResource: Resource = getNeededResource
-  def setNeededResource(nr: Resource): Unit = neededResource = Some(nr)
+  def setNeededResource(nr: Resource): Unit = _neededResource = Some(nr)
 
   def getPeriodicity: Periodicity = periodicity
   def setPeriodicity(periodicity: Periodicity): Unit = this.periodicity = periodicity

@@ -37,28 +37,8 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
 }
 
 @SerialVersionUID(1L)
-class Course(id: ID) extends Identifiable(id) with CourseLike with Serializable {
-
-  private var name: String = ""
-  private var description: String = ""
-  private var firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
-  private var secondQuarterData: QuarterData = new QuarterData(SecondQuarter)
-
-  def getFirstQuarterData: QuarterData = firstQuarterData
-  def getSecondQuarterData: QuarterData = secondQuarterData
-
-  def getName: String = name
-  def setName(n: String): Unit = name = n
-
-  def getDescription: String = description
-  def setDescription(d: String): Unit = description = d
-
-  def getFirstQuarterEvents: Iterable[Event] = firstQuarterData.getSchedule.getEvents
-  def getSecondQuarterEvents: Iterable[Event] = secondQuarterData.getSchedule.getEvents
-  //WARNING danger, future implementations may allow repeated events appear in this iterable.
-  def getAllEvents: Iterable[Event] = getFirstQuarterEvents ++ getSecondQuarterEvents
-
-  override def toString: String = name
+class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable {
+  override def toString: String = name //TODO remove this and use custom cell factories
 }
 
 object Course{
@@ -69,8 +49,7 @@ object Course{
 }
 
 object NoCourse extends Course(-1){
-  setName(AppSettings.language.getItem("noCourse"))
+  name = AppSettings.language.getItem("noCourse")
 
   def noCourse: Course = this
-  override def toString: String = getName
 } //non bd object

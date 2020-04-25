@@ -835,7 +835,7 @@ public class MainController extends StageController {
     //TODO: remove this method, it has only debugging purposes.
     public void addCourseTab(){
         Course c = courseDatabase.createCourse()._2;
-        c.setName("Default");
+        c.name_$eq("Default");
         addCourseTab(c, false);
     }
 
@@ -855,7 +855,7 @@ public class MainController extends StageController {
         }
 
         //create tab with course grid if possible. If not, create empty tab.
-        final Tab newTab = courseTabContent == null ? new Tab(c.getName()) : new Tab(c.getName(), courseTabContent);
+        final Tab newTab = courseTabContent == null ? new Tab(c.name()) : new Tab(c.name(), courseTabContent);
 
         //mapping the course to the tab
         courseTabMap.put(c.getID(), newTab);
@@ -900,7 +900,7 @@ public class MainController extends StageController {
     //called when the tab is closed from the main interface, so it has to be deleted from db
     public void closeCourseTab(Course c, Tab tab){
         if(tab != null) {
-            for(Event e : JavaConverters.asJavaCollection(c.getAllEvents()))
+            for(Event e : JavaConverters.asJavaCollection(c.events()))
                 addUnassignedEvent(e);
 
             courseTabMap.remove(c.getID());

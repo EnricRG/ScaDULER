@@ -16,11 +16,11 @@ class CourseDatabase extends Database[Course] {
   private val indexByName: mutable.Map[String, Course] = new mutable.HashMap
 
   def index(c: Course): Unit = {
-    indexByName.put(c.getName, c)
+    indexByName.put(c.name, c)
   }
 
   def deindex(c: Course): Unit ={
-    if(c != null) indexByName.remove(c.getName)
+    if(c != null) indexByName.remove(c.name)
   }
 
 

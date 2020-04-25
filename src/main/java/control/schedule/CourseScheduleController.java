@@ -32,8 +32,8 @@ public class CourseScheduleController implements Initializable {
     public CourseScheduleController(MainController mainController, Course course){
         this.mainController = mainController;
         this.course = course;
-        this.firstQuarterController = new QuarterScheduleController(mainController, this, course.getFirstQuarterData());
-        this.secondQuarterController = new QuarterScheduleController(mainController, this, course.getSecondQuarterData());
+        this.firstQuarterController = new QuarterScheduleController(mainController, this, course.firstQuarterData());
+        this.secondQuarterController = new QuarterScheduleController(mainController, this, course.secondQuarterData());
     }
 
     @Override

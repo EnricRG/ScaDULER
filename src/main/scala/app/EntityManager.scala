@@ -2,10 +2,10 @@ package app
 
 import control.MainController
 import file.imprt.ImportJob
+import misc.EventTypeIncompatibility
 import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
-import misc.{EventTypeIncompatibilities, EventTypeIncompatibility}
-import model.{ComputerEvent, Course, Event, EventType, EventTypes, LaboratoryEvent, Resource, Subject, TheoryEvent}
-import service.{AppDatabase, CourseDatabase, EventDatabase, ResourceDatabase, SubjectDatabase}
+import model._
+import service._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -84,7 +84,7 @@ object EntityManager {
     }
 
     private def setCourseFromBlueprint(c: Course, cb: CourseBlueprint): Unit = {
-        c.setName(cb.name)
+        c.name = cb.name
     }
 
     private def setResourceFromBlueprint(r: Resource, rb: ResourceBlueprint): Unit = {

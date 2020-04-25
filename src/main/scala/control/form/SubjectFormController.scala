@@ -1,26 +1,5 @@
 package control.form
-
-import java.util.{ArrayList, Collection, HashMap, HashSet, List}
-
-import app.{AppSettings, FXMLPaths, MainApp}
-import control.StageController
-import factory.ViewFactory
-import javafx.beans.property.SimpleStringProperty
-import javafx.collections.{FXCollections, ObservableList}
-import javafx.scene.control.{Button, ColorPicker, ComboBox, Label, ListCell, ListView, SelectionMode, TableColumn, TableView, TextArea, TextField}
-import javafx.stage.{Modality, Stage}
-import misc.{Duration, EventTypeIncompatibility, Warning}
-import model.{Color, Course, CourseLike, Event, EventLike, EventType, EventTypes, Quarter, Quarters, Resource, ResourceLike, Subject, Weeks}
-import model.blueprint.{EventBlueprint, SubjectBlueprint}
-import util.Utils
-import java.util
-
-import javafx.fxml.FXML
-import model.Weeks.Periodicity
-
-import scala.collection.mutable.ArrayBuffer
-import scala.collection.{JavaConverters, mutable}
-
+/*
 class SubjectFormController[C <: CourseLike, R <: ResourceLike](
   courses: Iterable[C], resources: Iterable[R]) extends FormController2[SubjectBlueprint] {
 
@@ -483,4 +462,4 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
       checkSubjectCreationWarnings
   }
 }
-
+*/
