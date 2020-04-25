@@ -24,5 +24,6 @@ package object model{
   trait EventLike{
     @deprecated
     def getName: String
+    def neededResource: ResourceLike
   }
 }
