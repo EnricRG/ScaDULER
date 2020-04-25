@@ -22,6 +22,7 @@ trait CourseLikeImpl extends CourseLike {
   private val _firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
   private val _secondQuarterData: QuarterData = new QuarterData(SecondQuarter)
 
+
   def name: String = _name
   def name_=(s: String): Unit = _name = s
 

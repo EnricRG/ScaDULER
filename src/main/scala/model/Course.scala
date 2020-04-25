@@ -49,7 +49,7 @@ object Course{
 }
 
 object NoCourse extends Course(-1){
-  name = AppSettings.language.getItem("noCourse")
+  name = AppSettings.language.getItemOrElse("noCourse", "No Course")
 
   def noCourse: Course = this
 } //non bd object
