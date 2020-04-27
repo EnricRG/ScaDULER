@@ -6,17 +6,17 @@ import factory.ViewFactory
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, ColorPicker, ComboBox, Label, ListCell, ListView, SelectionMode, TableColumn, TableView, TextArea, TextField}
+import javafx.scene.control._
 import javafx.stage.{Modality, Stage}
 import misc.{Duration, EventTypeIncompatibility, Warning}
 import model.Weeks.Periodicity
 import model.blueprint.{EventBlueprint, SubjectBlueprint}
-import model.{CourseLike, Event, EventLike, EventType, EventTypes, Quarter, Quarters, ResourceLike, Weeks}
+import model._
 import util.Utils
 import java.util
 
-import scala.collection.{JavaConverters, mutable}
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.{JavaConverters, mutable}
 
 class SubjectFormController[C <: CourseLike, R <: ResourceLike](
   courses: Iterable[C], resources: Iterable[R]) extends FormController2[SubjectBlueprint] {
@@ -207,6 +207,13 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
   override protected def setupViews(): Unit = {
     subjectCoursePicker.setItems(FXCollections.observableArrayList(
       JavaConverters.asJavaCollection(courses)))
+    subjectCoursePicker.setCellFactory(param => new ListCell[C] {
+      override protected def updateItem(item: C, empty: Boolean): Unit = {
+        super.updateItem(item, empty)
+        if (empty || item == null) setGraphic(null)
+        else setText(item.name)
+      }
+    })
 
     subjectQuarterPicker.setItems(FXCollections.observableArrayList(
       JavaConverters.asJavaCollection(Quarters.quarters)))

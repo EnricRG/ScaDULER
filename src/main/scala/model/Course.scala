@@ -37,9 +37,7 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
 }
 
 @SerialVersionUID(1L)
-class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable {
-  override def toString: String = name //TODO remove this and use custom cell factories
-}
+class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable { }
 
 object Course{
   def setCourseFromBlueprint(c: Course, cb: CourseBlueprint): Unit = {

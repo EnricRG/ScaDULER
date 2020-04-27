@@ -133,6 +133,13 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
   override protected def setupViews(): Unit = {
     eventCourseBox.setItems(FXCollections.observableArrayList(
       JavaConverters.asJavaCollection(courses)))
+    eventCourseBox.setCellFactory(param => new ListCell[C] {
+      override protected def updateItem(item: C, empty: Boolean): Unit = {
+        super.updateItem(item, empty)
+        if (empty || item == null) setGraphic(null)
+        else setText(item.name)
+      }
+    })
 
     eventQuarterBox.setItems(FXCollections.observableArrayList(
       JavaConverters.asJavaCollection(Quarters.quarters)))
