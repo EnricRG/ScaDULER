@@ -53,6 +53,42 @@ object EventTypes extends Serializable {
 
 case class Precedence(event: Event, isStrict: Boolean)
 
+class Event2(id: ID) extends Identifiable(id)
+  with EventLikeImpl[Subject2, Course, Resource, Event2]
+  with Serializable{
+
+  private var startInterval: Int = -1
+  private var _week: Option[Week] = None
+
+  def getStartInterval: Int = startInterval
+  def assign(week: Week, interval: Int): Unit = {
+    startInterval = interval
+    this._week = Some(week)
+  }
+  def unassign(): Unit = {
+    startInterval = -1
+    _week = None
+  }
+
+  def week: Option[Week] = _week
+  def week_=(w: Option[Week]): Unit = _week = w
+  def week_=(w: Week): Unit = _week = Some(w)
+
+  def isAssigned: Boolean = startInterval >= 0
+  def isUnassigned: Boolean = !isAssigned
+  def isAssignable: Boolean = isUnassigned
+
+  def addIncompatibility(e: Event2): Unit = if (e != this) {
+    _incompatibilities.add(e)
+    if(!e.incompatibilities.contains(this)) e.addIncompatibility(this)
+  }
+
+  def removeIncompatibility(e: Event2): Unit = {
+    _incompatibilities.remove(e)
+    if(e.incompatibilities.contains(this)) e.removeIncompatibility(this)
+  }
+}
+
 @SerialVersionUID(1L)
 class Event(id: ID) extends Identifiable(id) with EventLike with Serializable {
 

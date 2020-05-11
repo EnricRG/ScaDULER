@@ -3,8 +3,8 @@ package app
 import control.MainController
 import file.imprt.ImportJob
 import misc.EventTypeIncompatibility
-import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import model._
+import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import service._
 
 import scala.collection.mutable
@@ -57,8 +57,8 @@ object EntityManager {
             val event = eventDatabase.createEvent._2
 
             setEventFromBlueprint(event, eb,
-                subjectMapper(eb.subject.get),
-                courseMapper(eb.course),
+                subjectMapper(eb.subject.orNull),
+                courseMapper(eb.course.orNull),
                 resourceMapper.get(eb.neededResource.orNull)
             )
 
@@ -108,7 +108,7 @@ object EntityManager {
         if(r.nonEmpty) e.setNeededResource(r.get)
         e.setPeriodicity(eb.periodicity)
         e.setCourse(c)
-        e.setQuarter(eb.quarter)
+        e.setQuarter(eb.quarter.orNull)
     }
 }
 

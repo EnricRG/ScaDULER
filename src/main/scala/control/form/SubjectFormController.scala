@@ -10,7 +10,6 @@ import javafx.scene.control._
 import javafx.stage.{Modality, Stage}
 import misc.{Duration, EventTypeIncompatibility, Warning}
 import model.Weeks.Periodicity
-import model.blueprint.{EventBlueprint, SubjectBlueprint}
 import model._
 import util.Utils
 import java.util
@@ -18,8 +17,17 @@ import java.util
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.{JavaConverters, mutable}
 
-class SubjectFormController[C <: CourseLike, R <: ResourceLike](
-  courses: Iterable[C], resources: Iterable[R]) extends FormController2[SubjectBlueprint] {
+abstract class SubjectFormController2[
+  C <: CourseLike,
+  R <: ResourceLike,
+  SD <: SubjectDescriptor[C,R,EventDescriptor2[SD,C,R]],
+  ED <: EventDescriptor2[SD,C,R]](
+  courses: Iterable[C],
+  resources: Iterable[R])
+  extends FormController2[SD] {
+
+  def newEventDescriptor: ED
+  def newSubjectDescriptor: SD
 
   @FXML var subjectNameTag: Label = _
   @FXML var subjectNameField: TextField = _
@@ -59,16 +67,16 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
 
   @FXML var manageEventTypeIncompatibilitiesButton: Button = _
 
-  @FXML var eventTable: TableView[EventLike] = _
-  @FXML var eventTable_nameColumn: TableColumn[EventLike, String] = _
-  @FXML var eventTable_resourceColumn: TableColumn[EventLike, String] = _
+  @FXML var eventTable: TableView[ED] = _
+  @FXML var eventTable_nameColumn: TableColumn[ED, String] = _
+  @FXML var eventTable_resourceColumn: TableColumn[ED, String] = _
 
   @FXML var deleteSelectedEventsButton: Button = _
   @FXML var deleteAllEventsButton: Button = _
 
   @FXML var createSubjectButton: Button = _
 
-  private var subjectBlueprint: Option[SubjectBlueprint] = None
+  private var subjectBlueprint: Option[SD] = None
   private val eventTypeIncompatibilities: util.Collection[EventTypeIncompatibility] = new util.HashSet[EventTypeIncompatibility]
 
   def this(courses: Iterable[C], resources: Iterable[R], stage: Stage) {
@@ -248,10 +256,13 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
       JavaConverters.asJavaCollection(resources)))
 
     eventTable.getSelectionModel.setSelectionMode(SelectionMode.MULTIPLE)
-    eventTable_nameColumn.setCellValueFactory((cell: TableColumn.CellDataFeatures[EventLike, String]) =>
-      new SimpleStringProperty(cell.getValue.getName))
-    eventTable_resourceColumn.setCellValueFactory((cell: TableColumn.CellDataFeatures[EventLike, String]) =>
-      new SimpleStringProperty(cell.getValue.neededResource.getName))
+    eventTable_nameColumn.setCellValueFactory((cell: TableColumn.CellDataFeatures[ED, String]) =>
+      new SimpleStringProperty(cell.getValue.name))
+    eventTable_resourceColumn.setCellValueFactory((cell: TableColumn.CellDataFeatures[ED, String]) =>
+      if(cell.getValue.neededResource.nonEmpty)
+        new SimpleStringProperty(cell.getValue.neededResource.get.name)
+      else new SimpleStringProperty()
+    )
   }
 
   override protected def bindActions(): Unit = {
@@ -348,7 +359,7 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
         periodicity.toShortString))
   }
 
-  private def deleteSubjectEvents(selectedItems: util.Collection[EventLike]): Unit = {
+  private def deleteSubjectEvents(selectedItems: util.Collection[ED]): Unit = {
     eventTable.getItems.removeAll(selectedItems)
   }
 
@@ -390,8 +401,8 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
                             ): Unit = {
     if (!warnings(checkEventGenerationWarnings(eventType, rangeStart, rangeEnd, periodicity, duration, neededResource)))
       for (i <- rangeStart to rangeEnd) {
-        val event: EventBlueprint = new EventBlueprint
-        //TODO abstract string pattern
+        val event = newEventDescriptor
+
         event.name = "%s (%s-%d) (%s)".format(subjectName, eventType.toString, i, periodicity.toShortString)
         event.shortName = "%s (%s %d) (%s)".format(subjectShortName, eventType.toShortString, i, periodicity.toShortString)
         event.eventType = eventType
@@ -403,8 +414,8 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
       }
   }
 
-  private def createSubject: SubjectBlueprint = {
-    val subject: SubjectBlueprint = new SubjectBlueprint
+  private def createSubject: SD = {
+    val subject = newSubjectDescriptor
 
     subject.name = subjectNameField.getText
     subject.shortName = subjectShortNameField.getText
@@ -413,21 +424,21 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
     subject.course = subjectCoursePicker.getValue
     subject.quarter = subjectQuarterPicker.getValue
 
-    val eventsByType: mutable.Map[EventType, ArrayBuffer[Event]] = new mutable.HashMap
+    val eventsByType: mutable.Map[EventType, ArrayBuffer[ED]] = new mutable.HashMap
     EventTypes.commonEventTypes.foreach(eventsByType.put(_, new ArrayBuffer))
 
     eventTable.getItems.forEach(e => {
-      subject.addEvent(e)
+      subject.events_+=(e)
       e.subject = subject
-      e.course = subject.getCourse
-      e.quarter = subject.getQuarter
-      eventsByType.get(e.eventType).add(e)
+      e.course = subject.course
+      e.quarter = subject.quarter
+      eventsByType(e.eventType) += e
       //TODO remove getMainController().addUnassignedEvent(e);
     })
 
     eventTypeIncompatibilities.forEach(eti => {
-      eventsByType.get(eti.getFirstType).foreach(e1 => {
-        eventsByType.get(eti.getSecondType).foreach(e2 => {
+      eventsByType(eti.getFirstType).foreach(e1 => {
+        eventsByType(eti.getSecondType).foreach(e2 => {
           e1.addIncompatibility(e2)
         })
       })
@@ -438,7 +449,7 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
 
   override protected def checkWarnings: Option[Warning] = checkSubjectCreationWarnings
 
-  override def waitFormResult: Option[SubjectBlueprint] = {
+  override def waitFormResult: Option[SD] = {
     showAndWait()
     subjectBlueprint
   }
@@ -487,4 +498,3 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
       checkSubjectCreationWarnings
   }
 }
-

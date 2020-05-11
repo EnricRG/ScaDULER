@@ -3,10 +3,6 @@ package object service {
 }
 
 package object model{
-  trait SubjectLike{
-    @deprecated
-    def getName: String
-  }
   trait ResourceLike{
     @deprecated
     def getName: String
@@ -16,10 +12,5 @@ package object model{
     def decrementCapacity(decrement: Int)
     def getAvailability(week: Int, interval: Int): Int
     def getAvailability: ResourceSchedule
-  }
-  trait EventLike{
-    @deprecated
-    def getName: String
-    def neededResource: ResourceLike
   }
 }

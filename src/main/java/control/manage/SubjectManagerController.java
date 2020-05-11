@@ -61,6 +61,7 @@ public class SubjectManagerController extends EntityManagerController<Subject> {
         nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
         shortNameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getShortName()));
         descriptionColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDescription()));
+        //TODO replace eventSummary for more advanced cell value factory
         eventCountColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getEventSummary()));
     }
 
