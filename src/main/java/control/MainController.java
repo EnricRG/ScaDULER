@@ -3,7 +3,6 @@ package control;
 import app.*;
 import control.form.CourseFormController;
 import control.form.EventFormController;
-import control.form.SubjectFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
 import control.imprt.mcf.MCFImportErrorViewerController;
@@ -713,7 +712,8 @@ public class MainController extends StageController {
     }
 
     private void promptSubjectForm(){
-
+        ScalaMainController$.MODULE$.promptSubjectForm(this);
+/*
         StageController stageController = new SubjectFormController(this);
 
         stageController.setStage(Utils.promptBoundWindow(
@@ -724,7 +724,7 @@ public class MainController extends StageController {
                 stageController
         ));
 
-        stageController.show();
+        stageController.show();*/
     }
 
     private void promptEventForm() {

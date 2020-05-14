@@ -101,7 +101,7 @@ trait SubjectLikeImpl[
 }
 
 class SubjectDescriptor[
-  S <: SubjectDescriptor[S,C,R,E],
+  S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
   E <: EventLike2[S,C,R,E]] extends SubjectLikeImpl[S,C,R,E]

@@ -2,6 +2,7 @@ package model
 
 import javafx.scene.paint
 import misc.EventTypeIncompatibility
+import model.blueprint.SubjectBlueprint
 import service.{ID, Identifiable}
 
 import scala.collection.mutable
@@ -21,14 +22,12 @@ class Subject2(id: ID) extends Identifiable(id) with SubjectLikeImpl[Subject2, C
 @SerialVersionUID(1L)
 class Subject(id: ID) extends Identifiable(id) with SubjectLike with Serializable {
 
-  def DefaultColor: paint.Color = paint.Color.WHITESMOKE
-
   private var name: String = ""
   private var shortName: String = ""
   private var description: String = ""
   private var course: Course = NoCourse
   private var quarter: Quarter = NoQuarter
-  private var color: Color = new Color(DefaultColor)
+  private var color: Color = new Color(Subject.DefaultColor)
   private val events: mutable.Map[ID,Event] = new mutable.HashMap
   private val additionalInformation: mutable.Map[String, Any] = new mutable.HashMap
   private val eventTypeIncompatibilities: mutable.Set[EventTypeIncompatibility] = new mutable.HashSet
@@ -87,4 +86,19 @@ class Subject(id: ID) extends Identifiable(id) with SubjectLike with Serializabl
 
   //debug method
   def summary: String = List(name, shortName, description, events, color).mkString("\n")
+}
+
+object Subject{
+  def DefaultColor: paint.Color = paint.Color.WHITESMOKE
+
+  def setSubjectFromBlueprint(s: Subject, sb: SubjectLike2[_,Course,Resource,_], events: Iterable[Event]): Unit = {
+    s.setName(sb.name)
+    s.setShortName(sb.shortName)
+    s.setDescription(sb.description)
+    s.setColor(sb.color.getOrElse(Subject.DefaultColor))
+    s.setCourse(sb.course.getOrElse(NoCourse))
+    s.setQuarter(sb.quarter.getOrElse(NoQuarter))
+    sb.additionalFields.foreach(pair => s.setAdditionalField(pair._1,pair._2))
+    events.foreach(e => s.addEvent(e.getID,e))
+  }
 }
