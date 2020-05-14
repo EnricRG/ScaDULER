@@ -10,9 +10,10 @@ trait SubjectLike{
 }
 
 trait SubjectLike2[
+  S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
-  E <: EventLike2[SubjectLike2[C,R,E],C,R,E]] {
+  E <: EventLike2[S,C,R,E]] {
 
   def name: String
   def name_=(s: String): Unit
@@ -49,9 +50,10 @@ trait SubjectLike2[
 }
 
 trait SubjectLikeImpl[
+  S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
-  E <: EventLike2[SubjectLike2[C,R,E],C,R,E]] extends SubjectLike2[C,R,E] {
+  E <: EventLike2[S,C,R,E]] extends SubjectLike2[S,C,R,E] {
 
   private var _name: String = ""
   private var _shortName: String = ""
@@ -99,6 +101,7 @@ trait SubjectLikeImpl[
 }
 
 class SubjectDescriptor[
+  S <: SubjectDescriptor[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
-  E <: EventLike2[SubjectDescriptor[C,R,E],C,R,E]] extends SubjectLikeImpl[C,R,E]
+  E <: EventLike2[S,C,R,E]] extends SubjectLikeImpl[S,C,R,E]

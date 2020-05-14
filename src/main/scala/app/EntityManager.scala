@@ -58,7 +58,7 @@ object EntityManager {
 
             setEventFromBlueprint(event, eb,
                 subjectMapper(eb.subject.orNull),
-                courseMapper(eb.course.orNull),
+                courseMapper(eb.course),
                 resourceMapper.get(eb.neededResource.orNull)
             )
 
@@ -108,7 +108,7 @@ object EntityManager {
         if(r.nonEmpty) e.setNeededResource(r.get)
         e.setPeriodicity(eb.periodicity)
         e.setCourse(c)
-        e.setQuarter(eb.quarter.orNull)
+        e.setQuarter(eb.quarter)
     }
 }
 

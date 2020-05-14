@@ -713,6 +713,7 @@ public class MainController extends StageController {
     }
 
     private void promptSubjectForm(){
+
         StageController stageController = new SubjectFormController(this);
 
         stageController.setStage(Utils.promptBoundWindow(

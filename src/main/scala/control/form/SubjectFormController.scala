@@ -17,10 +17,35 @@ import java.util
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.{JavaConverters, mutable}
 
-abstract class SubjectFormController2[
+object SubjectFormController2{
+  type C = Course
+  type R = Resource
+  type SD = SubjectDescriptor[SubjectDescriptor[Nothing,C,R,ED], C, R, ED]
+  type ED = EventDescriptor2[Nothing,C,R]
+}
+
+class SubjectFormController2(
+  courses: Iterable[Course],
+  resources: Iterable[Resource]) extends AbstractSubjectFormController[
+    SubjectFormController2.C,
+    SubjectFormController2.R,
+    SubjectFormController2.SD,
+    SubjectFormController2.ED
+  ](courses, resources) {
+
+  def newEventDescriptor: SubjectFormController2.ED = {
+    new EventDescriptor2
+  }
+
+  def newSubjectDescriptor: SubjectFormController2.SD = {
+    new SubjectDescriptor
+  }
+}
+
+abstract class AbstractSubjectFormController[
   C <: CourseLike,
   R <: ResourceLike,
-  SD <: SubjectDescriptor[C,R,EventDescriptor2[SD,C,R]],
+  SD <: SubjectDescriptor[SD,C,R,EventDescriptor2[SD,C,R]],
   ED <: EventDescriptor2[SD,C,R]](
   courses: Iterable[C],
   resources: Iterable[R])

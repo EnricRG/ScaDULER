@@ -12,7 +12,7 @@ trait EventLike {
 }
 
 trait EventLike2[
-  S <: SubjectLike2[C,R,E],
+  S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
   E <: EventLike2[S,C,R,E]] {
@@ -59,7 +59,8 @@ trait EventLike2[
   def removeIncompatibility(e: E): Unit
 }
 
-trait EventLikeImpl[S <: SubjectLike2[C,R,E],
+trait EventLikeImpl[
+  S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
   E <: EventLike2[S,C,R,E]] extends EventLike2[S,C,R,E]{
@@ -119,7 +120,7 @@ trait EventLikeImpl[S <: SubjectLike2[C,R,E],
 }
 
 class EventDescriptor2[
-  S <: SubjectLike2[C,R,EventDescriptor2[S,C,R]],
+  S <: SubjectLike2[S,C,R,EventDescriptor2[S,C,R]],
   C <: CourseLike,
   R <: ResourceLike] extends EventLikeImpl[S,C,R,EventDescriptor2[S,C,R]]{
 

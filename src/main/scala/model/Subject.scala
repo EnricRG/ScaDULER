@@ -7,7 +7,7 @@ import service.{ID, Identifiable}
 import scala.collection.mutable
 
 @SerialVersionUID(1L)
-class Subject2(id: ID) extends Identifiable(id) with SubjectLikeImpl[Course, Resource, Event2]{
+class Subject2(id: ID) extends Identifiable(id) with SubjectLikeImpl[Subject2, Course, Resource, Event2]{
 
   @deprecated
   def getEventSummary: String =
