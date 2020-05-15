@@ -4,7 +4,7 @@ import app.{AppSettings, FXMLPaths, MainApp}
 import control.form.SubjectFormController2
 import factory.ViewFactory
 import javafx.stage.Modality
-import model.Subject
+import model.{Event, Subject}
 import util.Utils
 
 object ScalaMainController {
@@ -26,9 +26,13 @@ object ScalaMainController {
       val sd = osd.get
 
       val (sid,subject) = MainApp.getDatabase.subjectDatabase.createSubject
-      val events = List() //TODO generate events
+      /*val events = sd.events.map(e => {
+        val event = MainApp.getDatabase.eventDatabase.createEvent._2
+        val ed = e.toEventDescriptor
+        Event.setEventFromDescriptor(event,ed)
+      })
 
-      Subject.setSubjectFromBlueprint(subject,sd,events)
+      Subject.setSubjectFromBlueprint(subject,sd,events)*/
 
       MainApp.getDatabase.subjectDatabase.setAsFinished(sid)
     }

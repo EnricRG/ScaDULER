@@ -1,6 +1,7 @@
 package model
 
 import model.Weeks.{Periodicity, Weekly}
+import model.descriptor.EventDescriptor
 
 import scala.collection.mutable
 
@@ -134,5 +135,18 @@ class EventDescriptor2[
   def removeIncompatibility(e: EventDescriptor2[S,C,R]): Unit = {
     _incompatibilities.remove(e)
     if(e.incompatibilities.contains(this)) e.removeIncompatibility(this)
+  }
+
+  def toEventDescriptor: EventDescriptor[S,C,R,EventDescriptor[_,_,_,_]] = {
+    val ed: EventDescriptor[S,C,R,EventDescriptor[_,_,_,_]] = new EventDescriptor
+
+    ed.name = this.name
+    ed.shortName = this.shortName
+    ed.description = this.description
+    /*ed.course = this.course.getOrElse(NoCourse)
+    ed.quarter = this.quarter.getOrElse(NoQuarter)*/
+    //TODO finish
+
+    ed
   }
 }

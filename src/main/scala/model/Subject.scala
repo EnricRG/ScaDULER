@@ -95,7 +95,7 @@ object Subject{
     s.setName(sb.name)
     s.setShortName(sb.shortName)
     s.setDescription(sb.description)
-    s.setColor(sb.color.getOrElse(Subject.DefaultColor))
+    s.setColor(sb.color.getOrElse(new Color(Subject.DefaultColor)))
     s.setCourse(sb.course.getOrElse(NoCourse))
     s.setQuarter(sb.quarter.getOrElse(NoQuarter))
     sb.additionalFields.foreach(pair => s.setAdditionalField(pair._1,pair._2))
