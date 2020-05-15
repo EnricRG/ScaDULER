@@ -51,6 +51,7 @@ object EventTypes extends Serializable {
   val allEventTypes: List[EventType] = SpecialEvent :: commonEventTypes
 }
 
+@deprecated
 case class Precedence(event: Event, isStrict: Boolean)
 
 @SerialVersionUID(1L)

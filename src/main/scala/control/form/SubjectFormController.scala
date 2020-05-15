@@ -1,4 +1,4 @@
-package control.form
+/*package control.form
 
 import app.{AppSettings, FXMLPaths}
 import control.StageController
@@ -487,4 +487,4 @@ class SubjectFormController[C <: CourseLike, R <: ResourceLike](
       checkSubjectCreationWarnings
   }
 }
-
+*/
