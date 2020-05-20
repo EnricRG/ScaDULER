@@ -3,7 +3,7 @@ package control.imprt
 import app.{AppSettings, FXMLPaths}
 import control.form.CourseFormController
 import factory.ViewFactory
-import javafx.fxml.{FXML, Initializable}
+import javafx.fxml.FXML
 import javafx.scene.control.{Label, TableColumn}
 import javafx.stage.Modality
 import model.blueprint.CourseBlueprint
@@ -18,15 +18,13 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
   }
 
   override def initializeContentLanguage(): Unit = {
-    newButton.setText(AppSettings.language.getItemOrElse("import_course_newButton", "New Course"))
-    editButton.setText(AppSettings.language.getItemOrElse("import_course_editButton", "Edit Course"))
-    newButton.setText(AppSettings.language.getItemOrElse("import_course_newButton", "Delete Course"))
+    newButton.setText(language.getItemOrElse("import_course_newButton", "New Course"))
+    editButton.setText(language.getItemOrElse("import_course_editButton", "Edit Course"))
+    deleteButton.setText(language.getItemOrElse("import_course_singleDeleteButton", "Delete Course"))
 
-    table.setPlaceholder(new Label(AppSettings.language.getItemOrElse(
-      "import_course_tablePlaceholder",
-      "No courses")))
+    table.setPlaceholder(new Label(language.getItemOrElse("import_course_tablePlaceholder", "No courses")))
 
-    nameColumn.setText(AppSettings.language.getItemOrElse("import_course_nameColumn", "Name"))
+    nameColumn.setText(language.getItemOrElse("import_course_nameColumn", "Name"))
   }
 
   override def additionalTableSetup(): Unit = {
@@ -73,6 +71,14 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
     Utils.loadScene(new ViewFactory(FXMLPaths.ImportCourseDetailsView), controller)
 
     controller
+  }
+
+  override protected def notifySingleSelection(): Unit = {
+    deleteButton.setText(language.getItemOrElse("import_course_singleDeleteButton", "Delete Course"))
+  }
+
+  override protected def notifyMultipleSelection(): Unit = {
+    deleteButton.setText(language.getItemOrElse("import_course_multipleDeleteButton", "Delete Courses"))
   }
 
 }

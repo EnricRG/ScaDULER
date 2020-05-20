@@ -3,6 +3,7 @@ package control.imprt
 import java.net.URL
 import java.util.ResourceBundle
 
+import app.{AppSettings, Language}
 import control.Controller
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.fxml.FXML
@@ -10,6 +11,8 @@ import javafx.scene.control.{Button, TableView}
 import javafx.scene.layout.{HBox, VBox}
 
 abstract class ImportEntityManagerController[E] extends Controller {
+
+  override protected def language: Language = AppSettings.language
 
   @FXML var mainBox: VBox = _
 
@@ -40,6 +43,9 @@ abstract class ImportEntityManagerController[E] extends Controller {
 
   def showAdditionalInformation(entity: E): Unit
 
+  protected def notifySingleSelection(): Unit
+  protected def notifyMultipleSelection(): Unit
+
   def setupTable(): Unit = {
     /*table.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
       if (newValue != null) showAdditionalInformation(newValue)
@@ -47,6 +53,10 @@ abstract class ImportEntityManagerController[E] extends Controller {
     table.getSelectionModel.selectedItemProperty().addListener(new ChangeListener[E] {
       override def changed(observable: ObservableValue[_ <: E], oldValue: E, newValue: E): Unit = {
         if (newValue != null) showAdditionalInformation(newValue)
+        if (table.getSelectionModel.getSelectedCells.size() > 1)
+          notifyMultipleSelection()
+        else
+          notifySingleSelection()
       }
     })
     additionalTableSetup()

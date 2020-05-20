@@ -11,6 +11,8 @@ import javafx.scene.layout.VBox
 
 class ImportCourseDetailsController extends Controller {
 
+  override def language: Language = AppSettings.language
+
   @FXML var mainBox: VBox = _
 
   @FXML var nameTag: Label = _
@@ -23,7 +25,7 @@ class ImportCourseDetailsController extends Controller {
     initializeContentLanguage(AppSettings.language)
   }
 
-  def initializeContentLanguage(language: Language): Unit = {
+  private def initializeContentLanguage(language: Language): Unit = {
     nameTag.setText(language.getItemOrElse("import_course_nameTag", "Name"))
     descriptionTag.setText(language.getItemOrElse("import_course_descriptionTag", "Description"))
   }
