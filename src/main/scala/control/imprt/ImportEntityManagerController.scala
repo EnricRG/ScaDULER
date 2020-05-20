@@ -3,12 +3,13 @@ package control.imprt
 import java.net.URL
 import java.util.ResourceBundle
 
-import control.StageController
+import control.Controller
+import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TableView}
 import javafx.scene.layout.{HBox, VBox}
 
-abstract class ImportEntityManagerController[E] extends StageController {
+abstract class ImportEntityManagerController[E] extends Controller {
 
   @FXML var mainBox: VBox = _
 
@@ -31,17 +32,31 @@ abstract class ImportEntityManagerController[E] extends StageController {
 
   def additionalInitialization(): Unit
   def initializeContentLanguage(): Unit
-  def setupTable(): Unit
+  def additionalTableSetup(): Unit
 
-  def newEntity: E
-  def editEntity(entity: E): E
+  def newEntity: Option[E]
+  def editEntity(entity: E): Option[E]
   def deleteEntity(entity: E): Unit
 
   def showAdditionalInformation(entity: E): Unit
 
+  def setupTable(): Unit = {
+    /*table.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
+      if (newValue != null) showAdditionalInformation(newValue)
+    })*/ //JavaFX8 doesn't like scala anonymous functions
+    table.getSelectionModel.selectedItemProperty().addListener(new ChangeListener[E] {
+      override def changed(observable: ObservableValue[_ <: E], oldValue: E, newValue: E): Unit = {
+        if (newValue != null) showAdditionalInformation(newValue)
+      }
+    })
+    additionalTableSetup()
+  }
+
   def bindButtons(): Unit = {
     newButton.setOnAction(actionEvent => {
-      table.getItems.add(newEntity)
+      val entity = newEntity
+
+      if (entity.nonEmpty) table.getItems.add(entity.get)
 
       actionEvent.consume()
     })
@@ -49,8 +64,10 @@ abstract class ImportEntityManagerController[E] extends StageController {
     editButton.setOnAction(actionEvent => {
       val editedEntity = editEntity(table.getSelectionModel.getSelectedItem)
 
-      table.getItems.remove(table.getSelectionModel.getSelectedIndex)
-      table.getItems.add(editedEntity)
+      if (editedEntity.nonEmpty){
+        table.getItems.remove(table.getSelectionModel.getSelectedIndex)
+        table.getItems.add(editedEntity.get)
+      }
 
       actionEvent.consume()
     })
