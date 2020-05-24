@@ -5,17 +5,23 @@ import model.blueprint.CourseBlueprint
 import service.{ID, Identifiable}
 
 @SerialVersionUID(1L)
-trait Quarter extends Serializable
+trait Quarter extends Serializable{
+  def toShortString: String
+}
 
 object NoQuarter extends Quarter{
   def noQuarter: Quarter = this //should not be used
   override def toString: String = AppSettings.language.getItem("noQuarter")
+  override def toShortString: String = "NQ" //TODO language specific
 }
 object FirstQuarter extends Quarter{
   override def toString: String = AppSettings.language.getItem("firstQuarter")
+  override def toShortString: String = "Q1" //TODO language specific
 }
 object SecondQuarter extends Quarter{
   override def toString: String = AppSettings.language.getItem("secondQuarter")
+  override def toShortString: String = "Q2" //TODO language specific
+
 }
 
 object Quarters{

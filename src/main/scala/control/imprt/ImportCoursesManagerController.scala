@@ -3,6 +3,7 @@ package control.imprt
 import app.{AppSettings, FXMLPaths}
 import control.form.CourseFormController
 import factory.ViewFactory
+import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, TableColumn}
 import javafx.stage.Modality
@@ -13,7 +14,14 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
 
   @FXML var nameColumn: TableColumn[CourseBlueprint, String] = _
 
+  private val detailsController: ImportCourseDetailsController = {
+    val controller = new ImportCourseDetailsController
+    Utils.loadScene(new ViewFactory(FXMLPaths.ImportCourseDetailsView), controller)
+    controller
+  }
+
   override def additionalInitialization(): Unit = {
+    detailBoxContent_=(detailsController.mainBox)
     nameColumn = new TableColumn()
   }
 
@@ -28,7 +36,12 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
   }
 
   override def additionalTableSetup(): Unit = {
-    table.getColumns.add(nameColumn.asInstanceOf[TableColumn[CourseBlueprint,_]]) //little hack to check types
+    nameColumn.setCellValueFactory(cell => {
+      if (cell.getValue != null) new SimpleStringProperty(cell.getValue.name)
+      else new SimpleStringProperty()
+    })
+
+    addColumn(nameColumn)
   }
 
   override def newEntity: Option[CourseBlueprint] = {
@@ -52,25 +65,15 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
     ???
   }
 
-  override def deleteEntity(entity: CourseBlueprint): Unit = { }
-
-  override def showAdditionalInformation(entity: CourseBlueprint): Unit = {
-    val informationController: ImportCourseDetailsController = newInformationController
-
-    informationController.name_=(entity.name)
-    informationController.description_=(entity.description)
-
-    detailBox.getChildren.add(informationController.mainBox)
-
-    showDetailBox()
+  override def deleteEntity(entity: CourseBlueprint): Unit = {
+    ???
   }
 
-  private def newInformationController: ImportCourseDetailsController = {
-    val controller = new ImportCourseDetailsController
+  override def showAdditionalInformation(entity: CourseBlueprint): Unit = {
+    detailsController.name_=(entity.name)
+    detailsController.description_=(entity.description)
 
-    Utils.loadScene(new ViewFactory(FXMLPaths.ImportCourseDetailsView), controller)
-
-    controller
+    showDetailBox()
   }
 
   override protected def notifySingleSelection(): Unit = {

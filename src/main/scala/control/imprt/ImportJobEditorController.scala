@@ -46,33 +46,25 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
   }
 
   private def initializeSubjectsTab(): Unit = {
-    Utils.loadScene(
-      new ViewFactory(FXMLPaths.ImportEntityManagerView),
-      subjectsController)
+    Utils.loadScene(new ViewFactory(FXMLPaths.ImportEntityManagerView), subjectsController)
 
     subjectsTab.setContent(subjectsController.mainBox)
   }
 
   private def initializeCoursesTab(): Unit = {
-    Utils.loadScene(
-      new ViewFactory(FXMLPaths.ImportEntityManagerView),
-      coursesController)
+    Utils.loadScene(new ViewFactory(FXMLPaths.ImportEntityManagerView), coursesController)
 
     subjectsTab.setContent(coursesController.mainBox)
   }
 
   private def initializeEventsTab(): Unit = {
-    Utils.loadScene(
-      new ViewFactory(FXMLPaths.ImportEntityManagerView),
-      eventsController)
+    Utils.loadScene(new ViewFactory(FXMLPaths.ImportEntityManagerView), eventsController)
 
     eventsTab.setContent(eventsController.mainBox)
   }
 
   private def initializeResourcesTab(): Unit = {
-    Utils.loadScene(
-      new ViewFactory[ImportCoursesManagerController](FXMLPaths.ImportEntityManagerView),
-      resourcesController)
+    Utils.loadScene(new ViewFactory(FXMLPaths.ImportEntityManagerView), resourcesController)
 
     resourcesTab.setContent(resourcesController.mainBox)
   }

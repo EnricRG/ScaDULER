@@ -7,7 +7,8 @@ import app.{AppSettings, Language}
 import control.Controller
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, TableView}
+import javafx.scene.Node
+import javafx.scene.control.{Button, TableColumn, TableView}
 import javafx.scene.layout.{HBox, VBox}
 
 abstract class ImportEntityManagerController[E] extends Controller {
@@ -45,6 +46,8 @@ abstract class ImportEntityManagerController[E] extends Controller {
 
   protected def notifySingleSelection(): Unit
   protected def notifyMultipleSelection(): Unit
+
+  protected def addColumn(column: TableColumn[E,_]): Boolean = table.getColumns.add(column)
 
   def setupTable(): Unit = {
     /*table.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
@@ -100,5 +103,10 @@ abstract class ImportEntityManagerController[E] extends Controller {
   def showDetailBox(): Unit = if (!showingDetails) {
     mainBox.getChildren.add(detailBox)
     showingDetails = true
+  }
+  
+  def detailBoxContent_=(content: Node): Unit = {
+    detailBox.getChildren.clear()
+    detailBox.getChildren.add(content)
   }
 }

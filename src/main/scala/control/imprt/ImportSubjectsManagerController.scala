@@ -1,21 +1,31 @@
 package control.imprt
 
+import app.FXMLPaths
+import factory.ViewFactory
+import javafx.beans.property.{SimpleIntegerProperty, SimpleStringProperty}
+import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, TableColumn}
 import model.blueprint.SubjectBlueprint
+import util.Utils
 
-class ImportSubjectsManagerController(/*
-  courses: Iterable[CourseLike],
-  resources: Iterable[ResourceLike]*/) extends ImportEntityManagerController[SubjectBlueprint]{
+class ImportSubjectsManagerController(/*importJobController: ImportJobEditorController*/)
+  extends ImportEntityManagerController[SubjectBlueprint]{
 
-  @FXML var nameColumn: TableColumn[SubjectBlueprint, String] = _
   @FXML var shortNameColumn: TableColumn[SubjectBlueprint, String] = _
   @FXML var courseColumn: TableColumn[SubjectBlueprint, String] = _
   @FXML var quarterColumn: TableColumn[SubjectBlueprint, String] = _
   @FXML var eventsColumn: TableColumn[SubjectBlueprint, Int] = _
 
+  private val detailsController: ImportSubjectDetailsController = {
+    val controller = new ImportSubjectDetailsController
+    Utils.loadScene(new ViewFactory(FXMLPaths.ImportSubjectDetailsView), controller)
+    controller
+  }
+
   def additionalInitialization(): Unit = {
-    nameColumn = new TableColumn()
+    detailBoxContent_=(detailsController.mainBox)
+
     shortNameColumn = new TableColumn()
     courseColumn = new TableColumn()
     quarterColumn = new TableColumn()
@@ -29,7 +39,6 @@ class ImportSubjectsManagerController(/*
 
     table.setPlaceholder(new Label(language.getItemOrElse("import_subject_tablePlaceholder", "No subjects")))
 
-    nameColumn.setText(language.getItemOrElse("import_subject_nameColumn", "Name"))
     shortNameColumn.setText(language.getItemOrElse("import_subject_shortNameColumn", "Short"))
     courseColumn.setText(language.getItemOrElse("import_subject_courseColumn", "Course"))
     quarterColumn.setText(language.getItemOrElse("import_subject_quarterColumn", "Quarter"))
@@ -37,11 +46,33 @@ class ImportSubjectsManagerController(/*
   }
 
   def additionalTableSetup(): Unit = {
-    table.getColumns.add(nameColumn.asInstanceOf[TableColumn[SubjectBlueprint,_]]) //little hack to check types
-    table.getColumns.add(shortNameColumn.asInstanceOf[TableColumn[SubjectBlueprint,_]])
-    table.getColumns.add(courseColumn.asInstanceOf[TableColumn[SubjectBlueprint,_]])
-    table.getColumns.add(quarterColumn.asInstanceOf[TableColumn[SubjectBlueprint,_]])
-    table.getColumns.add(eventsColumn.asInstanceOf[TableColumn[SubjectBlueprint,_]])
+    shortNameColumn.setCellValueFactory(cell => {
+      if (cell.getValue != null) new SimpleStringProperty(cell.getValue.shortName)
+      else new SimpleStringProperty()
+    })
+
+    courseColumn.setCellValueFactory(cell => {
+      if (cell.getValue != null) new SimpleStringProperty(cell.getValue.course.name)
+      else new SimpleStringProperty()
+    })
+
+    quarterColumn.setCellValueFactory(cell => {
+      if (cell.getValue != null) new SimpleStringProperty(cell.getValue.quarter.toShortString)
+      else new SimpleStringProperty()
+    })
+
+    eventsColumn.setCellValueFactory(cell => {
+      val cellValue =
+        if (cell.getValue != null) new SimpleIntegerProperty(cell.getValue.events.size)
+        else new SimpleIntegerProperty()
+
+      cellValue.asInstanceOf[ObservableValue[Int]]
+    })
+
+    addColumn(shortNameColumn)
+    addColumn(courseColumn)
+    addColumn(quarterColumn)
+    addColumn(eventsColumn)
   }
 
   def newEntity: Option[SubjectBlueprint] = {
@@ -49,7 +80,7 @@ class ImportSubjectsManagerController(/*
     ???
   }
 
-  /*private def promptCourseForm: Option[CourseBlueprint] = {
+  /*private def promptSubjectForm: Option[SubjectBlueprint] = {
     val subjectForm = new SubjectFormController2(courses, resources)
 
     subjectForm.setStage(Utils.promptBoundWindow(
@@ -66,10 +97,12 @@ class ImportSubjectsManagerController(/*
     ???
   }
 
-  def deleteEntity(entity: SubjectBlueprint): Unit = { }
+  def deleteEntity(entity: SubjectBlueprint): Unit = {
+    ???
+  }
 
   def showAdditionalInformation(entity: SubjectBlueprint): Unit = {
-    //FIXME content won't update since the controller is not swapped from detailBox children.
+    //TODO
     showDetailBox()
   }
 

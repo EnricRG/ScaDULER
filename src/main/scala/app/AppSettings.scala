@@ -25,6 +25,9 @@ object FXMLPaths {
   val ModifyImportJob: String = "src/main/fxml/import/modify_import_job_main_frame.fxml"
   val ImportEntityManagerView: String = "src/main/fxml/import/import_entity_manager.fxml"
   val ImportCourseDetailsView: String = "src/main/fxml/import/entity_details/course_details.fxml"
+  val ImportSubjectDetailsView: String = "src/main/fxml/import/entity_details/subject_details.fxml"
+  val ImportEventDetailsView: String = "src/main/fxml/import/entity_details/event_details.fxml"
+  val ImportResourceDetailsView: String = "src/main/fxml/import/entity_details/resource_details.fxml"
 
   val MCFErrorViewer: String = "src/main/fxml/import/mcf/mcf_import_error_viewer.fxml"
   val MCFFinishImportPrompt: String = "src/main/fxml/import/mcf/mcf_finish_import_prompt.fxml"

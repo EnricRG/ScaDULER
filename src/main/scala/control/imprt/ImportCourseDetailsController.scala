@@ -22,10 +22,10 @@ class ImportCourseDetailsController extends Controller {
   @FXML var descriptionContent: Label = _
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    initializeContentLanguage(AppSettings.language)
+    initializeContentLanguage()
   }
 
-  private def initializeContentLanguage(language: Language): Unit = {
+  private def initializeContentLanguage(): Unit = {
     nameTag.setText(language.getItemOrElse("import_course_nameTag", "Name"))
     descriptionTag.setText(language.getItemOrElse("import_course_descriptionTag", "Description"))
   }
