@@ -166,7 +166,7 @@ public class SubjectFormController extends FormController<SubjectBlueprint> {
             protected void updateItem(Resource resource, boolean empty) {
                 super.updateItem(resource, empty);
                 if (empty || resource == null) setText(null);
-                else setText(resource.getName());
+                else setText(resource.name());
             }
         });
         selectResourceListView.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(resourceDatabase.getElements())));
@@ -175,7 +175,7 @@ public class SubjectFormController extends FormController<SubjectBlueprint> {
         //This should be secure because all table elements are valid IDs
         eventTable_nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
         //This should be secure because all table elements are valid IDs
-        eventTable_resourceColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNeededResource().getName()));
+        eventTable_resourceColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNeededResource().name()));
     }
 
     @Override
@@ -282,7 +282,7 @@ public class SubjectFormController extends FormController<SubjectBlueprint> {
     private void filterResourceList(String filter) {
         ObservableList<Resource> resources = FXCollections.observableArrayList(JavaConverters.asJavaCollection(resourceDatabase.getElements()));
 
-        if(!filter.trim().isEmpty()) resources.removeIf(resource -> !resource.getName().toLowerCase().contains(filter.trim().toLowerCase()));
+        if(!filter.trim().isEmpty()) resources.removeIf(resource -> !resource.name().toLowerCase().contains(filter.trim().toLowerCase()));
 
         selectResourceListView.setItems(resources);
     }

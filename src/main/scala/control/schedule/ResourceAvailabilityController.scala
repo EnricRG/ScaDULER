@@ -262,7 +262,7 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
     cell.addEventHandler(MouseEvent.ANY, new CellEventHandler(cell))
     cell.setWeek(week)
     cell.setInterval(interval)
-    cell.setQuantity(resource.getAvailability(week, interval), silent = false)
+    cell.setQuantity(resource.availabilityAt(week, interval), silent = false)
   }
 
   private def computeInterval(cell: ScheduleCell): Int = {
@@ -274,8 +274,8 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
 
   private def incrementSelectionIn(amount: Int): Unit = {
     selection.forEach(cell => {
-      resource.getAvailability.increment(cell.week, cell.interval, amount)
-      cell.setQuantity(resource.getAvailability(cell.week, cell.interval), silent = true)
+      resource.availability.increment(cell.week, cell.interval, amount)
+      cell.setQuantity(resource.availabilityAt(cell.week, cell.interval), silent = true)
     })
   }
 
@@ -285,8 +285,8 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
 
   private def setSelectionTo(quantity: Int): Unit = {
     selection.forEach(cell => {
-      if (quantity <= 0) resource.getAvailability.unset(cell.week, cell.interval)
-      else resource.getAvailability.set(cell.week, cell.interval, quantity)
+      if (quantity <= 0) resource.availability.unset(cell.week, cell.interval)
+      else resource.availability.set(cell.week, cell.interval, quantity)
       cell.setQuantity(quantity, silent = true)
     })
   }

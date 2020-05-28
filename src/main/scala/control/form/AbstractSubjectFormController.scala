@@ -255,7 +255,7 @@ abstract class AbstractSubjectFormController[
       override protected def updateItem(resource: R, empty: Boolean): Unit = {
         super.updateItem(resource, empty)
         if (empty || resource == null) setText(null)
-        else setText(resource.getName)
+        else setText(resource.name)
       }
     })
 
@@ -374,7 +374,7 @@ abstract class AbstractSubjectFormController[
   private def filterResourceList(filter: String): Unit = if (filter.trim.nonEmpty) {
     selectResourceListView.setItems(
       FXCollections.observableArrayList(JavaConverters.asJavaCollection(
-        resources.filter(_.getName.toLowerCase.contains(filter.trim.toLowerCase)))))
+        resources.filter(_.name.toLowerCase.contains(filter.trim.toLowerCase)))))
   }
 
   private def getNumberFromField(textField: TextField): Int = {

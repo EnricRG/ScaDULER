@@ -7,6 +7,7 @@ import service.{ID, Identifiable}
 @SerialVersionUID(1L)
 trait Quarter extends Serializable
 
+@deprecated
 object NoQuarter extends Quarter{
   def noQuarter: Quarter = this //should not be used
   override def toString: String = AppSettings.language.getItem("noQuarter")
@@ -46,6 +47,7 @@ object Course{
   }
 }
 
+@deprecated
 object NoCourse extends Course(-1){
   name = AppSettings.language.getItemOrElse("noCourse", "No Course")
 

@@ -88,7 +88,7 @@ object EntityManager {
     }
 
     private def setResourceFromBlueprint(r: Resource, rb: ResourceBlueprint): Unit = {
-        r.setName(rb.name)
+        r.name = rb.name
     }
 
     private def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint, c: Course): Unit = {

@@ -203,7 +203,7 @@ class ResourceManagerController[R <: ResourceLike](
 
     //if search field is not blank, remove all rows that resource's name does not contain fields content as a substring
     if (!text.trim.isEmpty) filteredResources.removeIf(
-      (resource: ResourceLike) => !resource.getName.toLowerCase.contains(text))
+      (resource: ResourceLike) => !resource.name.toLowerCase.contains(text))
 
     resourceTable.setItems(filteredResources)
   }

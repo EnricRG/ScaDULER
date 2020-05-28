@@ -16,11 +16,11 @@ class ResourceDatabase extends Database[Resource]{
     private val indexByName: mutable.Map[String, Resource] = new mutable.HashMap
 
     def index(r: Resource): Unit = {
-        indexByName.put(r.getName, r)
+        indexByName.put(r.name, r)
     }
 
     def deindex(r: Resource): Unit ={
-        if(r != null) indexByName.remove(r.getName)
+        if(r != null) indexByName.remove(r.name)
     }
 
     def createResource: (ID, Resource) = {

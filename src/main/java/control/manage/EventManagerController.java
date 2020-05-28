@@ -79,7 +79,7 @@ public class EventManagerController extends EntityManagerController<Event> {
         });
         resourceColumn.setCellValueFactory(cell -> {
             Resource resource = cell.getValue().getSafeNeededResource();
-            if(resource != null) return new SimpleStringProperty(resource.getName());
+            if(resource != null) return new SimpleStringProperty(resource.name());
             else return new SimpleStringProperty();
         });
         weekColumn.setCellValueFactory(new PropertyValueFactory<>("week"));

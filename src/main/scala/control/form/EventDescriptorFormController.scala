@@ -168,7 +168,7 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
     eventResourceBox.setConverter(new StringConverter[R]() {
       override def toString(`object`: R): String =
         if (`object` == null) null
-        else `object`.getName
+        else `object`.name
 
       override def fromString(string: String): R = null
     })

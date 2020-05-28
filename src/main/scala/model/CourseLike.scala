@@ -2,10 +2,10 @@ package model
 
 trait CourseLike {
   def name: String
-  def name_=(s: String): Unit
+  def name_=(name: String): Unit
 
   def description: String
-  def description_=(s: String): Unit
+  def description_=(description: String): Unit
 
   def firstQuarterData: QuarterData
   def secondQuarterData: QuarterData
@@ -24,10 +24,10 @@ trait CourseLikeImpl extends CourseLike {
 
 
   def name: String = _name
-  def name_=(s: String): Unit = _name = s
+  def name_=(name: String): Unit = _name = name
 
   def description: String = _description
-  def description_=(s: String): Unit = _description = s
+  def description_=(description: String): Unit = _description = description
 
   def firstQuarterData: QuarterData = _firstQuarterData
 

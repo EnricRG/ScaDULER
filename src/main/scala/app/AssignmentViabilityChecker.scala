@@ -59,12 +59,12 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
     def checkResourceAvailability(course: Course, quarter: QuarterData, event: Event, targetWeek: Week, interval: Int): Option[Warning] = {
         if(event.needsResource) {
 
-            val availabilityMap = for (i <- interval until interval + event.getDuration) yield event.getNeededResource.getAvailability.isAvailable(targetWeek.toWeekNumber, i)
+            val availabilityMap = for (i <- interval until interval + event.getDuration) yield event.getNeededResource.availability.isAvailable(targetWeek.toWeekNumber, i)
 
             if (!availabilityMap.toList.contains(true))
-                return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceNeverUnavailable"), event.getNeededResource.getName)))
+                return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceNeverUnavailable"), event.getNeededResource.name)))
             else if (availabilityMap.toList.contains(false))
-                return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceUnavailable"), event.getNeededResource.getName)))
+                return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceUnavailable"), event.getNeededResource.name)))
 
 
             val quarterEvents = getQuarterEvents(course, quarter).filter(_.getSafeNeededResource == event.getSafeNeededResource)
@@ -77,7 +77,7 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
                 for((inter, resourceAvailableQuantity) <- resourceAvailability) {
                     if(resourceAvailableQuantity <= 0) {
                         val relativeMinutes = (if (interval < inter) AppSettings.TimeSlotDuration * (inter - interval) else 0).toString
-                        return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceWillBeUnavailable"), event.getNeededResource.getName, relativeMinutes)))
+                        return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceWillBeUnavailable"), event.getNeededResource.name, relativeMinutes)))
                     }
                 }
                 None

@@ -131,7 +131,6 @@ class MCFImportReader(file: File) extends ImportReader {
                 case None =>
                     val newResource = new ResourceBlueprint
                     newResource.name = resourceName + "_" + values.apply(3)
-                    newResource.quantity = 1 //TODO remove resource quantity
                     newResource.capacity = resourceCapacity
                     createdResources.put(newResource.name, newResource)
                     newResource
@@ -344,7 +343,6 @@ class MCFImportReader(file: File) extends ImportReader {
         //Auxiliary resource to model theory room occupation
         val theoryResource = new ResourceBlueprint
         theoryResource.name = "Aula Teoria/Problemes"
-        theoryResource.quantity = 1 //TODO temove resource quantity
         //TODO theoryResource.capacity = ?
         resources += theoryResource
 
