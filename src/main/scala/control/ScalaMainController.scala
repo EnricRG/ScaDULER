@@ -1,10 +1,11 @@
 package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
-import control.form.SubjectFormController2
+import control.form.{AbstractSubjectFormControllerResult, SubjectFormController2}
 import factory.ViewFactory
 import javafx.stage.Modality
-import model.{Event, Subject}
+import model.descriptor.EventDescriptor
+import model.{Course, Event, Resource, Subject}
 import util.Utils
 
 object ScalaMainController {
@@ -26,15 +27,44 @@ object ScalaMainController {
       val sd = osd.get
 
       val (sid,subject) = MainApp.getDatabase.subjectDatabase.createSubject
-      /*val events = sd.events.map(e => {
-        val event = MainApp.getDatabase.eventDatabase.createEvent._2
-        val ed = e.toEventDescriptor
-        Event.setEventFromDescriptor(event,ed)
-      })
+      val events = {
+        val descriptorMap = sd.events.map((_,MainApp.getDatabase.eventDatabase.createEvent._2)).toMap
 
-      Subject.setSubjectFromBlueprint(subject,sd,events)*/
+        descriptorMap.foreach { case (ed, e) =>
+          Event.setEventFromDescriptor(e, fromSubjectFormEventDescriptor(Some(subject), ed, descriptorMap))
+        }
 
+        descriptorMap.values
+      }
+
+      Subject.setSubjectFromDescriptor(subject,sd,events)
       MainApp.getDatabase.subjectDatabase.setAsFinished(sid)
+      events.foreach(mc.addUnassignedEvent)
     }
+  }
+
+  private def fromSubjectFormEventDescriptor(s: Option[Subject],
+    ed: AbstractSubjectFormControllerResult[Course, Resource]#ED,
+    descriptorMapping: Map[AbstractSubjectFormControllerResult[Course, Resource]#ED, Event]
+    ): EventDescriptor[Subject,Course,Resource,Event] =
+  {
+    val descriptor = new EventDescriptor[Subject,Course,Resource,Event]
+
+    descriptor.name = ed.name
+    descriptor.shortName = ed.shortName
+    descriptor.description = ed.description
+    descriptor.eventType = ed.eventType
+    descriptor.duration = ed.duration
+    descriptor.periodicity = ed.periodicity
+
+    descriptor.subject = s
+    descriptor.course = ed.course
+    descriptor.quarter = ed.quarter
+    descriptor.neededResource = ed.neededResource
+    ed.incompatibilities
+      .collect(descriptorMapping.toMap)
+      .foreach(descriptor.incompatibilities.add)
+
+    descriptor
   }
 }

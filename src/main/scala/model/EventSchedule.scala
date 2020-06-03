@@ -1,6 +1,6 @@
 package model
 
-import model.Weeks.{EveryWeek, Week}
+import model.Weeks.Week
 
 import scala.collection.mutable
 
@@ -24,5 +24,5 @@ class EventSchedule(intervalsPerWeek: Int) extends Schedule[mutable.Set[Event]](
 
     def getEvents: Iterable[Event] = super.getAllElements.flatten
 
-    def getIncompatibleEvents(e: Event, week: Int, interval: Int): Iterable[Event] = e.getIncompatibilities.toList intersect getEventsAtIntervalOrElse(interval).toList
+    def getIncompatibleEvents(e: Event, week: Int, interval: Int): Iterable[Event] = e.incompatibilities.toList intersect getEventsAtIntervalOrElse(interval).toList
 }

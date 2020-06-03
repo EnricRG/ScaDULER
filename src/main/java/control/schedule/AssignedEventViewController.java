@@ -52,7 +52,7 @@ public class AssignedEventViewController extends EventViewController {
     }
 
     private void resizeBox(){
-        double height = getEvent().getDuration()*intervalController.getBoundingRegion().getHeight();
+        double height = getEvent().duration()*intervalController.getBoundingRegion().getHeight();
         hourPane.setMaxHeight(height);
         hourPane.setMinHeight(height);
     }
@@ -65,11 +65,11 @@ public class AssignedEventViewController extends EventViewController {
 
     @Override
     protected void setEventColor() {
-        hourPane.setStyle("-fx-color: #" + event.getEventType().color().toString().substring(2) + ";");
+        hourPane.setStyle("-fx-color: #" + event.eventType().color().toString().substring(2) + ";");
         //super.setEventColor();
         super.setEventColorFrame();
         if(!viable) {
-            String originalStyle = mainBox.getStyle().replace("-fx-background-color: #" + event.getEventType().color().toString().substring(2) + ";", "");
+            String originalStyle = mainBox.getStyle().replace("-fx-background-color: #" + event.eventType().color().toString().substring(2) + ";", "");
             mainBox.setStyle(originalStyle + "-fx-background-color: #" + NON_VIABLE_COLOR.toString().substring(2) + ";");
         }
     }

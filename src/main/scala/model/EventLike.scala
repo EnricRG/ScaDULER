@@ -1,22 +1,14 @@
 package model
 
 import model.Weeks.{Periodicity, Weekly}
-import model.descriptor.EventDescriptor
 
 import scala.collection.mutable
 
-trait EventLike {
-  @deprecated
-  def getName: String
-
-  def neededResource: ResourceLike
-}
-
-trait EventLike2[
+trait EventLike[
   S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
-  E <: EventLike2[S,C,R,E]] {
+  E <: EventLike[S,C,R,E]] {
 
   def name: String
   def name_=(s: String): Unit
@@ -51,9 +43,6 @@ trait EventLike2[
   def neededResource: Option[R]
   def neededResource_=(or: Option[R]): Unit
   def neededResource_=(r: R): Unit
-  def needsResource: Boolean
-
-  def isValid: Boolean
 
   def incompatibilities: Set[E]
   def addIncompatibility(e: E): Unit
@@ -64,7 +53,7 @@ trait EventLikeImpl[
   S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
-  E <: EventLike2[S,C,R,E]] extends EventLike2[S,C,R,E]{
+  E <: EventLike[S,C,R,E]] extends EventLike[S,C,R,E]{
 
   private var _name: String = "" //TODO dynamic naming
   private var _shortName: String = "" //TODO dynamic naming
@@ -113,40 +102,6 @@ trait EventLikeImpl[
   def neededResource: Option[R] = _neededResource
   def neededResource_=(ro: Option[R]): Unit = _neededResource = ro
   def neededResource_=(r: R): Unit = neededResource = Some(r)
-  def needsResource: Boolean = _neededResource.nonEmpty
-
-  def isValid: Boolean = course.nonEmpty && quarter.nonEmpty
 
   def incompatibilities: Set[E] = _incompatibilities.toSet
-}
-
-class EventDescriptor2[
-  S <: SubjectLike2[S,C,R,EventDescriptor2[S,C,R]],
-  C <: CourseLike,
-  R <: ResourceLike] extends EventLikeImpl[S,C,R,EventDescriptor2[S,C,R]]{
-
-  def mutableIncompatibilities: mutable.Set[EventDescriptor2[S,C,R]] = _incompatibilities
-
-  def addIncompatibility(e: EventDescriptor2[S,C,R]): Unit = if (e != this) {
-    _incompatibilities.add(e)
-    if(!e.incompatibilities.contains(this)) e.addIncompatibility(this)
-  }
-
-  def removeIncompatibility(e: EventDescriptor2[S,C,R]): Unit = {
-    _incompatibilities.remove(e)
-    if(e.incompatibilities.contains(this)) e.removeIncompatibility(this)
-  }
-
-  def toEventDescriptor: EventDescriptor[S,C,R,EventDescriptor[_,_,_,_]] = {
-    val ed: EventDescriptor[S,C,R,EventDescriptor[_,_,_,_]] = new EventDescriptor
-
-    ed.name = this.name
-    ed.shortName = this.shortName
-    ed.description = this.description
-    /*ed.course = this.course.getOrElse(NoCourse)
-    ed.quarter = this.quarter.getOrElse(NoQuarter)*/
-    //TODO finish
-
-    ed
-  }
 }

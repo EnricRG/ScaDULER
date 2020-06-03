@@ -8,7 +8,7 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
 
     private val courseDatabase = MainApp.getDatabase.courseDatabase
 
-    private val eventWeek = if(event.getPeriodicity == Weekly) EveryWeek
+    private val eventWeek = if(event.periodicity == Weekly) EveryWeek
                             else if(droppedWeek == AWeek.toWeekNumber) AWeek
                             else BWeek
 
@@ -19,7 +19,7 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
     def isAViableAssignment: Boolean = if (checked) {
         viable
     } else {
-        checkViability();
+        checkViability()
         viable
     }
 
@@ -34,16 +34,16 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
         val quarterEvents = getQuarterEvents(course, quarter)
 
         val incompatibilityClashes = quarterEvents.
-            filter(x => x != event && x.isAssigned && event.getIncompatibilities.contains(x) && weekOverlap(targetWeek, x.getWeek) && overlap(x.getStartInterval,x.getDuration,interval,event.getDuration))
+            filter(x => x != event && x.isAssigned && event.incompatibilities.contains(x) && weekOverlap(targetWeek, x.week.get) && overlap(x.getStartInterval,x.duration,interval,event.duration))
 
         if(incompatibilityClashes.isEmpty)
             None
         else {
-            val eventShortName = event.getShortName
-            val incompatibilityShortName = incompatibilityClashes.head.getShortName
+            val eventShortName = event.shortName
+            val incompatibilityShortName = incompatibilityClashes.head.shortName
             Some(new Warning(String.format(AppSettings.language.getItem("warning_incompatibleEvents"),
-                if(eventShortName.trim.isEmpty) event.getName else eventShortName,
-                if(incompatibilityShortName.trim.isEmpty) incompatibilityClashes.head.getName else incompatibilityShortName))
+                if(eventShortName.trim.isEmpty) event.name else eventShortName,
+                if(incompatibilityShortName.trim.isEmpty) incompatibilityClashes.head.name else incompatibilityShortName))
             )
         }
     }
@@ -59,25 +59,25 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
     def checkResourceAvailability(course: Course, quarter: QuarterData, event: Event, targetWeek: Week, interval: Int): Option[Warning] = {
         if(event.needsResource) {
 
-            val availabilityMap = for (i <- interval until interval + event.getDuration) yield event.getNeededResource.availability.isAvailable(targetWeek.toWeekNumber, i)
+            val availabilityMap = for (i <- interval until interval + event.duration) yield event.neededResource.get.availability.isAvailable(targetWeek.toWeekNumber, i)
 
             if (!availabilityMap.toList.contains(true))
-                return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceNeverUnavailable"), event.getNeededResource.name)))
+                return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceNeverUnavailable"), event.neededResource.get.name)))
             else if (availabilityMap.toList.contains(false))
-                return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceUnavailable"), event.getNeededResource.name)))
+                return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceUnavailable"), event.neededResource.get.name)))
 
 
-            val quarterEvents = getQuarterEvents(course, quarter).filter(_.getSafeNeededResource == event.getSafeNeededResource)
+            val quarterEvents = getQuarterEvents(course, quarter).filter(_.neededResource.orNull == event.neededResource.get)
 
             def checkWeeklyAvailability(week: Week): Option[Warning] = {
-                val concurrentEvents = quarterEvents.filter(x => x != event && x.isAssigned && weekOverlap(week, x.getWeek) && overlap(x.getStartInterval,x.getDuration,interval,event.getDuration))
+                val concurrentEvents = quarterEvents.filter(x => x != event && x.isAssigned && weekOverlap(week, x.week.get) && overlap(x.getStartInterval,x.duration,interval,event.duration))
 
-                val resourceAvailability = for(i <- interval until interval + event.getDuration) yield (i,event.getNeededResource.getQuantityAt(week, interval) - concurrentEvents.count(x => overlap(i, 1, x.getStartInterval, x.getDuration)))
+                val resourceAvailability = for(i <- interval until interval + event.duration) yield (i,event.neededResource.get.getQuantityAt(week, interval) - concurrentEvents.count(x => overlap(i, 1, x.getStartInterval, x.duration)))
 
                 for((inter, resourceAvailableQuantity) <- resourceAvailability) {
                     if(resourceAvailableQuantity <= 0) {
                         val relativeMinutes = (if (interval < inter) AppSettings.TimeSlotDuration * (inter - interval) else 0).toString
-                        return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceWillBeUnavailable"), event.getNeededResource.name, relativeMinutes)))
+                        return Some(new Warning(String.format(AppSettings.language.getItem("warning_resourceWillBeUnavailable"), event.neededResource.get.name, relativeMinutes)))
                     }
                 }
                 None
@@ -104,15 +104,15 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
     def checkBorders(event: Event, interval: Int): Option[Warning] = {
         val dayInterval = interval % AppSettings.timeSlotsPerDay
 
-        if(dayInterval+event.getDuration > AppSettings.timeSlotsPerDay)
+        if(dayInterval+event.duration > AppSettings.timeSlotsPerDay)
             Some(new Warning(AppSettings.language.getItem("warning_borderLimit")))
         else None
     }
 
     def checkCourseAndQuarter(course: Course, quarter: QuarterData, event: Event): Option[Warning] = {
-        if(event.getCourse != course)
+        if(event.course.orNull != course)
             Some(new Warning(AppSettings.language.getItem("warning_courseNotMatching")))
-        else if (quarter.getQuarter != event.getQuarter)
+        else if (quarter.getQuarter != event.quarter.orNull)
             Some(new Warning(AppSettings.language.getItem("warning_quarterNotMatching")))
         else None
     }

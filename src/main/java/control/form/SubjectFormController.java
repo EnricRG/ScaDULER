@@ -173,9 +173,13 @@ public class SubjectFormController extends FormController<SubjectBlueprint> {
 
         eventTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         //This should be secure because all table elements are valid IDs
-        eventTable_nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
+        eventTable_nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().name()));
         //This should be secure because all table elements are valid IDs
-        eventTable_resourceColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNeededResource().name()));
+        eventTable_resourceColumn.setCellValueFactory(cell -> {
+            Resource r = cell.getValue().neededResource().getOrElse(null);
+            if(r != null) return new SimpleStringProperty(r.name());
+            else return new SimpleStringProperty();
+        });
     }
 
     @Override
@@ -319,12 +323,12 @@ public class SubjectFormController extends FormController<SubjectBlueprint> {
                 Event event = eventDatabase.createEvent()._2;
 
                 //TODO abstract string pattern
-                event.setName(String.format("%s (%s-%d) (%s)", subjectName, eventType.toString(), i, periodicity.toShortString()));
-                event.setShortName(String.format("%s (%s %d) (%s)", subjectShortName, eventType.toShortString(), i, periodicity.toShortString()));
-                event.setEventType(eventType);
-                event.setNeededResource(neededResource);
-                event.setPeriodicity(periodicity);
-                event.setDuration(duration.toInt());
+                event.name_$eq(String.format("%s (%s-%d) (%s)", subjectName, eventType.toString(), i, periodicity.toShortString()));
+                event.shortName_$eq(String.format("%s (%s %d) (%s)", subjectShortName, eventType.toShortString(), i, periodicity.toShortString()));
+                event.eventType_$eq(eventType);
+                event.neededResource_$eq(neededResource);
+                event.periodicity_$eq(periodicity);
+                event.duration_$eq(duration.toInt());
 
                 eventTable.getItems().add(event);
             }
@@ -349,10 +353,10 @@ public class SubjectFormController extends FormController<SubjectBlueprint> {
 
             for(Event e : eventTable.getItems()){
                 subject.addEvent(e.getID(), e);
-                e.setSubject(subject);
-                e.setCourse(subject.getCourse());
-                e.setQuarter(subject.getQuarter());
-                eventsByType.get(e.getEventType()).add(e);
+                //e.subject_$eq(subject); //TODO adapt to SubjectLike
+                e.course_$eq(subject.getCourse());
+                e.quarter_$eq(subject.getQuarter());
+                eventsByType.get(e.eventType()).add(e);
                 //TODO remove getMainController().addUnassignedEvent(e);
             }
 

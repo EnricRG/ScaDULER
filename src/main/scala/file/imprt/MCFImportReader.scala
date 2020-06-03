@@ -322,8 +322,8 @@ class MCFImportReader(file: File) extends ImportReader {
                 event.subject = Some(subject)
                 event.periodicity = periodicity
                 event.duration = duration
-                event.course = subject.course
-                event.quarter = subject.quarter
+                event.course = Some(subject.course)
+                event.quarter = Some(subject.quarter)
 
                 events += event
             })

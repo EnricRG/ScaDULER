@@ -3,7 +3,6 @@ package control;
 import app.*;
 import control.form.CourseFormController;
 import control.form.EventFormController;
-import control.form.SubjectFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
 import control.imprt.mcf.MCFImportErrorViewerController;
@@ -179,7 +178,7 @@ public class MainController extends StageController {
             Event event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
 
             CourseScheduleController courseScheduleController = getEventCourseController(event);
-            QuarterScheduleController quarterScheduleController = courseScheduleController.getQuarterController(event.getQuarter());
+            QuarterScheduleController quarterScheduleController = courseScheduleController.getQuarterController(event.quarter().getOrElse(null));
             ScheduleIntervalController intervalController =
                     quarterScheduleController.getIntervalControllerAt(ea.week().toWeekNumber(), ea.interval());
 
@@ -199,7 +198,7 @@ public class MainController extends StageController {
 
     private CourseScheduleController getEventCourseController(Event event) {
         //TODO highly improvable, better data structure
-        return tabCourseMap.get(courseTabMap.get(event.getCourse().getID()));
+        return tabCourseMap.get(courseTabMap.get(event.course().get().getID()));
     }
 
     private CourseScheduleController getVisibleCourse() {
@@ -435,7 +434,7 @@ public class MainController extends StageController {
         ArrayList<Node> filteredEvents = new ArrayList<>();
 
         for(EventViewController evc: unassignedEventsMap.values())
-            if(evc.getEvent().getName().toLowerCase().contains(text.toLowerCase())) filteredEvents.add(evc.getNode());
+            if(evc.getEvent().name().toLowerCase().contains(text.toLowerCase())) filteredEvents.add(evc.getNode());
 
         rightPane_VBox.getChildren().clear();
         rightPane_VBox.getChildren().addAll(filteredEvents);
@@ -713,19 +712,7 @@ public class MainController extends StageController {
     }
 
     private void promptSubjectForm(){
-        //ScalaMainController$.MODULE$.promptSubjectForm(this);
-
-        StageController stageController = new SubjectFormController(this);
-
-        stageController.setStage(Utils.promptBoundWindow(
-                AppSettings.language().getItem("subjectForm_windowTitle"),
-                addButtons_subject.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.SubjectForm()),
-                stageController
-        ));
-
-        stageController.show();
+        ScalaMainController$.MODULE$.promptSubjectForm(this);
     }
 
     private void promptEventForm() {

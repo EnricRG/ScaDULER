@@ -2,13 +2,12 @@ package model
 
 import javafx.scene.paint
 import misc.EventTypeIncompatibility
-import model.blueprint.SubjectBlueprint
 import service.{ID, Identifiable}
 
 import scala.collection.mutable
 
 @SerialVersionUID(1L)
-class Subject2(id: ID) extends Identifiable(id) with SubjectLikeImpl[Subject2, Course, Resource, Event2]{
+class Subject2(id: ID) extends Identifiable(id) with SubjectLikeImpl[Subject2, Course, Resource, Event]{
 
   @deprecated
   def getEventSummary: String =
@@ -50,7 +49,7 @@ class Subject(id: ID) extends Identifiable(id) with SubjectLike with Serializabl
 
   def getCourse: Course = course
   def setCourse(c: Course): Course = {
-    val oldCourse = course;
+    val oldCourse = course
     course = c
     oldCourse
   }
@@ -64,7 +63,7 @@ class Subject(id: ID) extends Identifiable(id) with SubjectLike with Serializabl
   def getEventSummary: String =
     EventTypes.commonEventTypes.zip(
       EventTypes.commonEventTypes.map(
-        evType => events.count(_._2.getEventType == evType)
+        evType => events.count(_._2.eventType == evType)
       )
     ).map{ case (evType, n) => evType + ": " + n}.mkString("\n")
 
@@ -91,14 +90,14 @@ class Subject(id: ID) extends Identifiable(id) with SubjectLike with Serializabl
 object Subject{
   def DefaultColor: paint.Color = paint.Color.WHITESMOKE
 
-  def setSubjectFromBlueprint(s: Subject, sb: SubjectLike2[_,Course,Resource,_], events: Iterable[Event]): Unit = {
-    s.setName(sb.name)
-    s.setShortName(sb.shortName)
-    s.setDescription(sb.description)
-    s.setColor(sb.color.getOrElse(new Color(Subject.DefaultColor)))
-    s.setCourse(sb.course.getOrElse(NoCourse))
-    s.setQuarter(sb.quarter.getOrElse(NoQuarter))
-    sb.additionalFields.foreach(pair => s.setAdditionalField(pair._1,pair._2))
+  def setSubjectFromDescriptor(s: Subject, sd: SubjectDescriptor[Course,_], events: Iterable[Event]): Unit = {
+    s.setName(sd.name)
+    s.setShortName(sd.shortName)
+    s.setDescription(sd.description)
+    s.setColor(sd.color.getOrElse(new Color(Subject.DefaultColor)))
+    s.setCourse(sd.course.getOrElse(NoCourse)) //TODO NoCourse to None
+    s.setQuarter(sd.quarter.getOrElse(NoQuarter)) //TODO NoQuarter to None
+    sd.additionalFields.foreach(entry => s.setAdditionalField(entry._1,entry._2))
     events.foreach(e => s.addEvent(e.getID,e))
   }
 }

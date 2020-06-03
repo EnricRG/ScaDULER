@@ -4,14 +4,12 @@ import actors.Messages.MiniZincMessages.MiniZincSolveRequest
 import actors.Messages.{NoSolution, Solution, SolveRequest, Stop}
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
-import akka.pattern.after
 import akka.util.Timeout
 import model.{FirstQuarter, SecondQuarter}
 import solver.{InstanceData, MiniZincInstance}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future, TimeoutException}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
@@ -37,8 +35,8 @@ class MasterActor extends Actor{
         case SolveRequest(data, time) => {
 
             //FIXME this should be done outside master or modeled on MiniZinc
-            val firstQuarterEvents = data.events.filter(_.getQuarter == FirstQuarter)
-            val secondQuarterEvents = data.events.filter(_.getQuarter == SecondQuarter)
+            val firstQuarterEvents = data.events.filter(e => e.quarter.nonEmpty && e.quarter.get == FirstQuarter)
+            val secondQuarterEvents = data.events.filter(e => e.quarter.nonEmpty && e.quarter.get == SecondQuarter)
 
             val firstQuarterInstance = InstanceData(
                 data.nDays, data.dayDuration,

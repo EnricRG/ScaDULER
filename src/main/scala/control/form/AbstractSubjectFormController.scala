@@ -14,13 +14,15 @@ import model._
 import util.Utils
 import java.util
 
+import model.descriptor.EventDescriptor
+
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.{JavaConverters, mutable}
 
 
 sealed trait AbstractSubjectFormControllerResult[C <: CourseLike, R <: ResourceLike]{
-  type SD = SubjectDescriptor[Null,C,R,ED]
-  type ED = EventDescriptor2[Null,C,R]
+  type SD = SubjectDescriptor[C,ED]
+  type ED = EventDescriptor[Null,C,R,EventDescriptor[Null,C,R,_]]
 }
 
 abstract class AbstractSubjectFormController[
@@ -413,7 +415,7 @@ abstract class AbstractSubjectFormController[
         event.name = "%s (%s-%d) (%s)".format(subjectName, eventType.toString, i, periodicity.toShortString)
         event.shortName = "%s (%s %d) (%s)".format(subjectShortName, eventType.toShortString, i, periodicity.toShortString)
         event.eventType = eventType
-        event.neededResource = neededResource
+        event.neededResource = Some(neededResource)
         event.periodicity = periodicity
         event.duration = duration.toInt
 
@@ -427,15 +429,15 @@ abstract class AbstractSubjectFormController[
     subject.name = subjectNameField.getText
     subject.shortName = subjectShortNameField.getText
     subject.description = subjectDescriptionField.getText
-    subject.color = new Color(subjectColorPicker.getValue)
-    subject.course = subjectCoursePicker.getValue
-    subject.quarter = subjectQuarterPicker.getValue
+    subject.color = Some(new Color(subjectColorPicker.getValue))
+    subject.course = Some(subjectCoursePicker.getValue)
+    subject.quarter = Some(subjectQuarterPicker.getValue)
 
     val eventsByType: mutable.Map[EventType, ArrayBuffer[ED]] = new mutable.HashMap
     EventTypes.commonEventTypes.foreach(eventsByType.put(_, new ArrayBuffer))
 
     eventTable.getItems.forEach(e => {
-      subject.events_+=(e)
+      subject.events.add(e)
       //e.subject = subject
       e.course = subject.course
       e.quarter = subject.quarter
@@ -446,7 +448,8 @@ abstract class AbstractSubjectFormController[
     eventTypeIncompatibilities.forEach(eti => {
       eventsByType(eti.getFirstType).foreach(e1 => {
         eventsByType(eti.getSecondType).foreach(e2 => {
-          e1.addIncompatibility(e2)
+          e1.incompatibilities.add(e2)
+          e2.incompatibilities.add(e1)
         })
       })
     })

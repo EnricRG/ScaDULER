@@ -26,7 +26,7 @@ object EntityManager {
         importJob.courses.foreach(cb => {
             val existingCourse = courseDatabase.getCourseByName(cb.name)
             if(existingCourse.isEmpty) {
-                val course = courseDatabase.createCourse._2
+                val course = courseDatabase.createCourse()._2
                 setCourseFromBlueprint(course, cb)
                 courseMapper.put(cb, course)
                 mc.addCourseTab(course, false)
@@ -58,11 +58,11 @@ object EntityManager {
 
             setEventFromBlueprint(event, eb,
                 subjectMapper(eb.subject.orNull),
-                courseMapper(eb.course),
+                courseMapper(eb.course.orNull),
                 resourceMapper.get(eb.neededResource.orNull)
             )
 
-            eventsByType(event.getEventType) += event
+            eventsByType(event.eventType) += event
             mc.addUnassignedEvent(event)
         })
 
@@ -99,16 +99,18 @@ object EntityManager {
         sb.additionalInformation.foreach(pair => s.setAdditionalField(pair._1, pair._2))
     }
 
+    @deprecated
     private def setEventFromBlueprint(e: Event, eb: EventBlueprint, s: Subject, c: Course, r: Option[Resource]): Unit = {
-        e.setName(eb.name)
-        e.setShortName(eb.shortName)
-        e.setEventType(eb.eventType)
-        e.setDuration(eb.duration)
-        e.setSubject(s)
-        if(r.nonEmpty) e.setNeededResource(r.get)
-        e.setPeriodicity(eb.periodicity)
-        e.setCourse(c)
-        e.setQuarter(eb.quarter)
+        e.name = eb.name
+        e.shortName = eb.shortName
+        e.eventType = eb.eventType
+        e.duration = eb.duration
+        //e.subject_=(s)
+        //throw new UnsupportedOperationException("e.subject_=(s) expects Subject2 but received Subject")
+        if(r.nonEmpty) e.neededResource = r.get
+        e.periodicity = eb.periodicity
+        e.course = c
+        e.quarter = eb.quarter
     }
 }
 

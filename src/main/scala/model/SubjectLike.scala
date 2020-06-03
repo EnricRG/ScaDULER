@@ -13,7 +13,7 @@ trait SubjectLike2[
   S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
-  E <: EventLike2[S,C,R,E]] {
+  E <: EventLike[S,C,R,E]] {
 
   def name: String
   def name_=(s: String): Unit
@@ -53,7 +53,7 @@ trait SubjectLikeImpl[
   S <: SubjectLike2[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
-  E <: EventLike2[S,C,R,E]] extends SubjectLike2[S,C,R,E] {
+  E <: EventLike[S,C,R,E]] extends SubjectLike2[S,C,R,E] {
 
   private var _name: String = ""
   private var _shortName: String = ""
@@ -99,9 +99,3 @@ trait SubjectLikeImpl[
   def eventTypeIncompatibilities_+=(eti: EventTypeIncompatibility): Unit = _eventTypeIncompatibilities += eti
   def eventTypeIncompatibilities_-=(eti: EventTypeIncompatibility): Unit = _eventTypeIncompatibilities -= eti
 }
-
-class SubjectDescriptor[
-  S <: SubjectLike2[S,C,R,E],
-  C <: CourseLike,
-  R <: ResourceLike,
-  E <: EventLike2[S,C,R,E]] extends SubjectLikeImpl[S,C,R,E]
