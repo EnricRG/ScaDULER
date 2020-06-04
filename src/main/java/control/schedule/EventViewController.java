@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import model.Event;
 import model.Subject;
-import model.Subject2;
 import scala.Option;
 
 import java.net.URL;
@@ -46,7 +45,7 @@ public abstract class EventViewController implements Initializable {
     }
 
     protected void setEventColorFrame(){
-        Option<Subject2> eventSubject = event.subject();
+        Option<Subject> eventSubject = event.subject();
         if(eventSubject.nonEmpty() && eventSubject.get().color().nonEmpty())
             mainBox.setStyle(mainBox.getStyle() + "-fx-border-width: 2; -fx-border-color: #" +
                 eventSubject.get().color().get().toJFXColor().toString().substring(2) + ";");

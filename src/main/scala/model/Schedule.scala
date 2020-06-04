@@ -10,9 +10,11 @@ class Schedule[T](intervals: Int) extends Serializable {
     def getValueAtIntervalOrElse(interval: Int, el: => T): T = if(interval < intervals) timeline.getOrElse(interval, el) else el
     //Danger, if interval exceeds limit caller will not know that this happened. So...
     //pre: interval < intervals
-    def getValueAtIntervalOrElseUpdate(interval: Int, el: => T): T = if(interval < intervals) timeline.getOrElseUpdate(interval, el) else el
+    def getValueAtIntervalOrElseUpdate(interval: Int, el: => T): T =
+        if(interval < intervals) timeline.getOrElseUpdate(interval, el) else el
 
-    def updateInterval(interval: Int, element: T): Unit = if(interval < intervals) timeline.update(interval, element)
+    def updateInterval(interval: Int, element: T): Unit =
+        if(interval < intervals) timeline.update(interval, element)
     def removeInterval(interval: Int): Unit = timeline.remove(interval)
 
     //I did this because I could.

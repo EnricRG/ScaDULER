@@ -3,7 +3,7 @@ package control.form
 import model.descriptor.EventDescriptor
 import model.{Course, Resource, SubjectDescriptor}
 
-class SubjectFormController2(
+class SubjectFormController(
   courses: Iterable[Course],
   resources: Iterable[Resource]) extends AbstractSubjectFormController(courses, resources) {
 

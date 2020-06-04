@@ -74,7 +74,7 @@ public class EventManagerController extends EntityManagerController<Event> {
         shortNameColumn.setCellValueFactory(new PropertyValueFactory<>("shortName"));
         subjectColumn.setCellValueFactory(cell -> {
             Subject subject = cell.getValue().subject().getOrElse(null);
-            if(subject != null) return new SimpleStringProperty(subject.getName());
+            if(subject != null) return new SimpleStringProperty(subject.name());
             else return new SimpleStringProperty();
         });
         resourceColumn.setCellValueFactory(cell -> {
@@ -108,7 +108,7 @@ public class EventManagerController extends EntityManagerController<Event> {
         if(event != null){
             Subject subject = event.subject().getOrElse(null);
             if(subject != null){
-                subject.removeEvent(event.getID());
+                subject.events_$minus$eq(event);
             }
 
             for(Event ev : JavaConverters.asJavaCollection(event.incompatibilities())){

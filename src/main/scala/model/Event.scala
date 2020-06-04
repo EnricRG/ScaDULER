@@ -52,7 +52,7 @@ case class Precedence(event: Event, isStrict: Boolean)
 
 @SerialVersionUID(1L)
 class Event(id: ID) extends Identifiable(id)
-  with EventLikeImpl[Subject2, Course, Resource, Event]
+  with EventLikeImpl[Subject, Course, Resource, Event]
   with Serializable {
 
   private var _startInterval: Int = -1
@@ -99,7 +99,7 @@ object Event{
     event.duration = descriptor.duration
     event.periodicity = descriptor.periodicity
 
-    //event.subject = descriptor.subject //TODO adapt to SubjectLike renovation
+    event.subject = descriptor.subject
     event.course = descriptor.course
     event.quarter = descriptor.quarter
     event.neededResource = descriptor.neededResource

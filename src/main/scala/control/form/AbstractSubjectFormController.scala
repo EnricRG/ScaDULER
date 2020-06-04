@@ -30,7 +30,7 @@ abstract class AbstractSubjectFormController[
   R <: ResourceLike](
   courses: Iterable[C],
   resources: Iterable[R])
-  extends FormController2[AbstractSubjectFormControllerResult[C,R]#SD] {
+  extends FormController[AbstractSubjectFormControllerResult[C,R]#SD] {
 
   type SD = AbstractSubjectFormControllerResult[C,R]#SD
   type ED = AbstractSubjectFormControllerResult[C,R]#ED

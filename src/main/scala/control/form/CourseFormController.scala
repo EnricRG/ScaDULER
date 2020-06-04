@@ -1,14 +1,13 @@
 package control.form
 
+import app.AppSettings
 import javafx.fxml.FXML
 import javafx.scene.control._
 import javafx.stage.Stage
-
-import app.AppSettings
 import misc.Warning
 import model.blueprint.CourseBlueprint
 
-class CourseFormController extends FormController2[CourseBlueprint] {
+class CourseFormController extends FormController[CourseBlueprint] {
 
   @FXML var courseNameTag: Label = _
   @FXML var courseNameField: TextField = _

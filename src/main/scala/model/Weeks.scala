@@ -7,7 +7,7 @@ object Weeks extends Serializable {
     @SerialVersionUID(1L)
     sealed abstract class Week extends Serializable {
         def toString: String
-        def toShortString: String //FIXME BAD IDEA! MINIZINC DEPENDS ON THIS, SHOULD NOT BE LANGUAGE DEPENDANT!
+        def toShortString: String
         def toWeekNumber: Int
         def periodicity: Periodicity
     }

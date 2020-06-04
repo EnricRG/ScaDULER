@@ -4,13 +4,8 @@ import misc.EventTypeIncompatibility
 
 import scala.collection.mutable
 
-trait SubjectLike{
-  @deprecated
-  def getName: String
-}
-
-trait SubjectLike2[
-  S <: SubjectLike2[S,C,R,E],
+trait SubjectLike[
+  S <: SubjectLike[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
   E <: EventLike[S,C,R,E]] {
@@ -50,10 +45,10 @@ trait SubjectLike2[
 }
 
 trait SubjectLikeImpl[
-  S <: SubjectLike2[S,C,R,E],
+  S <: SubjectLike[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
-  E <: EventLike[S,C,R,E]] extends SubjectLike2[S,C,R,E] {
+  E <: EventLike[S,C,R,E]] extends SubjectLike[S,C,R,E] {
 
   private var _name: String = ""
   private var _shortName: String = ""
@@ -76,15 +71,18 @@ trait SubjectLikeImpl[
   def description_=(s: String): Unit = _description = s
 
   def color: Option[Color] = _color
-  def color_=(c: Color): Unit = _color = Some(c)
+  def color_=(oc: Option[Color]): Unit = _color = oc
+  def color_=(c: Color): Unit = color = Some(c)
   def hasColor: Boolean = color.nonEmpty
 
   def course: Option[C] = _course
-  def course_=(c: C): Unit = _course = Some(c)
+  def course_=(oc: Option[C]): Unit = _course = oc
+  def course_=(c: C): Unit = course = Some(c)
   def hasCourse: Boolean = course.nonEmpty
 
   def quarter: Option[Quarter] = _quarter
-  def quarter_=(q: Quarter): Unit = _quarter = Some(q)
+  def quarter_=(oq: Option[Quarter]): Unit = _quarter = oq
+  def quarter_=(q: Quarter): Unit = quarter = Some(q)
   def hasQuarter: Boolean = quarter.nonEmpty
 
   def events: Iterable[E] = _events
@@ -98,4 +96,6 @@ trait SubjectLikeImpl[
   def eventTypeIncompatibilities: Set[EventTypeIncompatibility] = _eventTypeIncompatibilities.toSet
   def eventTypeIncompatibilities_+=(eti: EventTypeIncompatibility): Unit = _eventTypeIncompatibilities += eti
   def eventTypeIncompatibilities_-=(eti: EventTypeIncompatibility): Unit = _eventTypeIncompatibilities -= eti
+  def eventTypeIncompatibilities_++=(elems: TraversableOnce[EventTypeIncompatibility]): Unit =
+    _eventTypeIncompatibilities ++= elems
 }

@@ -1,7 +1,7 @@
 package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
-import control.form.{AbstractSubjectFormControllerResult, SubjectFormController2}
+import control.form.{AbstractSubjectFormControllerResult, SubjectFormController}
 import factory.ViewFactory
 import javafx.stage.Modality
 import model.descriptor.EventDescriptor
@@ -10,7 +10,7 @@ import util.Utils
 
 object ScalaMainController {
   def promptSubjectForm(mc: MainController): Unit = {
-    val subjectForm = new SubjectFormController2(
+    val subjectForm = new SubjectFormController(
       MainApp.getDatabase.courseDatabase.getCourses,
       MainApp.getDatabase.resourceDatabase.getElements)
 
@@ -18,7 +18,7 @@ object ScalaMainController {
       AppSettings.language.getItem("subjectForm_windowTitle"),
       mc.addButtons_subject.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory[SubjectFormController2](FXMLPaths.SubjectForm),
+      new ViewFactory[SubjectFormController](FXMLPaths.SubjectForm),
       subjectForm))
 
     val osd = subjectForm.waitFormResult
@@ -61,9 +61,10 @@ object ScalaMainController {
     descriptor.course = ed.course
     descriptor.quarter = ed.quarter
     descriptor.neededResource = ed.neededResource
-    ed.incompatibilities
+    descriptor.incompatibilities ++= ed.incompatibilities.map(descriptorMapping.toMap)
+    /*ed.incompatibilities
       .collect(descriptorMapping.toMap)
-      .foreach(descriptor.incompatibilities.add)
+      .foreach(descriptor.incompatibilities.add)*/
 
     descriptor
   }

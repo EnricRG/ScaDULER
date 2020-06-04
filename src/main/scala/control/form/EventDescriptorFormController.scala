@@ -16,12 +16,12 @@ import util.Utils
 import scala.collection.JavaConverters
 import scala.collection.mutable.ArrayBuffer
 
-class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R >: Null <: ResourceLike,
+class EventDescriptorFormController[S >: Null <: SubjectLike[_,_,_,_], C <: CourseLike, R >: Null <: ResourceLike,
   E <: EventLike[_,_,_,_]](
   subjects: Iterable[S],
   courses: Iterable[C],
   resources: Iterable[R],
-  events: Iterable[E]) extends FormController2[EventDescriptor[S,C,R,E]] {
+  events: Iterable[E]) extends FormController[EventDescriptor[S,C,R,E]] {
 
   @FXML var eventNameTag: Label = _
   @FXML var eventNameField: TextField = _
@@ -150,7 +150,7 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
     eventSubjectBox.setConverter(new StringConverter[S]() {
       override def toString(`object`: S): String =
         if (`object` == null) null
-        else `object`.getName
+        else `object`.name
 
       override def fromString(string: String): S = null
     })

@@ -5,7 +5,7 @@ import model.Weeks.{Periodicity, Weekly}
 import scala.collection.mutable
 
 trait EventLike[
-  S <: SubjectLike2[S,C,R,E],
+  S <: SubjectLike[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
   E <: EventLike[S,C,R,E]] {
@@ -50,7 +50,7 @@ trait EventLike[
 }
 
 trait EventLikeImpl[
-  S <: SubjectLike2[S,C,R,E],
+  S <: SubjectLike[S,C,R,E],
   C <: CourseLike,
   R <: ResourceLike,
   E <: EventLike[S,C,R,E]] extends EventLike[S,C,R,E]{

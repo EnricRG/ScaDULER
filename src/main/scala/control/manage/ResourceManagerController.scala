@@ -4,7 +4,7 @@ import util.Utils
 import java.util
 
 import app.{AppSettings, FXMLPaths}
-import control.form.FormController2
+import control.form.FormController
 import control.schedule.ResourceAvailabilityController
 import factory.ViewFactory
 import javafx.beans.property.{SimpleObjectProperty, SimpleStringProperty}
@@ -25,7 +25,7 @@ import scala.collection.JavaConverters
 import scala.collection.mutable.ArrayBuffer
 
 class ResourceManagerController[R <: ResourceLike](
-  initialResources: Iterable[R]) extends FormController2[(Iterable[ResourceBlueprint], Iterable[R])] {
+  initialResources: Iterable[R]) extends FormController[(Iterable[ResourceBlueprint], Iterable[R])] {
 
   @FXML var searchResourceField: TextField = _
 

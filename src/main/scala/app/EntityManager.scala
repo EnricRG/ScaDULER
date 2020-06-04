@@ -92,11 +92,11 @@ object EntityManager {
     }
 
     private def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint, c: Course): Unit = {
-        s.setName(sb.name)
-        s.setShortName(sb.shortName)
-        s.setCourse(c)
-        s.setQuarter(sb.quarter)
-        sb.additionalInformation.foreach(pair => s.setAdditionalField(pair._1, pair._2))
+        s.name = sb.name
+        s.shortName = sb.shortName
+        s.course = Some(c)
+        s.quarter = sb.quarter
+        sb.additionalInformation.foreach(pair => s.updateAdditionalField(pair._1, pair._2))
     }
 
     @deprecated

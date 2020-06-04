@@ -716,22 +716,22 @@ public class MainController extends StageController {
     }
 
     private void promptEventForm() {
-        EventFormController formController = new EventFormController(
+        EventFormController eventForm = new EventFormController(
             MainApp.getDatabase().subjectDatabase().getFinishedSubjects(),
             MainApp.getDatabase().courseDatabase().getCourses(),
             MainApp.getDatabase().resourceDatabase().getElements(),
             MainApp.getDatabase().eventDatabase().getElements()
         );
 
-        formController.setStage(Utils.promptBoundWindow(
+        eventForm.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItemOrElse("eventForm_windowTitle", "New Event"),
                 addButtons_event.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EventForm()),
-                formController
+                eventForm
         ));
 
-        Option<EventDescriptor<Subject, Course, Resource, Event>> ed = formController.waitFormResult();
+        Option<EventDescriptor<Subject, Course, Resource, Event>> ed = eventForm.waitFormResult();
 
         if(ed.nonEmpty()){
             EventDescriptor<Subject, Course, Resource, Event> eventDescriptor = ed.get();
@@ -741,7 +741,7 @@ public class MainController extends StageController {
             Event.setEventFromDescriptor(event, ed.get());
 
             if(eventDescriptor.subject().nonEmpty()){
-                eventDescriptor.subject().get().addEvent(event.getID(), event);
+                eventDescriptor.subject().get().events_$plus$eq(event);
             }
 
             addUnassignedEvent(event);

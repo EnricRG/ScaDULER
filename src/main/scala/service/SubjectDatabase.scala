@@ -21,7 +21,7 @@ class SubjectDatabase extends Database[Subject] {
 
     def removeSubject(sid: ID): Unit = getElement(sid) match{
         case Some(s) =>
-            s.getEventIDs.foreach(eventDatabase.removeEvent)
+            s.events.map(_.getID).foreach(eventDatabase.removeEvent)
             removeElement(sid)
         case _ =>
     }
@@ -29,7 +29,7 @@ class SubjectDatabase extends Database[Subject] {
 
     def deleteSubject(sid: ID): Unit = getElement(sid) match{
         case Some(s) =>
-            s.getEventIDs.foreach(eventDatabase.deleteEvent)
+            s.events.map(_.getID).foreach(eventDatabase.deleteEvent)
             deleteElement(sid)
         case _ =>
     }

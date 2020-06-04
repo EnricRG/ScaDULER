@@ -7,11 +7,6 @@ import service.{ID, Identifiable}
 @SerialVersionUID(1L)
 trait Quarter extends Serializable
 
-@deprecated
-object NoQuarter extends Quarter{
-  def noQuarter: Quarter = this //should not be used
-  override def toString: String = AppSettings.language.getItem("noQuarter")
-}
 object FirstQuarter extends Quarter{
   override def toString: String = AppSettings.language.getItem("firstQuarter")
 }
@@ -22,7 +17,6 @@ object SecondQuarter extends Quarter{
 object Quarters{
   def firstQuarter: Quarter = FirstQuarter
   def secondQuarter: Quarter = SecondQuarter
-  def noQuarter: Quarter = NoQuarter
   val quarters: List[Quarter] = List(FirstQuarter,SecondQuarter)
 }
 
@@ -46,10 +40,3 @@ object Course{
     c.description = cb.description
   }
 }
-
-@deprecated
-object NoCourse extends Course(-1){
-  name = AppSettings.language.getItemOrElse("noCourse", "No Course")
-
-  def noCourse: Course = this
-} //non bd object
