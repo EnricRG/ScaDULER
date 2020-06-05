@@ -2,6 +2,7 @@ package service
 
 import model.Resource
 import model.blueprint.ResourceBlueprint
+import model.descriptor.ResourceDescriptor
 
 import scala.collection.mutable
 
@@ -30,6 +31,13 @@ class ResourceDatabase extends Database[Resource]{
         addElement(id, resource)
     }
 
+    def createResourceFromDescriptor(rd: ResourceDescriptor): (ID, Resource) = {
+        val ret = createResource
+        Resource.setResourceFromDescriptor(ret._2, rd)
+        ret
+    }
+
+    @deprecated
     def createResourceFromBlueprint(rb: ResourceBlueprint): (ID, Resource) = {
         val ret = createResource
         Resource.setResourceFromBlueprint(ret._2, rb)

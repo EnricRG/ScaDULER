@@ -5,9 +5,9 @@ import javafx.fxml.FXML
 import javafx.scene.control._
 import javafx.stage.Stage
 import misc.Warning
-import model.blueprint.CourseBlueprint
+import model.descriptor.CourseDescriptor
 
-class CourseFormController extends FormController[CourseBlueprint] {
+class CourseFormController extends FormController[CourseDescriptor] {
 
   @FXML var courseNameTag: Label = _
   @FXML var courseNameField: TextField = _
@@ -63,11 +63,11 @@ class CourseFormController extends FormController[CourseBlueprint] {
   }
 
   //pre: !warnings
-  private def createCourse: CourseBlueprint = {
-    val cb = new CourseBlueprint
-    cb.name = courseNameField.getText
-    cb.description = courseDescriptionField.getText
-    cb
+  private def createCourse: CourseDescriptor = {
+    val cd = new CourseDescriptor
+    cd.name = courseNameField.getText
+    cd.description = courseDescriptionField.getText
+    cd
   }
 
   override protected def checkWarnings: Option[Warning] = {

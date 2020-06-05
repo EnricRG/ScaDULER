@@ -5,7 +5,7 @@ import model.{Color, Quarter}
 
 import scala.collection.mutable
 
-class SubjectDescriptor[C, E]{
+class SubjectDescriptor[C, E] {
   var name: String = ""
   var shortName: String = ""
   var description: String = ""

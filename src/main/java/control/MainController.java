@@ -26,9 +26,9 @@ import javafx.stage.Window;
 import misc.Selection;
 import misc.Warning;
 import model.*;
-import model.blueprint.CourseBlueprint;
-import model.blueprint.ResourceBlueprint;
+import model.descriptor.CourseDescriptor;
 import model.descriptor.EventDescriptor;
+import model.descriptor.ResourceDescriptor;
 import scala.Option;
 import scala.Tuple2;
 import scala.collection.Iterable;
@@ -703,10 +703,10 @@ public class MainController extends StageController {
             courseForm
         ));
 
-        Option<CourseBlueprint> cb = courseForm.waitFormResult();
+        Option<CourseDescriptor> cd = courseForm.waitFormResult();
 
-        if(cb.nonEmpty()) {
-            Course c = courseDatabase.createCourseFromBlueprint(cb.get())._2;
+        if(cd.nonEmpty()) {
+            Course c = courseDatabase.createCourseFromDescriptor(cd.get())._2;
             addCourseTab(c, false);
         }
     }
@@ -772,14 +772,14 @@ public class MainController extends StageController {
             controller
         ));
 
-        Option<Tuple2<Iterable<ResourceBlueprint>, Iterable<Resource>>> formResult = controller.waitFormResult();
+        Option<Tuple2<Iterable<ResourceDescriptor>, Iterable<Resource>>> formResult = controller.waitFormResult();
 
         if(formResult.nonEmpty()){
-            Iterable<ResourceBlueprint> addedResources = formResult.get()._1;
+            Iterable<ResourceDescriptor> addedResources = formResult.get()._1;
             Iterable<Resource> removedResources = formResult.get()._2;
 
-            for(ResourceBlueprint rb : JavaConverters.asJavaCollection(addedResources))
-                MainApp.getDatabase().resourceDatabase().createResourceFromBlueprint(rb);
+            for(ResourceDescriptor rd : JavaConverters.asJavaCollection(addedResources))
+                MainApp.getDatabase().resourceDatabase().createResourceFromDescriptor(rd);
 
             for(Resource r : JavaConverters.asJavaCollection(removedResources))
                 MainApp.getDatabase().resourceDatabase().removeResource(r);

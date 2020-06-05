@@ -2,6 +2,7 @@ package model
 
 import app.AppSettings
 import model.blueprint.CourseBlueprint
+import model.descriptor.CourseDescriptor
 import service.{ID, Identifiable}
 
 @SerialVersionUID(1L)
@@ -46,6 +47,11 @@ class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializa
 }
 
 object Course{
+  def setCourseFromDescriptor(c: Course, cd: CourseDescriptor): Unit = {
+    c.name = cd.name
+    c.description = cd.description
+  }
+
   def setCourseFromBlueprint(c: Course, cb: CourseBlueprint): Unit = {
     c.name = cb.name
     c.description = cb.description
