@@ -14,7 +14,7 @@ import model._
 import util.Utils
 import java.util
 
-import model.descriptor.EventDescriptor
+import model.descriptor.{EventDescriptor, SubjectDescriptor}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.{JavaConverters, mutable}

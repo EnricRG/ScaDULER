@@ -1,6 +1,7 @@
 package model
 
 import javafx.scene.paint
+import model.descriptor.SubjectDescriptor
 import service.{ID, Identifiable}
 
 @SerialVersionUID(1L)

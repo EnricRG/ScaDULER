@@ -32,7 +32,18 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
 }
 
 @SerialVersionUID(1L)
-class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable { }
+class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable {
+  private val _firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
+  private val _secondQuarterData: QuarterData = new QuarterData(SecondQuarter)
+
+  def firstQuarterData: QuarterData = _firstQuarterData
+  def secondQuarterData: QuarterData = _secondQuarterData
+
+  def firstQuarterEvents: Iterable[Event] = firstQuarterData.getSchedule.getEvents
+  def secondQuarterEvents: Iterable[Event] = secondQuarterData.getSchedule.getEvents
+  //events from both quarters
+  def events: Iterable[Event] = firstQuarterEvents ++ secondQuarterEvents
+}
 
 object Course{
   def setCourseFromBlueprint(c: Course, cb: CourseBlueprint): Unit = {

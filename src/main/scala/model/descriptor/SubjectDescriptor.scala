@@ -1,6 +1,7 @@
-package model
+package model.descriptor
 
 import misc.EventTypeIncompatibility
+import model.{Color, Quarter}
 
 import scala.collection.mutable
 

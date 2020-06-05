@@ -1,7 +1,7 @@
 package control.form
 
-import model.descriptor.EventDescriptor
-import model.{Course, Resource, SubjectDescriptor}
+import model.descriptor.{EventDescriptor, SubjectDescriptor}
+import model.{Course, Resource}
 
 class SubjectFormController(
   courses: Iterable[Course],
