@@ -234,6 +234,7 @@ object DefaultLanguage extends Language {
         "eventManager_shortNameColumnHeader" -> "Short Name",
         "subjectManager_subjectColumnHeader" -> "Subject",
         "subjectManager_resourceColumnHeader" -> "Resource",
+        "subjectManager_periodicityColumnHeader" -> "Periodicity",
         "subjectManager_weekColumnHeader" -> "Week",
         "subjectManager_durationColumnHeader" -> "Duration",
         "subjectManager_incompatibilitiesColumnHeader" -> "Incompatibilities",

@@ -67,12 +67,14 @@ class ImportEventsManagerController(/*importJobController: ImportJobEditorContro
     })
 
     courseColumn.setCellValueFactory(cell => {
-      if (cell.getValue != null) new SimpleStringProperty(cell.getValue.course.name)
+      if (cell.getValue != null && cell.getValue.course.nonEmpty)
+        new SimpleStringProperty(cell.getValue.course.get.name)
       else new SimpleStringProperty()
     })
 
     quarterColumn.setCellValueFactory(cell => {
-      if (cell.getValue != null) new SimpleStringProperty(cell.getValue.quarter.toShortString)
+      if (cell.getValue != null && cell.getValue.quarter.nonEmpty)
+        new SimpleStringProperty(cell.getValue.quarter.get.toShortString)
       else new SimpleStringProperty()
     })
 

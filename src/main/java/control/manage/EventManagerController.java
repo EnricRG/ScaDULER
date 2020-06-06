@@ -7,12 +7,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import misc.Duration;
 import model.Event;
 import model.Resource;
 import model.Subject;
+import model.Weeks;
+import scala.Option;
 import scala.collection.JavaConverters;
 import service.EventDatabase;
 
@@ -24,6 +25,7 @@ public class EventManagerController extends EntityManagerController<Event> {
     public TableColumn<Event, String> shortNameColumn = new TableColumn<>();
     public TableColumn<Event, String> subjectColumn = new TableColumn<>();
     public TableColumn<Event, String> resourceColumn = new TableColumn<>();
+    public TableColumn<Event, String> periodicityColumn = new TableColumn<>();
     public TableColumn<Event, String> weekColumn = new TableColumn<>();
     public TableColumn<Event, String> durationColumn = new TableColumn<>();
     public TableColumn<Event, String> incompatibilitiesColumn = new TableColumn<>();
@@ -43,6 +45,7 @@ public class EventManagerController extends EntityManagerController<Event> {
         shortNameColumn.setText(AppSettings.language().getItem("eventManager_shortNameColumnHeader"));
         subjectColumn.setText(AppSettings.language().getItem("subjectManager_subjectColumnHeader"));
         resourceColumn.setText(AppSettings.language().getItem("subjectManager_resourceColumnHeader"));
+        periodicityColumn.setText(AppSettings.language().getItem("subjectManager_periodicityColumnHeader"));
         weekColumn.setText(AppSettings.language().getItem("subjectManager_weekColumnHeader"));
         durationColumn.setText(AppSettings.language().getItem("subjectManager_durationColumnHeader"));
         incompatibilitiesColumn.setText(AppSettings.language().getItem("subjectManager_incompatibilitiesColumnHeader"));
@@ -64,25 +67,32 @@ public class EventManagerController extends EntityManagerController<Event> {
         addColumn(shortNameColumn);
         addColumn(subjectColumn);
         addColumn(resourceColumn);
+        addColumn(periodicityColumn);
         addColumn(weekColumn);
         addColumn(durationColumn);
         addColumn(incompatibilitiesColumn);
     }
 
     private void configureColumns(){
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        shortNameColumn.setCellValueFactory(new PropertyValueFactory<>("shortName"));
+        nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().name()));
+        shortNameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().shortName()));
         subjectColumn.setCellValueFactory(cell -> {
-            Subject subject = cell.getValue().subject().getOrElse(null);
-            if(subject != null) return new SimpleStringProperty(subject.name());
+            Option<Subject> subject = cell.getValue().subject();
+            if(subject.nonEmpty()) return new SimpleStringProperty(subject.get().name());
             else return new SimpleStringProperty();
         });
         resourceColumn.setCellValueFactory(cell -> {
-            Resource resource = cell.getValue().neededResource().getOrElse(null);
-            if(resource != null) return new SimpleStringProperty(resource.name());
+            Option<Resource> resource = cell.getValue().neededResource();
+            if(resource.nonEmpty()) return new SimpleStringProperty(resource.get().name());
             else return new SimpleStringProperty();
         });
-        weekColumn.setCellValueFactory(new PropertyValueFactory<>("week"));
+        periodicityColumn.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().periodicity().toString()));
+        weekColumn.setCellValueFactory(cell -> {
+            Option<Weeks.Week> week = cell.getValue().week();
+            if(week.nonEmpty()) return new SimpleStringProperty(week.get().toString());
+            else return new SimpleStringProperty();
+        });
         durationColumn.setCellValueFactory(cell ->
                 new SimpleStringProperty(Duration.asPrettyString(cell.getValue().duration()))
         );

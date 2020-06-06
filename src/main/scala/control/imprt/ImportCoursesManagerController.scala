@@ -58,7 +58,14 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
       new ViewFactory[CourseFormController](FXMLPaths.CourseForm),
       courseForm))
 
-    courseForm.waitFormResult
+    val ocd = courseForm.waitFormResult
+
+    if (ocd.nonEmpty){
+      val cb = new CourseBlueprint
+      CourseBlueprint.setBlueprintFromDescriptor(cb,ocd.get)
+      Some(cb)
+    }
+    else None
   }
 
   override def editEntity(entity: CourseBlueprint): Option[CourseBlueprint] = {
