@@ -58,9 +58,10 @@ public class SubjectManagerController extends EntityManagerController<Subject> {
     }
 
     private void configureColumns(){
-        nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
-        shortNameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getShortName()));
-        descriptionColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDescription()));
+        nameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().name()));
+        shortNameColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().shortName()));
+        descriptionColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().description()));
+        //TODO replace eventSummary for more advanced cell value factory
         eventCountColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getEventSummary()));
     }
 
@@ -80,7 +81,7 @@ public class SubjectManagerController extends EntityManagerController<Subject> {
 
         if(subject != null){
             removeRow(subject);
-            for(Event ev : JavaConverters.asJavaCollection(subject.getEvents()))
+            for(Event ev : JavaConverters.asJavaCollection(subject.events()))
                 getMainController().removeEvent(ev);
             subjectDatabase.removeSubject(subject);
         }

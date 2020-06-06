@@ -3,7 +3,6 @@ package control;
 import app.*;
 import control.form.CourseFormController;
 import control.form.EventFormController;
-import control.form.SubjectFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
 import control.imprt.mcf.MCFImportErrorViewerController;
@@ -27,9 +26,9 @@ import javafx.stage.Window;
 import misc.Selection;
 import misc.Warning;
 import model.*;
-import model.blueprint.CourseBlueprint;
-import model.blueprint.ResourceBlueprint;
+import model.descriptor.CourseDescriptor;
 import model.descriptor.EventDescriptor;
+import model.descriptor.ResourceDescriptor;
 import scala.Option;
 import scala.Tuple2;
 import scala.collection.Iterable;
@@ -179,7 +178,7 @@ public class MainController extends StageController {
             Event event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
 
             CourseScheduleController courseScheduleController = getEventCourseController(event);
-            QuarterScheduleController quarterScheduleController = courseScheduleController.getQuarterController(event.getQuarter());
+            QuarterScheduleController quarterScheduleController = courseScheduleController.getQuarterController(event.quarter().getOrElse(null));
             ScheduleIntervalController intervalController =
                     quarterScheduleController.getIntervalControllerAt(ea.week().toWeekNumber(), ea.interval());
 
@@ -199,7 +198,7 @@ public class MainController extends StageController {
 
     private CourseScheduleController getEventCourseController(Event event) {
         //TODO highly improvable, better data structure
-        return tabCourseMap.get(courseTabMap.get(event.getCourse().getID()));
+        return tabCourseMap.get(courseTabMap.get(event.course().get().getID()));
     }
 
     private CourseScheduleController getVisibleCourse() {
@@ -435,7 +434,7 @@ public class MainController extends StageController {
         ArrayList<Node> filteredEvents = new ArrayList<>();
 
         for(EventViewController evc: unassignedEventsMap.values())
-            if(evc.getEvent().getName().toLowerCase().contains(text.toLowerCase())) filteredEvents.add(evc.getNode());
+            if(evc.getEvent().name().toLowerCase().contains(text.toLowerCase())) filteredEvents.add(evc.getNode());
 
         rightPane_VBox.getChildren().clear();
         rightPane_VBox.getChildren().addAll(filteredEvents);
@@ -704,45 +703,35 @@ public class MainController extends StageController {
             courseForm
         ));
 
-        Option<CourseBlueprint> cb = courseForm.waitFormResult();
+        Option<CourseDescriptor> cd = courseForm.waitFormResult();
 
-        if(cb.nonEmpty()) {
-            Course c = courseDatabase.createCourseFromBlueprint(cb.get())._2;
+        if(cd.nonEmpty()) {
+            Course c = courseDatabase.createCourseFromDescriptor(cd.get())._2;
             addCourseTab(c, false);
         }
     }
 
     private void promptSubjectForm(){
-        StageController stageController = new SubjectFormController(this);
-
-        stageController.setStage(Utils.promptBoundWindow(
-                AppSettings.language().getItem("subjectForm_windowTitle"),
-                addButtons_subject.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.SubjectForm()),
-                stageController
-        ));
-
-        stageController.show();
+        ScalaMainController$.MODULE$.promptSubjectForm(this);
     }
 
     private void promptEventForm() {
-        EventFormController formController = new EventFormController(
+        EventFormController eventForm = new EventFormController(
             MainApp.getDatabase().subjectDatabase().getFinishedSubjects(),
             MainApp.getDatabase().courseDatabase().getCourses(),
             MainApp.getDatabase().resourceDatabase().getElements(),
             MainApp.getDatabase().eventDatabase().getElements()
         );
 
-        formController.setStage(Utils.promptBoundWindow(
+        eventForm.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItemOrElse("eventForm_windowTitle", "New Event"),
                 addButtons_event.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EventForm()),
-                formController
+                eventForm
         ));
 
-        Option<EventDescriptor<Subject, Course, Resource, Event>> ed = formController.waitFormResult();
+        Option<EventDescriptor<Subject, Course, Resource, Event>> ed = eventForm.waitFormResult();
 
         if(ed.nonEmpty()){
             EventDescriptor<Subject, Course, Resource, Event> eventDescriptor = ed.get();
@@ -752,7 +741,7 @@ public class MainController extends StageController {
             Event.setEventFromDescriptor(event, ed.get());
 
             if(eventDescriptor.subject().nonEmpty()){
-                eventDescriptor.subject().get().addEvent(event.getID(), event);
+                eventDescriptor.subject().get().events_$plus$eq(event);
             }
 
             addUnassignedEvent(event);
@@ -783,14 +772,14 @@ public class MainController extends StageController {
             controller
         ));
 
-        Option<Tuple2<Iterable<ResourceBlueprint>, Iterable<Resource>>> formResult = controller.waitFormResult();
+        Option<Tuple2<Iterable<ResourceDescriptor>, Iterable<Resource>>> formResult = controller.waitFormResult();
 
         if(formResult.nonEmpty()){
-            Iterable<ResourceBlueprint> addedResources = formResult.get()._1;
+            Iterable<ResourceDescriptor> addedResources = formResult.get()._1;
             Iterable<Resource> removedResources = formResult.get()._2;
 
-            for(ResourceBlueprint rb : JavaConverters.asJavaCollection(addedResources))
-                MainApp.getDatabase().resourceDatabase().createResourceFromBlueprint(rb);
+            for(ResourceDescriptor rd : JavaConverters.asJavaCollection(addedResources))
+                MainApp.getDatabase().resourceDatabase().createResourceFromDescriptor(rd);
 
             for(Resource r : JavaConverters.asJavaCollection(removedResources))
                 MainApp.getDatabase().resourceDatabase().removeResource(r);

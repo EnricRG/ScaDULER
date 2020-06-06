@@ -2,6 +2,7 @@ package model
 
 import app.AppSettings
 import model.blueprint.CourseBlueprint
+import model.descriptor.CourseDescriptor
 import service.{ID, Identifiable}
 
 @SerialVersionUID(1L)
@@ -9,11 +10,6 @@ trait Quarter extends Serializable{
   def toShortString: String
 }
 
-object NoQuarter extends Quarter{
-  def noQuarter: Quarter = this //should not be used
-  override def toString: String = AppSettings.language.getItem("noQuarter")
-  override def toShortString: String = "NQ" //TODO language specific
-}
 object FirstQuarter extends Quarter{
   override def toString: String = AppSettings.language.getItem("firstQuarter")
   override def toShortString: String = "Q1" //TODO language specific
@@ -27,7 +23,6 @@ object SecondQuarter extends Quarter{
 object Quarters{
   def firstQuarter: Quarter = FirstQuarter
   def secondQuarter: Quarter = SecondQuarter
-  def noQuarter: Quarter = NoQuarter
   val quarters: List[Quarter] = List(FirstQuarter,SecondQuarter)
 }
 
@@ -43,17 +38,27 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
 }
 
 @SerialVersionUID(1L)
-class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable { }
+class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable {
+  private val _firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
+  private val _secondQuarterData: QuarterData = new QuarterData(SecondQuarter)
+
+  def firstQuarterData: QuarterData = _firstQuarterData
+  def secondQuarterData: QuarterData = _secondQuarterData
+
+  def firstQuarterEvents: Iterable[Event] = firstQuarterData.getSchedule.getEvents
+  def secondQuarterEvents: Iterable[Event] = secondQuarterData.getSchedule.getEvents
+  //events from both quarters
+  def events: Iterable[Event] = firstQuarterEvents ++ secondQuarterEvents
+}
 
 object Course{
+  def setCourseFromDescriptor(c: Course, cd: CourseDescriptor): Unit = {
+    c.name = cd.name
+    c.description = cd.description
+  }
+
   def setCourseFromBlueprint(c: Course, cb: CourseBlueprint): Unit = {
     c.name = cb.name
     c.description = cb.description
   }
 }
-
-object NoCourse extends Course(-1){
-  name = AppSettings.language.getItemOrElse("noCourse", "No Course")
-
-  def noCourse: Course = this
-} //non bd object

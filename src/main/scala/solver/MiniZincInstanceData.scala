@@ -1,8 +1,8 @@
 package solver
 
 import app.AppSettings
-import model.Weeks.{AWeek, BWeek, Biweekly, EveryWeek, Periodicity, Week, Weekly}
 import model.Resource
+import model.Weeks._
 import service.ID
 
 import scala.collection.immutable
@@ -56,7 +56,7 @@ case class MiniZincInstanceData(nDays: Int, //unused
 }
 
 object MiniZincInstance{
-    val ModelIndexDeviation = 1;
+    val ModelIndexDeviation = 1
 
     def parsePeriodicity(periodicity: Periodicity): String = periodicity match{
         case Weekly => "WE"
@@ -136,7 +136,7 @@ object MiniZincInstance{
 
             val eventDurationAux: ListBuffer[Int] = eventDurationAuxAWeek ++ eventDurationAuxBWeek
             //val eventWeekAux: ListBuffer[String] = eventWeekAuxAWeek ++ eventWeekAuxBWeek
-            val predefinedEventWeek = List.fill(nPreassignedEventsAuxAWeek)(parseWeek(AWeek)) ++ List.fill(nPreassignedEventsAuxBWeek)(parseWeek(BWeek))
+            val predefinedEventWeek: List[String] = List.fill(nPreassignedEventsAuxAWeek)(parseWeek(AWeek)) ++ List.fill(nPreassignedEventsAuxBWeek)(parseWeek(BWeek))
             val nPreassignedEventsAux: Int = nPreassignedEventsAuxAWeek + nPreassignedEventsAuxBWeek
             val preassignedEventNumbersAux: immutable.IndexedSeq[Int] = preassignedEventNumbersAuxAWeek ++ preassignedEventNumbersAuxBWeek
             val preassignedEventStartsAux: ListBuffer[Int] = preassignedEventStartsAuxAWeek ++ preassignedEventStartsAuxBWeek
@@ -150,17 +150,17 @@ object MiniZincInstance{
         val nResources = instance.nResources
         val resourceQuantity = instance.resources.map(_.getMaxQuantity)
         val nEvents = instance.nEvents + resourceAvailabilityFillerAux.nPreassignedEventsAux
-        val eventDuration = instance.events.map(_.getDuration) ++ resourceAvailabilityFillerAux.eventDurationAux
-        val eventPeriodicity = instance.events.map(e => parsePeriodicity(e.getPeriodicity)) ++ List.fill(resourceAvailabilityFillerAux.nPreassignedEventsAux)(parsePeriodicity(Biweekly))
+        val eventDuration = instance.events.map(_.duration) ++ resourceAvailabilityFillerAux.eventDurationAux
+        val eventPeriodicity = instance.events.map(e => parsePeriodicity(e.periodicity)) ++ List.fill(resourceAvailabilityFillerAux.nPreassignedEventsAux)(parsePeriodicity(Biweekly))
         //val eventWeek = instance.events.map(_.getWeek.toShortString) ++ resourceAvailabilityFillerAux.eventWeekAux
-        val eventExclusions = for(e1 <- instance.events) yield for(e2 <- instance.events) yield e1.getIncompatibilities.contains(e2)
-        val resourceNeeded = (for(e <- instance.events) yield for(r <- instance.resources) yield e.getNeededResource == r) ++ resourceAvailabilityFillerAux.resourceNeededAux
+        val eventExclusions = for(e1 <- instance.events) yield for(e2 <- instance.events) yield e1.incompatibilities.contains(e2)
+        val resourceNeeded = (for(e <- instance.events) yield for(r <- instance.resources) yield e.neededResource.orNull == r) ++ resourceAvailabilityFillerAux.resourceNeededAux
         val preassignedEventNumbers = preassignedEventsAux.map(instance.events.indexOf(_) + ModelIndexDeviation) ++ resourceAvailabilityFillerAux.preassignedEventNumbersAux
         val preassignedEventStarts = preassignedEventsAux.map(_.getStartInterval + ModelIndexDeviation) ++ resourceAvailabilityFillerAux.preassignedEventStartsAux
         val nPreassignedEvents = preassignedEventsAux.length + resourceAvailabilityFillerAux.nPreassignedEventsAux
         val nPredefinedEventWeeks = nPreassignedEvents
         val predefinedWeekEventNumbers = preassignedEventNumbers
-        val predefinedEventWeek = preassignedEventsAux.map(e => parseWeek(e.getWeek)) ++ resourceAvailabilityFillerAux.predefinedEventWeek
+        val predefinedEventWeek = preassignedEventsAux.map(e => parseWeek(e.week.orNull)) ++ resourceAvailabilityFillerAux.predefinedEventWeek
         val nPrecedences = 0
         val predecessors = List()
         val successors = List()

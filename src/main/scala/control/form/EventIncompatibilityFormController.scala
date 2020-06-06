@@ -15,7 +15,7 @@ import model.EventLike
 import scala.collection.JavaConverters
 import scala.collection.mutable.ArrayBuffer
 
-class EventIncompatibilityFormController[E <: EventLike](
+class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   incompatibilities: ArrayBuffer[E],
   events: Iterable[E]) extends StageController {
 
@@ -88,7 +88,7 @@ class EventIncompatibilityFormController[E <: EventLike](
     incompatibilityTable_nameColumn.setCellValueFactory(cell => {
       val e: E = cell.getValue
 
-      if(e != null) new SimpleStringProperty(e.getName)
+      if(e != null) new SimpleStringProperty(e.name)
       else new SimpleStringProperty()
     })
 
@@ -96,7 +96,7 @@ class EventIncompatibilityFormController[E <: EventLike](
     generalEventTable_nameColumn.setCellValueFactory(cell => {
       val e: E = cell.getValue
 
-      if(e != null) new SimpleStringProperty(e.getName)
+      if(e != null) new SimpleStringProperty(e.name)
       else new SimpleStringProperty()
     })
 
@@ -109,7 +109,7 @@ class EventIncompatibilityFormController[E <: EventLike](
 
     //if search field is not blank, remove all rows that event's name does not contain field's content as a substring
     if (!text.trim.isEmpty) filteredResources.removeIf(
-      event => !event.getName.toLowerCase.contains(text.toLowerCase))
+      event => !event.name.toLowerCase.contains(text.toLowerCase))
 
     generalEventTable.setItems(filteredResources)
   }

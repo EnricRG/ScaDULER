@@ -4,7 +4,7 @@ import util.Utils
 import java.util
 
 import app.{AppSettings, FXMLPaths}
-import control.form.FormController2
+import control.form.FormController
 import control.schedule.ResourceAvailabilityController
 import factory.ViewFactory
 import javafx.beans.property.{SimpleObjectProperty, SimpleStringProperty}
@@ -18,14 +18,15 @@ import javafx.scene.layout.Region.USE_COMPUTED_SIZE
 import javafx.scene.layout.{HBox, Priority}
 import javafx.stage.{Modality, Stage}
 import misc.Warning
-import model.ResourceLike
 import model.blueprint.ResourceBlueprint
+import model.descriptor.ResourceDescriptor
+import model.{ResourceLike, ResourceSchedule}
 
 import scala.collection.JavaConverters
 import scala.collection.mutable.ArrayBuffer
 
 class ResourceManagerController[R <: ResourceLike](
-  initialResources: Iterable[R]) extends FormController2[(Iterable[ResourceBlueprint], Iterable[R])] {
+  initialResources: Iterable[R]) extends FormController[(Iterable[ResourceDescriptor], Iterable[R])] {
 
   @FXML var searchResourceField: TextField = _
 
@@ -140,10 +141,10 @@ class ResourceManagerController[R <: ResourceLike](
   }
 
   private def generateResourceManageButton(r: ResourceLike): Node = {
-    val hbox: HBox = new HBox
+    val hBox: HBox = new HBox
 
-    hbox.setAlignment(Pos.CENTER)
-    hbox.setMaxWidth(USE_COMPUTED_SIZE)
+    hBox.setAlignment(Pos.CENTER)
+    hBox.setMaxWidth(USE_COMPUTED_SIZE)
 
     val button: Button = new Button(AppSettings.language.getItemOrElse("manage", "Manage"))
 
@@ -153,9 +154,9 @@ class ResourceManagerController[R <: ResourceLike](
     button.setOnAction(actionEvent => manageResourceAvailability(r))
 
     HBox.setHgrow(button, Priority.ALWAYS)
-    hbox.getChildren.add(button)
+    hBox.getChildren.add(button)
 
-    hbox
+    hBox
   }
 
   private def manageResourceAvailability(r: ResourceLike): Unit = {
@@ -172,7 +173,6 @@ class ResourceManagerController[R <: ResourceLike](
 
     controller.setStage(stage)
 
-    //TODO move this to ResourceAvailabilityController
     stage.getScene.setOnKeyReleased(keyEvent => {
       val keyCode: KeyCode = keyEvent.getCode
 
@@ -203,7 +203,7 @@ class ResourceManagerController[R <: ResourceLike](
 
     //if search field is not blank, remove all rows that resource's name does not contain fields content as a substring
     if (!text.trim.isEmpty) filteredResources.removeIf(
-      (resource: ResourceLike) => !resource.getName.toLowerCase.contains(text))
+      (resource: ResourceLike) => !resource.name.toLowerCase.contains(text))
 
     resourceTable.setItems(filteredResources)
   }
@@ -263,12 +263,22 @@ class ResourceManagerController[R <: ResourceLike](
 
   override protected def checkWarnings: Option[Warning] = resourceCanBeCreated
 
-  override def waitFormResult: Option[(Iterable[ResourceBlueprint], Iterable[R])] = {
+  override def waitFormResult: Option[(Iterable[ResourceDescriptor], Iterable[R])] = {
     showAndWait()
     if(_addedResources.nonEmpty || _removedResources.nonEmpty)
-      Some((_addedResources, _removedResources))
+      Some((_addedResources.map(resourceBlueprintToResourceDescriptor), _removedResources))
     else
       None
+  }
+
+  private def resourceBlueprintToResourceDescriptor(rb: ResourceBlueprint): ResourceDescriptor = {
+    val rd = new ResourceDescriptor
+
+    rd.name = rb.name
+    rd.capacity = rb.capacity
+    rd.availability = new ResourceSchedule(rb.availability)
+
+    rd
   }
 
   //pre: name and capacity not null

@@ -74,8 +74,8 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
         for(Event e: JavaConverters.asJavaCollection(quarterData.getSchedule().getEvents())){
             //TODO optimize this, save viability state on persistence.
             //FIXME
-            AssignmentViabilityChecker checker = new AssignmentViabilityChecker(courseController.getCourse(), quarterData, e.getWeek().toWeekNumber(), e.getStartInterval(), e);
-            processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, e.getWeek().toWeekNumber(), e.getStartInterval(), checker.isAViableAssignment());
+            AssignmentViabilityChecker checker = new AssignmentViabilityChecker(courseController.getCourse(), quarterData, e.week().get().toWeekNumber(), e.getStartInterval(), e);
+            processEventDrop(e, MainController.EventDrag.FROM_UNASSIGNED, -1, e.week().get().toWeekNumber(), e.getStartInterval(), checker.isAViableAssignment());
         }
         //FIXME this will need a fix
     }
@@ -89,7 +89,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
     //TODO improve call performance vs readability: Call only getWeek() once
     //TODO improve call redundancy. No need to call addEvent when reloading the course.
     public void assignEvent(Event scheduleEvent, int scheduleWeek, Integer interval, int hint, boolean viable) {
-        Weeks.Week eventWeek = scheduleEvent.getPeriodicity() == Weeks.weekly() ?
+        Weeks.Week eventWeek = scheduleEvent.periodicity() == Weeks.weekly() ?
             Weeks.getEveryWeek() : (scheduleWeek == Weeks.getAWeek().toWeekNumber() ? Weeks.getAWeek() : Weeks.getBWeek());
 
         if(eventWeek == Weeks.getEveryWeek()){//scheduleEvent.getWeek() == Weeks.getEveryWeek()){
@@ -118,7 +118,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
 
     //pre: event assigned to this quarter
     public void unassignEvent(Event scheduleEvent) {
-        Weeks.Week week = scheduleEvent.getWeek(); //event will have an assigned week
+        Weeks.Week week = scheduleEvent.week().get(); //event will have an assigned week
 
         if(week == Weeks.getEveryWeek()){
             firstWeekEventViews.get(scheduleEvent.getStartInterval()).removeAssignment(scheduleEvent);

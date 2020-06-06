@@ -16,11 +16,12 @@ import util.Utils
 import scala.collection.JavaConverters
 import scala.collection.mutable.ArrayBuffer
 
-class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R >: Null <: ResourceLike, E <: EventLike](
+class EventDescriptorFormController[S >: Null <: SubjectLike[_,_,_,_], C <: CourseLike, R >: Null <: ResourceLike,
+  E <: EventLike[_,_,_,_]](
   subjects: Iterable[S],
   courses: Iterable[C],
   resources: Iterable[R],
-  events: Iterable[E]) extends FormController2[EventDescriptor[S, C, R, E]] {
+  events: Iterable[E]) extends FormController[EventDescriptor[S,C,R,E]] {
 
   @FXML var eventNameTag: Label = _
   @FXML var eventNameField: TextField = _
@@ -60,7 +61,7 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
 
   @FXML var createEventButton: Button = _
 
-  private var eventBlueprint: Option[EventDescriptor[S, C, R, E]] = None
+  private var eventDescriptor: Option[EventDescriptor[S, C, R, E]] = None
   private val incompatibilities: ArrayBuffer[E] = new ArrayBuffer
 
   def this(subjects: Iterable[S],
@@ -149,7 +150,7 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
     eventSubjectBox.setConverter(new StringConverter[S]() {
       override def toString(`object`: S): String =
         if (`object` == null) null
-        else `object`.getName
+        else `object`.name
 
       override def fromString(string: String): S = null
     })
@@ -168,7 +169,7 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
     eventResourceBox.setConverter(new StringConverter[R]() {
       override def toString(`object`: R): String =
         if (`object` == null) null
-        else `object`.getName
+        else `object`.name
 
       override def fromString(string: String): R = null
     })
@@ -194,7 +195,7 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
 
     createEventButton.setOnAction(actionEvent => {
       if (!warnings) {
-        eventBlueprint = Some(createEvent)
+        eventDescriptor = Some(createEvent)
         close()
       }
       actionEvent.consume()
@@ -223,8 +224,8 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
     ed.name = eventNameField.getText.trim
     ed.shortName = eventShortNameField.getText.trim
     ed.description = eventDescriptionField.getText.trim
-    ed.course = eventCourseBox.getValue
-    ed.quarter = eventQuarterBox.getValue
+    if(eventCourseBox.getValue != null) ed.course = Some(eventCourseBox.getValue)
+    if(eventQuarterBox.getValue != null)  ed.quarter = Some(eventQuarterBox.getValue)
     ed.duration = eventDurationBox.getValue.toInt
     ed.eventType = eventTypeBox.getValue
     ed.periodicity = eventPeriodicityBox.getValue
@@ -271,6 +272,6 @@ class EventDescriptorFormController[S >: Null <: SubjectLike, C <: CourseLike, R
 
   override def waitFormResult: Option[EventDescriptor[S, C, R, E]] = {
     showAndWait()
-    eventBlueprint
+    eventDescriptor
   }
 }

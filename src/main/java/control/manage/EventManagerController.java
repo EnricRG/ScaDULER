@@ -73,21 +73,21 @@ public class EventManagerController extends EntityManagerController<Event> {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         shortNameColumn.setCellValueFactory(new PropertyValueFactory<>("shortName"));
         subjectColumn.setCellValueFactory(cell -> {
-            Subject subject = cell.getValue().getSafeSubject();
-            if(subject != null) return new SimpleStringProperty(subject.getName());
+            Subject subject = cell.getValue().subject().getOrElse(null);
+            if(subject != null) return new SimpleStringProperty(subject.name());
             else return new SimpleStringProperty();
         });
         resourceColumn.setCellValueFactory(cell -> {
-            Resource resource = cell.getValue().getSafeNeededResource();
-            if(resource != null) return new SimpleStringProperty(resource.getName());
+            Resource resource = cell.getValue().neededResource().getOrElse(null);
+            if(resource != null) return new SimpleStringProperty(resource.name());
             else return new SimpleStringProperty();
         });
         weekColumn.setCellValueFactory(new PropertyValueFactory<>("week"));
         durationColumn.setCellValueFactory(cell ->
-                new SimpleStringProperty(Duration.asPrettyString(cell.getValue().getDuration()))
+                new SimpleStringProperty(Duration.asPrettyString(cell.getValue().duration()))
         );
         incompatibilitiesColumn.setCellValueFactory(cell ->
-                new SimpleStringProperty(String.valueOf(cell.getValue().getIncompatibilities().size()))
+                new SimpleStringProperty(String.valueOf(cell.getValue().incompatibilities().size()))
         );
     }
 
@@ -106,12 +106,12 @@ public class EventManagerController extends EntityManagerController<Event> {
         Event event = table.getSelectionModel().getSelectedItem();
 
         if(event != null){
-            Subject subject = event.getSafeSubject();
+            Subject subject = event.subject().getOrElse(null);
             if(subject != null){
-                subject.removeEvent(event.getID());
+                subject.events_$minus$eq(event);
             }
 
-            for(Event ev : JavaConverters.asJavaCollection(event.getIncompatibilities())){
+            for(Event ev : JavaConverters.asJavaCollection(event.incompatibilities())){
                 ev.removeIncompatibility(event);
             }
 

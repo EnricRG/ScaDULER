@@ -2,6 +2,7 @@ package service
 
 import model.Resource
 import model.blueprint.ResourceBlueprint
+import model.descriptor.ResourceDescriptor
 
 import scala.collection.mutable
 
@@ -16,11 +17,11 @@ class ResourceDatabase extends Database[Resource]{
     private val indexByName: mutable.Map[String, Resource] = new mutable.HashMap
 
     def index(r: Resource): Unit = {
-        indexByName.put(r.getName, r)
+        indexByName.put(r.name, r)
     }
 
     def deindex(r: Resource): Unit ={
-        if(r != null) indexByName.remove(r.getName)
+        if(r != null) indexByName.remove(r.name)
     }
 
     def createResource: (ID, Resource) = {
@@ -30,6 +31,13 @@ class ResourceDatabase extends Database[Resource]{
         addElement(id, resource)
     }
 
+    def createResourceFromDescriptor(rd: ResourceDescriptor): (ID, Resource) = {
+        val ret = createResource
+        Resource.setResourceFromDescriptor(ret._2, rd)
+        ret
+    }
+
+    @deprecated
     def createResourceFromBlueprint(rb: ResourceBlueprint): (ID, Resource) = {
         val ret = createResource
         Resource.setResourceFromBlueprint(ret._2, rb)

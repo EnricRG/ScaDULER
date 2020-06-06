@@ -3,11 +3,10 @@ package control.form
 import java.net.URL
 import java.util.ResourceBundle
 
+import control.StageController
 import javafx.fxml.FXML
 import javafx.scene.control.Label
 import javafx.stage.Stage
-
-import control.StageController
 import misc.Warning
 
 /** Base class for entity form controllers
@@ -15,11 +14,12 @@ import misc.Warning
  * Provides a common and mostly implemented interface for all StageControllers that manage an entity form window.
  * This way form controllers only have to override a bunch of methods and focus only on implementing its own logic.
  */
-abstract class FormController2[E] extends StageController {
+abstract class FormController[E] extends StageController {
 
   /** Warning notification field that all forms must have. */
   @FXML var warningTag: Label = _
 
+  /** Holds form result */
   protected var formResult: Option[E] = None
 
   def this(stage: Stage) = {
@@ -42,6 +42,7 @@ abstract class FormController2[E] extends StageController {
   /** Should be used to initialize interaction fields (i.e. buttons, lists). */
   protected def bindActions(): Unit
 
+  /** Base FormController initialization. All classes overriding this method should call it first. */
   override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
     initializeContentLanguage()
     initializeWarningSystem()
@@ -95,6 +96,7 @@ abstract class FormController2[E] extends StageController {
     showWarnings()
   }
 
+  /** Shows controller's stage, blocks the thread until window is closed and then returns formResult. */
   def waitFormResult: Option[E] = {
     showAndWait()
     formResult

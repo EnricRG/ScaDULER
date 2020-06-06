@@ -2,6 +2,7 @@ package service
 
 import model.Course
 import model.blueprint.CourseBlueprint
+import model.descriptor.CourseDescriptor
 
 import scala.collection.mutable
 
@@ -29,6 +30,12 @@ class CourseDatabase extends Database[Course] {
     val course = new Course(id)
     index(course)
     addElement(id, course)
+  }
+
+  def createCourseFromDescriptor(cd: CourseDescriptor): (ID, Course) = {
+    val ret = createCourse()
+    Course.setCourseFromDescriptor(ret._2, cd)
+    ret
   }
 
   def createCourseFromBlueprint(cb: CourseBlueprint): (ID, Course) = {

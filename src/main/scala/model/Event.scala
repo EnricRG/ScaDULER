@@ -2,12 +2,9 @@ package model
 
 import app.AppSettings
 import javafx.scene.paint
-import model.Weeks.{Periodicity, Week}
+import model.Weeks.Week
 import model.descriptor.EventDescriptor
 import service.{ID, Identifiable}
-
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 @SerialVersionUID(1L)
 abstract class EventType extends Serializable {
@@ -55,111 +52,58 @@ object EventTypes extends Serializable {
 case class Precedence(event: Event, isStrict: Boolean)
 
 @SerialVersionUID(1L)
-class Event(id: ID) extends Identifiable(id) with EventLike with Serializable {
+class Event(id: ID) extends Identifiable(id)
+  with EventLikeImpl[Subject, Course, Resource, Event]
+  with Serializable {
 
-  private var startInterval: Int = -1
-  private var name: String = ""
-  private var shortName: String = ""
-  private var description: String = ""
-  private var _neededResource: Option[Resource] = None
-  private var eventType: EventType = _
-  private var subject: Option[Subject] = None
-  private var periodicity: Periodicity = _
-  private var week: Week = _
-  private var duration: Int = AppSettings.maxEventDuration
-  private val incompatibilities: mutable.Set[Event] = new mutable.HashSet[Event]
-  private var precedences: ListBuffer[Precedence] = new ListBuffer
+  private var _startInterval: Int = -1
+  private var _week: Option[Week] = None
 
-  private var course: Course = NoCourse
-  private var quarter: Quarter = NoQuarter
-
-  def getStartInterval: Int = startInterval
+  def getStartInterval: Int = _startInterval
   def assign(week: Week, interval: Int): Unit = {
-    startInterval = interval
-    this.week = week
+    _startInterval = interval
+    this._week = Some(week)
   }
   def unassign(): Unit = {
-    startInterval = -1
-    week = null //TODO use options here would help.
+    _startInterval = -1
+    _week = None
   }
-  //TODO should be more robust, check week
-  def isAssigned: Boolean = startInterval >= 0
+
+  def week: Option[Week] = _week
+  def week_=(w: Option[Week]): Unit = _week = w
+  def week_=(w: Week): Unit = _week = Some(w)
+
+  def isAssigned: Boolean = _startInterval >= 0
   def isUnassigned: Boolean = !isAssigned
-  def isAssignable: Boolean = {
-    isUnassigned && course != NoCourse && quarter != NoQuarter
-    //fields such as eventType or periodicity aren't checked because it's impossible for the user not set them.
+  def isAssignable: Boolean = isUnassigned
+
+  def needsResource: Boolean = neededResource.nonEmpty
+  def isValid: Boolean = course.nonEmpty && quarter.nonEmpty
+
+  def addIncompatibility(e: Event): Unit = if (e != this) {
+    _incompatibilities.add(e)
+    if(!e.incompatibilities.contains(this)) e.addIncompatibility(this)
   }
 
-  def getName: String = name
-  def setName(n: String): Unit = name = n
-
-  def getShortName: String = shortName
-  def setShortName(n: String): Unit = shortName = n
-
-  def getDescription: String = description
-  def setDescription(n: String): Unit = description = n
-
-  def getSafeSubject: Subject = subject.orNull
-  def getSubject: Option[Subject] = subject
-  def setSubject(s: Subject): Unit = subject = Some(s)
-
-  def getEventType: EventType = eventType
-  def setEventType(et: EventType): Unit = eventType = et
-
-  def needsResource: Boolean = _neededResource match{
-    case Some(_) => true
-    case _ => false
-  }
-  def neededResource: Resource = getNeededResource
-  def getNeededResource: Resource = _neededResource.orNull
-  def getSafeNeededResource: Resource = getNeededResource
-  def setNeededResource(nr: Resource): Unit = _neededResource = Some(nr)
-
-  def getPeriodicity: Periodicity = periodicity
-  def setPeriodicity(periodicity: Periodicity): Unit = this.periodicity = periodicity
-
-  def getWeek: Week = {
-    //if(isUnassigned) throw new UnsupportedOperationException("unassigned week")
-    week
-  }
-  def setWeek(week: Week): Unit = this.week = week
-
-  def getDuration: Int = duration
-  def setDuration(duration: Int): Unit = this.duration = duration
-
-  def getIncompatibilities: Set[Event] = incompatibilities.toSet
-  //TODO update to take advantage of Set incompatibilities
-  def addIncompatibility(e: Event): Unit = if(e != this){
-    incompatibilities.add(e)
-    if(!e.getIncompatibilities.contains(this)) e.addIncompatibility(this)
-  }
   def removeIncompatibility(e: Event): Unit = {
-    incompatibilities.remove(e)
-    if(e.getIncompatibilities.contains(this)) e.removeIncompatibility(this)
+    _incompatibilities.remove(e)
+    if(e.incompatibilities.contains(this)) e.removeIncompatibility(this)
   }
-
-  //def getPrecedent
-
-  def getCourse: Course = course
-  def setCourse(c: Course): Unit = course = c
-
-  def getQuarter: Quarter = quarter
-  def setQuarter(q: Quarter): Unit = quarter = q
 }
 
 object Event{
   def setEventFromDescriptor(event: Event, descriptor: EventDescriptor[Subject, Course, Resource, Event]): Unit = {
-    event.setName(descriptor.name)
-    event.setShortName(descriptor.shortName)
-    event.setDescription(descriptor.description)
-    event.setEventType(descriptor.eventType)
-    event.setDuration(descriptor.duration)
-    event.setPeriodicity(descriptor.periodicity)
+    event.name = descriptor.name
+    event.shortName = descriptor.shortName
+    event.description = descriptor.description
+    event.eventType = descriptor.eventType
+    event.duration = descriptor.duration
+    event.periodicity = descriptor.periodicity
 
-    if (descriptor.subject.nonEmpty) event.setSubject(descriptor.subject.get)
-    event.setCourse(descriptor.course)
-    event.setQuarter(descriptor.quarter)
-    if (descriptor.neededResource.nonEmpty) event.setNeededResource(descriptor.neededResource.get)
+    event.subject = descriptor.subject
+    event.course = descriptor.course
+    event.quarter = descriptor.quarter
+    event.neededResource = descriptor.neededResource
 
     descriptor.incompatibilities.foreach(event.addIncompatibility)
   }

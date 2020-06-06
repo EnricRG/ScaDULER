@@ -3,8 +3,8 @@ package app
 import control.MainController
 import file.imprt.ImportJob
 import misc.EventTypeIncompatibility
-import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import model._
+import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import service._
 
 import scala.collection.mutable
@@ -26,7 +26,7 @@ object EntityManager {
         importJob.courses.foreach(cb => {
             val existingCourse = courseDatabase.getCourseByName(cb.name)
             if(existingCourse.isEmpty) {
-                val course = courseDatabase.createCourse._2
+                val course = courseDatabase.createCourse()._2
                 setCourseFromBlueprint(course, cb)
                 courseMapper.put(cb, course)
                 mc.addCourseTab(course, false)
@@ -57,12 +57,12 @@ object EntityManager {
             val event = eventDatabase.createEvent._2
 
             setEventFromBlueprint(event, eb,
-                subjectMapper(eb.subject.get),
-                courseMapper(eb.course),
+                subjectMapper(eb.subject.orNull),
+                courseMapper(eb.course.orNull),
                 resourceMapper.get(eb.neededResource.orNull)
             )
 
-            eventsByType(event.getEventType) += event
+            eventsByType(event.eventType) += event
             mc.addUnassignedEvent(event)
         })
 
@@ -88,27 +88,29 @@ object EntityManager {
     }
 
     private def setResourceFromBlueprint(r: Resource, rb: ResourceBlueprint): Unit = {
-        r.setName(rb.name)
+        r.name = rb.name
     }
 
     private def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint, c: Course): Unit = {
-        s.setName(sb.name)
-        s.setShortName(sb.shortName)
-        s.setCourse(c)
-        s.setQuarter(sb.quarter)
-        sb.additionalInformation.foreach(pair => s.setAdditionalField(pair._1, pair._2))
+        s.name = sb.name
+        s.shortName = sb.shortName
+        s.course = Some(c)
+        s.quarter = sb.quarter
+        sb.additionalInformation.foreach(pair => s.updateAdditionalField(pair._1, pair._2))
     }
 
+    @deprecated
     private def setEventFromBlueprint(e: Event, eb: EventBlueprint, s: Subject, c: Course, r: Option[Resource]): Unit = {
-        e.setName(eb.name)
-        e.setShortName(eb.shortName)
-        e.setEventType(eb.eventType)
-        e.setDuration(eb.duration)
-        e.setSubject(s)
-        if(r.nonEmpty) e.setNeededResource(r.get)
-        e.setPeriodicity(eb.periodicity)
-        e.setCourse(c)
-        e.setQuarter(eb.quarter)
+        e.name = eb.name
+        e.shortName = eb.shortName
+        e.eventType = eb.eventType
+        e.duration = eb.duration
+        //e.subject_=(s)
+        //throw new UnsupportedOperationException("e.subject_=(s) expects Subject2 but received Subject")
+        if(r.nonEmpty) e.neededResource = r.get
+        e.periodicity = eb.periodicity
+        e.course = c
+        e.quarter = eb.quarter
     }
 }
 
