@@ -1,8 +1,9 @@
 package control.imprt
 
 import app.{AppSettings, FXMLPaths}
-import control.form.CourseFormController
+import control.form.{CourseFormController, CourseFormInitializer}
 import factory.ViewFactory
+import file.imprt.MutableImportJob
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, TableColumn}
@@ -10,7 +11,9 @@ import javafx.stage.Modality
 import model.blueprint.CourseBlueprint
 import util.Utils
 
-class ImportCoursesManagerController extends ImportEntityManagerController[CourseBlueprint]{
+class ImportCoursesManagerController(importJobEditorController: ImportJobEditorController,
+                                     editableImportJob: MutableImportJob)
+  extends ImportEntityManagerController[CourseBlueprint]{
 
   @FXML var nameColumn: TableColumn[CourseBlueprint, String] = _
 
@@ -42,17 +45,30 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
     })
 
     addColumn(nameColumn)
+
+    addContent(editableImportJob.courses)
+
+    table.getSortOrder.add(nameColumn.asInstanceOf[TableColumn[CourseBlueprint, _]])
   }
 
   override def newEntity: Option[CourseBlueprint] = {
-    promptCourseForm
+    promptCourseForm()
   }
 
-  private def promptCourseForm: Option[CourseBlueprint] = {
-    val courseForm = new CourseFormController
+  private def promptCourseForm(cfi: CourseFormInitializer): Option[CourseBlueprint] =
+    promptCourseForm(Some(cfi))
+
+  private def promptCourseForm(ocfi: Option[CourseFormInitializer] = None): Option[CourseBlueprint] = {
+    val courseForm = new CourseFormController(ocfi)
+
+    val windowTitle =
+      if(ocfi.isEmpty)
+        AppSettings.language.getItemOrElse("courseForm_windowTitle", "Create new Course")
+      else
+        AppSettings.language.getItemOrElse("courseForm_edit_windowTitle", "Edit Course")
 
     courseForm.setStage(Utils.promptBoundWindow(
-      AppSettings.language.getItemOrElse("courseForm_windowTitle", "Create new Course"),
+      windowTitle,
       newButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
       new ViewFactory[CourseFormController](FXMLPaths.CourseForm),
@@ -69,11 +85,11 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
   }
 
   override def editEntity(entity: CourseBlueprint): Option[CourseBlueprint] = {
-    ???
+    promptCourseForm(CourseFormInitializer(entity.name, entity.description))
   }
 
   override def deleteEntity(entity: CourseBlueprint): Unit = {
-    ???
+    importJobEditorController.notifyCourseDeletion(entity)
   }
 
   override def showAdditionalInformation(entity: CourseBlueprint): Unit = {
@@ -81,6 +97,10 @@ class ImportCoursesManagerController extends ImportEntityManagerController[Cours
     detailsController.description_=(entity.description)
 
     showDetailBox()
+  }
+
+  override def clearAdditionalInformation(): Unit = {
+    detailsController.clear()
   }
 
   override protected def notifySingleSelection(): Unit = {

@@ -4,6 +4,7 @@ object FXMLPaths {
   val MainInterface: String = "src/main/fxml/app/main_border_pane.fxml"
   val UnassignedEvent: String = "src/main/fxml/app/unassigned_event_box.fxml"
   val AssignedEvent: String = "src/main/fxml/app/assigned_event_box.fxml"
+  val ProgressBar: String = "src/main/fxml/app/simple_progress_bar.fxml"
 
   val CourseForm: String = "src/main/fxml/form/course_form.fxml"
   val SubjectForm: String = "src/main/fxml/form/subject_form.fxml"

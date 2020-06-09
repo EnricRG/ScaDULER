@@ -6,10 +6,13 @@ import java.util.ResourceBundle
 import app.{AppSettings, Language}
 import control.Controller
 import javafx.beans.value.{ChangeListener, ObservableValue}
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.Node
-import javafx.scene.control.{Button, TableColumn, TableView}
+import javafx.scene.control.{Button, SelectionMode, TableColumn, TableView}
 import javafx.scene.layout.{HBox, VBox}
+
+import scala.collection.JavaConverters
 
 abstract class ImportEntityManagerController[E] extends Controller {
 
@@ -43,6 +46,7 @@ abstract class ImportEntityManagerController[E] extends Controller {
   def deleteEntity(entity: E): Unit
 
   def showAdditionalInformation(entity: E): Unit
+  def clearAdditionalInformation(): Unit
 
   protected def notifySingleSelection(): Unit
   protected def notifyMultipleSelection(): Unit
@@ -50,26 +54,38 @@ abstract class ImportEntityManagerController[E] extends Controller {
   protected def addColumn(column: TableColumn[E,_]): Boolean = table.getColumns.add(column)
 
   def setupTable(): Unit = {
-    /*table.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
-      if (newValue != null) showAdditionalInformation(newValue)
-    })*/ //JavaFX8 doesn't like scala anonymous functions
+    table.getSelectionModel.setSelectionMode(SelectionMode.MULTIPLE)
     table.getSelectionModel.selectedItemProperty().addListener(new ChangeListener[E] {
+
       override def changed(observable: ObservableValue[_ <: E], oldValue: E, newValue: E): Unit = {
-        if (newValue != null) showAdditionalInformation(newValue)
-        if (table.getSelectionModel.getSelectedCells.size() > 1)
+
+        if (table.getSelectionModel.getSelectedCells.size() > 1) {
+          editButton.setDisable(true)
+          clearAdditionalInformation()
           notifyMultipleSelection()
-        else
+        }
+        else {
+          editButton.setDisable(false)
+          if (newValue != null) showAdditionalInformation(newValue)
           notifySingleSelection()
+        }
       }
     })
     additionalTableSetup()
+  }
+
+  def addContent(content: Iterable[E]): Unit = {
+    table.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(content)))
   }
 
   def bindButtons(): Unit = {
     newButton.setOnAction(actionEvent => {
       val entity = newEntity
 
-      if (entity.nonEmpty) table.getItems.add(entity.get)
+      if (entity.nonEmpty) {
+        table.getItems.add(entity.get)
+        table.sort()
+      }
 
       actionEvent.consume()
     })
@@ -80,6 +96,7 @@ abstract class ImportEntityManagerController[E] extends Controller {
       if (editedEntity.nonEmpty){
         table.getItems.remove(table.getSelectionModel.getSelectedIndex)
         table.getItems.add(editedEntity.get)
+        table.sort()
       }
 
       actionEvent.consume()
@@ -89,7 +106,7 @@ abstract class ImportEntityManagerController[E] extends Controller {
       val entities = table.getSelectionModel.getSelectedItems
 
       entities.forEach(deleteEntity(_))
-      table.getItems.remove(entities)
+      table.getItems.removeAll(entities)
 
       actionEvent.consume()
     })

@@ -33,4 +33,9 @@ class ImportCourseDetailsController extends Controller {
   def name_=(s: String): Unit = nameContent.setText(s)
 
   def description_=(s: String): Unit = descriptionContent.setText(s)
+
+  def clear(): Unit = {
+    name_=("")
+    description_=("")
+  }
 }

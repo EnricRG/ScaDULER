@@ -21,7 +21,7 @@ class ImportResourcesManagerController(/*importJobController: ImportJobEditorCon
     controller
   }
 
-  def additionalInitialization(): Unit = {
+  override def additionalInitialization(): Unit = {
     detailBoxContent_=(detailsController.mainBox)
 
     nameColumn = new TableColumn()
@@ -39,7 +39,7 @@ class ImportResourcesManagerController(/*importJobController: ImportJobEditorCon
     capacityColumn.setText(language.getItemOrElse("import_resource_typeColumn", "Capacity"))
   }
 
-  def additionalTableSetup(): Unit = {
+  override def additionalTableSetup(): Unit = {
     nameColumn.setCellValueFactory(cell => {
       if (cell.getValue != null) new SimpleStringProperty(cell.getValue.name)
       else new SimpleStringProperty()
@@ -57,7 +57,7 @@ class ImportResourcesManagerController(/*importJobController: ImportJobEditorCon
     addColumn(capacityColumn)
   }
 
-  def newEntity: Option[ResourceBlueprint] = {
+  override def newEntity: Option[ResourceBlueprint] = {
     //promptResourceForm
     ???
   }
@@ -75,17 +75,21 @@ class ImportResourcesManagerController(/*importJobController: ImportJobEditorCon
     resourceForm.waitFormResult
   }*/
 
-  def editEntity(entity: ResourceBlueprint): Option[ResourceBlueprint] = {
+  override def editEntity(entity: ResourceBlueprint): Option[ResourceBlueprint] = {
     ???
   }
 
-  def deleteEntity(entity: ResourceBlueprint): Unit = {
+  override def deleteEntity(entity: ResourceBlueprint): Unit = {
     ???
   }
 
-  def showAdditionalInformation(entity: ResourceBlueprint): Unit = {
+  override def showAdditionalInformation(entity: ResourceBlueprint): Unit = {
     //TODO
     showDetailBox()
+  }
+
+  override def clearAdditionalInformation(): Unit = {
+    //TODO
   }
 
   override protected def notifySingleSelection(): Unit = {

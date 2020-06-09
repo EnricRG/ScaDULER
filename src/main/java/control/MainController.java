@@ -543,11 +543,15 @@ public class MainController extends StageController {
 
             Option<Selection> selection = controller.getSelection();
 
-            if(selection.nonEmpty() && selection.get() == Selection.ModifyOption()){
-                EntityManager.importEntities(modifyImportJob(importJob), this);
-            }
-            else if(selection.nonEmpty() && selection.get() == Selection.FinishOption()){
-                EntityManager.importEntities(importJob, this);
+            if (selection.nonEmpty() && (selection.get() == Selection.ModifyOption() ||
+                selection.get() == Selection.FinishOption())){
+
+                if(selection.get() == Selection.ModifyOption()){
+                    EntityManager.importEntities(modifyImportJob(importJob), this);
+                }
+                else if(selection.get() == Selection.FinishOption()){
+                    EntityManager.importEntities(importJob, this);
+                }
             }
         }
     }
@@ -562,13 +566,16 @@ public class MainController extends StageController {
     private ImportJob modifyImportJob(ImportJob importJob) {
         ImportJobEditorController controller = new ImportJobEditorController(importJob);
 
-        controller.setStage(Utils.promptBoundWindow(
+        Stage stage = Utils.promptBoundWindow(
             AppSettings.language().getItemOrElse("modifyImportJob_windowTitle", "Modify Import data"),
             this.stage.getScene().getWindow(),
             Modality.WINDOW_MODAL,
             new ViewFactory<>(FXMLPaths.ModifyImportJob()),
             controller
-        ));
+        );
+
+        stage.setResizable(false);
+        controller.setStage(stage);
 
         controller.showAndWait();
 
@@ -693,7 +700,7 @@ public class MainController extends StageController {
 
 
     private void promptCourseForm() {
-        CourseFormController courseForm = new CourseFormController();
+        CourseFormController courseForm = new CourseFormController(Option.empty());
 
         courseForm.setStage(Utils.promptBoundWindow(
             AppSettings.language().getItemOrElse("courseForm_windowTitle", "Create new Course"),

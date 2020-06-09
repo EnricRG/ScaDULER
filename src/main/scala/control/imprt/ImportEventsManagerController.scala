@@ -27,7 +27,7 @@ class ImportEventsManagerController(/*importJobController: ImportJobEditorContro
     controller
   }
 
-  def additionalInitialization(): Unit = {
+  override def additionalInitialization(): Unit = {
     detailBoxContent_=(detailsController.mainBox)
 
     shortNameColumn = new TableColumn()
@@ -55,7 +55,7 @@ class ImportEventsManagerController(/*importJobController: ImportJobEditorContro
     incompatibilitiesColumn.setText(language.getItemOrElse("import_event_eventsColumn", "Event Nº"))
   }
 
-  def additionalTableSetup(): Unit = {
+  override def additionalTableSetup(): Unit = {
     shortNameColumn.setCellValueFactory(cell => {
       if (cell.getValue != null) new SimpleStringProperty(cell.getValue.shortName)
       else new SimpleStringProperty()
@@ -105,7 +105,7 @@ class ImportEventsManagerController(/*importJobController: ImportJobEditorContro
     addColumn(incompatibilitiesColumn)
   }
 
-  def newEntity: Option[EventBlueprint] = {
+  override def newEntity: Option[EventBlueprint] = {
     //promptEventForm
     ???
   }
@@ -123,17 +123,21 @@ class ImportEventsManagerController(/*importJobController: ImportJobEditorContro
     eventForm.waitFormResult
   }*/
 
-  def editEntity(entity: EventBlueprint): Option[EventBlueprint] = {
+  override def editEntity(entity: EventBlueprint): Option[EventBlueprint] = {
     ???
   }
 
-  def deleteEntity(entity: EventBlueprint): Unit = {
+  override def deleteEntity(entity: EventBlueprint): Unit = {
     ???
   }
 
-  def showAdditionalInformation(entity: EventBlueprint): Unit = {
+  override def showAdditionalInformation(entity: EventBlueprint): Unit = {
     //TODO
     showDetailBox()
+  }
+
+  override def clearAdditionalInformation(): Unit = {
+    //TODO
   }
 
   override protected def notifySingleSelection(): Unit = {

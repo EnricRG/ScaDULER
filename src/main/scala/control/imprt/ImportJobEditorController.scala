@@ -9,6 +9,7 @@ import factory.ViewFactory
 import file.imprt.{ImportJob, MutableImportJob}
 import javafx.fxml.FXML
 import javafx.scene.control.Tab
+import model.blueprint.CourseBlueprint
 import util.Utils
 
 import scala.collection.mutable.ArrayBuffer
@@ -29,8 +30,10 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
   @FXML var eventsTab: Tab = _
   @FXML var resourcesTab: Tab = _
 
-  private val subjectsController: ImportSubjectsManagerController = new ImportSubjectsManagerController
-  private val coursesController: ImportCoursesManagerController = new ImportCoursesManagerController
+  private val subjectsController: ImportSubjectsManagerController =
+    new ImportSubjectsManagerController(editableImportJob)
+  private val coursesController: ImportCoursesManagerController =
+    new ImportCoursesManagerController(this, editableImportJob)
   private val eventsController: ImportEventsManagerController = new ImportEventsManagerController
   private val resourcesController: ImportResourcesManagerController = new ImportResourcesManagerController
 
@@ -54,7 +57,7 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
   private def initializeCoursesTab(): Unit = {
     Utils.loadScene(new ViewFactory(FXMLPaths.ImportEntityManagerView), coursesController)
 
-    subjectsTab.setContent(coursesController.mainBox)
+    coursesTab.setContent(coursesController.mainBox)
   }
 
   private def initializeEventsTab(): Unit = {
@@ -67,6 +70,14 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
     Utils.loadScene(new ViewFactory(FXMLPaths.ImportEntityManagerView), resourcesController)
 
     resourcesTab.setContent(resourcesController.mainBox)
+  }
+
+  def notifyCourseDeletion(cb: CourseBlueprint, hardDelete: Boolean = false): Unit = {
+    //TODO implement
+    //If hard delete
+      //Remove al subjects and events happening on this course.
+    //Else
+      //Set all subjects and events that happen in this course to have no course.
   }
 
   def getImportJob: ImportJob = editableImportJob.toImportJob

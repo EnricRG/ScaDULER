@@ -2,6 +2,7 @@ package control.imprt
 
 import app.FXMLPaths
 import factory.ViewFactory
+import file.imprt.MutableImportJob
 import javafx.beans.property.{SimpleIntegerProperty, SimpleStringProperty}
 import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
@@ -9,7 +10,7 @@ import javafx.scene.control.{Label, TableColumn}
 import model.blueprint.SubjectBlueprint
 import util.Utils
 
-class ImportSubjectsManagerController(/*importJobController: ImportJobEditorController*/)
+class ImportSubjectsManagerController(editableImportJob: MutableImportJob)
   extends ImportEntityManagerController[SubjectBlueprint]{
 
   @FXML var shortNameColumn: TableColumn[SubjectBlueprint, String] = _
@@ -23,7 +24,7 @@ class ImportSubjectsManagerController(/*importJobController: ImportJobEditorCont
     controller
   }
 
-  def additionalInitialization(): Unit = {
+  override def additionalInitialization(): Unit = {
     detailBoxContent_=(detailsController.mainBox)
 
     shortNameColumn = new TableColumn()
@@ -45,7 +46,7 @@ class ImportSubjectsManagerController(/*importJobController: ImportJobEditorCont
     eventsColumn.setText(language.getItemOrElse("import_subject_eventsColumn", "Event Nº"))
   }
 
-  def additionalTableSetup(): Unit = {
+  override def additionalTableSetup(): Unit = {
     shortNameColumn.setCellValueFactory(cell => {
       if (cell.getValue != null) new SimpleStringProperty(cell.getValue.shortName)
       else new SimpleStringProperty()
@@ -73,9 +74,13 @@ class ImportSubjectsManagerController(/*importJobController: ImportJobEditorCont
     addColumn(courseColumn)
     addColumn(quarterColumn)
     addColumn(eventsColumn)
+
+    addContent(editableImportJob.subjects)
+
+    table.getSortOrder.add(shortNameColumn.asInstanceOf[TableColumn[SubjectBlueprint, _]])
   }
 
-  def newEntity: Option[SubjectBlueprint] = {
+  override def newEntity: Option[SubjectBlueprint] = {
     //promptSubjectForm
     ???
   }
@@ -93,17 +98,21 @@ class ImportSubjectsManagerController(/*importJobController: ImportJobEditorCont
     subjectForm.waitFormResult
   }*/
 
-  def editEntity(entity: SubjectBlueprint): Option[SubjectBlueprint] = {
+  override def editEntity(entity: SubjectBlueprint): Option[SubjectBlueprint] = {
     ???
   }
 
-  def deleteEntity(entity: SubjectBlueprint): Unit = {
+  override def deleteEntity(entity: SubjectBlueprint): Unit = {
     ???
   }
 
-  def showAdditionalInformation(entity: SubjectBlueprint): Unit = {
+  override def showAdditionalInformation(entity: SubjectBlueprint): Unit = {
     //TODO
     showDetailBox()
+  }
+
+  override def clearAdditionalInformation(): Unit = {
+    //TODO
   }
 
   override protected def notifySingleSelection(): Unit = {

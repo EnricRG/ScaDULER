@@ -1,5 +1,8 @@
 package control.form
 
+import java.net.URL
+import java.util.ResourceBundle
+
 import app.AppSettings
 import javafx.fxml.FXML
 import javafx.scene.control._
@@ -7,7 +10,9 @@ import javafx.stage.Stage
 import misc.Warning
 import model.descriptor.CourseDescriptor
 
-class CourseFormController extends FormController[CourseDescriptor] {
+case class CourseFormInitializer(name: String, description: String)
+
+class CourseFormController(ocfi: Option[CourseFormInitializer] = None) extends FormController[CourseDescriptor] {
 
   @FXML var courseNameTag: Label = _
   @FXML var courseNameField: TextField = _
@@ -17,9 +22,19 @@ class CourseFormController extends FormController[CourseDescriptor] {
 
   @FXML var createCourseButton: Button = _
 
-  def this(stage: Stage) = {
-    this()
+  def this(cfi: Option[CourseFormInitializer], stage: Stage) = {
+    this(cfi)
     setStage(stage)
+  }
+
+  def fillForm(cfi: CourseFormInitializer): Unit = {
+    courseNameField.setText(cfi.name)
+    courseDescriptionField.setText(cfi.description)
+  }
+
+  override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
+    super.initialize(url, resourceBundle)
+    if(ocfi.nonEmpty) fillForm(ocfi.get)
   }
 
   override protected def initializeContentLanguage(): Unit = {
