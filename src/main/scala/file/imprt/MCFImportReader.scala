@@ -119,12 +119,12 @@ class MCFImportReader(file: File) extends ImportReader {
       subjectEntity.course = courseEntity
       subjectEntity.quarter = semester
 
-      subjectEntity.additionalInformation.update("students", students)
-      subjectEntity.additionalInformation.update("credits", credits)
-      subjectEntity.additionalInformation.update("cgg", cgg)
-      subjectEntity.additionalInformation.update("cgm", cgm)
-      subjectEntity.additionalInformation.update("cgp", cgp)
-      subjectEntity.additionalInformation.update("shared", shared)
+      subjectEntity.updateAdditionalField("students", students)
+      subjectEntity.updateAdditionalField("credits", credits)
+      subjectEntity.updateAdditionalField("cgg", cgg)
+      subjectEntity.updateAdditionalField("cgm", cgm)
+      subjectEntity.updateAdditionalField("cgp", cgp)
+      subjectEntity.updateAdditionalField("shared", shared)
 
       val resourceEntity = if (emptyHgp) None else Some(createdResources.get(resourceName) match {
         case Some(r) => r
@@ -161,7 +161,7 @@ class MCFImportReader(file: File) extends ImportReader {
       else if (hgp.isEmpty) List()
       else generateEvents(subjectEntity, LaboratoryEvent, hgp.head._1, hgp.head._2, resourceEntity, 1, ngp)
 
-      subjectEntity.events ++= (theoryEvents ++ problemsEvents ++ labEvents)
+      subjectEntity.events_++=(theoryEvents ++ problemsEvents ++ labEvents)
 
       LineImportJob(subjectEntity, subjectEntity.events.toList, courseEntity, resourceEntity, errors.toList, finished = true)
     }
@@ -322,8 +322,8 @@ class MCFImportReader(file: File) extends ImportReader {
         event.subject = Some(subject)
         event.periodicity = periodicity
         event.duration = duration
-        event.course = Some(subject.course)
-        event.quarter = Some(subject.quarter)
+        event.course = subject.course
+        event.quarter = subject.quarter
 
         events += event
       })

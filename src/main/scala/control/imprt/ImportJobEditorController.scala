@@ -9,7 +9,7 @@ import factory.ViewFactory
 import file.imprt.{ImportJob, MutableImportJob}
 import javafx.fxml.FXML
 import javafx.scene.control.Tab
-import model.blueprint.CourseBlueprint
+import model.blueprint.{CourseBlueprint, SubjectBlueprint}
 import util.Utils
 
 import scala.collection.mutable.ArrayBuffer
@@ -31,7 +31,7 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
   @FXML var resourcesTab: Tab = _
 
   private val subjectsController: ImportSubjectsManagerController =
-    new ImportSubjectsManagerController(editableImportJob)
+    new ImportSubjectsManagerController(this, editableImportJob)
   private val coursesController: ImportCoursesManagerController =
     new ImportCoursesManagerController(this, editableImportJob)
   private val eventsController: ImportEventsManagerController = new ImportEventsManagerController
@@ -75,9 +75,14 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
   def notifyCourseDeletion(cb: CourseBlueprint, hardDelete: Boolean = false): Unit = {
     //TODO implement
     //If hard delete
-      //Remove al subjects and events happening on this course.
+      //Remove all subjects and events happening on this course.
     //Else
       //Set all subjects and events that happen in this course to have no course.
+  }
+
+  def notifySubjectDeletion(sb: SubjectBlueprint): Unit = {
+    //TODO implement
+    //remove all incompatibilities to ensure correct garbage collection
   }
 
   def getImportJob: ImportJob = editableImportJob.toImportJob

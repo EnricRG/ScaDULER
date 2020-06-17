@@ -1,16 +1,22 @@
 package control.imprt
 
 import app.FXMLPaths
+import control.form.SubjectDescriptorFormController
 import factory.ViewFactory
 import file.imprt.MutableImportJob
 import javafx.beans.property.{SimpleIntegerProperty, SimpleStringProperty}
 import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, TableColumn}
-import model.blueprint.SubjectBlueprint
+import javafx.stage.Modality
+import model.blueprint.{EventBlueprint, SubjectBlueprint}
+import model.{EventType, EventTypes}
 import util.Utils
 
-class ImportSubjectsManagerController(editableImportJob: MutableImportJob)
+import scala.collection.mutable
+
+class ImportSubjectsManagerController(importJobEditorController: ImportJobEditorController,
+                                      editableImportJob: MutableImportJob)
   extends ImportEntityManagerController[SubjectBlueprint]{
 
   @FXML var shortNameColumn: TableColumn[SubjectBlueprint, String] = _
@@ -53,12 +59,14 @@ class ImportSubjectsManagerController(editableImportJob: MutableImportJob)
     })
 
     courseColumn.setCellValueFactory(cell => {
-      if (cell.getValue != null) new SimpleStringProperty(cell.getValue.course.name)
+      if (cell.getValue != null && cell.getValue.course.nonEmpty)
+        new SimpleStringProperty(cell.getValue.course.get.name)
       else new SimpleStringProperty()
     })
 
     quarterColumn.setCellValueFactory(cell => {
-      if (cell.getValue != null) new SimpleStringProperty(cell.getValue.quarter.toShortString)
+      if (cell.getValue != null && cell.getValue.quarter.nonEmpty)
+        new SimpleStringProperty(cell.getValue.quarter.get.toShortString)
       else new SimpleStringProperty()
     })
 
@@ -81,29 +89,61 @@ class ImportSubjectsManagerController(editableImportJob: MutableImportJob)
   }
 
   override def newEntity: Option[SubjectBlueprint] = {
-    //promptSubjectForm
-    ???
+    promptSubjectForm
   }
 
-  /*private def promptSubjectForm: Option[SubjectBlueprint] = {
-    val subjectForm = new SubjectFormController2(courses, resources)
+  private def promptSubjectForm: Option[SubjectBlueprint] = {
+    val subjectForm = new SubjectDescriptorFormController(editableImportJob.courses, editableImportJob.resources)
 
     subjectForm.setStage(Utils.promptBoundWindow(
-      AppSettings.language.getItemOrElse("subjectForm_windowTitle", "Create new Subject"),
+      language.getItemOrElse("subjectForm_windowTitle", "Create new Subject"),
       newButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
       new ViewFactory(FXMLPaths.SubjectForm),
       subjectForm))
 
-    subjectForm.waitFormResult
-  }*/
+    val osd = subjectForm.waitFormResult
+
+    if (osd.nonEmpty) {
+      val sb = SubjectBlueprint.fromDescriptor(osd.get)
+
+      sb.course = osd.get.course
+
+      val eventsByType: mutable.Map[EventType, mutable.Set[EventBlueprint]] = new mutable.HashMap
+      EventTypes.commonEventTypes.foreach(eventsByType.put(_, new mutable.HashSet))
+
+      val events = osd.get.events.map(ed => {
+        val eb = EventBlueprint.fromDescriptor(ed)
+
+        eb.subject = sb
+        eb.course = sb.course
+        eb.neededResource = ed.neededResource
+
+        sb.events_+=(eb)
+
+        eventsByType(eb.eventType) += eb
+      })
+
+      //This will not set per event type incompatibilities, only subject ones.
+      sb.eventTypeIncompatibilities.foreach(eti => {
+        eventsByType(eti.getFirstType).foreach(e1 => {
+          eventsByType(eti.getSecondType).foreach(e2 => {
+            e1.addIncompatibility(e2)
+          })
+        })
+      })
+
+      Some(sb)
+    }
+    else None
+  }
 
   override def editEntity(entity: SubjectBlueprint): Option[SubjectBlueprint] = {
     ???
   }
 
   override def deleteEntity(entity: SubjectBlueprint): Unit = {
-    ???
+    importJobEditorController.notifySubjectDeletion(entity)
   }
 
   override def showAdditionalInformation(entity: SubjectBlueprint): Unit = {

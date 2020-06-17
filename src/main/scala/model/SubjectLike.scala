@@ -35,9 +35,9 @@ trait SubjectLike[
   def events_+=(e: E): Unit
   def events_-=(e: E): Unit
 
-  def getAdditionalField(f: String): Option[Any]
-  def updateAdditionalField(f: String, v: Any): Unit
-  def additionalFields: Map[String, Any]
+  def getAdditionalField(f: String): Option[String]
+  def updateAdditionalField(f: String, v: String): Unit
+  def additionalFields: Map[String, String]
 
   def eventTypeIncompatibilities: Set[EventTypeIncompatibility]
   def eventTypeIncompatibilities_+=(eti: EventTypeIncompatibility): Unit
@@ -58,7 +58,7 @@ trait SubjectLikeImpl[
   private var _color: Option[Color] = None
 
   private val _events: mutable.Set[E] = new mutable.HashSet
-  private val _additionalInformation: mutable.Map[String, Any] = new mutable.HashMap
+  private val _additionalInformation: mutable.Map[String, String] = new mutable.HashMap
   private val _eventTypeIncompatibilities: mutable.Set[EventTypeIncompatibility] = new mutable.HashSet
 
   def name: String = _name
@@ -88,10 +88,13 @@ trait SubjectLikeImpl[
   def events: Iterable[E] = _events
   def events_+=(e: E): Unit = _events.add(e)
   def events_-=(e: E): Unit = _events.remove(e)
+  def events_++=(es: Traversable[E]): Unit = _events ++= es
+  def events_--=(es: Traversable[E]): Unit = _events --= es
 
-  def getAdditionalField(f: String): Option[Any] = _additionalInformation.get(f)
-  def updateAdditionalField(f: String, v: Any): Unit = _additionalInformation.update(f, v)
-  def additionalFields: Map[String, Any] = _additionalInformation.toMap
+  def getAdditionalField(f: String): Option[String] = _additionalInformation.get(f)
+  def updateAdditionalField(f: String, v: Any): Unit = _additionalInformation.update(f, v.toString)
+  def updateAdditionalField(f: String, v: String): Unit = _additionalInformation.update(f, v)
+  def additionalFields: Map[String, String] = _additionalInformation.toMap
 
   def eventTypeIncompatibilities: Set[EventTypeIncompatibility] = _eventTypeIncompatibilities.toSet
   def eventTypeIncompatibilities_+=(eti: EventTypeIncompatibility): Unit = _eventTypeIncompatibilities += eti

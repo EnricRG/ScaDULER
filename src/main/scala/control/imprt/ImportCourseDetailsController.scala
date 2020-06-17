@@ -15,9 +15,6 @@ class ImportCourseDetailsController extends Controller {
 
   @FXML var mainBox: VBox = _
 
-  @FXML var nameTag: Label = _
-  @FXML var nameContent: Label = _
-
   @FXML var descriptionTag: Label = _
   @FXML var descriptionContent: Label = _
 
@@ -26,16 +23,12 @@ class ImportCourseDetailsController extends Controller {
   }
 
   private def initializeContentLanguage(): Unit = {
-    nameTag.setText(language.getItemOrElse("import_course_nameTag", "Name"))
-    descriptionTag.setText(language.getItemOrElse("import_course_descriptionTag", "Description"))
+    descriptionTag.setText(language.getItemOrElse("import_courseDetails_descriptionTag", "Description"))
   }
-
-  def name_=(s: String): Unit = nameContent.setText(s)
 
   def description_=(s: String): Unit = descriptionContent.setText(s)
 
   def clear(): Unit = {
-    name_=("")
     description_=("")
   }
 }

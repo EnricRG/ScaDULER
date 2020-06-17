@@ -25,7 +25,7 @@ sealed trait AbstractSubjectFormControllerResult[C <: CourseLike, R <: ResourceL
   type ED = EventDescriptor[Null,C,R,EventDescriptor[Null,C,R,_]]
 }
 
-abstract class AbstractSubjectFormController[
+class SubjectDescriptorFormController[
   C <: CourseLike,
   R <: ResourceLike](
   courses: Iterable[C],
@@ -34,9 +34,6 @@ abstract class AbstractSubjectFormController[
 
   type SD = AbstractSubjectFormControllerResult[C,R]#SD
   type ED = AbstractSubjectFormControllerResult[C,R]#ED
-
-  def newEventDescriptor: ED
-  def newSubjectDescriptor: SD
 
   @FXML var subjectNameTag: Label = _
   @FXML var subjectNameField: TextField = _
@@ -423,6 +420,8 @@ abstract class AbstractSubjectFormController[
       }
   }
 
+  private def newEventDescriptor: ED = new EventDescriptor
+
   private def createSubject: SD = {
     val subject = newSubjectDescriptor
 
@@ -442,8 +441,9 @@ abstract class AbstractSubjectFormController[
       e.course = subject.course
       e.quarter = subject.quarter
       eventsByType(e.eventType) += e
-      //TODO remove getMainController().addUnassignedEvent(e);
     })
+
+    subject.eventTypeIncompatibilities ++= JavaConverters.collectionAsScalaIterable(eventTypeIncompatibilities)
 
     eventTypeIncompatibilities.forEach(eti => {
       eventsByType(eti.getFirstType).foreach(e1 => {
@@ -456,6 +456,8 @@ abstract class AbstractSubjectFormController[
 
     subject
   }
+
+  private def newSubjectDescriptor: SD = new SubjectDescriptor
 
   override protected def checkWarnings: Option[Warning] = checkSubjectCreationWarnings
 

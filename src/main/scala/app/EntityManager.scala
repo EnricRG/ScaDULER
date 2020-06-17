@@ -46,7 +46,8 @@ object EntityManager {
 
     importJob.subjects.foreach(sb => {
       val subject = subjectDatabase.createSubject._2
-      setSubjectFromBlueprint(subject, sb, courseMapper(sb.course))
+      val subjectCourse = if(sb.course.nonEmpty) Some(courseMapper(sb.course.get)) else None
+      setSubjectFromBlueprint(subject, sb, subjectCourse)
       subjectDatabase.setAsFinished(subject.getID)
       subjectMapper.put(sb, subject)
     })
@@ -69,12 +70,12 @@ object EntityManager {
 
   //TODO remove this and use Subject methods
   @deprecated
-  private def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint, c: Course): Unit = {
+  private def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint, c: Option[Course]): Unit = {
     s.name = sb.name
     s.shortName = sb.shortName
-    s.course = Some(c)
+    s.course = c
     s.quarter = sb.quarter
-    sb.additionalInformation.foreach(pair => s.updateAdditionalField(pair._1, pair._2))
+    sb.additionalFields.foreach(pair => s.updateAdditionalField(pair._1, pair._2))
   }
 
   //TODO remove this and use Event methods

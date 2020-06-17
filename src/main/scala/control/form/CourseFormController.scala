@@ -4,6 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import app.AppSettings
+import control.form.FormModes.{Edit, FormMode}
 import javafx.fxml.FXML
 import javafx.scene.control._
 import javafx.stage.Stage
@@ -12,7 +13,9 @@ import model.descriptor.CourseDescriptor
 
 case class CourseFormInitializer(name: String, description: String)
 
-class CourseFormController(ocfi: Option[CourseFormInitializer] = None) extends FormController[CourseDescriptor] {
+class CourseFormController(ocfi: Option[CourseFormInitializer] = None,
+                           mode: FormMode = FormModes.Create)
+  extends FormController[CourseDescriptor] {
 
   @FXML var courseNameTag: Label = _
   @FXML var courseNameField: TextField = _
@@ -22,8 +25,8 @@ class CourseFormController(ocfi: Option[CourseFormInitializer] = None) extends F
 
   @FXML var createCourseButton: Button = _
 
-  def this(cfi: Option[CourseFormInitializer], stage: Stage) = {
-    this(cfi)
+  def this(cfi: Option[CourseFormInitializer], mode: FormMode, stage: Stage) = {
+    this(cfi, mode)
     setStage(stage)
   }
 
@@ -58,9 +61,14 @@ class CourseFormController(ocfi: Option[CourseFormInitializer] = None) extends F
       "form_wrapDescription",
       "Wrap text on corners"))
 
-    createCourseButton.setText(AppSettings.language.getItemOrElse(
-      "courseForm_createCourseButtonText",
-      "Create Course"))
+    if(mode == Edit)
+      createCourseButton.setText(AppSettings.language.getItemOrElse(
+        "courseForm_editCourseButtonText",
+        "Edit Course"))
+    else
+      createCourseButton.setText(AppSettings.language.getItemOrElse(
+        "courseForm_createCourseButtonText",
+        "Create Course"))
   }
 
   override protected def setupViews(): Unit = {}

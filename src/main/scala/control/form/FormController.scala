@@ -9,6 +9,15 @@ import javafx.scene.control.Label
 import javafx.stage.Stage
 import misc.Warning
 
+object FormModes{
+  sealed trait FormMode
+  case object Create extends FormMode
+  case object Edit extends FormMode
+
+  //Java interoperability method
+  def create(): FormMode = Create
+}
+
 /** Base class for entity form controllers
  *
  * Provides a common and mostly implemented interface for all StageControllers that manage an entity form window.

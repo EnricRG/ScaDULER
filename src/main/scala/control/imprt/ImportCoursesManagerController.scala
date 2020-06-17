@@ -1,6 +1,7 @@
 package control.imprt
 
 import app.{AppSettings, FXMLPaths}
+import control.form.FormModes.{Create, Edit}
 import control.form.{CourseFormController, CourseFormInitializer}
 import factory.ViewFactory
 import file.imprt.MutableImportJob
@@ -59,13 +60,14 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
     promptCourseForm(Some(cfi))
 
   private def promptCourseForm(ocfi: Option[CourseFormInitializer] = None): Option[CourseBlueprint] = {
-    val courseForm = new CourseFormController(ocfi)
+    val formMode = if(ocfi.nonEmpty) Edit else Create
+    val courseForm = new CourseFormController(ocfi, formMode)
 
     val windowTitle =
-      if(ocfi.isEmpty)
-        AppSettings.language.getItemOrElse("courseForm_windowTitle", "Create new Course")
-      else
+      if(formMode == Edit)
         AppSettings.language.getItemOrElse("courseForm_edit_windowTitle", "Edit Course")
+      else
+        AppSettings.language.getItemOrElse("courseForm_windowTitle", "Create new Course")
 
     courseForm.setStage(Utils.promptBoundWindow(
       windowTitle,
@@ -93,7 +95,6 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
   }
 
   override def showAdditionalInformation(entity: CourseBlueprint): Unit = {
-    detailsController.name_=(entity.name)
     detailsController.description_=(entity.description)
 
     showDetailBox()
