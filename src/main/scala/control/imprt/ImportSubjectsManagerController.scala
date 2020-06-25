@@ -1,7 +1,7 @@
 package control.imprt
 
 import app.FXMLPaths
-import control.form.SubjectDescriptorFormController
+import control.form.{SubjectDescriptorFormController, SubjectFormInitializer}
 import factory.ViewFactory
 import file.imprt.MutableImportJob
 import javafx.beans.property.{SimpleIntegerProperty, SimpleStringProperty}
@@ -9,7 +9,7 @@ import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, TableColumn}
 import javafx.stage.Modality
-import model.blueprint.{EventBlueprint, SubjectBlueprint}
+import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import model.{EventType, EventTypes}
 import util.Utils
 
@@ -18,6 +18,8 @@ import scala.collection.mutable
 class ImportSubjectsManagerController(importJobEditorController: ImportJobEditorController,
                                       editableImportJob: MutableImportJob)
   extends ImportEntityManagerController[SubjectBlueprint]{
+
+  type SFI = SubjectFormInitializer[SubjectBlueprint, CourseBlueprint, ResourceBlueprint, EventBlueprint]
 
   @FXML var shortNameColumn: TableColumn[SubjectBlueprint, String] = _
   @FXML var courseColumn: TableColumn[SubjectBlueprint, String] = _
@@ -89,10 +91,13 @@ class ImportSubjectsManagerController(importJobEditorController: ImportJobEditor
   }
 
   override def newEntity: Option[SubjectBlueprint] = {
-    promptSubjectForm
+    promptSubjectForm()
   }
 
-  private def promptSubjectForm: Option[SubjectBlueprint] = {
+  private def promptSubjectForm(sfi: SFI): Option[SubjectBlueprint] =
+    promptSubjectForm(Some(sfi))
+
+  private def promptSubjectForm(osfi: Option[SFI] = None): Option[SubjectBlueprint] = {
     val subjectForm = new SubjectDescriptorFormController(editableImportJob.courses, editableImportJob.resources)
 
     subjectForm.setStage(Utils.promptBoundWindow(
@@ -112,7 +117,7 @@ class ImportSubjectsManagerController(importJobEditorController: ImportJobEditor
       val eventsByType: mutable.Map[EventType, mutable.Set[EventBlueprint]] = new mutable.HashMap
       EventTypes.commonEventTypes.foreach(eventsByType.put(_, new mutable.HashSet))
 
-      val events = osd.get.events.map(ed => {
+      osd.get.events.map(ed => {
         val eb = EventBlueprint.fromDescriptor(ed)
 
         eb.subject = sb
@@ -147,12 +152,12 @@ class ImportSubjectsManagerController(importJobEditorController: ImportJobEditor
   }
 
   override def showAdditionalInformation(entity: SubjectBlueprint): Unit = {
-    //TODO
+    detailsController.setFromSubjectBlueprint(entity)
     showDetailBox()
   }
 
   override def clearAdditionalInformation(): Unit = {
-    //TODO
+    detailsController.clear()
   }
 
   override protected def notifySingleSelection(): Unit = {

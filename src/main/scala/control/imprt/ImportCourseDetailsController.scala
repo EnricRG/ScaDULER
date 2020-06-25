@@ -8,6 +8,7 @@ import control.Controller
 import javafx.fxml.FXML
 import javafx.scene.control.Label
 import javafx.scene.layout.VBox
+import model.blueprint.CourseBlueprint
 
 class ImportCourseDetailsController extends Controller {
 
@@ -27,6 +28,10 @@ class ImportCourseDetailsController extends Controller {
   }
 
   def description_=(s: String): Unit = descriptionContent.setText(s)
+
+  def setFromCourseBlueprint(cb: CourseBlueprint): Unit = {
+    description_=(cb.description)
+  }
 
   def clear(): Unit = {
     description_=("")

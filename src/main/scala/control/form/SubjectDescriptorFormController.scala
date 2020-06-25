@@ -25,6 +25,13 @@ sealed trait AbstractSubjectFormControllerResult[C <: CourseLike, R <: ResourceL
   type ED = EventDescriptor[Null,C,R,EventDescriptor[Null,C,R,_]]
 }
 
+case class SubjectFormInitializer[
+  S <: SubjectLike[S,C,R,E],
+  C <: CourseLike,
+  R <: ResourceLike,
+  E <: EventLike[S,C,R,E]](subjectLike: S)
+
+//TODO adopt Initializer
 class SubjectDescriptorFormController[
   C <: CourseLike,
   R <: ResourceLike](

@@ -95,8 +95,7 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
   }
 
   override def showAdditionalInformation(entity: CourseBlueprint): Unit = {
-    detailsController.description_=(entity.description)
-
+    detailsController.setFromCourseBlueprint(entity)
     showDetailBox()
   }
 

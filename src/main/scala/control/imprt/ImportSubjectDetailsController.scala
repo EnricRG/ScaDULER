@@ -11,8 +11,11 @@ import javafx.scene.control.{Label, TableColumn, TableView}
 import javafx.scene.layout.{Pane, VBox}
 import javafx.scene.paint
 import model.Color
+import model.blueprint.SubjectBlueprint
 
 class ImportSubjectDetailsController extends Controller {
+
+  type AF = (String, String)
 
   override def language: Language = AppSettings.language
 
@@ -28,9 +31,9 @@ class ImportSubjectDetailsController extends Controller {
   @FXML var colorFrame: Pane = _
 
   @FXML var additionalFieldsTag: Label = _
-  @FXML var additionalFieldsTable: TableView[(String, Any)] = _
-  @FXML var fieldColumn: TableColumn[(String, Any),String] = _
-  @FXML var valueColumn: TableColumn[(String, Any),String] = _
+  @FXML var additionalFieldsTable: TableView[AF] = _
+  @FXML var fieldColumn: TableColumn[AF, String] = _
+  @FXML var valueColumn: TableColumn[AF, String] = _
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     initializeContentLanguage()
@@ -51,13 +54,13 @@ class ImportSubjectDetailsController extends Controller {
     fieldColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue._1))
     valueColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue._2.toString))
 
-    additionalFieldsTable.getSortOrder.add(fieldColumn.asInstanceOf[TableColumn[(String,Any), _]])
+    additionalFieldsTable.getSortOrder.add(fieldColumn.asInstanceOf[TableColumn[AF, _]])
 
     addAdditionalFieldsColumn(fieldColumn)
     addAdditionalFieldsColumn(valueColumn)
   }
 
-  private def addAdditionalFieldsColumn(column: TableColumn[(String, Any), _]): Unit = {
+  private def addAdditionalFieldsColumn(column: TableColumn[AF, _]): Unit = {
     additionalFieldsTable.getColumns.add(column)
   }
 
@@ -75,12 +78,26 @@ class ImportSubjectDetailsController extends Controller {
 
   def color_=(color: Color): Unit = color_=(color.toJFXColor)
 
-  def addAdditionalField(additionalField: (String, Any)): Unit = {
+  def addAdditionalField(additionalField: AF): Unit = {
     additionalFieldsTable.getItems.add(additionalField)
   }
 
-  def addAdditionalFields(additionalFields: Iterable[(String, Any)]): Unit = {
+  def addAdditionalFields(additionalFields: Iterable[AF]): Unit = {
     additionalFields.foreach(addAdditionalField)
     additionalFieldsTable.sort()
+  }
+
+  def setFromSubjectBlueprint(sb: SubjectBlueprint): Unit = {
+    name_=(sb.name)
+    description_=(sb.description)
+    if(sb.color.nonEmpty) color_=(sb.color.get)
+    addAdditionalFields(sb.additionalFields)
+  }
+
+  def clear(): Unit = {
+    name_=("")
+    description_=("")
+    colorFrame.setStyle("")
+    additionalFieldsTable.getItems.clear()
   }
 }
