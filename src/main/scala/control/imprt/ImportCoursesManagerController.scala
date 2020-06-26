@@ -1,8 +1,7 @@
 package control.imprt
 
 import app.{AppSettings, FXMLPaths}
-import control.form.FormModes.{Create, Edit}
-import control.form.{CourseFormController, CourseFormInitializer}
+import control.form.{CreateCourseFormController, EditCourseFormController}
 import factory.ViewFactory
 import file.imprt.MutableImportJob
 import javafx.beans.property.SimpleStringProperty
@@ -53,27 +52,17 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
   }
 
   override def newEntity: Option[CourseBlueprint] = {
-    promptCourseForm()
+    promptNewCourseForm()
   }
 
-  private def promptCourseForm(cfi: CourseFormInitializer): Option[CourseBlueprint] =
-    promptCourseForm(Some(cfi))
-
-  private def promptCourseForm(ocfi: Option[CourseFormInitializer] = None): Option[CourseBlueprint] = {
-    val formMode = if(ocfi.nonEmpty) Edit else Create
-    val courseForm = new CourseFormController(ocfi, formMode)
-
-    val windowTitle =
-      if(formMode == Edit)
-        AppSettings.language.getItemOrElse("courseForm_edit_windowTitle", "Edit Course")
-      else
-        AppSettings.language.getItemOrElse("courseForm_windowTitle", "Create new Course")
+  private def promptNewCourseForm(): Option[CourseBlueprint] = {
+    val courseForm = new CreateCourseFormController()
 
     courseForm.setStage(Utils.promptBoundWindow(
-      windowTitle,
+      AppSettings.language.getItemOrElse("courseForm_windowTitle", "Create new Course"),
       newButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory[CourseFormController](FXMLPaths.CourseForm),
+      new ViewFactory[CreateCourseFormController](FXMLPaths.CourseForm),
       courseForm))
 
     val ocd = courseForm.waitFormResult
@@ -87,7 +76,22 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
   }
 
   override def editEntity(entity: CourseBlueprint): Option[CourseBlueprint] = {
-    promptCourseForm(CourseFormInitializer(entity.name, entity.description))
+    promptEditCourseForm(entity)
+  }
+
+  private def promptEditCourseForm(course: CourseBlueprint): Option[CourseBlueprint] = {
+    val courseForm = new EditCourseFormController(course)
+
+    courseForm.setStage(Utils.promptBoundWindow(
+      AppSettings.language.getItemOrElse("courseForm_edit_windowTitle", "Edit Course"),
+      newButton.getScene.getWindow,
+      Modality.WINDOW_MODAL,
+      new ViewFactory[EditCourseFormController[CourseBlueprint]](FXMLPaths.CourseForm),
+      courseForm))
+
+    //This is fine because EditCourseFormController(course) specification ensures that if the form result is Some(x),
+    //x == course, and that's what we want.
+    courseForm.waitFormResult
   }
 
   override def deleteEntity(entity: CourseBlueprint): Unit = {

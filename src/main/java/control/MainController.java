@@ -1,9 +1,8 @@
 package control;
 
 import app.*;
-import control.form.CourseFormController;
+import control.form.CreateCourseFormController;
 import control.form.EventFormController;
-import control.form.FormModes;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
 import control.imprt.mcf.MCFImportErrorViewerController;
@@ -701,7 +700,7 @@ public class MainController extends StageController {
 
 
     private void promptCourseForm() {
-        CourseFormController courseForm = new CourseFormController(Option.empty(), FormModes.create());
+        CreateCourseFormController courseForm = new CreateCourseFormController(Option.empty());
 
         courseForm.setStage(Utils.promptBoundWindow(
             AppSettings.language().getItemOrElse("courseForm_windowTitle", "Create new Course"),

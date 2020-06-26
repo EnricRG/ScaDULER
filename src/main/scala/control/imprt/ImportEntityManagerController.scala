@@ -85,6 +85,7 @@ abstract class ImportEntityManagerController[E] extends Controller {
       if (entity.nonEmpty) {
         table.getItems.add(entity.get)
         table.sort()
+        selectEntity(entity.get)
       }
 
       actionEvent.consume()
@@ -97,6 +98,8 @@ abstract class ImportEntityManagerController[E] extends Controller {
         table.getItems.remove(table.getSelectionModel.getSelectedIndex)
         table.getItems.add(editedEntity.get)
         table.sort()
+        table.refresh() //This shouldn't be here, but the table doesn't reflect changes otherwise.
+        selectEntity(editedEntity.get)
       }
 
       actionEvent.consume()
@@ -110,6 +113,11 @@ abstract class ImportEntityManagerController[E] extends Controller {
 
       actionEvent.consume()
     })
+  }
+
+  private def selectEntity(entity: E): Unit = {
+    table.getSelectionModel.clearSelection()
+    table.getSelectionModel.select(entity)
   }
 
   def hideDetailBox(): Unit = if (showingDetails) {
