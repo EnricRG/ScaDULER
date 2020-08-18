@@ -546,12 +546,11 @@ public class MainController extends StageController {
                         AppSettings.language().getItemOrElse("import_repeatedResourcesFound_windowTitle",
                         "Repeated resources found"),
                         AppSettings.language().getItemOrElse("import_repeatedResourcesFound_explanation",
-                        "Repeated resources found when importing. Would you like to discard them, " +
-                                "or update already existing resources with thw new data?")
+                        "Already existing resources found when importing. Would you like to discard them, " +
+                                "or to update already existing resources with the new data?")
                     );
 
                     if(update_required){
-
                         for (ResourceBlueprint rb : JavaConverters.asJavaCollection(repeated_resources)) {
                             Option<Resource> ro = resourceDatabase.getResourceByName(rb.name());
                             if(ro.nonEmpty()) Resource.setResourceFromBlueprint(ro.get(), rb);
