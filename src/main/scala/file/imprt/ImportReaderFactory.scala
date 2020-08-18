@@ -1,6 +1,6 @@
 package file.imprt
 
-import build.{ImportReaderBuilder, MCFImportReaderBuilder}
+import file.imprt.build.{ImportReaderBuilder, MCFImportReaderBuilder}
 
 object ImportReaderFactory {
     private val extensions: Set[String] = Set(MCFImportReader.MCFFileExtension)

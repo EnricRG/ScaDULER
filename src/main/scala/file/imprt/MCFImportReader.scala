@@ -4,6 +4,7 @@ import java.io.File
 
 import app.AppSettings
 import file.imprt.ImportType.MCFImport
+import file.imprt.MCFImportReader.{NumberOfFields, TheoryResourceName}
 import model._
 import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 
@@ -24,6 +25,8 @@ object MCFImportReader{
   val MCFFileExtension: String = "mcf"
   val MCFVersion: String = "1.1"
   val Separator: Char = ';'
+  val NumberOfFields: Int = 18
+  val TheoryResourceName: String = "aula"
 }
 
 class MCFImportReader(file: File) extends ImportReader {
@@ -38,8 +41,13 @@ class MCFImportReader(file: File) extends ImportReader {
 
     try {
       val filteredLines = source.getLines().filterNot(l => l.forall(_ == MCFImportReader.Separator) /*|| l.trim.isEmpty*/)
+
       val lines = filteredLines.zipWithIndex.map { case (s, i) => (i, s.split(MCFImportReader.Separator.toString, -1)) }.toList //all file lines
+
       val headers = lines.head //only headers line
+      if (headers._2.length != NumberOfFields) {
+        //TODO report incorrect file format.
+      }
       val lineImportJobs = for ((row, line) <- lines.tail) yield readLine(row + 1, line, headers._2)
 
       importJob = flattenImportJobs(lineImportJobs)
@@ -86,7 +94,7 @@ class MCFImportReader(file: File) extends ImportReader {
     val (resourceCapacity, rCErrors, emptyRC) = getIntegerField(values.apply(10).trim, row, 11, headers.apply(10)+"(1)")
     if(rCErrors.nonEmpty && !emptyHgp) errors ++= rCErrors
 
-    val (resourceName, rNErrors, emptyRN) = getStringField(values.apply(11).trim, row, 12, headers.apply(11)+"(2)")
+    val (resourceName, rNErrors, emptyRN) = getStringField(values.apply(11).trim, row, 12, headers.apply(10)+"(2)")
     if(rNErrors.nonEmpty && !emptyHgp) errors ++= rNErrors
 
     val students = getUncheckedIntegerField(values.apply(12).trim)
@@ -99,10 +107,6 @@ class MCFImportReader(file: File) extends ImportReader {
     if(emptyShortName || emptyName || emptyCourse || emptySemester) {
       LineImportJob(null, List(), null, null, errors.toList, finished = false)
     }
-    /*else if(database.subjectDatabase.getSubjectByName(name).isEmpty) {
-        //TODO check if subject already exists. This shouldn't be done because application allows repeated subjects.
-        LineImportJob(null, List(), null, null, errors.toList, finished = false)
-    }*/
     else{
       val subjectEntity = new SubjectBlueprint
       subjectEntity.shortName = shortName
@@ -130,7 +134,7 @@ class MCFImportReader(file: File) extends ImportReader {
         case Some(r) => r
         case None =>
           val newResource = new ResourceBlueprint
-          newResource.name = resourceName + "_" + values.apply(3)
+          newResource.name = resourceName
           newResource.capacity = resourceCapacity
           createdResources.put(newResource.name, newResource)
           newResource
@@ -339,15 +343,6 @@ class MCFImportReader(file: File) extends ImportReader {
     val resources: ArrayBuffer[ResourceBlueprint] = new mutable.ArrayBuffer
     val errors: ArrayBuffer[ImportError] = new mutable.ArrayBuffer
 
-    //TODO improvable, could be created at start and add all event when reading lines, improves performance.
-    //Auxiliary resource to model theory room occupation
-    val theoryResource = new ResourceBlueprint
-    theoryResource.name = "Aula Teoria/Problemes"
-    //TODO theoryResource.capacity = ?
-    resources += theoryResource
-
-    resources ++= createdResources.values
-
     lineImportJobs.foreach(lij => if (lij.finished) {
       subjects += lij.subject
       events ++= lij.events
@@ -356,7 +351,23 @@ class MCFImportReader(file: File) extends ImportReader {
       errors ++= lij.errors
     })
 
-    events.foreach(e => if(e.eventType == TheoryEvent || e.eventType == ProblemsEvent) e.neededResource = Some(theoryResource))
+    ///This piece of code assumes that all Theory and Problem events in this import will happen in the same room.
+    val theoryResource = createdResources.get(TheoryResourceName) match {
+      case Some(r) => r
+      case None =>
+        val generatedTheoryResource = new ResourceBlueprint
+
+        generatedTheoryResource.name = "Aula Teoria/Problemes"
+        //TODO generatedTheoryResource.capacity = ?
+
+        resources += generatedTheoryResource
+
+        generatedTheoryResource
+    }
+    events.foreach(e => if(e.eventType == TheoryEvent || e.eventType == ProblemsEvent)
+      e.neededResource = Some(theoryResource))
+
+    resources ++= createdResources.values
 
     ImportJob(subjects.toList, events.toList,
       resources.toList, createdCourses.values.toList,
