@@ -12,12 +12,13 @@ import javafx.geometry.Pos
 import javafx.scene.control.{Button, Label, TextField}
 import javafx.scene.input.{KeyCode, MouseButton, MouseDragEvent, MouseEvent}
 import javafx.scene.layout.VBox
-import model.ResourceLike
+import model.ResourceSchedule
 import util.Utils
 import java.util
 import java.util.ResourceBundle
 
 import javafx.fxml.FXML
+import javafx.stage.Stage
 
 
 object ResourceAvailabilityController {
@@ -25,7 +26,7 @@ object ResourceAvailabilityController {
   private val SET_STATE_STYLE: String = "-fx-background-color: skyblue;"
 }
 
-class ResourceAvailabilityController(resource: ResourceLike) extends StageController {
+class ResourceAvailabilityController(availability: ResourceSchedule) extends StageController {
 
   private class ResourceScheduleCellFactory extends ScheduleCellFactory {
     override def newCell(row: Int, column: Int) = new ResourceAvailabilityCell(row, column)
@@ -34,7 +35,7 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
   private object ResourceAvailabilityCell {
     private val UNSET_STATE = 0
     private val SET_STATE = 1
-    private val SELECTED_STATE = 2
+    private val SELECTED_STATE = 2 //This state is for coloring purposes. Must never be assigned to any cell.
   }
 
   private class ResourceAvailabilityCell(quantity: Int, row: Int, column: Int) extends ScheduleCell(row, column) {
@@ -115,15 +116,16 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
       _quantity = quantity
     }
 
+    //pre: cell not selected
     def select(): Unit = {
       _selected = true
       setStateStyle(ResourceAvailabilityCell.SELECTED_STATE)
     }
 
+    //pre: cell selected
     def deselect(): Unit = {
       _selected = false
       setStyle(removeStateFromStyle(this.getStyle, ResourceAvailabilityCell.SELECTED_STATE))
-      //TODO improve: redundant job at setStateStyle
       setStateStyle(_state)
     }
   }
@@ -184,6 +186,7 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
 
   private var selection = new util.HashSet[ResourceAvailabilityCell]
   private var dragging = false
+  private var typing = false
 
   override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
     try
@@ -200,6 +203,22 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
 
     initializeContentLanguage()
     initializeCustomBehavior()
+  }
+
+  override def setStage(stage: Stage): Unit = {
+    super.setStage(stage)
+
+    stage.getScene.setOnKeyReleased(keyEvent => {
+      val keyCode: KeyCode = keyEvent.getCode
+
+      if (keyCode == KeyCode.ESCAPE)
+        clearSelection()
+      else if (!typing && (keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE)) {
+        //FIXME if user presses any of this keys when typing on text fields, this code will also be triggered.
+        //To prevent this from happening, this feature is disabled until fixed.
+        //unsetSelection()
+      }
+    })
   }
 
   private def initializeContentLanguage(): Unit = {
@@ -243,8 +262,8 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
     })
 
     quantityField.setOnKeyReleased(keyEvent => {
-      if (keyEvent.getCode eq KeyCode.ENTER) setSelectionFromQuantityField()
-      else if (keyEvent.getCode eq KeyCode.ESCAPE) setButton.requestFocus()
+      if (keyEvent.getCode == KeyCode.ENTER) setSelectionFromQuantityField()
+      else if (keyEvent.getCode == KeyCode.ESCAPE) setButton.requestFocus()
       //keyEvent.consume();
     })
 
@@ -262,7 +281,7 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
     cell.addEventHandler(MouseEvent.ANY, new CellEventHandler(cell))
     cell.setWeek(week)
     cell.setInterval(interval)
-    cell.setQuantity(resource.availabilityAt(week, interval), silent = false)
+    cell.setQuantity(availability.get(week, interval), silent = false)
   }
 
   private def computeInterval(cell: ScheduleCell): Int = {
@@ -274,8 +293,8 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
 
   private def incrementSelectionIn(amount: Int): Unit = {
     selection.forEach(cell => {
-      resource.availability.increment(cell.week, cell.interval, amount)
-      cell.setQuantity(resource.availabilityAt(cell.week, cell.interval), silent = true)
+      availability.increment(cell.week, cell.interval, amount)
+      cell.setQuantity(availability.get(cell.week, cell.interval), silent = true)
     })
   }
 
@@ -285,8 +304,8 @@ class ResourceAvailabilityController(resource: ResourceLike) extends StageContro
 
   private def setSelectionTo(quantity: Int): Unit = {
     selection.forEach(cell => {
-      if (quantity <= 0) resource.availability.unset(cell.week, cell.interval)
-      else resource.availability.set(cell.week, cell.interval, quantity)
+      if (quantity <= 0) availability.unset(cell.week, cell.interval)
+      else availability.set(cell.week, cell.interval, quantity)
       cell.setQuantity(quantity, silent = true)
     })
   }

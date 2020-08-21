@@ -13,7 +13,6 @@ import javafx.fxml.FXML
 import javafx.geometry.{Insets, Pos}
 import javafx.scene.Node
 import javafx.scene.control._
-import javafx.scene.input.KeyCode
 import javafx.scene.layout.Region.USE_COMPUTED_SIZE
 import javafx.scene.layout.{HBox, Priority}
 import javafx.stage.{Modality, Stage}
@@ -160,7 +159,7 @@ class ResourceManagerController[R <: ResourceLike](
   }
 
   private def manageResourceAvailability(r: ResourceLike): Unit = {
-    val controller: ResourceAvailabilityController = new ResourceAvailabilityController(r)
+    val controller: ResourceAvailabilityController = new ResourceAvailabilityController(r.availability)
 
     val stage: Stage = Utils.promptBoundWindow(
       AppSettings.language.getItemOrElse(
@@ -172,15 +171,6 @@ class ResourceManagerController[R <: ResourceLike](
       controller)
 
     controller.setStage(stage)
-
-    stage.getScene.setOnKeyReleased(keyEvent => {
-      val keyCode: KeyCode = keyEvent.getCode
-
-      if (keyCode == KeyCode.ESCAPE)
-        controller.clearSelection()
-      else if (keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE)
-        controller.unsetSelection()
-    })
 
     controller.show()
   }
