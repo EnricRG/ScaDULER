@@ -52,10 +52,14 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
   }
 
   override def newEntity: Option[CourseBlueprint] = {
-    promptNewCourseForm()
+    val ncb = promptNewCourseForm
+
+    if(ncb.nonEmpty) importJobEditorController.notifyCourseCreation(ncb.get)
+
+    ncb
   }
 
-  private def promptNewCourseForm(): Option[CourseBlueprint] = {
+  private def promptNewCourseForm: Option[CourseBlueprint] = {
     val courseForm = new CreateCourseFormController()
 
     courseForm.setStage(Utils.promptBoundWindow(
@@ -91,7 +95,7 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
 
     //This is fine because EditCourseFormController(course) specification ensures that if the form result is Some(x),
     //x == course, and that's what we want.
-    courseForm.waitFormResult
+    courseForm.waitFormResult //execution thread stops here.
   }
 
   override def deleteEntity(entity: CourseBlueprint): Unit = {

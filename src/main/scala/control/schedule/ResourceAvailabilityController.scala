@@ -186,7 +186,8 @@ class ResourceAvailabilityController(availability: ResourceSchedule) extends Sta
 
   private var selection = new util.HashSet[ResourceAvailabilityCell]
   private var dragging = false
-  private var typing = false
+
+  private var edited = false
 
   override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
     try
@@ -213,9 +214,9 @@ class ResourceAvailabilityController(availability: ResourceSchedule) extends Sta
 
       if (keyCode == KeyCode.ESCAPE)
         clearSelection()
-      else if (!typing && (keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE)) {
+      else if (keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE) {
         //FIXME if user presses any of this keys when typing on text fields, this code will also be triggered.
-        //To prevent this from happening, this feature is disabled until fixed.
+        //To prevent this from happening, this functionality is disabled until fixed.
         //unsetSelection()
       }
     })
@@ -243,21 +244,25 @@ class ResourceAvailabilityController(availability: ResourceSchedule) extends Sta
   private def initializeCustomBehavior(): Unit = {
     plusOneButton.setOnAction(actionEvent => {
       incrementSelectionIn(1)
+      edited = true
       actionEvent.consume()
     })
 
     minusOneButton.setOnAction(actionEvent=> {
       decrementSelectionIn(1)
+      edited = true
       actionEvent.consume()
     })
 
     zeroButton.setOnAction(actionEvent => {
       setSelectionTo(0)
+      edited = true
       actionEvent.consume()
     })
 
     setButton.setOnAction(actionEvent => {
       setSelectionFromQuantityField()
+      edited = true
       actionEvent.consume()
     })
 
@@ -310,7 +315,7 @@ class ResourceAvailabilityController(availability: ResourceSchedule) extends Sta
     })
   }
 
-  def unsetSelection(): Unit = { setSelectionTo(0) }
+  private def unsetSelection(): Unit = { setSelectionTo(0) }
 
   private def setSelectionFromQuantityField(): Unit = {
     val quantity = getNumberFromField
@@ -326,11 +331,13 @@ class ResourceAvailabilityController(availability: ResourceSchedule) extends Sta
     }
   }
 
-  def clearSelection(): Unit = {
+  private def clearSelection(): Unit = {
     if (!selection.isEmpty) {
       selection.forEach(_.deselect())
       selection = new util.HashSet[ResourceAvailabilityCell]
     }
   }
+
+  def changesMade: Boolean = edited
 }
 

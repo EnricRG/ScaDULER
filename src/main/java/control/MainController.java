@@ -178,7 +178,8 @@ public class MainController extends StageController {
             Event event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
 
             CourseScheduleController courseScheduleController = getEventCourseController(event);
-            QuarterScheduleController quarterScheduleController = courseScheduleController.getQuarterController(event.quarter().getOrElse(null));
+            QuarterScheduleController quarterScheduleController =
+                    courseScheduleController.getQuarterController(event.quarter().getOrElse(null));
             ScheduleIntervalController intervalController =
                     quarterScheduleController.getIntervalControllerAt(ea.week().toWeekNumber(), ea.interval());
 

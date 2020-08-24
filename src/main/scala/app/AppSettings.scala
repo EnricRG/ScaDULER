@@ -11,6 +11,7 @@ object FXMLPaths {
   val SubjectIncompatibilityForm = "src/main/fxml/form/subject_event_incompatibility_manager.fxml"
   val EventForm: String = "src/main/fxml/form/event_form.fxml"
   val EventIncompatibilityFrom: String = "src/main/fxml/form/event_incompatibility_manager.fxml"
+  val ResourceForm: String = "src/main/fxml/form/resource_form.fxml"
 
   val EntityManagerPanel: String = "src/main/fxml/manage/entity_manager.fxml"
   val ManageResourcesPanel: String = "src/main/fxml/manage/resource_manager.fxml"
@@ -46,7 +47,7 @@ object AppSettings {
   var dayStart: Int = 8 //8:00 AM
   var dayEnd: Int = 19 //19:00
 
-  var timeSlotsPerDay:Int = 22
+  var timeSlotsPerDay:Int = 22 //this should be computed ( (dayEnd - dayStart) * TimeSlotsPerHour )
   var days: Int = 5
   var timeSlots: Int = timeSlotsPerDay*days
 

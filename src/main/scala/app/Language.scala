@@ -104,7 +104,7 @@ object DefaultLanguage extends Language {
 
         "rightPane_eventSearch" -> "Enter Event name",
 
-        "form_wrapDescription" -> "Wrap text on corners",
+        "form_wrapDescription" -> "Wrap text on edges",
 
         "course" -> "Course",
         "course_emptyDescription" -> "This course has no description",

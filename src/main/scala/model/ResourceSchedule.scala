@@ -53,11 +53,24 @@ class ResourceSchedule(intervalsPerWeek: Int) extends DualWeekSchedule[Int](inte
 
   def getMax: Int = (getFirstWeekSchedule.getAllElements ++ getSecondWeekSchedule.getAllElements ++ List(0)).max
 
-  def getIntervalsWith(week: Int, day:Int, quantity: Int, el: Int): Iterable[Int] =
-    (day*AppSettings.timeSlotsPerDay until (day+1)*AppSettings.timeSlotsPerDay).map(i => if (get(week, i) == quantity) i else el)
+  def getIntervalsWith(week: Int, day: Int, quantity: Int, el: Int): Iterable[Int] =
+    (day * AppSettings.timeSlotsPerDay until (day+1) * AppSettings.timeSlotsPerDay)
+      .map(i => if (get(week, i) == quantity) i else el)
 
   //pre: day < 5 && day >= 0
   //post sorted Iterable of unavailable intervals at that day
   def getUnavailableIntervalsOrElse(week: Int, day: Int, el: Int): Iterable[Int] =
-    (day*AppSettings.timeSlotsPerDay until (day+1)*AppSettings.timeSlotsPerDay).map(x => if (!isAvailable(week, x)) x else el)
+    (day * AppSettings.timeSlotsPerDay until (day+1) * AppSettings.timeSlotsPerDay)
+      .map(x => if (!isAvailable(week, x)) x else el)
+
+  def getNumberOfAvailableIntervals: Int =
+    (0 to 1).map( week =>
+      (0 until AppSettings.timeSlots).map( timeSlot =>
+        if(get(week, timeSlot) > 0) 1 else 0
+      ).sum
+    ).sum
+}
+
+object ResourceSchedule {
+  def newDefaultSchedule: ResourceSchedule = new ResourceSchedule(AppSettings.timeSlots)
 }

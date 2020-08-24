@@ -7,6 +7,7 @@ import app.{AppSettings, Language}
 import control.Controller
 import javafx.fxml.FXML
 import javafx.scene.layout.VBox
+import model.blueprint.ResourceBlueprint
 
 class ImportResourceDetailsController extends Controller {
 
@@ -19,6 +20,14 @@ class ImportResourceDetailsController extends Controller {
   }
 
   private def initializeContentLanguage(): Unit = {
+
+  }
+
+  def setFromResourceBlueprint(rb: ResourceBlueprint): Unit = {
+
+  }
+
+  def clear(): Unit ={
 
   }
 }

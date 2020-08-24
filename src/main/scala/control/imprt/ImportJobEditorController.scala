@@ -9,7 +9,7 @@ import factory.ViewFactory
 import file.imprt.{ImportJob, MutableImportJob}
 import javafx.fxml.FXML
 import javafx.scene.control.Tab
-import model.blueprint.{CourseBlueprint, SubjectBlueprint}
+import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import util.Utils
 
 import scala.collection.mutable.ArrayBuffer
@@ -32,10 +32,14 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
 
   private val subjectsController: ImportSubjectsManagerController =
     new ImportSubjectsManagerController(this, editableImportJob)
+
   private val coursesController: ImportCoursesManagerController =
     new ImportCoursesManagerController(this, editableImportJob)
+
   private val eventsController: ImportEventsManagerController = new ImportEventsManagerController
-  private val resourcesController: ImportResourcesManagerController = new ImportResourcesManagerController
+
+  private val resourcesController: ImportResourcesManagerController =
+    new ImportResourcesManagerController(this, editableImportJob)
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     initializeControllers()
@@ -72,6 +76,26 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
     resourcesTab.setContent(resourcesController.mainBox)
   }
 
+  /** entity creation notifiers */
+
+  def notifyCourseCreation(cb: CourseBlueprint): Unit = {
+    editableImportJob.courses += cb
+  }
+
+  def notifyResourceCreation(rb: ResourceBlueprint): Unit = {
+    editableImportJob.resources += rb
+  }
+
+  def notifySubjectCreation(sb: SubjectBlueprint): Unit = {
+    editableImportJob.subjects += sb
+  }
+
+  def notifyEventCreation(eb: EventBlueprint): Unit = {
+    editableImportJob.events += eb
+  }
+
+  /** entity deletion notifiers */
+
   def notifyCourseDeletion(cb: CourseBlueprint, hardDelete: Boolean = false): Unit = {
     //TODO implement
     //If hard delete
@@ -80,7 +104,20 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
       //Set all subjects and events that happen in this course to have no course.
   }
 
+  def notifyResourceDeletion(rb: ResourceBlueprint, hardDelete: Boolean = false): Unit = {
+    //TODO implement
+    //If hard delete
+    //Remove all events depending on this resource.
+    //Else
+    //Set all events depending on this resource to have no resource.
+  }
+
   def notifySubjectDeletion(sb: SubjectBlueprint): Unit = {
+    //TODO implement
+    //remove all incompatibilities to ensure correct garbage collection
+  }
+
+  def notifyEventDeletion(eb: EventBlueprint): Unit = {
     //TODO implement
     //remove all incompatibilities to ensure correct garbage collection
   }

@@ -18,7 +18,8 @@ object CourseFormInitializer {
   }
 }
 
-case class CourseFormInitializer(name: String, description: String)
+case class CourseFormInitializer(name: String,
+                                 description: String)
 
 abstract class CourseFormController[FR](ocfi: Option[CourseFormInitializer] = None)
   extends FormController[FR] {
@@ -66,7 +67,7 @@ abstract class CourseFormController[FR](ocfi: Option[CourseFormInitializer] = No
 
     descriptionWrapCheckBox.setText(AppSettings.language.getItemOrElse(
       "form_wrapDescription",
-      "Wrap text on corners"))
+      "Wrap text on edges"))
   }
 
   override protected def setupViews(): Unit = {}
@@ -148,16 +149,6 @@ class EditCourseFormController[C <: CourseLike](course: C)
   override protected def bindActions(): Unit = {
     super.bindActions()
 
-    courseNameField.setOnKeyTyped(keyEvent => {
-      editInformation.name = courseNameField.getText()
-      //keyEvent.consume()
-    })
-
-    courseDescriptionField.setOnKeyTyped(keyEvent => {
-      editInformation.description = courseDescriptionField.getText()
-      //keyEvent.consume()
-    })
-
     finishFormButton.setOnAction(actionEvent => {
       if (!warnings) { //edit course from form fields
         formResult = modifyEntity(course)
@@ -169,15 +160,21 @@ class EditCourseFormController[C <: CourseLike](course: C)
 
   //if c has been edited, the result will be Some(c), None otherwise.
   private def modifyEntity(c: C): Option[C] = {
+    updateEditInformation()
+
     if(editInformation.hasBeenEdited) {
-      if(editInformation.name.edited)
-        c.name = editInformation.name.value
-      if(editInformation.description.edited)
-        c.description = editInformation.description.value
+      //Assigning strings is faster than comparing them
+      c.name = editInformation.name.value
+      c.description = editInformation.description.value
 
       Some(c)
     }
     else
       None
+  }
+
+  private def updateEditInformation(): Unit = {
+    editInformation.name = courseNameField.getText()
+    editInformation.description = courseDescriptionField.getText()
   }
 }

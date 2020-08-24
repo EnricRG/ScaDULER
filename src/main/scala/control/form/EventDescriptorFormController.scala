@@ -100,7 +100,7 @@ class EventDescriptorFormController[S >: Null <: SubjectLike[_,_,_,_], C <: Cour
 
     wrapEventDescriptionCheckbox.setText(AppSettings.language.getItemOrElse(
       "form_wrapDescription",
-      "Wrap text on corners"))
+      "Wrap text on edges"))
 
     eventCourseTag.setText(AppSettings.language.getItemOrElse("eventForm_eventCourseTag", "Course") + ":")
 
