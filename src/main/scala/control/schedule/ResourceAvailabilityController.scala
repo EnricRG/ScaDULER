@@ -338,6 +338,6 @@ class ResourceAvailabilityController(availability: ResourceSchedule) extends Sta
     }
   }
 
-  def changesMade: Boolean = edited
+  def availabilityChanged: Boolean = edited
 }
 

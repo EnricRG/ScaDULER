@@ -27,13 +27,15 @@ class ImportCourseDetailsController extends Controller {
     descriptionTag.setText(language.getItemOrElse("import_courseDetails_descriptionTag", "Description"))
   }
 
+  def description: String = descriptionContent.getText
+
   def description_=(s: String): Unit = descriptionContent.setText(s)
 
   def setFromCourseBlueprint(cb: CourseBlueprint): Unit = {
-    description_=(cb.description)
+    description = cb.description
   }
 
   def clear(): Unit = {
-    description_=("")
+    description = ""
   }
 }

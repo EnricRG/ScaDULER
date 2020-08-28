@@ -12,21 +12,21 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1">
+<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox>
          <children>
             <VBox alignment="CENTER_LEFT" fillWidth="false" spacing="3.0">
                <children>
-                  <Label fx:id="eventNameTag" text="Event Name:" />
-                  <TextField fx:id="eventNameField" prefColumnCount="25" promptText="Full Event name" />
-                  <Label fx:id="eventShortNameTag" text="Event Short Name (optional):" />
-                  <TextField fx:id="eventShortNameField" promptText="Name abbreviation" />
-                  <Label fx:id="eventDescriptionTag" text="Event Description (optional):" />
+                  <Label fx:id="nameTag" text="Event Name:" />
+                  <TextField fx:id="nameField" prefColumnCount="25" promptText="Full Event name" />
+                  <Label fx:id="shortNameTag" text="Event Short Name (optional):" />
+                  <TextField fx:id="shortNameField" promptText="Name abbreviation" />
+                  <Label fx:id="descriptionTag" text="Event Description (optional):" />
                   <VBox spacing="2.0">
                      <children>
-                        <TextArea fx:id="eventDescriptionField" prefHeight="150.0" prefWidth="400.0" promptText="Write a description about this event" />
-                        <CheckBox fx:id="wrapEventDescriptionCheckbox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Wrap Text" />
+                        <TextArea fx:id="descriptionField" prefHeight="150.0" prefWidth="400.0" promptText="Write a description about this event" />
+                        <CheckBox fx:id="descriptionWrapCheckBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Wrap Text" />
                      </children>
                   </VBox>
                </children>
@@ -39,28 +39,28 @@
                <children>
                   <VBox spacing="4.0">
                      <children>
-                        <Label fx:id="eventCourseTag" text="Course" />
-                        <ComboBox fx:id="eventCourseBox" prefWidth="150.0" />
-                        <Label fx:id="eventQuarterTag" layoutX="10.0" layoutY="10.0" text="Quarter" />
-                        <ComboBox fx:id="eventQuarterBox" layoutX="10.0" layoutY="32.0" prefWidth="150.0" />
-                        <Label fx:id="eventSubjectTag" layoutX="10.0" layoutY="10.0" text="Subject (Optional):" />
+                        <Label fx:id="courseTag" text="Course" />
+                        <ComboBox fx:id="courseBox" prefWidth="150.0" />
+                        <Label fx:id="quarterTag" layoutX="10.0" layoutY="10.0" text="Quarter" />
+                        <ComboBox fx:id="quarterBox" layoutX="10.0" layoutY="32.0" prefWidth="150.0" />
+                        <Label fx:id="subjectTag" layoutX="10.0" layoutY="10.0" text="Subject (Optional):" />
                         <HBox>
                            <children>
-                              <ComboBox fx:id="eventSubjectBox" prefWidth="150.0" />
-                              <Button fx:id="unassignSubjectButton" mnemonicParsing="false" text="X" />
+                              <ComboBox fx:id="subjectBox" prefWidth="150.0" />
+                              <Button fx:id="unselectSubjectButton" mnemonicParsing="false" text="X" />
                            </children>
                         </HBox>
-                        <Label fx:id="eventDurationTag" text="Duration:" />
-                        <ComboBox fx:id="eventDurationBox" prefWidth="100.0" />
+                        <Label fx:id="durationTag" text="Duration:" />
+                        <ComboBox fx:id="durationBox" prefWidth="100.0" />
                         <Label fx:id="eventTypeTag" text="Event type:" />
                         <ComboBox fx:id="eventTypeBox" prefWidth="150.0" />
-                        <Label fx:id="eventPeriodicityTag" text="Periodicity:" />
-                        <ComboBox fx:id="eventPeriodicityBox" prefWidth="150.0" />
-                        <Label fx:id="eventResourceTag" text="Resource (Optional):" />
+                        <Label fx:id="periodicityTag" text="Periodicity:" />
+                        <ComboBox fx:id="periodicityBox" prefWidth="150.0" />
+                        <Label fx:id="resourceTag" text="Resource (Optional):" />
                         <HBox>
                            <children>
-                              <ComboBox fx:id="eventResourceBox" prefWidth="150.0" />
-                              <Button fx:id="unassignResourceButton" mnemonicParsing="false" text="X" />
+                              <ComboBox fx:id="resourceBox" prefWidth="150.0" />
+                              <Button fx:id="unselectResourceButton" mnemonicParsing="false" text="X" />
                            </children>
                         </HBox>
                      </children>
@@ -104,7 +104,7 @@
             </Label>
             <HBox alignment="TOP_CENTER">
                <children>
-                  <Button fx:id="createEventButton" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Create Event" HBox.hgrow="ALWAYS">
+                  <Button fx:id="finishFormButton" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Finish Form" HBox.hgrow="ALWAYS">
                      <font>
                         <Font size="18.0" />
                      </font>

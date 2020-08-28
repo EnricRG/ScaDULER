@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Separator prefWidth="200.0" />
       <HBox spacing="50.0">
@@ -24,9 +24,9 @@
             </HBox>
             <HBox spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
-                  <VBox spacing="5.0">
+                  <VBox maxWidth="160.0" spacing="5.0">
                      <children>
-                        <HBox spacing="5.0">
+                        <HBox spacing="20.0">
                            <children>
                               <TextField fx:id="quantityField" prefWidth="100.0" />
                               <Button fx:id="setButton" mnemonicParsing="false" text="Set" />
@@ -34,9 +34,9 @@
                         </HBox>
                         <HBox alignment="TOP_CENTER" spacing="20.0">
                            <children>
-                              <Button fx:id="plusOneButton" mnemonicParsing="false" prefWidth="32.0" text="+1" />
-                              <Button fx:id="minusOneButton" mnemonicParsing="false" prefWidth="32.0" text="-1" />
-                              <Button fx:id="zeroButton" layoutX="45.0" layoutY="10.0" mnemonicParsing="false" prefWidth="32.0" text="0" />
+                              <Button fx:id="plusOneButton" mnemonicParsing="false" prefWidth="40.0" text="+1" />
+                              <Button fx:id="minusOneButton" mnemonicParsing="false" prefWidth="40.0" text="-1" textAlignment="CENTER" />
+                              <Button fx:id="zeroButton" layoutX="45.0" layoutY="10.0" mnemonicParsing="false" prefWidth="40.0" text="0" textAlignment="CENTER" />
                            </children>
                         </HBox>
                      </children>

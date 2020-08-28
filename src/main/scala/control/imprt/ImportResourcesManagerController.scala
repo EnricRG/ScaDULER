@@ -13,9 +13,8 @@ import misc.Duration
 import model.blueprint.ResourceBlueprint
 import util.Utils
 
-class ImportResourcesManagerController(
-                                        importJobEditorController: ImportJobEditorController,
-                                        editableImportJob: MutableImportJob             )
+class ImportResourcesManagerController( importJobEditorController: ImportJobEditorController,
+                                        editableImportJob: MutableImportJob                   )
   extends ImportEntityManagerController[ResourceBlueprint] {
 
   @FXML var nameColumn: TableColumn[ResourceBlueprint, String] = _
@@ -100,7 +99,7 @@ class ImportResourcesManagerController(
       AppSettings.language.getItemOrElse("resourceForm_create_windowTitle", "Create new Resource"),
       newButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory(FXMLPaths.ResourceForm),
+      new ViewFactory[CreateResourceFormController](FXMLPaths.ResourceForm),
       resourceForm))
 
     val ord = resourceForm.waitFormResult //execution thread stops here.
@@ -123,7 +122,7 @@ class ImportResourcesManagerController(
       AppSettings.language.getItemOrElse("resourceForm_edit_windowTitle", "Edit Resource"),
       newButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory(FXMLPaths.ResourceForm),
+      new ViewFactory[EditResourceFormController[_]](FXMLPaths.ResourceForm),
       resourceForm))
 
     //This is fine because EditResourceFormController(resource) specification ensures that

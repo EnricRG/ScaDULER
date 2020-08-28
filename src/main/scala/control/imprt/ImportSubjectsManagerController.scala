@@ -1,7 +1,8 @@
 package control.imprt
 
 import app.FXMLPaths
-import control.form.{SubjectDescriptorFormController, SubjectFormInitializer}
+import control.StageController
+import control.form.{AbstractSubjectFormControllerResult, SubjectDescriptorFormController}
 import factory.ViewFactory
 import file.imprt.MutableImportJob
 import javafx.beans.property.{SimpleIntegerProperty, SimpleStringProperty}
@@ -10,6 +11,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.{Label, TableColumn}
 import javafx.stage.Modality
 import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import model.descriptor.SubjectDescriptor
 import model.{EventType, EventTypes}
 import util.Utils
 
@@ -19,7 +21,8 @@ class ImportSubjectsManagerController(importJobEditorController: ImportJobEditor
                                       editableImportJob: MutableImportJob)
   extends ImportEntityManagerController[SubjectBlueprint]{
 
-  type SFI = SubjectFormInitializer[SubjectBlueprint, CourseBlueprint, ResourceBlueprint, EventBlueprint]
+  //FIXME standardize FormInitializers
+  type SFI = Any //SubjectFormInitializer[SubjectBlueprint, CourseBlueprint, ResourceBlueprint, EventBlueprint]
 
   @FXML var shortNameColumn: TableColumn[SubjectBlueprint, String] = _
   @FXML var courseColumn: TableColumn[SubjectBlueprint, String] = _
@@ -98,13 +101,18 @@ class ImportSubjectsManagerController(importJobEditorController: ImportJobEditor
     promptSubjectForm(Some(sfi))
 
   private def promptSubjectForm(osfi: Option[SFI] = None): Option[SubjectBlueprint] = {
-    val subjectForm = new SubjectDescriptorFormController(editableImportJob.courses, editableImportJob.resources)
+    val subjectForm =
+      new SubjectDescriptorFormController[
+        CourseBlueprint,
+        ResourceBlueprint,
+        SubjectDescriptor[CourseBlueprint, AbstractSubjectFormControllerResult[CourseBlueprint,ResourceBlueprint]#ED]](
+        editableImportJob.courses, editableImportJob.resources)
 
     subjectForm.setStage(Utils.promptBoundWindow(
       language.getItemOrElse("subjectForm_windowTitle", "Create new Subject"),
       newButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory(FXMLPaths.SubjectForm),
+      new ViewFactory[StageController](FXMLPaths.SubjectForm),
       subjectForm))
 
     val osd = subjectForm.waitFormResult
@@ -117,7 +125,7 @@ class ImportSubjectsManagerController(importJobEditorController: ImportJobEditor
       val eventsByType: mutable.Map[EventType, mutable.Set[EventBlueprint]] = new mutable.HashMap
       EventTypes.commonEventTypes.foreach(eventsByType.put(_, new mutable.HashSet))
 
-      osd.get.events.map(ed => {
+      /*osd.get.events.map(ed => {
         val eb = EventBlueprint.fromDescriptor(ed)
 
         eb.subject = sb
@@ -127,7 +135,7 @@ class ImportSubjectsManagerController(importJobEditorController: ImportJobEditor
         sb.events_+=(eb)
 
         eventsByType(eb.eventType) += eb
-      })
+      })*/
 
       //This will not set per event type incompatibilities, only subject ones.
       sb.eventTypeIncompatibilities.foreach(eti => {

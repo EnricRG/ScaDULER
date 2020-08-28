@@ -17,32 +17,6 @@ import util.Utils
 import scala.util.{Failure, Success, Try}
 
 /**
- * Companion object to help on creation of new ResourceFormInitializer instances.
- */
-object ResourceFormInitializer {
-
-  /**
-   * Creates a ResourceFormInitializer given a name, a capacity and a resource availability schedule.
-   * @param name A non-null string for the name.
-   * @param capacity A non-null integer for the capacity.
-   * @param availability A non-null resource schedule for the availability.
-   * @return A new instance of ResourceFormInitializer.
-   */
-  def apply(name: String, capacity: Int, availability: ResourceSchedule) =
-    new ResourceFormInitializer(name, capacity, availability)
-
-  /**
-   * Creates a ResourceFormInitializer instance from the properties of a given resource.
-   * @param resource A non-null resource.
-   * @return A new instance of ResourceFormInitializer built from `resource`'s properties.
-   */
-  def fromResourceLike(resource: ResourceLike): ResourceFormInitializer = {
-    ResourceFormInitializer(resource.name, resource.capacity, resource.availability)
-  }
-
-}
-
-/**
  * Container class to hold the initial values of ResourceFormController fields and variables.
  * Used to initialize content on ResourceFormController fields at controller initialization stage.
  * All fields are optional.
@@ -68,6 +42,32 @@ case class ResourceFormInitializer( name: Option[String],
    */
   def this(name: String, capacity: Int, availability: ResourceSchedule) =
     this(Some(name), Some(capacity), Some(availability))
+}
+
+/**
+ * Companion object to help on creation of new ResourceFormInitializer instances.
+ */
+object ResourceFormInitializer {
+
+  /**
+   * Creates a ResourceFormInitializer given a name, a capacity and a resource availability schedule.
+   * @param name A non-null string for the name.
+   * @param capacity A non-null integer for the capacity.
+   * @param availability A non-null resource schedule for the availability.
+   * @return A new instance of ResourceFormInitializer.
+   */
+  def apply(name: String, capacity: Int, availability: ResourceSchedule) =
+    new ResourceFormInitializer(name, capacity, availability)
+
+  /**
+   * Creates a ResourceFormInitializer instance from the properties of a given resource.
+   * @param resource A non-null resource.
+   * @return A new instance of ResourceFormInitializer built from `resource`'s properties.
+   */
+  def fromResourceLike(resource: ResourceLike): ResourceFormInitializer = {
+    ResourceFormInitializer(resource.name, resource.capacity, resource.availability)
+  }
+
 }
 
 abstract class ResourceFormController[FR](orfi: Option[ResourceFormInitializer] = None)
@@ -110,7 +110,7 @@ abstract class ResourceFormController[FR](orfi: Option[ResourceFormInitializer] 
         "Manage Availability"),
       manageAvailabilityButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory(FXMLPaths.ResourceAvailabilityManager),
+      new ViewFactory[ResourceAvailabilityController](FXMLPaths.ResourceAvailabilityManager),
       controller))
 
     controller
@@ -126,8 +126,6 @@ abstract class ResourceFormController[FR](orfi: Option[ResourceFormInitializer] 
   protected def fillForm(rfi: ResourceFormInitializer): Unit = {
     if (rfi.name.nonEmpty) nameField.setText(rfi.name.get)
     if (rfi.capacity.nonEmpty) capacityField.setText(rfi.capacity.get.toString)
-    //descriptionField.setText(rfi.description)
-    //availability = new ResourceSchedule(rfi.availability) //not needed, done in object initialization stage.
   }
 
   override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
@@ -359,7 +357,7 @@ class EditResourceFormController[R <: ResourceLike](resource: R)
 
     finishFormButton.setOnAction(actionEvent => {
       if (!warnings) { //edit resource from form fields
-        formResult = modifyEntity(resource)
+        formResult = modifyResource(resource)
         close()
       }
       actionEvent.consume()
@@ -382,18 +380,18 @@ class EditResourceFormController[R <: ResourceLike](resource: R)
 
   override def showAndWaitAvailabilityManager(): Unit = {
     super.showAndWaitAvailabilityManager()
-    EditInformation.availabilityChanged = availabilityManagerController.changesMade
+    EditInformation.availabilityChanged = availabilityManagerController.availabilityChanged
   }
 
   /** Entity creation */
 
   //pre: !warnings
   //post: if r has been edited in this form, the result will be Some(r), None otherwise.
-  private def modifyEntity(r: R): Option[R] = {
+  private def modifyResource(r: R): Option[R] = {
 
     if(EditInformation.changed) {
       //Assigning strings directly is faster than checking if there's any change.
-      r.name = nameField.getText
+      r.name = nameField.getText.trim
       r.capacity = getCapacityFieldValue.get
       //r.description = descriptionField.getText
       r.availability = availability //Aliasing is ok, won't be used anymore here.

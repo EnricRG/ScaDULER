@@ -1,7 +1,7 @@
 package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
-import control.form.{AbstractSubjectFormControllerResult, SubjectFormController}
+import control.form.{AbstractSubjectFormControllerResult, CreateEventFormController, SubjectFormController}
 import factory.ViewFactory
 import javafx.stage.Modality
 import model.descriptor.EventDescriptor
@@ -46,8 +46,8 @@ object ScalaMainController {
   private def fromSubjectFormEventDescriptor(s: Option[Subject],
     ed: AbstractSubjectFormControllerResult[Course, Resource]#ED,
     descriptorMapping: Map[AbstractSubjectFormControllerResult[Course, Resource]#ED, Event]
-    ): EventDescriptor[Subject,Course,Resource,Event] =
-  {
+    ): EventDescriptor[Subject,Course,Resource,Event] = {
+
     val descriptor = new EventDescriptor[Subject,Course,Resource,Event]
 
     descriptor.name = ed.name
@@ -68,4 +68,41 @@ object ScalaMainController {
 
     descriptor
   }
+
+  def promptEventForm(mainController: MainController): Unit = {
+    val eventForm = new CreateEventFormController(
+      None, //no initializer
+      MainApp.getDatabase.subjectDatabase.getFinishedSubjects,
+      MainApp.getDatabase.courseDatabase.getCourses,
+      MainApp.getDatabase.resourceDatabase.getElements,
+      MainApp.getDatabase.eventDatabase.getElements
+    )
+
+    eventForm.setStage(Utils.promptBoundWindow(
+      AppSettings.language.getItemOrElse(
+        "eventForm_windowTitle",
+        "New Event"),
+      mainController.addButtons_event.getScene.getWindow,
+      Modality.WINDOW_MODAL,
+      new ViewFactory[StageController](FXMLPaths.EventForm),
+      eventForm
+    ))
+
+    val oed = eventForm.waitFormResult
+
+    if(oed.nonEmpty){
+      val ed = oed.get
+
+      val event = MainApp.getDatabase.eventDatabase.createEvent._2;
+
+      Event.setEventFromDescriptor(event, ed)
+
+      if(ed.subject.nonEmpty){
+        ed.subject.get.events_$plus$eq(event)
+      }
+
+      mainController.addUnassignedEvent(event)
+    }
+  }
+
 }

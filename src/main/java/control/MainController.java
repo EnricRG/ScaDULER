@@ -2,7 +2,6 @@ package control;
 
 import app.*;
 import control.form.CreateCourseFormController;
-import control.form.EventFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
 import control.imprt.mcf.MCFImportErrorViewerController;
@@ -27,7 +26,6 @@ import misc.Selection;
 import misc.Warning;
 import model.*;
 import model.descriptor.CourseDescriptor;
-import model.descriptor.EventDescriptor;
 import model.descriptor.ResourceDescriptor;
 import scala.Option;
 import scala.Tuple2;
@@ -724,36 +722,7 @@ public class MainController extends StageController {
     }
 
     private void promptEventForm() {
-        EventFormController eventForm = new EventFormController(
-            MainApp.getDatabase().subjectDatabase().getFinishedSubjects(),
-            MainApp.getDatabase().courseDatabase().getCourses(),
-            MainApp.getDatabase().resourceDatabase().getElements(),
-            MainApp.getDatabase().eventDatabase().getElements()
-        );
-
-        eventForm.setStage(Utils.promptBoundWindow(
-                AppSettings.language().getItemOrElse("eventForm_windowTitle", "New Event"),
-                addButtons_event.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.EventForm()),
-                eventForm
-        ));
-
-        Option<EventDescriptor<Subject, Course, Resource, Event>> ed = eventForm.waitFormResult();
-
-        if(ed.nonEmpty()){
-            EventDescriptor<Subject, Course, Resource, Event> eventDescriptor = ed.get();
-
-            Event event = MainApp.getDatabase().eventDatabase().createEvent()._2;
-
-            Event.setEventFromDescriptor(event, ed.get());
-
-            if(eventDescriptor.subject().nonEmpty()){
-                eventDescriptor.subject().get().events_$plus$eq(event);
-            }
-
-            addUnassignedEvent(event);
-        }
+        ScalaMainController$.MODULE$.promptEventForm(this);
     }
 
 

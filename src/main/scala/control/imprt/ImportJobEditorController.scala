@@ -36,7 +36,8 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
   private val coursesController: ImportCoursesManagerController =
     new ImportCoursesManagerController(this, editableImportJob)
 
-  private val eventsController: ImportEventsManagerController = new ImportEventsManagerController
+  private val eventsController: ImportEventsManagerController =
+    new ImportEventsManagerController(this, editableImportJob)
 
   private val resourcesController: ImportResourcesManagerController =
     new ImportResourcesManagerController(this, editableImportJob)
@@ -102,6 +103,21 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
       //Remove all subjects and events happening on this course.
     //Else
       //Set all subjects and events that happen in this course to have no course.
+
+    val affectedSubjects = editableImportJob.subjects.filter(sb => sb.course.nonEmpty && sb.course.get == cb)
+
+    if(hardDelete) {
+      //affectedSubjects.foreach(removeSubject)
+
+      val remainingAffectedEvents = editableImportJob.events.filter(eb => eb.course.nonEmpty && eb.course.get == cb)
+
+      //remainingAffectedEvents.foreach(removeEvent)
+    }
+    else {
+      affectedSubjects.foreach(sb => {
+
+      })
+    }
   }
 
   def notifyResourceDeletion(rb: ResourceBlueprint, hardDelete: Boolean = false): Unit = {

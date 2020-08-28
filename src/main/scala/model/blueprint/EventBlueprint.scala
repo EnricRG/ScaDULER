@@ -18,8 +18,14 @@ class EventBlueprint
 }
 
 object EventBlueprint {
-  //Sets only non generic fields
-  def fromDescriptor(ed: EventDescriptor[_,_,_,_]): EventBlueprint = {
+
+  //To reduce verbosity
+  type SB = SubjectBlueprint
+  type CB = CourseBlueprint
+  type RB = ResourceBlueprint
+  type EB = EventBlueprint
+
+  def fromDescriptor(ed: EventDescriptor[SB,CB,RB,EB]): EventBlueprint = {
     val eb = new EventBlueprint
 
     eb.name = ed.name
@@ -29,12 +35,13 @@ object EventBlueprint {
     eb.duration = ed.duration
     eb.periodicity = ed.periodicity
 
-    //eb.subject = ed.subject
-    //eb.course = ed.course
+    eb.subject = ed.subject
+    eb.course = ed.course
     eb.quarter = ed.quarter
-    //eb.neededResource = ed.neededResource
+    eb.neededResource = ed.neededResource
 
-    //ed.incompatibilities.foreach(eb.addIncompatibility)
+    ed.incompatibilities.foreach(eb.addIncompatibility)
+
     eb
   }
 }

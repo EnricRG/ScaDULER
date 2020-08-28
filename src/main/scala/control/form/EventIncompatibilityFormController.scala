@@ -1,7 +1,6 @@
 package control.form
 
 import java.net.URL
-import java.util
 import java.util.ResourceBundle
 
 import app.AppSettings
@@ -12,12 +11,13 @@ import javafx.fxml.FXML
 import javafx.scene.control._
 import model.EventLike
 
-import scala.collection.JavaConverters
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.{JavaConverters, mutable}
 
+//constructor pre: `events` contains all `incompatibilities` elements.
 class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
-  incompatibilities: ArrayBuffer[E],
-  events: Iterable[E]) extends StageController {
+  incompatibilities: Iterable[E],
+  events: Iterable[E])
+  extends StageController {
 
   @FXML var assignedIncompatibilitiesTag: Label = _
   @FXML var incompatibilityTable: TableView[E] = _
@@ -33,11 +33,30 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   @FXML var generalEventTable_nameColumn: TableColumn[E, String] = _
   @FXML var selectAllUnassigned: Button = _
 
-  private val allEvents: util.ArrayList[E] = {
-    val x = new util.ArrayList(JavaConverters.asJavaCollection(events))
-    x.removeAll(JavaConverters.asJavaCollection(incompatibilities))
-    x
+  private val _incompatibilities: mutable.HashSet[E] = {
+    val hashSet = new mutable.HashSet[E]
+
+    hashSet ++= incompatibilities
+
+    hashSet
   }
+
+  private val _newIncompatibilities: mutable.HashSet[E] =
+    new mutable.HashSet[E]
+
+  private val _removedIncompatibilities: mutable.HashSet[E] =
+    new mutable.HashSet[E]
+
+  private val _allEvents: mutable.HashSet[E] = {
+    val hashSet = new mutable.HashSet[E]
+
+    hashSet ++= events
+    hashSet --= incompatibilities
+
+    hashSet
+  }
+
+  private var _edited: Boolean = false
 
   override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
     initializeContentLanguage()
@@ -100,12 +119,16 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
       else new SimpleStringProperty()
     })
 
-    incompatibilityTable.getItems.addAll(JavaConverters.asJavaCollection(incompatibilities))
-    generalEventTable.getItems.addAll(allEvents)
+    incompatibilityTable.setItems(FXCollections.observableArrayList(
+      JavaConverters.asJavaCollection(incompatibilities)))
+
+    generalEventTable.setItems(FXCollections.observableArrayList(
+      JavaConverters.asJavaCollection(_allEvents)))
   }
 
   private def filterGeneralEventTable(text: String): Unit = {
-    val filteredResources: ObservableList[E] = FXCollections.observableArrayList(allEvents)
+    val filteredResources: ObservableList[E] =
+      FXCollections.observableArrayList(JavaConverters.asJavaCollection(_allEvents))
 
     //if search field is not blank, remove all rows that event's name does not contain field's content as a substring
     if (!text.trim.isEmpty) filteredResources.removeIf(
@@ -128,10 +151,12 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
     })
     addButton.setOnAction( actionEvent => {
       addSelectedIncompatibilities()
+      _edited = true
       actionEvent.consume()
     })
     removeButton.setOnAction( actionEvent => {
       removeSelectedIncompatibilities()
+      _edited = true
       actionEvent.consume()
     })
   }
@@ -139,10 +164,10 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   private def addSelectedIncompatibilities(): Unit = {
     val selection: ObservableList[E] = generalEventTable.getSelectionModel.getSelectedItems
 
-    allEvents.removeAll(selection)
+    _allEvents --= JavaConverters.collectionAsScalaIterable(selection)
+    _newIncompatibilities ++= JavaConverters.collectionAsScalaIterable(selection)
 
     incompatibilityTable.getItems.addAll(selection)
-    incompatibilities ++= JavaConverters.collectionAsScalaIterable(selection)
 
     filterGeneralEventTable(eventSearchBox.getText.trim)
   }
@@ -150,12 +175,20 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   private def removeSelectedIncompatibilities(): Unit = {
     val selection: ObservableList[E] = incompatibilityTable.getSelectionModel.getSelectedItems
 
-    allEvents.addAll(selection)
+    _allEvents ++= JavaConverters.collectionAsScalaIterable(selection)
+    _removedIncompatibilities ++= JavaConverters.collectionAsScalaIterable(selection)
 
-    incompatibilities --= JavaConverters.collectionAsScalaIterable(selection)
     incompatibilityTable.getItems.removeAll(selection)
 
     filterGeneralEventTable(eventSearchBox.getText.trim)
   }
+
+  def incompatibilitiesChanged: Boolean =
+    _edited && (_newIncompatibilities.nonEmpty || _removedIncompatibilities.nonEmpty)
+
+  //first element of the pair contains newly added incompatibilities,
+  //second element contains the removed ones (present at form start and not present on form finish).
+  def incompatibilities: (Iterable[E], Iterable[E]) =
+    (_newIncompatibilities -- incompatibilities, _removedIncompatibilities -- incompatibilities)
 }
 
