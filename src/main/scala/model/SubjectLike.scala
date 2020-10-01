@@ -20,20 +20,25 @@ trait SubjectLike[
   def description_=(s: String): Unit
 
   def color: Option[Color]
+  def color_=(oc: Option[Color]): Unit
   def color_=(c: Color): Unit
   def hasColor: Boolean
 
   def course: Option[C]
+  def course_=(oc: Option[C]): Unit
   def course_=(c: C): Unit
   def hasCourse: Boolean
 
   def quarter: Option[Quarter]
+  def quarter_=(oq: Option[Quarter]): Unit
   def quarter_=(q: Quarter): Unit
   def hasQuarter: Boolean
 
   def events: Iterable[E]
   def events_+=(e: E): Unit
   def events_-=(e: E): Unit
+  def events_++=(es: TraversableOnce[E]): Unit
+  def events_--=(es: TraversableOnce[E]): Unit
 
   def getAdditionalField(f: String): Option[String]
   def updateAdditionalField(f: String, v: String): Unit
@@ -88,8 +93,8 @@ trait SubjectLikeImpl[
   def events: Iterable[E] = _events
   def events_+=(e: E): Unit = _events.add(e)
   def events_-=(e: E): Unit = _events.remove(e)
-  def events_++=(es: Traversable[E]): Unit = _events ++= es
-  def events_--=(es: Traversable[E]): Unit = _events --= es
+  def events_++=(es: TraversableOnce[E]): Unit = _events ++= es
+  def events_--=(es: TraversableOnce[E]): Unit = _events --= es
 
   def getAdditionalField(f: String): Option[String] = _additionalInformation.get(f)
   def updateAdditionalField(f: String, v: Any): Unit = _additionalInformation.update(f, v.toString)

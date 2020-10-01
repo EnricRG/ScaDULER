@@ -4,10 +4,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-
 
 <HBox fx:id="mainBox" maxHeight="150.0" maxWidth="1.7976931348623157E308" minHeight="150.0" minWidth="650.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -51,7 +50,7 @@
                         <Insets right="5.0" />
                      </padding>
                   </Label>
-                  <Pane fx:id="colorPane" prefWidth="15.0" />
+                  <FlowPane fx:id="colorFrame" prefWidth="40.0" />
                </children>
             </HBox>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="2.0">
@@ -71,7 +70,4 @@
          </children>
       </VBox>
    </children>
-   <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-   </padding>
 </HBox>

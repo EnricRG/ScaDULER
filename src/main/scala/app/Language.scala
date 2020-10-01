@@ -6,7 +6,7 @@ class Language(val items: Map[String,String]) {
     final val ItemNotFound = "???"
 
     def this(asset: List[(String, String)]) = this(asset.toMap)
-    def this() = this(List())
+    def this() = this(Nil)
 
     def getItem(key: String): String = items.getOrElse(key, ItemNotFound)
     def getItemOrElse(key: String, default: String): String = items.getOrElse(key, default)

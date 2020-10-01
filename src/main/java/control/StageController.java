@@ -4,7 +4,7 @@ import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 
 /** Base class for controllers that control a Stage. */
-public abstract class StageController implements Initializable{
+public abstract class StageController implements Initializable {
 
     /** Controlled Stage. */
     protected Stage stage = null;

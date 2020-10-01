@@ -117,6 +117,7 @@ abstract class ImportEntityManagerController[E] extends Controller {
 
   private def selectEntity(entity: E): Unit = {
     table.getSelectionModel.clearSelection()
+    table.scrollTo(entity)
     table.getSelectionModel.select(entity)
   }
 

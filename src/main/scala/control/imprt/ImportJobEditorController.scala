@@ -95,47 +95,58 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
     editableImportJob.events += eb
   }
 
+  def notifySubjectEventsCreation(ebs: Iterable[EventBlueprint]): Unit = {
+    editableImportJob.events ++= ebs
+    eventsController.addEvents(ebs)
+  }
+
   /** entity deletion notifiers */
 
   def notifyCourseDeletion(cb: CourseBlueprint, hardDelete: Boolean = false): Unit = {
-    //TODO implement
-    //If hard delete
-      //Remove all subjects and events happening on this course.
-    //Else
-      //Set all subjects and events that happen in this course to have no course.
-
-    val affectedSubjects = editableImportJob.subjects.filter(sb => sb.course.nonEmpty && sb.course.get == cb)
+    val affectedSubjects = editableImportJob.subjects.filter(sb => sb.course.contains(cb))
+    val otherAffectedEvents = editableImportJob.events.filter(e=> e.subject.isEmpty && e.course.contains(cb))
 
     if(hardDelete) {
-      //affectedSubjects.foreach(removeSubject)
-
-      val remainingAffectedEvents = editableImportJob.events.filter(eb => eb.course.nonEmpty && eb.course.get == cb)
-
-      //remainingAffectedEvents.foreach(removeEvent)
-    }
-    else {
+      affectedSubjects.foreach(notifySubjectDeletion)
+      notifyEventsDeletion(otherAffectedEvents)
+    } else {
       affectedSubjects.foreach(sb => {
-
+        sb.course = None
+        sb.events.foreach(_.course = None)
       })
+
+      otherAffectedEvents.foreach(_.course = None)
     }
   }
 
   def notifyResourceDeletion(rb: ResourceBlueprint, hardDelete: Boolean = false): Unit = {
-    //TODO implement
-    //If hard delete
-    //Remove all events depending on this resource.
-    //Else
-    //Set all events depending on this resource to have no resource.
+    val affectedEvents = editableImportJob.events.filter(_.neededResource.contains(rb))
+
+    if(hardDelete){
+      notifyEventsDeletion(affectedEvents)
+    }
+    else {
+      affectedEvents.foreach(_.neededResource = None)
+    }
+
+    editableImportJob.resources -= rb
   }
 
   def notifySubjectDeletion(sb: SubjectBlueprint): Unit = {
-    //TODO implement
-    //remove all incompatibilities to ensure correct garbage collection
+    notifyEventsDeletion(sb.events)
+
+    editableImportJob.subjects -= sb
   }
 
   def notifyEventDeletion(eb: EventBlueprint): Unit = {
-    //TODO implement
-    //remove all incompatibilities to ensure correct garbage collection
+    eb.incompatibilities.foreach(eb.removeIncompatibility)
+
+    editableImportJob.events -= eb
+    eventsController.removeEvent(eb)
+  }
+
+  def notifyEventsDeletion(ebs: Iterable[EventBlueprint]): Unit = {
+    ebs.foreach(notifyEventDeletion)
   }
 
   def getImportJob: ImportJob = editableImportJob.toImportJob

@@ -1,5 +1,6 @@
 package model.blueprint
 
+import control.form.SubjectLikeFormEventDescriptor
 import model.EventLikeImpl
 import model.descriptor.EventDescriptor
 
@@ -25,7 +26,24 @@ object EventBlueprint {
   type RB = ResourceBlueprint
   type EB = EventBlueprint
 
-  def fromDescriptor(ed: EventDescriptor[SB,CB,RB,EB]): EventBlueprint = {
+  def fromSubjectLikeFormDescriptor(ed: SubjectLikeFormEventDescriptor[CB,RB]): EB = {
+    val eb = new EventBlueprint
+
+    eb.name = ed.name
+    eb.shortName = ed.shortName
+    eb.description = ed.description
+    eb.eventType = ed.eventType
+    eb.duration = ed.duration
+    eb.periodicity = ed.periodicity
+
+    eb.course = ed.course
+    eb.quarter = ed.quarter
+    eb.neededResource = ed.neededResource
+
+    eb
+  }
+
+  def fromBlueprintDescriptor(ed: EventDescriptor[SB,CB,RB,EB]): EventBlueprint = {
     val eb = new EventBlueprint
 
     eb.name = ed.name

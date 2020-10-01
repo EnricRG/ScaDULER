@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -16,17 +17,26 @@
          <children>
             <VBox alignment="TOP_CENTER" spacing="5.0">
                <children>
-                  <Label fx:id="courseNameTag" text="Course name: " />
-                  <TextField fx:id="courseNameField" maxHeight="-Infinity" maxWidth="-Infinity" promptText="Full Course name" VBox.vgrow="NEVER" />
+                  <Label fx:id="nameTag" text="Course name: " />
+                  <TextField fx:id="nameField" maxHeight="-Infinity" maxWidth="-Infinity" promptText="Full Course name" VBox.vgrow="NEVER">
+                     <tooltip>
+                        <Tooltip fx:id="nameFieldTooltip" text="A name to identify this course. Format: a string of characters." />
+                     </tooltip></TextField>
                </children>
             </VBox>
          </children>
       </HBox>
       <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
-            <Label fx:id="courseDescriptionTag" text="Course description (Optional): " />
-            <TextArea fx:id="courseDescriptionField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Enter a course description" VBox.vgrow="ALWAYS" />
-            <CheckBox fx:id="descriptionWrapCheckBox" alignment="CENTER" mnemonicParsing="false" text="Wrap Text" />
+            <Label fx:id="descriptionTag" text="Course description (Optional): " />
+            <TextArea fx:id="descriptionField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Enter a course description" VBox.vgrow="ALWAYS">
+               <tooltip>
+                  <Tooltip fx:id="descriptionFieldTooltip" text="A description about this course. Format: a string of characters." />
+               </tooltip></TextArea>
+            <CheckBox fx:id="descriptionWrapCheckBox" alignment="CENTER" mnemonicParsing="false" text="Wrap Text">
+               <tooltip>
+                  <Tooltip fx:id="descriptionWrapCheckBoxTooltip" maxWidth="500.0" text="When checked, the text inside the description field will wrap around the edges of the box containing it and jump to next line (without inserting jump characters)." textAlignment="JUSTIFY" wrapText="true" />
+               </tooltip></CheckBox>
          </children>
       </VBox>
       <VBox alignment="TOP_CENTER" spacing="2.0">
@@ -45,6 +55,9 @@
                      <font>
                         <Font size="18.0" />
                      </font>
+                     <tooltip>
+                        <Tooltip fx:id="finishFormButtonTooltip" maxWidth="500.0" text="Click this button to finish this form. To cancel it, close this window instead." />
+                     </tooltip>
                   </Button>
                </children>
                <VBox.margin>

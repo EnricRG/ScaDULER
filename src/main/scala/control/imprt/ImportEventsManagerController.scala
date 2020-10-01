@@ -14,6 +14,8 @@ import misc.Duration
 import model.blueprint.EventBlueprint
 import util.Utils
 
+import scala.collection.JavaConverters
+
 class ImportEventsManagerController( importJobEditorController: ImportJobEditorController,
                                      editableImportJob: MutableImportJob             )
   extends ImportEntityManagerController[EventBlueprint]{
@@ -126,6 +128,20 @@ class ImportEventsManagerController( importJobEditorController: ImportJobEditorC
     table.getSortOrder.add(shortNameColumn.asInstanceOf[TableColumn[EventBlueprint, _]])
   }
 
+  def addEvent(eb: EventBlueprint): Unit = {
+    table.getItems.add(eb)
+    table.sort()
+  }
+
+  def addEvents(ebs: Iterable[EventBlueprint]): Unit = {
+    table.getItems.addAll(JavaConverters.asJavaCollection(ebs))
+    table.sort()
+  }
+
+  def removeEvent(eb: EventBlueprint): Unit = {
+    table.getItems.remove(eb)
+  }
+
   override def newEntity: Option[EventBlueprint] = {
     val neb = promptNewEventForm
 
@@ -136,7 +152,6 @@ class ImportEventsManagerController( importJobEditorController: ImportJobEditorC
 
   private def promptNewEventForm: Option[EventBlueprint] = {
     val eventForm = new CreateEventFormController(
-      None,
       editableImportJob.subjects,
       editableImportJob.courses,
       editableImportJob.resources,
@@ -152,7 +167,7 @@ class ImportEventsManagerController( importJobEditorController: ImportJobEditorC
     val oed = eventForm.waitFormResult
 
     if(oed.nonEmpty) {
-      Some(EventBlueprint.fromDescriptor(oed.get))
+      Some(EventBlueprint.fromBlueprintDescriptor(oed.get))
     }
     else
       None
@@ -164,11 +179,11 @@ class ImportEventsManagerController( importJobEditorController: ImportJobEditorC
 
   private def promptEditEventForm(entity: EventBlueprint): Option[EventBlueprint] = {
     val eventForm = new EditEventLikeFormController(
-      entity,
       editableImportJob.subjects,
       editableImportJob.courses,
       editableImportJob.resources,
-      editableImportJob.events)
+      editableImportJob.events,
+      entity)
 
     eventForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItemOrElse("eventForm_edit_windowTitle", "Edit Event"),

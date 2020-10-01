@@ -28,7 +28,7 @@
       </HBox>
       <HBox>
          <children>
-            <Label fx:id="subjectTag" text="Subject" />
+            <Label fx:id="subjectNameTag" text="Subject" />
             <Label layoutX="10.0" layoutY="10.0" text=":">
                <HBox.margin>
                   <Insets right="5.0" />

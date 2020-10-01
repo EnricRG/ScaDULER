@@ -105,7 +105,7 @@ class MCFImportReader(file: File) extends ImportReader {
     val shared = values.apply(17).trim
 
     if(emptyShortName || emptyName || emptyCourse || emptySemester) {
-      LineImportJob(null, List(), null, null, errors.toList, finished = false)
+      LineImportJob(null, Nil, null, null, errors.toList, finished = false)
     }
     else{
       val subjectEntity = new SubjectBlueprint
@@ -128,7 +128,7 @@ class MCFImportReader(file: File) extends ImportReader {
       subjectEntity.updateAdditionalField("cgg", cgg)
       subjectEntity.updateAdditionalField("cgm", cgm)
       subjectEntity.updateAdditionalField("cgp", cgp)
-      subjectEntity.updateAdditionalField("shared", shared)
+      if(shared.nonEmpty) subjectEntity.updateAdditionalField("shared", shared)
 
       val resourceEntity = if (emptyHgp) None else Some(createdResources.get(resourceName) match {
         case Some(r) => r
@@ -148,21 +148,21 @@ class MCFImportReader(file: File) extends ImportReader {
         (1 to ngg).flatMap(n => hgg.indices.flatMap(number => generateEvents(subjectEntity, TheoryEvent,
           hgg.apply(number)._1, hgg.apply(number)._2, None, n, n))).toList
       }
-      else if (hgg.isEmpty) List()
+      else if (hgg.isEmpty) Nil
       else generateEvents(subjectEntity, TheoryEvent, hgg.head._1, hgg.head._2, None, 1, ngg)
 
       val problemsEvents: List[EventBlueprint] = if(hgm.length > 1){
         (1 to ngm).flatMap(n => hgm.indices.flatMap(number => generateEvents(subjectEntity, ProblemsEvent,
           hgm.apply(number)._1, hgm.apply(number)._2, None, number+1, number+1))).toList
       }
-      else if (hgm.isEmpty) List()
+      else if (hgm.isEmpty) Nil
       else generateEvents(subjectEntity, ProblemsEvent, hgm.head._1, hgm.head._2, None, 1, ngm)
 
       val labEvents: List[EventBlueprint] = if(hgp.length > 1){
         (1 to ngp).flatMap(n => hgp.indices.flatMap(number => generateEvents(subjectEntity, LaboratoryEvent,
           hgp.apply(number)._1, hgp.apply(number)._2, resourceEntity, number+1, number+1))).toList
       }
-      else if (hgp.isEmpty) List()
+      else if (hgp.isEmpty) Nil
       else generateEvents(subjectEntity, LaboratoryEvent, hgp.head._1, hgp.head._2, resourceEntity, 1, ngp)
 
       subjectEntity.events_++=(theoryEvents ++ problemsEvents ++ labEvents)
@@ -221,13 +221,13 @@ class MCFImportReader(file: File) extends ImportReader {
   //returns (hg values, errors, hgg.isEffectivelyEmpty)
   def getHg(rawHg: String, row: Int, fieldNumber: Int, header: String): (List[(Int, Int)], List[ImportError], Boolean) = {
     if (rawHg.isEmpty)
-      (List(), List(), true)
+      (Nil, Nil, true)
     else{
       val parsedHgg = parseHGField(rawHg, row, 5, header)
       if(parsedHgg._2.nonEmpty)
-        (List(), parsedHgg._2, true)
+        (Nil, parsedHgg._2, true)
       else
-        (parsedHgg._1, List(), false)
+        (parsedHgg._1, Nil, false)
     }
   }
 
@@ -333,7 +333,7 @@ class MCFImportReader(file: File) extends ImportReader {
       })
       events.toList
     }
-    else List()
+    else Nil
   }
 
   def flattenImportJobs(lineImportJobs: List[LineImportJob]): ImportJob = {

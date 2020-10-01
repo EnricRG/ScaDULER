@@ -8,7 +8,7 @@ object FXMLPaths {
 
   val CourseForm: String = "src/main/fxml/form/course_form.fxml"
   val SubjectForm: String = "src/main/fxml/form/subject_form.fxml"
-  val SubjectIncompatibilityForm = "src/main/fxml/form/subject_event_incompatibility_manager.fxml"
+  val SubjectEventIncompatibilityForm = "src/main/fxml/form/subject_event_incompatibility_manager.fxml"
   val EventForm: String = "src/main/fxml/form/event_form.fxml"
   val EventIncompatibilityFrom: String = "src/main/fxml/form/event_incompatibility_manager.fxml"
   val ResourceForm: String = "src/main/fxml/form/resource_form.fxml"

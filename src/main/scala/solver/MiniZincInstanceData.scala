@@ -162,8 +162,8 @@ object MiniZincInstance{
         val predefinedWeekEventNumbers = preassignedEventNumbers
         val predefinedEventWeek = preassignedEventsAux.map(e => parseWeek(e.week.orNull)) ++ resourceAvailabilityFillerAux.predefinedEventWeek
         val nPrecedences = 0
-        val predecessors = List()
-        val successors = List()
+        val predecessors = Nil
+        val successors = Nil
 
         val totalEventExclusions = (for(e1 <- 0 until nEvents) yield (for(e2 <- 0 until nEvents) yield if(e1 < instance.nEvents && e2 < instance.nEvents) eventExclusions(e1)(e2) else false).toList).toList
 

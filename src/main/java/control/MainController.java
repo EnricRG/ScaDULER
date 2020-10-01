@@ -1,7 +1,7 @@
 package control;
 
 import app.*;
-import control.form.CreateCourseFormController;
+import control.form.CreateCourseLikeFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
 import control.imprt.mcf.MCFImportErrorViewerController;
@@ -576,9 +576,7 @@ public class MainController extends StageController {
         stage.setResizable(false);
         controller.setStage(stage);
 
-        controller.showAndWait();
-
-        return controller.getImportJob();
+        return controller.waitForImportJob();
     }
 
     private void showMCFErrors(scala.collection.immutable.List<MCFImportError> errors) {
@@ -699,7 +697,7 @@ public class MainController extends StageController {
 
 
     private void promptCourseForm() {
-        CreateCourseFormController courseForm = new CreateCourseFormController(Option.empty());
+        CreateCourseLikeFormController courseForm = new CreateCourseLikeFormController(Option.empty());
 
         courseForm.setStage(Utils.promptBoundWindow(
             AppSettings.language().getItemOrElse("courseForm_windowTitle", "Create new Course"),

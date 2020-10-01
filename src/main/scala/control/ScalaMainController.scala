@@ -1,7 +1,7 @@
 package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
-import control.form.{AbstractSubjectFormControllerResult, CreateEventFormController, SubjectFormController}
+import control.form.{CreateEventFormController, CreateSubjectLikeFormController, SubjectLikeForm}
 import factory.ViewFactory
 import javafx.stage.Modality
 import model.descriptor.EventDescriptor
@@ -10,7 +10,7 @@ import util.Utils
 
 object ScalaMainController {
   def promptSubjectForm(mc: MainController): Unit = {
-    val subjectForm = new SubjectFormController(
+    val subjectForm = new CreateSubjectLikeFormController(
       MainApp.getDatabase.courseDatabase.getCourses,
       MainApp.getDatabase.resourceDatabase.getElements)
 
@@ -18,7 +18,7 @@ object ScalaMainController {
       AppSettings.language.getItem("subjectForm_windowTitle"),
       mc.addButtons_subject.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory[SubjectFormController](FXMLPaths.SubjectForm),
+      new ViewFactory(FXMLPaths.SubjectForm),
       subjectForm))
 
     val osd = subjectForm.waitFormResult
@@ -37,6 +37,13 @@ object ScalaMainController {
         descriptorMap.values
       }
 
+      val eventsByType = events.groupBy(_.eventType)
+
+      sd.eventTypeIncompatibilities.foreach(eti =>
+        eventsByType.getOrElse(eti.getFirstType, Nil).foreach(e1 =>
+          eventsByType.getOrElse(eti.getSecondType, Nil).foreach(e2 =>
+            e1.addIncompatibility(e2))))
+
       Subject.setSubjectFromDescriptor(subject,sd,events)
       MainApp.getDatabase.subjectDatabase.setAsFinished(sid)
       events.foreach(mc.addUnassignedEvent)
@@ -44,8 +51,8 @@ object ScalaMainController {
   }
 
   private def fromSubjectFormEventDescriptor(s: Option[Subject],
-    ed: AbstractSubjectFormControllerResult[Course, Resource]#ED,
-    descriptorMapping: Map[AbstractSubjectFormControllerResult[Course, Resource]#ED, Event]
+    ed: SubjectLikeForm[Course, Resource]#ED,
+    descriptorMapping: Map[SubjectLikeForm[Course, Resource]#ED, Event]
     ): EventDescriptor[Subject,Course,Resource,Event] = {
 
     val descriptor = new EventDescriptor[Subject,Course,Resource,Event]
@@ -71,12 +78,10 @@ object ScalaMainController {
 
   def promptEventForm(mainController: MainController): Unit = {
     val eventForm = new CreateEventFormController(
-      None, //no initializer
       MainApp.getDatabase.subjectDatabase.getFinishedSubjects,
       MainApp.getDatabase.courseDatabase.getCourses,
       MainApp.getDatabase.resourceDatabase.getElements,
-      MainApp.getDatabase.eventDatabase.getElements
-    )
+      MainApp.getDatabase.eventDatabase.getElements)
 
     eventForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItemOrElse(

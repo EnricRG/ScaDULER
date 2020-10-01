@@ -17,14 +17,13 @@ class SubjectBlueprint
   extends SubjectLikeImpl[SubjectBlueprint, CourseBlueprint, ResourceBlueprint, EventBlueprint] { }
 
 object SubjectBlueprint{
-
-  //Sets only non generic fields
-  def fromDescriptor(sd: SubjectDescriptor[_, _]): SubjectBlueprint = {
+  
+  def fromDescriptorWithoutEvents(sd: SubjectDescriptor[CourseBlueprint, _]): SubjectBlueprint = {
     val sb = new SubjectBlueprint
     sb.name = sd.name
     sb.shortName = sd.shortName
     sb.description = sd.description
-    //sb.course = sd.course
+    sb.course = sd.course
     sb.quarter = sd.quarter
     sb.color = sd.color
     //sb.events_++=(sd.events)

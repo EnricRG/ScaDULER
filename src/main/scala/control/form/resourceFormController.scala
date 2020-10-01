@@ -70,7 +70,7 @@ object ResourceFormInitializer {
 
 }
 
-abstract class ResourceFormController[FR](orfi: Option[ResourceFormInitializer] = None)
+abstract class ResourceFormController[FR](formInitializer: Option[ResourceFormInitializer])
   extends FormController[FR] {
 
   /** Form fields. Store basic user input information */
@@ -98,8 +98,10 @@ abstract class ResourceFormController[FR](orfi: Option[ResourceFormInitializer] 
   /** Local form variables. Store information beyond simple fields */
 
   protected val availability: ResourceSchedule =
-    if(orfi.nonEmpty && orfi.get.availability.nonEmpty) new ResourceSchedule(orfi.get.availability.get)
-    else ResourceSchedule.newDefaultSchedule
+    if(formInitializer.nonEmpty && formInitializer.get.availability.nonEmpty)
+      new ResourceSchedule(formInitializer.get.availability.get)
+    else
+      ResourceSchedule.newDefaultSchedule
 
   protected lazy val availabilityManagerController: ResourceAvailabilityController = {
     val controller = new ResourceAvailabilityController(availability)
@@ -118,19 +120,21 @@ abstract class ResourceFormController[FR](orfi: Option[ResourceFormInitializer] 
 
   /** Constructors and Initializers */
 
-  def this(rfi: Option[ResourceFormInitializer], stage: Stage) = {
-    this(rfi)
+  def this() = this(None)
+
+  def this(stage: Stage, formInitializer: Option[ResourceFormInitializer] = None) = {
+    this(formInitializer)
     setStage(stage)
   }
 
-  protected def fillForm(rfi: ResourceFormInitializer): Unit = {
-    if (rfi.name.nonEmpty) nameField.setText(rfi.name.get)
-    if (rfi.capacity.nonEmpty) capacityField.setText(rfi.capacity.get.toString)
+  protected def fillForm(formInitializer: ResourceFormInitializer): Unit = {
+    if (formInitializer.name.nonEmpty) nameField.setText(formInitializer.name.get)
+    if (formInitializer.capacity.nonEmpty) capacityField.setText(formInitializer.capacity.get.toString)
   }
 
   override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
     super.initialize(url, resourceBundle)
-    if(orfi.nonEmpty) fillForm(orfi.get)
+    if(formInitializer.nonEmpty) fillForm(formInitializer.get)
   }
 
   override protected def initializeContentLanguage(): Unit = {
@@ -273,8 +277,8 @@ abstract class ResourceFormController[FR](orfi: Option[ResourceFormInitializer] 
 
 }
 
-class CreateResourceFormController(orfi: Option[ResourceFormInitializer] = None)
-  extends ResourceFormController[ResourceDescriptor](orfi) {
+class CreateResourceFormController(formInitializer: Option[ResourceFormInitializer] = None)
+  extends ResourceFormController[ResourceDescriptor](formInitializer) {
 
   /** Initializers */
 

@@ -1,7 +1,7 @@
 package control.imprt
 
 import app.{AppSettings, FXMLPaths}
-import control.form.{CreateCourseFormController, EditCourseFormController}
+import control.form.{CreateCourseLikeFormController, EditCourseLikeFormController}
 import factory.ViewFactory
 import file.imprt.MutableImportJob
 import javafx.beans.property.SimpleStringProperty
@@ -60,13 +60,13 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
   }
 
   private def promptNewCourseForm: Option[CourseBlueprint] = {
-    val courseForm = new CreateCourseFormController()
+    val courseForm = new CreateCourseLikeFormController()
 
     courseForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItemOrElse("courseForm_windowTitle", "Create new Course"),
       newButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory[CreateCourseFormController](FXMLPaths.CourseForm),
+      new ViewFactory[CreateCourseLikeFormController](FXMLPaths.CourseForm),
       courseForm))
 
     val ocd = courseForm.waitFormResult
@@ -84,17 +84,17 @@ class ImportCoursesManagerController(importJobEditorController: ImportJobEditorC
   }
 
   private def promptEditCourseForm(course: CourseBlueprint): Option[CourseBlueprint] = {
-    val courseForm = new EditCourseFormController(course)
+    val courseForm = new EditCourseLikeFormController(course)
 
     courseForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItemOrElse("courseForm_edit_windowTitle", "Edit Course"),
       newButton.getScene.getWindow,
       Modality.WINDOW_MODAL,
-      new ViewFactory[EditCourseFormController[CourseBlueprint]](FXMLPaths.CourseForm),
+      new ViewFactory[EditCourseLikeFormController[CourseBlueprint]](FXMLPaths.CourseForm),
       courseForm))
 
-    //This is fine because EditCourseFormController(course) specification ensures that if the form result is Some(x),
-    //x == course, and that's what we want.
+    //This is fine because EditCourseLikeFormController(course) specification ensures that if the form result is
+    //Some(x), x == course, and that's what we want.
     courseForm.waitFormResult //execution thread stops here.
   }
 

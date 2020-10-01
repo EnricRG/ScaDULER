@@ -14,7 +14,7 @@
    <children>
       <BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="700.0" VBox.vgrow="ALWAYS">
          <center>
-            <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="510.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                <tabs>
                   <Tab fx:id="subjectsTab" closable="false" text="Subjects" />
                   <Tab fx:id="coursesTab" closable="false" text="Courses" />
@@ -25,7 +25,7 @@
          </center>
       </BorderPane>
       <Separator />
-      <HBox alignment="TOP_CENTER" maxHeight="-Infinity" minHeight="-Infinity" spacing="50.0">
+      <HBox alignment="TOP_CENTER" maxHeight="-Infinity" spacing="50.0">
          <children>
             <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel and undo changes">
                <font>

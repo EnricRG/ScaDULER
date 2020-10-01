@@ -76,20 +76,21 @@ object EventLikeFormInitializer {
   }
 }
 
-//invariant: if present, `oefi`'s fields have to meet this requirements:
-//           - `course` has to be part of `courses`
-//           - `subject` has to be part of `subject`
-//           - `resource` has to be part of `resources`
-//           - all `incompatibilities`' elements have to be part of `events`
-abstract class EventLikeFormController[FR,
+//constructor pre: if present, `formInitializer`'s fields have to meet this requirements:
+// - `course` has to be part of `courses`
+// - `subject` has to be part of `subject`
+// - `resource` has to be part of `resources`
+// - all `incompatibilities`' elements have to be part of `events`
+abstract class EventLikeFormController[
+  FR,
   S >: Null <: SubjectLike[S,C,R,E],
   C <: CourseLike,
   R >: Null <: ResourceLike,
-  E <: EventLike[S,C,R,E]](oefi: Option[EventLikeFormInitializer[S,C,R,E]] = None,
-                           subjects: Iterable[S],
+  E <: EventLike[S,C,R,E]](subjects: Iterable[S],
                            courses: Iterable[C],
                            resources: Iterable[R],
-                           events: Iterable[E])
+                           events: Iterable[E],
+                           formInitializer: Option[EventLikeFormInitializer[S,C,R,E]])
   extends FormController[FR] {
 
   /** Form fields. Store basic user input information */
@@ -135,13 +136,12 @@ abstract class EventLikeFormController[FR,
 
   /** Local form variables. Store information beyond simple fields */
 
-  //TODO adapt to return (new incompatibilities, removed incompatibilities)
   protected lazy val incompatibilityManagerController: EventIncompatibilityFormController[E] = {
     val initialIncompatibilities: mutable.Set[E] = {
       val hashSet = new mutable.HashSet[E]
 
-      if(oefi.nonEmpty && oefi.get.incompatibilities.nonEmpty)
-        hashSet ++= oefi.get.incompatibilities.get
+      if(formInitializer.nonEmpty && formInitializer.get.incompatibilities.nonEmpty)
+        hashSet ++= formInitializer.get.incompatibilities.get
 
       hashSet
     }
@@ -162,19 +162,22 @@ abstract class EventLikeFormController[FR,
 
   /** Constructors and Initializers */
 
-  def this(oefi: Option[EventLikeFormInitializer[S,C,R,E]],
-           subjects: Iterable[S],
+  def this(subjects: Iterable[S], courses: Iterable[C], resources: Iterable[R], events: Iterable[E]) =
+    this(subjects, courses, resources, events, None)
+
+  def this(subjects: Iterable[S],
            courses: Iterable[C],
            resources: Iterable[R],
            events: Iterable[E],
-           stage: Stage) = {
-    this(oefi, subjects, courses, resources, events)
+           stage: Stage,
+           formInitializer: Option[EventLikeFormInitializer[S,C,R,E]] = None) = {
+    this(subjects, courses, resources, events, formInitializer)
     setStage(stage)
   }
 
   override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
     super.initialize(url, resourceBundle)
-    if(oefi.nonEmpty) fillForm(oefi.get)
+    if(formInitializer.nonEmpty) fillForm(formInitializer.get)
   }
 
   protected def fillForm(efi: EventLikeFormInitializer[S,C,R,E]): Unit = {
@@ -353,16 +356,17 @@ abstract class EventLikeFormController[FR,
       None
 }
 
-class CreateEventFormController[S >: Null <: SubjectLike[S,C,R,E],
+class CreateEventFormController[
+  S >: Null <: SubjectLike[S,C,R,E],
   C <: CourseLike,
   R >: Null <: ResourceLike,
-  E <: EventLike[S,C,R,E]]( oefi: Option[EventLikeFormInitializer[S,C,R,E]] = None,
-                            subjects: Iterable[S],
+  E <: EventLike[S,C,R,E]]( subjects: Iterable[S],
                             courses: Iterable[C],
                             resources: Iterable[R],
-                            events: Iterable[E])
+                            events: Iterable[E],
+                            formInitializer: Option[EventLikeFormInitializer[S,C,R,E]] = None)
   extends EventLikeFormController[EventDescriptor[S,C,R,E], S, C, R, E](
-    oefi, subjects, courses, resources, events) {
+    subjects, courses, resources, events, formInitializer) {
 
   /** Initializers */
 
@@ -410,17 +414,22 @@ class CreateEventFormController[S >: Null <: SubjectLike[S,C,R,E],
   }
 }
 
-class EditEventLikeFormController[ EE <: EventLike[S,C,R,E],
+class EditEventLikeFormController[
   S >: Null <: SubjectLike[S,C,R,E],
   C <: CourseLike,
   R >: Null <: ResourceLike,
-  E <: EventLike[S,C,R,E]](eventLike: EE,
-                           subjects: Iterable[S],
-                           courses: Iterable[C],
-                           resources: Iterable[R],
-                           events: Iterable[E])
-  extends EventLikeFormController[EE, S, C, R, E](Some(EventLikeFormInitializer.fromEventLike(eventLike)),
-    subjects, courses, resources, events) {
+  E <: EventLike[S,C,R,E],
+  EE <: EventLike[S,C,R,E]](  subjects: Iterable[S],
+                              courses: Iterable[C],
+                              resources: Iterable[R],
+                              events: Iterable[E],
+                              eventLike: EE)
+  extends EventLikeFormController[EE, S, C, R, E](
+    subjects,
+    courses,
+    resources,
+    events,
+    Some(EventLikeFormInitializer.fromEventLike(eventLike))) {
 
   object EditInformation {
     //This object keeps track of what fields have been edited.
@@ -528,20 +537,20 @@ class EditEventLikeFormController[ EE <: EventLike[S,C,R,E],
   //post: if r has been edited in this form, the result will be Some(r), None otherwise.
   private def modifyEvent(e: EE): Option[EE] = {
 
-    if(EditInformation.changed) {
-      if(EditInformation.nameFieldChanged)                e.name = nameField.getText.trim
-      if(EditInformation.shortNameFieldChanged)           e.shortName = shortNameField.getText.trim
-      if(EditInformation.descriptionFieldChanged)         e.description = descriptionField.getText.trim
-      if(EditInformation.courseBoxSelectionChanged)       e.course = Some(courseBox.getValue)
-      if(EditInformation.quarterBoxSelectionChanged)      e.quarter = Some(quarterBox.getValue)
-      if(EditInformation.durationBoxSelectionChanged)     e.duration = durationBox.getValue.toInt
-      if(EditInformation.eventTypeBoxSelectionChanged)    e.eventType = eventTypeBox.getValue
-      if(EditInformation.periodicityBoxSelectionChanged)  e.periodicity = periodicityBox.getValue
+    if (EditInformation.changed) {
+      if (EditInformation.nameFieldChanged)                e.name = nameField.getText.trim
+      if (EditInformation.shortNameFieldChanged)           e.shortName = shortNameField.getText.trim
+      if (EditInformation.descriptionFieldChanged)         e.description = descriptionField.getText.trim
+      if (EditInformation.courseBoxSelectionChanged)       e.course = Some(courseBox.getValue)
+      if (EditInformation.quarterBoxSelectionChanged)      e.quarter = Some(quarterBox.getValue)
+      if (EditInformation.durationBoxSelectionChanged)     e.duration = durationBox.getValue.toInt
+      if (EditInformation.eventTypeBoxSelectionChanged)    e.eventType = eventTypeBox.getValue
+      if (EditInformation.periodicityBoxSelectionChanged)  e.periodicity = periodicityBox.getValue
 
-      if(EditInformation.subjectBoxSelectionChanged)      e.subject = Some(subjectBox.getValue)
-      if(EditInformation.resourceBoxSelectionChanged)     e.neededResource = Some(resourceBox.getValue)
+      if (EditInformation.subjectBoxSelectionChanged)      e.subject = Some(subjectBox.getValue)
+      if (EditInformation.resourceBoxSelectionChanged)     e.neededResource = Some(resourceBox.getValue)
 
-      if(EditInformation.incompatibilitiesChanged){
+      if (EditInformation.incompatibilitiesChanged){
         val (newIncompatibilities, removedIncompatibilities) =
           incompatibilityManagerController.incompatibilities
 

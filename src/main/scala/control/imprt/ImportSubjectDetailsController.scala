@@ -8,7 +8,7 @@ import control.Controller
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, TableColumn, TableView}
-import javafx.scene.layout.{Pane, VBox}
+import javafx.scene.layout.{FlowPane, HBox}
 import javafx.scene.paint
 import model.Color
 import model.blueprint.SubjectBlueprint
@@ -19,7 +19,7 @@ class ImportSubjectDetailsController extends Controller {
 
   override def language: Language = AppSettings.language
 
-  @FXML var mainBox: VBox = _
+  @FXML var mainBox: HBox = _
 
   @FXML var nameTag: Label = _
   @FXML var nameContent: Label = _
@@ -28,7 +28,7 @@ class ImportSubjectDetailsController extends Controller {
   @FXML var descriptionContent: Label = _
 
   @FXML var colorTag: Label = _
-  @FXML var colorFrame: Pane = _
+  @FXML var colorFrame: FlowPane = _
 
   @FXML var additionalFieldsTag: Label = _
   @FXML var additionalFieldsTable: TableView[AF] = _
@@ -52,21 +52,19 @@ class ImportSubjectDetailsController extends Controller {
       language.getItemOrElse("import_subjectDetails_additionalFieldTablePlaceholder", "No additional fields")))
 
     fieldColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue._1))
-    valueColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue._2.toString))
+    valueColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue._2))
 
     additionalFieldsTable.getSortOrder.add(fieldColumn.asInstanceOf[TableColumn[AF, _]])
-
-    addAdditionalFieldsColumn(fieldColumn)
-    addAdditionalFieldsColumn(valueColumn)
   }
 
-  private def addAdditionalFieldsColumn(column: TableColumn[AF, _]): Unit = {
-    additionalFieldsTable.getColumns.add(column)
-  }
+  def name: String =
+    nameContent.getText
 
-  def name_=(name: String): Unit = {
+  def name_=(name: String): Unit =
     nameContent.setText(name)
-  }
+
+  def description: String =
+    descriptionContent.getText
 
   def description_=(description: String): Unit = {
     descriptionContent.setText(description)
@@ -82,21 +80,22 @@ class ImportSubjectDetailsController extends Controller {
     additionalFieldsTable.getItems.add(additionalField)
   }
 
-  def addAdditionalFields(additionalFields: Iterable[AF]): Unit = {
+  def setAdditionalFields(additionalFields: Iterable[AF]): Unit = {
+    additionalFieldsTable.getItems.clear()
     additionalFields.foreach(addAdditionalField)
     additionalFieldsTable.sort()
   }
 
   def setFromSubjectBlueprint(sb: SubjectBlueprint): Unit = {
-    name_=(sb.name)
-    description_=(sb.description)
+    name = sb.name
+    description = sb.description
     if(sb.color.nonEmpty) color_=(sb.color.get)
-    addAdditionalFields(sb.additionalFields)
+    setAdditionalFields(sb.additionalFields)
   }
 
   def clear(): Unit = {
-    name_=("")
-    description_=("")
+    name = ""
+    description = ""
     colorFrame.setStyle("")
     additionalFieldsTable.getItems.clear()
   }
