@@ -8,3 +8,5 @@ project/*.*
 !project/build.properties
 target/
 temp/
+/project/META-INF/MANIFEST.MF
+/src/main/scala/worksheet.sc
