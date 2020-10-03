@@ -37,7 +37,7 @@ object FXMLPaths {
 
 object AppSettings {
 
-  final val applicationTitle: String = "ScaDULER v0.1"
+  final val applicationTitle: String = "ScaDULER v0.2"
   final val TimeSlotDuration: Int = 30
   final val TimeSlotsPerHour: Int = 60/TimeSlotDuration
 
