@@ -3,12 +3,12 @@ package control.imprt
 import java.net.URL
 import java.util.ResourceBundle
 
-import app.FXMLPaths
+import app.{AppSettings, FXMLPaths}
 import control.StageController
 import factory.ViewFactory
 import file.imprt.{ImportJob, MutableImportJob}
 import javafx.fxml.FXML
-import javafx.scene.control.Tab
+import javafx.scene.control.{Button, Tab}
 import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
 import util.Utils
 
@@ -30,6 +30,11 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
   @FXML var eventsTab: Tab = _
   @FXML var resourcesTab: Tab = _
 
+  @FXML var cancelButton: Button = _
+  @FXML var finishButton: Button = _
+
+  private var canceled: Boolean = true
+
   private val subjectsController: ImportSubjectsManagerController =
     new ImportSubjectsManagerController(this, editableImportJob)
 
@@ -43,7 +48,47 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
     new ImportResourcesManagerController(this, editableImportJob)
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
+    initializeContentLanguage()
+    bindActions()
     initializeControllers()
+  }
+
+  private def initializeContentLanguage(): Unit = {
+    subjectsTab.setText(AppSettings.language.getItemOrElse(
+      "import_subjectsTab",
+      "Subjects"))
+
+    coursesTab.setText(AppSettings.language.getItemOrElse(
+      "import_coursesTab",
+      "Courses"))
+
+    eventsTab.setText(AppSettings.language.getItemOrElse(
+      "import_eventsTab",
+      "Events"))
+
+    subjectsTab.setText(AppSettings.language.getItemOrElse(
+      "import_resourcesTab",
+      "Resources"))
+
+    cancelButton.setText(AppSettings.language.getItemOrElse(
+      "import_cancelButton",
+      "Cancel and undo changes"))
+
+    finishButton.setText(AppSettings.language.getItemOrElse(
+      "import_finishButton",
+      "Finish and commit changes"))
+  }
+
+  private def bindActions(): Unit = {
+    cancelButton.setOnAction(actionEvent => {
+      canceled = true
+      close()
+    })
+
+    finishButton.setOnAction(actionEvent => {
+      canceled = false
+      close()
+    })
   }
 
   private def initializeControllers(): Unit = {
@@ -149,9 +194,14 @@ class ImportJobEditorController(importJob: ImportJob) extends StageController {
     ebs.foreach(notifyEventDeletion)
   }
 
-  def getImportJob: ImportJob = editableImportJob.toImportJob
+  def getImportJob: Option[ImportJob] = {
+    if(!canceled)
+      Some(editableImportJob.toImportJob)
+    else
+      None
+  }
 
-  def waitForImportJob: ImportJob = {
+  def waitForImportJob: Option[ImportJob] = {
     showAndWait()
     getImportJob
   }

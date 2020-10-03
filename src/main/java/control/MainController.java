@@ -528,29 +528,40 @@ public class MainController extends StageController {
             showImportErrors(importJob);
         }
         else{
-            FinishImportPromptController controller = new FinishImportPromptController(importJob);
+            askImportJobEdition(importJob);
+        }
+    }
 
-            controller.setStage(Utils.promptBoundWindow(
+    private void askImportJobEdition(ImportJob importJob) {
+        FinishImportPromptController controller = new FinishImportPromptController(importJob);
+
+        controller.setStage(Utils.promptBoundWindow(
                 AppSettings.language().getItemOrElse("finishImport_windowTitle", "Finish Import"),
                 this.stage.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.MCFFinishImportPrompt()),
                 controller
-            ));
+        ));
 
-            controller.showAndWait(); //Thread stops here. Past this line, user made a choice.
+        controller.showAndWait(); //Thread stops here. Past this line, user made a choice.
 
-            Option<Selection> selection = controller.getSelection();
+        Option<Selection> selection = controller.getSelection();
 
-            if (selection.nonEmpty() && (selection.get() == Selection.ModifyOption() ||
+        if (selection.nonEmpty() && (selection.get() == Selection.ModifyOption() ||
                 selection.get() == Selection.FinishOption())){
 
-                if(selection.get() == Selection.ModifyOption()){
-                    EntityManager.importEntities(modifyImportJob(importJob), this);
+            if(selection.get() == Selection.ModifyOption()){
+                Option<ImportJob> modifiedImportJob = modifyImportJob(importJob);
+
+                if(modifiedImportJob.nonEmpty()){ //user committed changes
+                    EntityManager.importEntities(modifiedImportJob.get(), this);
                 }
-                else if(selection.get() == Selection.FinishOption()){
-                    EntityManager.importEntities(importJob, this);
+                else {
+                    askImportJobEdition(importJob); //nice recursion you got there.
                 }
+            }
+            else if(selection.get() == Selection.FinishOption()){
+                EntityManager.importEntities(importJob, this);
             }
         }
     }
@@ -562,7 +573,7 @@ public class MainController extends StageController {
         }
     }
 
-    private ImportJob modifyImportJob(ImportJob importJob) {
+    private Option<ImportJob> modifyImportJob(ImportJob importJob) {
         ImportJobEditorController controller = new ImportJobEditorController(importJob);
 
         Stage stage = Utils.promptBoundWindow(
