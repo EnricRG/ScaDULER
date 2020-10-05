@@ -10,3 +10,6 @@ target/
 temp/
 /project/META-INF/MANIFEST.MF
 /src/main/scala/worksheet.sc
+/bigtest.mcf
+/bigtest - copia.mcf
+/resources.srf
