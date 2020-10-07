@@ -55,10 +55,8 @@ abstract class ImportEntityManagerController[E] extends Controller {
 
   def setupTable(): Unit = {
     table.getSelectionModel.setSelectionMode(SelectionMode.MULTIPLE)
-    table.getSelectionModel.selectedItemProperty().addListener(new ChangeListener[E] {
-
+    table.getSelectionModel.selectedItemProperty().addListener( new ChangeListener[E] {
       override def changed(observable: ObservableValue[_ <: E], oldValue: E, newValue: E): Unit = {
-
         if (table.getSelectionModel.getSelectedCells.size() > 1) {
           editButton.setDisable(true)
           clearAdditionalInformation()
