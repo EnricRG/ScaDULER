@@ -50,6 +50,7 @@ class ImportSubjectDetailsController extends Controller {
   private def setupTable(): Unit = {
     additionalFieldsTable.setPlaceholder(new Label(
       language.getItemOrElse("import_subjectDetails_additionalFieldTablePlaceholder", "No additional fields")))
+    additionalFieldsTable.setStyle("-fx-selection-bar: lightblue;")
 
     fieldColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue._1))
     valueColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue._2))

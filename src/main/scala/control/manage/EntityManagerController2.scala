@@ -47,6 +47,8 @@ abstract class EntityManagerController2[E](mainController: MainController)
       }
     })
 
+    table.setStyle("-fx-selection-bar: lightblue;")
+
     additionalTableSetup()
   }
 

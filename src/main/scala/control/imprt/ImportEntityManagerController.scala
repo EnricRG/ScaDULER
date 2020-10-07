@@ -69,6 +69,9 @@ abstract class ImportEntityManagerController[E] extends Controller {
         }
       }
     })
+
+    table.setStyle("-fx-selection-bar: lightblue;")
+
     additionalTableSetup()
   }
 
