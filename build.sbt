@@ -14,7 +14,7 @@ assemblyJarName in assembly := "ScaDULER.jar"
 mainClass in assembly := Some("app.MainApp")
 
 //adding fxml folder to jar building
-Compile / unmanagedResourceDirectories += baseDirectory.value / "src/main/fxml"
+Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
 
 test in assembly := {}
 

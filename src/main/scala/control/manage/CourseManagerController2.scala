@@ -39,6 +39,14 @@ class CourseManagerController2(
       "courseManager_descriptionColumnHeader",
       "Description"))
 
+    subjectsColumn.setText(AppSettings.language.getItemOrElse(
+      "courseManager_subjectsColumnHeader",
+      "Subjects"))
+
+    eventsColumn.setText(AppSettings.language.getItemOrElse(
+      "courseManager_eventsColumnHeader",
+      "Events"))
+
     addButton.setText(AppSettings.language.getItemOrElse(
       "courseManager_addCourseButton",
       "Create Course"))
@@ -74,7 +82,7 @@ class CourseManagerController2(
       override protected def updateItem(item: Int, empty: Boolean): Unit = {
         super.updateItem(item, empty)
         if (!empty) {
-          val subjects = getTableRow.getItem.asInstanceOf[Course].subjects
+          val subjects = getTableView.getItems.get(getIndex).subjects
           setGraphic(generateSubjectsHyperlink(subjects))
         }
         else {
@@ -88,7 +96,7 @@ class CourseManagerController2(
       override protected def updateItem(item: Int, empty: Boolean): Unit = {
         super.updateItem(item, empty)
         if (!empty) {
-          val events = getTableRow.getItem.asInstanceOf[Course].events
+          val events = getTableView.getItems.get(getIndex).events
           setGraphic(generateEventsHyperlink(events))
         }
         else {

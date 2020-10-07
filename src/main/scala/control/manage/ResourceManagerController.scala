@@ -101,7 +101,7 @@ class ResourceManagerController[R <: ResourceLike](
         override protected def updateItem(item: Any, empty: Boolean): Unit = {
           super.updateItem(item, empty)
           if (!empty)
-            this.setGraphic(generateResourceManageButton(this.getTableRow.getItem.asInstanceOf[ResourceLike]))
+            this.setGraphic(generateResourceManageButton(getTableView.getItems.get(getIndex)))
           else {
             setGraphic(null)
             setText(null)
