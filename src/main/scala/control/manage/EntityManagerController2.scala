@@ -71,6 +71,9 @@ abstract class EntityManagerController2[E](mainController: MainController)
       removeButtonAction(getSelectedEntities)
       event.consume()
     })
+
+    editButton.setDisable(true)
+    removeButton.setDisable(true)
   }
 
   protected final def addColumn(column: TableColumn[E,_]): Unit = {

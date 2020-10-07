@@ -1,6 +1,6 @@
 package model
 
-import app.AppSettings
+import app.{AppSettings, MainApp}
 import model.blueprint.CourseBlueprint
 import model.descriptor.CourseDescriptor
 import service.{ID, Identifiable}
@@ -39,6 +39,7 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
 
 @SerialVersionUID(1L)
 class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable {
+
   private val _firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
   private val _secondQuarterData: QuarterData = new QuarterData(SecondQuarter)
 
@@ -49,6 +50,9 @@ class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializa
   def secondQuarterEvents: Iterable[Event] = secondQuarterData.getSchedule.getEvents
   //events from both quarters
   def events: Iterable[Event] = firstQuarterEvents ++ secondQuarterEvents
+  //FIXME this is a workaround while we wait for the new data model which will relate courses, subjects and events directly
+  def subjects: Iterable[Subject] =
+    MainApp.getDatabase.subjectDatabase.getFinishedSubjects.filter(_.course.contains(this))
 }
 
 object Course{

@@ -5,7 +5,6 @@ import control.form.CreateCourseLikeFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
 import control.imprt.mcf.MCFImportErrorViewerController;
-import control.manage.CourseManagerController;
 import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
@@ -737,13 +736,14 @@ public class MainController extends StageController {
 
 
     private void promptCourseManager(){
-        Utils.promptBoundWindow(
+        ScalaMainController.promptCourseManager(this);
+        /*Utils.promptBoundWindow(
                 AppSettings.language().getItem("courseManager_windowTitle"),
                 manageButtons_courses.getScene().getWindow(),
                 Modality.WINDOW_MODAL,
                 new ViewFactory<>(FXMLPaths.EntityManagerPanel()),
                 new CourseManagerController(this)
-        ).show();
+        ).show();*/
     }
 
     public void promptResourceManager(Window owner) {

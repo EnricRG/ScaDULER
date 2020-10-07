@@ -2,6 +2,7 @@ package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
 import control.form.{CreateEventFormController, CreateSubjectLikeFormController, SubjectLikeForm}
+import control.manage.CourseManagerController2
 import factory.ViewFactory
 import javafx.stage.Modality
 import model.descriptor.EventDescriptor
@@ -108,6 +109,19 @@ object ScalaMainController {
 
       mainController.addUnassignedEvent(event)
     }
+  }
+
+  def promptCourseManager(mainController: MainController): Unit = {
+    Utils.promptBoundWindow(
+      AppSettings.language.getItemOrElse("courseManager_windowTitle", "Manage Courses"),
+      mainController.manageButtons_courses.getScene.getWindow,
+      Modality.WINDOW_MODAL,
+      new ViewFactory(FXMLPaths.EntityManagerPanel),
+      new CourseManagerController2(
+        MainApp.getDatabase.courseDatabase.getCourses,
+        mainController,
+        MainApp.getDatabase.courseDatabase)
+    ).showAndWait()
   }
 
 }
