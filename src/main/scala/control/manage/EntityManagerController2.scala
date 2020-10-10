@@ -37,13 +37,21 @@ abstract class EntityManagerController2[E](mainController: MainController)
   protected def setupTable(): Unit = {
     table.getSelectionModel.setSelectionMode(SelectionMode.MULTIPLE)
     table.getSelectionModel.selectedItemProperty.addListener(observable => {
-      if (table.getSelectionModel.getSelectedCells.size > 1) {
+      val nSelectedItems = table.getSelectionModel.getSelectedItems.size
+
+      if (nSelectedItems > 1) {
         editButton.setDisable(true)
+        removeButton.setDisable(false)
         notifyMultipleSelection()
       }
-      else {
+      else if(nSelectedItems == 1){
         editButton.setDisable(false)
+        removeButton.setDisable(false)
         notifySingleSelection()
+      }
+      else { //nSelectedItems == 0
+        editButton.setDisable(true)
+        removeButton.setDisable(true)
       }
     })
 
@@ -63,14 +71,12 @@ abstract class EntityManagerController2[E](mainController: MainController)
     })
 
     editButton.setOnAction(event => {
-      val selectedEntity = getSelectedEntity
-      if (selectedEntity.nonEmpty)
-        editButtonAction(selectedEntity.get)
+      editButtonAction()
       event.consume()
     })
 
     removeButton.setOnAction(event => {
-      removeButtonAction(getSelectedEntities)
+      removeButtonAction()
       event.consume()
     })
 
@@ -78,23 +84,55 @@ abstract class EntityManagerController2[E](mainController: MainController)
     removeButton.setDisable(true)
   }
 
+  private def addButtonAction(): Unit = {
+    val entity = newEntity
+
+    if (entity.nonEmpty) {
+      table.getItems.add(entity.get)
+      table.sort()
+      selectEntity(entity.get)
+    }
+  }
+
+  private def editButtonAction(): Unit = {
+    val editTarget = selectedEntity
+
+    if (editTarget.nonEmpty){
+      val editedEntity = editEntity(editTarget.get)
+
+      if (editedEntity.nonEmpty){
+        table.getItems.remove(table.getSelectionModel.getSelectedIndex)
+        table.getItems.add(editedEntity.get)
+        table.sort()
+        //table.refresh() //This shouldn't be here, but the table doesn't reflect changes otherwise.
+        selectEntity(editedEntity.get)
+      }
+    }
+  }
+
+  private def removeButtonAction(): Unit = {
+    val selectedEntities = table.getSelectionModel.getSelectedItems
+
+    selectedEntities.forEach(removeEntity(_))
+
+    table.getItems.removeAll(selectedEntities)
+  }
+
+  private def selectEntity(entity: E): Unit = {
+    table.getSelectionModel.clearSelection()
+    table.scrollTo(entity)
+    table.getSelectionModel.select(entity)
+  }
+
   protected final def addColumn(column: TableColumn[E,_]): Unit = {
     table.getColumns.add(column)
-  }
-
-  protected final def addEntity(entity: E): Unit = {
-    table.getItems.add(entity)
-  }
-
-  protected final def removeEntity(entity: E): Unit = {
-    table.getItems.remove(entity)
   }
 
   protected final def fillTable(entities: Iterable[E]): Unit = {
     table.setItems(FXCollections.observableArrayList(JavaConverters.asJavaCollection(entities)))
   }
 
-  protected final def getSelectedEntity: Option[E] =
+  protected final def selectedEntity: Option[E] =
     table.getSelectionModel.getSelectedItem match {
       case e if e != null => Some(e)
       case _ => None
@@ -103,11 +141,11 @@ abstract class EntityManagerController2[E](mainController: MainController)
   protected final def getSelectedEntities: Iterable[E] =
     JavaConverters.collectionAsScalaIterable(table.getSelectionModel.getSelectedItems)
 
-  protected def addButtonAction(): Unit
+  protected def newEntity: Option[E]
 
-  protected def editButtonAction(entity: E): Unit
+  protected def editEntity(entity: E): Option[E]
 
-  protected def removeButtonAction(entities: Iterable[E]): Unit
+  protected def removeEntity(entity: E): Unit
 
   protected def notifySingleSelection(): Unit
 

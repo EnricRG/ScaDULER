@@ -1,7 +1,9 @@
 package control.manage
 
-import app.AppSettings
+import app.{AppSettings, FXMLPaths}
 import control.MainController
+import control.form.{CreateCourseLikeFormController, EditCourseLikeFormController}
+import factory.ViewFactory
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.geometry.Pos
@@ -9,13 +11,16 @@ import javafx.scene.Node
 import javafx.scene.control.{Hyperlink, Label, TableCell, TableColumn}
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Region.USE_COMPUTED_SIZE
+import javafx.stage.Modality
+import model.descriptor.CourseDescriptor
 import model.{Course, Event, Subject}
-import service.CourseDatabase
+import service.AppDatabase
+import util.Utils
 
 class CourseManagerController2(
   courses: Iterable[Course],
   mainController: MainController,
-  courseDatabase: CourseDatabase
+  appDatabase: AppDatabase
 ) extends EntityManagerController2[Course](mainController) {
 
   @FXML protected var nameColumn: TableColumn[Course, String] = new TableColumn
@@ -23,8 +28,8 @@ class CourseManagerController2(
   @FXML protected var subjectsColumn: TableColumn[Course, Int] = new TableColumn
   @FXML protected var eventsColumn: TableColumn[Course, Int] = new TableColumn
 
-  def this(mainController: MainController, courseDatabase: CourseDatabase) =
-    this(Nil, mainController, courseDatabase)
+  def this(mainController: MainController, appDatabase: AppDatabase) =
+    this(Nil, mainController, appDatabase)
 
   override protected def initializeContentLanguage(): Unit = {
     table.setPlaceholder(new Label(AppSettings.language.getItemOrElse(
@@ -108,24 +113,24 @@ class CourseManagerController2(
   }
 
   private def generateSubjectsHyperlink(subjects: Iterable[Subject]): Node = {
-    val hBox: HBox = generateHyperlinkHBox
-
     val hyperlink = new Hyperlink(subjects.size.toString)
-
     hyperlink.setOnAction(actionEvent => showSubjectList(subjects))
 
+    //TODO add tooltip to hyperlink
+
+    val hBox: HBox = generateHyperlinkHBox
     hBox.getChildren.add(hyperlink)
 
     hBox
   }
 
   private def generateEventsHyperlink(events: Iterable[Event]): Node = {
-    val hBox: HBox = generateHyperlinkHBox
-
     val hyperlink = new Hyperlink(events.size.toString)
-
     hyperlink.setOnAction(actionEvent => showEventList(events))
 
+    //TODO add tooltip to hyperlink
+
+    val hBox: HBox = generateHyperlinkHBox
     hBox.getChildren.add(hyperlink)
 
     hBox
@@ -149,27 +154,81 @@ class CourseManagerController2(
     //TODO prompt event list
   }
 
-  override protected def addButtonAction(): Unit = ???
+  override protected def newEntity: Option[Course] = {
+    val formResult = promptNewCourseForm
 
-  override protected def editButtonAction(entity: Course): Unit = ???
+    if(formResult.nonEmpty)
+      Some(createCourseFromDescriptor(formResult.get))
+    else
+      None
+  }
 
-  override protected def removeButtonAction(entities: Iterable[Course]): Unit = ???
+  private def promptNewCourseForm: Option[CourseDescriptor] = {
+    val courseForm = new CreateCourseLikeFormController()
+
+    courseForm.setStage(Utils.promptBoundWindow(
+      AppSettings.language.getItemOrElse("courseForm_windowTitle", "Create new Course"),
+      addButton.getScene.getWindow,
+      Modality.WINDOW_MODAL,
+      new ViewFactory(FXMLPaths.CourseForm),
+      courseForm))
+
+    courseForm.waitFormResult
+  }
+
+  private def createCourseFromDescriptor(courseDescriptor: CourseDescriptor): Course = {
+    val course = appDatabase.createCourse()._2
+
+    Course.setCourseFromDescriptor(course,courseDescriptor)
+
+    course
+  }
+
+  override protected def editEntity(entity: Course): Option[Course] = {
+    promptEditForm(entity)
+  }
+
+  private def promptEditForm(course: Course): Option[Course] = {
+    val courseForm = new EditCourseLikeFormController(course)
+
+    courseForm.setStage(Utils.promptBoundWindow(
+      AppSettings.language.getItemOrElse("courseForm_edit_windowTitle", "Edit Course"),
+      editButton.getScene.getWindow,
+      Modality.WINDOW_MODAL,
+      new ViewFactory(FXMLPaths.CourseForm),
+      courseForm))
+
+    //This is fine because EditCourseLikeFormController(course) specification ensures that if the form result is
+    //Some(x), x == course, and that's what we want.
+    courseForm.waitFormResult //execution thread stops here.
+  }
+
+  override protected def removeEntity(entity: Course): Unit = {
+    val hardDelete = promptDeleteModeDialog
+    val deletedEvents = appDatabase.removeCourse(entity, hardDelete)._2
+    //TODO mainController.notifyCourseDeletion(entity)
+    //TODO mainController.notifyEventsDeletion(deletedEvents)
+  }
+
+  private def promptDeleteModeDialog: Boolean = {
+    //TODO
+
+    sealed trait DeleteMode
+    object HardMode extends DeleteMode
+    object SoftMode extends DeleteMode
+
+    false
+  }
 
   override protected def notifySingleSelection(): Unit = {
-    editButton.setDisable(false)
-
     removeButton.setText(AppSettings.language.getItemOrElse(
       "courseManager_removeCourseButton",
       "Remove Course"))
-    removeButton.setDisable(false)
   }
 
   override protected def notifyMultipleSelection(): Unit = {
-    editButton.setDisable(true)
-
     removeButton.setText(AppSettings.language.getItemOrElse(
       "courseManager_removeCoursesButton",
       "Remove Courses"))
-    removeButton.setDisable(false)
   }
 }

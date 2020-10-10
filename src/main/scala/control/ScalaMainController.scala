@@ -120,7 +120,7 @@ object ScalaMainController {
       new CourseManagerController2(
         MainApp.getDatabase.courseDatabase.getCourses,
         mainController,
-        MainApp.getDatabase.courseDatabase)
+        MainApp.getDatabase)
     ).showAndWait()
   }
 
