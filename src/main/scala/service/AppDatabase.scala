@@ -2,32 +2,36 @@ package service
 
 import model.{Course, Event, Subject}
 
-class AppDatabase (eventDBInitializer: Option[EventDatabase#Initializer] = None,
-                   subjectDBInitializer: Option[SubjectDatabase#Initializer] = None,
-                   courseDBInitializer: Option[CourseDatabase#Initializer] = None,
-                   resourceDBInitializer: Option[ResourceDatabase#Initializer] = None) extends Serializable {
+class AppDatabase extends Serializable {
 
-  lazy val eventDatabase: EventDatabase = eventDBInitializer match {
-    case Some(eDBi) => new EventDatabase(eDBi)
-    case None => new EventDatabase
+  lazy val eventDatabase: EventDatabase = new EventDatabase
+
+  lazy val subjectDatabase: SubjectDatabase = new SubjectDatabase
+
+  lazy val courseDatabase: CourseDatabase = new CourseDatabase
+
+  lazy val resourceDatabase: ResourceDatabase = new ResourceDatabase
+
+  /** Subjects */
+
+  def subjects: Iterable[Subject] =
+    subjectDatabase.subjects
+
+  def createSubject(): (ID, Subject) =
+    subjectDatabase.createSubject
+
+  def removeSubject(s: Subject): Unit = {
+    eventDatabase.removeEvents(s.events)
+    subjectDatabase.removeSubject2(s)
   }
 
-  lazy val subjectDatabase: SubjectDatabase = subjectDBInitializer match {
-    case Some(sDBi) => new SubjectDatabase(sDBi)
-    case None => new SubjectDatabase
-  }
+  def removeSubjects(subjects: Iterable[Subject]): Unit =
+    subjects.foreach(removeSubject)
 
-  lazy val courseDatabase: CourseDatabase = courseDBInitializer match {
-    case Some(cDBi) => new CourseDatabase(cDBi)
-    case None => new CourseDatabase
-  }
+  /** Courses */
 
-  lazy val resourceDatabase: ResourceDatabase = resourceDBInitializer match {
-    case Some(crDBi) => new ResourceDatabase(crDBi)
-    case None => new ResourceDatabase
-  }
-
-  def createCourse(): (ID, Course) = courseDatabase.createCourse()
+  def createCourse(): (ID, Course) =
+    courseDatabase.createCourse()
 
   def removeCourse(c: Course, hardDelete: Boolean): (Iterable[Subject], Iterable[Event]) = {
     val affectedSubjects = subjectDatabase.getFinishedSubjects.filter(sb => sb.course.contains(c))
@@ -37,7 +41,7 @@ class AppDatabase (eventDBInitializer: Option[EventDatabase#Initializer] = None,
       //store subject events before deleting them
       val affectedSubjectEvents = affectedSubjects.flatMap(_.events)
 
-      subjectDatabase.removeSubjects(affectedSubjects)
+      subjectDatabase.removeSubjects(affectedSubjects) //this also deletes subject events
       eventDatabase.removeEvents(otherAffectedEvents)
 
       (affectedSubjects, affectedSubjectEvents ++ otherAffectedEvents)
@@ -52,4 +56,10 @@ class AppDatabase (eventDBInitializer: Option[EventDatabase#Initializer] = None,
     }
   }
 
+  def removeCourses(courses: Iterable[Course], hardDelete: Boolean): (Iterable[Subject], Iterable[Event]) =
+    courses.map(removeCourse(_,hardDelete)).reduce((a, b) => (a._1 ++ b._1, a._2 ++ b._2))
+
+  /** Resources */
+
+  /** Events */
 }

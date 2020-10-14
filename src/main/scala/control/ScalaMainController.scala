@@ -12,7 +12,7 @@ import util.Utils
 object ScalaMainController {
   def promptSubjectForm(mc: MainController): Unit = {
     val subjectForm = new CreateSubjectLikeFormController(
-      MainApp.getDatabase.courseDatabase.getCourses,
+      MainApp.getDatabase.courseDatabase.courses,
       MainApp.getDatabase.resourceDatabase.getElements)
 
     subjectForm.setStage(Utils.promptBoundWindow(
@@ -80,7 +80,7 @@ object ScalaMainController {
   def promptEventForm(mainController: MainController): Unit = {
     val eventForm = new CreateEventFormController(
       MainApp.getDatabase.subjectDatabase.getFinishedSubjects,
-      MainApp.getDatabase.courseDatabase.getCourses,
+      MainApp.getDatabase.courseDatabase.courses,
       MainApp.getDatabase.resourceDatabase.getElements,
       MainApp.getDatabase.eventDatabase.getElements)
 
@@ -118,7 +118,7 @@ object ScalaMainController {
       Modality.WINDOW_MODAL,
       new ViewFactory(FXMLPaths.EntityManagerPanel),
       new CourseManagerController2(
-        MainApp.getDatabase.courseDatabase.getCourses,
+        MainApp.getDatabase.courseDatabase.courses,
         mainController,
         MainApp.getDatabase)
     ).showAndWait()

@@ -196,7 +196,7 @@ public class MainController extends StageController {
 
     private CourseScheduleController getEventCourseController(Event event) {
         //TODO highly improvable, better data structure
-        return tabCourseMap.get(courseTabMap.get(event.course().get().getID()));
+        return tabCourseMap.get(courseTabMap.get(event.course().get().id()));
     }
 
     private CourseScheduleController getVisibleCourse() {
@@ -833,7 +833,7 @@ public class MainController extends StageController {
         final Tab newTab = courseTabContent == null ? new Tab(c.name()) : new Tab(c.name(), courseTabContent);
 
         //mapping the course to the tab
-        courseTabMap.put(c.getID(), newTab);
+        courseTabMap.put(c.id(), newTab);
 
         //Setting tab properties.
         newTab.setClosable(false); //This is done by default.
@@ -869,7 +869,7 @@ public class MainController extends StageController {
     }
 
     public void closeCourseTab(Course c) {
-        closeCourseTab(c, courseTabMap.get(c.getID()));
+        closeCourseTab(c, courseTabMap.get(c.id()));
     }
 
     //called when the tab is closed from the main interface, so it has to be deleted from db
@@ -878,7 +878,7 @@ public class MainController extends StageController {
             for(Event e : JavaConverters.asJavaCollection(c.events()))
                 addUnassignedEvent(e);
 
-            courseTabMap.remove(c.getID());
+            courseTabMap.remove(c.id());
             tabCourseMap.remove(tab);
             courseTabs.getTabs().remove(tab);
             courseDatabase.removeCourse(c);

@@ -70,7 +70,7 @@ public class CourseManagerController extends EntityManagerController<Course> {
         Course course = table.getSelectionModel().getSelectedItem();
 
         if(course != null){
-            courseDatabase.removeElement(course.getID());
+            courseDatabase.removeElement(course);
             removeRow(course);
             getMainController().closeCourseTab(course);
         }

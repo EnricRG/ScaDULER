@@ -4,14 +4,20 @@ import app.MainApp
 import model.Subject
 
 class SubjectDatabase extends Database[Subject] {
+
   private lazy val eventDatabase = MainApp.getDatabase.eventDatabase
 
-  class Initializer{
+  def subjects: Iterable[Subject] = getElements
 
+  def removeSubject2(s: Subject): Unit =
+    removeElement(s) //TODO adapt to new single delete mode database
+
+  def removeSubjects(subjects: Iterable[Subject]): Unit = {
+    subjects.foreach(removeSubject2)
   }
 
-  def this(initializer: SubjectDatabase#Initializer) = this
 
+  //TODO remove ID from public interfaces. Only for internal uses.
   def createSubject: (ID, Subject) = {
       val id = reserveNextId
       val subject = new Subject(id)
@@ -26,14 +32,7 @@ class SubjectDatabase extends Database[Subject] {
   }
   def removeSubject(s: Subject): Unit = removeSubject(s.getID)
 
-  def removeSubject2(s: Subject): Unit = {
-    eventDatabase.removeEvents(s.events)
-    removeElement(s)
-  }
 
-  def removeSubjects(subjects: Iterable[Subject]): Unit = {
-    subjects.foreach(removeSubject2)
-  }
 
   def deleteSubject(sid: ID): Unit = getElement(sid) match{
       case Some(s) =>
@@ -45,8 +44,4 @@ class SubjectDatabase extends Database[Subject] {
 
   def getFinishedSubjectsIDs: Iterable[Long] = getIDs.filter(isFinished)
   def getFinishedSubjects: Iterable[Subject] = getFinishedSubjectsIDs.map(getElement(_).get)
-}
-
-class ReadOnlySubjectDatabase(subjectDatabase: SubjectDatabase){
-
 }

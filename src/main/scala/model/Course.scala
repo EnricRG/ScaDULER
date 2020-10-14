@@ -3,7 +3,7 @@ package model
 import app.{AppSettings, MainApp}
 import model.blueprint.CourseBlueprint
 import model.descriptor.CourseDescriptor
-import service.{ID, Identifiable}
+import service.{ID, Identifiable2}
 
 @SerialVersionUID(1L)
 trait Quarter extends Serializable{
@@ -38,7 +38,7 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
 }
 
 @SerialVersionUID(1L)
-class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable {
+class Course(val id: ID) extends Identifiable2 with CourseLikeImpl with Serializable {
 
   private val _firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
   private val _secondQuarterData: QuarterData = new QuarterData(SecondQuarter)

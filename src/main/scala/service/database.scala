@@ -60,7 +60,7 @@ trait DatabaseImpl[E <: Identifiable2] extends Database2[E] with Serializable {
    * @constructor Creates a new database element with an entity.
    * @param entity The encapsulated entity.
    */
-  private class DatabaseElement(val entity: E) extends Serializable {
+  protected class DatabaseElement(val entity: E) extends Serializable {
 
     /** Visibility of this element in database queries. */
     private var _visible: Boolean = true
