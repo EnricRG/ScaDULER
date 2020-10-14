@@ -82,7 +82,7 @@ object ScalaMainController {
       MainApp.getDatabase.subjectDatabase.getFinishedSubjects,
       MainApp.getDatabase.courseDatabase.courses,
       MainApp.getDatabase.resourceDatabase.resources,
-      MainApp.getDatabase.eventDatabase.getElements)
+      MainApp.getDatabase.eventDatabase.events)
 
     eventForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItemOrElse(
@@ -99,9 +99,7 @@ object ScalaMainController {
     if(oed.nonEmpty){
       val ed = oed.get
 
-      val event = MainApp.getDatabase.eventDatabase.createEvent._2;
-
-      Event.setEventFromDescriptor(event, ed)
+      val event = MainApp.getDatabase.eventDatabase.createEventFromDescriptor(ed)._2
 
       if(ed.subject.nonEmpty){
         ed.subject.get.events_$plus$eq(event)

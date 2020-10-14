@@ -84,7 +84,7 @@ public class ScheduleIntervalController {
         if(hint < 0) boundingBox.getChildren().add(assignedView.hourPane);
         else boundingBox.getChildren().add(hint, assignedView.hourPane);
 
-        eventViewControllers.put(event.getID(), assignedView);
+        eventViewControllers.put(event.id(), assignedView);
     }
 
     private void removeOldController(Node node) {
@@ -96,10 +96,10 @@ public class ScheduleIntervalController {
     }
 
     public void removeAssignment(Event event){
-        AssignedEventViewController eventViewController = eventViewControllers.get(event.getID());
+        AssignedEventViewController eventViewController = eventViewControllers.get(event.id());
         if(eventViewController != null){
             removeOldController(eventViewController);
-            eventViewControllers.remove(event.getID());
+            eventViewControllers.remove(event.id());
         }
     }
 

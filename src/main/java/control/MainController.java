@@ -152,8 +152,8 @@ public class MainController extends StageController {
                     intervalController.getInterval(),
                     viabilityChecker.isAViableAssignment()
             );
-            eventQuartersMap.put(eventDrag.getEvent().getID(), quarterScheduleController);
-            if(!viabilityChecker.isAViableAssignment()) nonViableEventAssignments.put(eventDrag.getEvent().getID(), eventDrag.getEvent());
+            eventQuartersMap.put(eventDrag.getEvent().id(), quarterScheduleController);
+            if(!viabilityChecker.isAViableAssignment()) nonViableEventAssignments.put(eventDrag.getEvent().id(), eventDrag.getEvent());
             assignmentDone(eventDrag);
         }
 
@@ -165,14 +165,14 @@ public class MainController extends StageController {
 
     public void processEventUnassignment(QuarterScheduleController quarterScheduleController, Event event){
         quarterScheduleController.unassignEvent(event);
-        eventQuartersMap.remove(event.getID());
-        nonViableEventAssignments.remove(event.getID());
+        eventQuartersMap.remove(event.id());
+        nonViableEventAssignments.remove(event.id());
         addUnassignedEvent(event);
     }
 
     public void processEventAssignments(Collection<EventAssignment> eventAssignments){
         for(EventAssignment ea : eventAssignments){
-            Event event = MainApp.getDatabase().eventDatabase().getElementOrElse(ea.eventID(), null);
+            Event event = MainApp.getDatabase().eventDatabase().getEventOrElse(ea.eventID(), null);
 
             CourseScheduleController courseScheduleController = getEventCourseController(event);
             QuarterScheduleController quarterScheduleController =
@@ -205,16 +205,16 @@ public class MainController extends StageController {
 
     //pre event exists in DB
     public void removeEvent(Event event) {
-        QuarterScheduleController quarterScheduleController = eventQuartersMap.get(event.getID());
+        QuarterScheduleController quarterScheduleController = eventQuartersMap.get(event.id());
         if(quarterScheduleController != null) {
             quarterScheduleController.unassignEvent(event);
-            eventQuartersMap.remove(event.getID());
+            eventQuartersMap.remove(event.id());
         }
         removeUnassignedEvent(event);
     }
 
     private void removeUnassignedEvent(Event event) {
-        Long eventID = event.getID();
+        Long eventID = event.id();
         UnassignedEventViewController viewController = unassignedEventsMap.get(eventID);
         if(viewController != null){
             rightPane_VBox.getChildren().remove(viewController.getNode());
@@ -420,7 +420,7 @@ public class MainController extends StageController {
 
             if(accepted){
                 for(Event e: new ArrayList<>(nonViableEventAssignments.values())){
-                    processEventUnassignment(eventQuartersMap.get(e.getID()), e);
+                    processEventUnassignment(eventQuartersMap.get(e.id()), e);
                 }
                 //nonViableEventAssignments.clear(); //this is not necessary, code above has the same effect.
                 solve(); //recursion hehe
@@ -641,7 +641,7 @@ public class MainController extends StageController {
     }
 
     private void addUnassignedEvents() {
-        ArrayList<Event> unassignedEvents = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().eventDatabase().getUnassignedEvents()));
+        ArrayList<Event> unassignedEvents = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().eventDatabase().unassignedEvents()));
         for(Event e : unassignedEvents) addUnassignedEvent(e);
     }
 
@@ -900,9 +900,9 @@ public class MainController extends StageController {
         }
 
         if (eventView != null){
-            unassignedEventsMap.put(event.getID(), controller);
+            unassignedEventsMap.put(event.id(), controller);
             rightPane_VBox.getChildren().add(eventView); //TODO: improve this with a method that updates the list.
-            eventViewMap.put(event.getID(), eventView);
+            eventViewMap.put(event.id(), eventView);
         }
     }
 }

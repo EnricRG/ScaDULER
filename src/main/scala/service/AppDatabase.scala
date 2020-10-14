@@ -1,6 +1,6 @@
 package service
 
-import model.{Course, Event, Subject}
+import model.{Course, Event, Resource, Subject}
 
 class AppDatabase extends Serializable {
 
@@ -35,7 +35,7 @@ class AppDatabase extends Serializable {
 
   def removeCourse(c: Course, hardDelete: Boolean): (Iterable[Subject], Iterable[Event]) = {
     val affectedSubjects = subjectDatabase.getFinishedSubjects.filter(sb => sb.course.contains(c))
-    lazy val otherAffectedEvents = eventDatabase.getElements.filter(e=> e.subject.isEmpty && e.course.contains(c))
+    lazy val otherAffectedEvents = eventDatabase.events.filter(e=> e.subject.isEmpty && e.course.contains(c))
 
     if(hardDelete) {
       //store subject events before deleting them
@@ -61,5 +61,25 @@ class AppDatabase extends Serializable {
 
   /** Resources */
 
+  def resources: Iterable[Resource] =
+    resourceDatabase.resources
+
+  def createResource(): (ID, Resource) =
+    resourceDatabase.createResource
+
+  def removeResource(r: Resource): Unit = {
+    resourceDatabase.removeResource(r)
+  }
+
   /** Events */
+
+  def events: Iterable[Event] =
+    eventDatabase.events
+
+  def createEvent(): (ID, Event) =
+    eventDatabase.createEvent
+
+  def removeEvent(e: Event): Unit = {
+    eventDatabase.removeEvent(e)
+  }
 }

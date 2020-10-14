@@ -4,7 +4,7 @@ import app.AppSettings
 import javafx.scene.paint
 import model.Weeks.Week
 import model.descriptor.EventDescriptor
-import service.{ID, Identifiable}
+import service.{ID, Identifiable2}
 
 @SerialVersionUID(1L)
 abstract class EventType extends Serializable {
@@ -52,7 +52,7 @@ object EventTypes extends Serializable {
 case class Precedence(event: Event, isStrict: Boolean)
 
 @SerialVersionUID(1L)
-class Event(id: ID) extends Identifiable(id)
+class Event(val id: ID) extends Identifiable2
   with EventLikeImpl[Subject, Course, Resource, Event]
   with Serializable {
 

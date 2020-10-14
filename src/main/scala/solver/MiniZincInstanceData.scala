@@ -174,7 +174,7 @@ object MiniZincInstance{
             nPredefinedEventWeeks, predefinedWeekEventNumbers, predefinedEventWeek, //week pre-assignation parameters
             nPreassignedEvents, preassignedEventNumbers, preassignedEventStarts, //start pre-assignation parameters
             nPrecedences, predecessors,successors, //precedences parameters
-            instance.events.indices.map(index => (index+ModelIndexDeviation, instance.events.apply(index).getID)).toMap
+            instance.events.indices.map(index => (index+ModelIndexDeviation, instance.events.apply(index).id)).toMap
         )
     }
 

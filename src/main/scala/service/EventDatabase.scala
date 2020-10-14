@@ -1,40 +1,46 @@
 package service
 
-import model.Event
+import model.descriptor.EventDescriptor
+import model.{Course, Event, Resource, Subject}
 
-class EventDatabase extends Database[Event] {
-
-  class Initializer{
-
-  }
-
-  def this(initializer: EventDatabase#Initializer) = this
+class EventDatabase extends DatabaseImpl[Event] {
 
   def createEvent: (ID, Event) = {
-    val id = reserveNextId
+    val id = reserveNextId()
     val event = new Event(id)
     addElement(id, event)
   }
 
-  //TODO removing an event should remove all its incompatibilities
-  def removeEvent(eid: ID): Unit = removeElement(eid)
-  def removeEvent(e: Event): Unit = removeElement(e.getID)
+  def createEventFromDescriptor(ed: EventDescriptor[Subject, Course, Resource, Event]): (ID, Event) = {
+    val entry = createEvent
+    Event.setEventFromDescriptor(entry._2, ed)
+    entry
+  }
 
-  def removeEvent2(e: Event): Unit = {
+  def removeEvent(id: ID): Unit = {
+    getElement(id).foreach(e => e.incompatibilities.foreach(e.removeIncompatibility))
+    removeElement(id)
+  }
+
+  def removeEvent(e: Event): Unit = {
     e.incompatibilities.foreach(e.removeIncompatibility)
+    e.subject.foreach(_.events_-=(e))
     removeElement(e)
   }
 
   def removeEvents(es: TraversableOnce[Event]): Unit = {
-    es.foreach(removeEvent2)
+    es.foreach(removeEvent)
   }
 
-  def deleteEvent(eid: ID): Unit = deleteElement(eid)
-  def deleteEvent(e: Event): Unit = deleteElement(e.getID)
+  def getEvent(id: ID): Option[Event] =
+    getElement(id)
 
-  def getUnassignedEvents: Iterable[Event] = getElements.filter(_.isUnassigned)
-}
+  def getEventOrElse(id: ID, alternative: => Event): Event =
+    getElementOrElse(id, alternative)
 
-class ReadOnlyEventDatabase(eventDatabase: EventDatabase){
+  def unassignedEvents: Iterable[Event] =
+    getElements.filter(_.isUnassigned)
 
+  def events: Iterable[Event] =
+    getElements
 }

@@ -64,7 +64,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
     private void setupCellBehavior(Node cell, int week, Integer interval, ScheduleIntervalController intervalController) {
         cell.setOnMouseDragReleased(dragEvent -> {
             if(dragEvent.getButton() == MouseButton.PRIMARY) {
-                System.out.println("Dropped here: " + week + " " + interval + " " + mainController.getEventDrag().getEvent().getID()); //TODO remove this print
+                System.out.println("Dropped here: " + week + " " + interval + " " + mainController.getEventDrag().getEvent().id()); //TODO remove this print
                 courseController.notifyEventDrop(this, intervalController, -1);
             }
         });
@@ -104,7 +104,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
         }
         //else error, no week like this exists
 
-        eventsAtInterval.put(scheduleEvent.getID(), interval);
+        eventsAtInterval.put(scheduleEvent.id(), interval);
         quarterData.getSchedule().addEvent(eventWeek, interval, scheduleEvent); //scheduleWeek is a dummy parameter here
     }
 
@@ -128,7 +128,7 @@ public class QuarterScheduleController extends DualWeekScheduleViewController<We
         else if(week == Weeks.getBWeek()) secondWeekEventViews.get(scheduleEvent.getStartInterval()).removeAssignment(scheduleEvent);
         //else error, no week like this exists
 
-        eventsAtInterval.remove(scheduleEvent.getID());
+        eventsAtInterval.remove(scheduleEvent.id());
         //TODO improvable call, there's no need to pass the first parameter.
         quarterData.getSchedule().removeEvent(scheduleEvent.getStartInterval(), scheduleEvent);
     }
