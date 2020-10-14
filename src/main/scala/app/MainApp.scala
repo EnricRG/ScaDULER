@@ -48,8 +48,8 @@ object MainApp extends App {
         val instanceData = InstanceData(
             AppSettings.days,
             AppSettings.timeSlotsPerDay,
-            database.resourceDatabase.getElements.size,
-            database.resourceDatabase.getElements.toList,
+            database.resourceDatabase.resources.size,
+            database.resourceDatabase.resources.toList,
             assignableEvents.size,
             assignableEvents.toList.sortBy(_.getID)
         )

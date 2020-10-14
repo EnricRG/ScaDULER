@@ -13,7 +13,7 @@ object ScalaMainController {
   def promptSubjectForm(mc: MainController): Unit = {
     val subjectForm = new CreateSubjectLikeFormController(
       MainApp.getDatabase.courseDatabase.courses,
-      MainApp.getDatabase.resourceDatabase.getElements)
+      MainApp.getDatabase.resourceDatabase.resources)
 
     subjectForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItem("subjectForm_windowTitle"),
@@ -81,7 +81,7 @@ object ScalaMainController {
     val eventForm = new CreateEventFormController(
       MainApp.getDatabase.subjectDatabase.getFinishedSubjects,
       MainApp.getDatabase.courseDatabase.courses,
-      MainApp.getDatabase.resourceDatabase.getElements,
+      MainApp.getDatabase.resourceDatabase.resources,
       MainApp.getDatabase.eventDatabase.getElements)
 
     eventForm.setStage(Utils.promptBoundWindow(

@@ -24,8 +24,8 @@ class CourseDatabase extends DatabaseImpl[Course] {
     entry
   }
 
-  def removeCourse(cid: ID): Unit =
-    removeElement(cid)
+  def removeCourse(id: ID): Unit =
+    removeElement(id)
 
   def removeCourse(c: Course): Unit =
     removeElement(c)

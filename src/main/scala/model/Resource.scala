@@ -3,10 +3,10 @@ package model
 import model.Weeks.Week
 import model.blueprint.ResourceBlueprint
 import model.descriptor.ResourceDescriptor
-import service.{ID, Identifiable}
+import service.{ID, Identifiable2}
 
 @SerialVersionUID(1L)
-class Resource(id: ID) extends Identifiable(id) with ResourceLikeImpl with Serializable {
+class Resource(val id: ID) extends Identifiable2 with ResourceLikeImpl with Serializable {
   def getMaxQuantity: Int = availability.getMax
   def getQuantityAt(week: Week, interval: Int): Int = availability.get(week.toWeekNumber, interval)
 
