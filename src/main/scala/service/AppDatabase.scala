@@ -6,7 +6,7 @@ class AppDatabase extends Serializable {
 
   lazy val eventDatabase: EventDatabase = new EventDatabase
 
-  lazy val subjectDatabase: SubjectDatabase = new SubjectDatabase
+  lazy val subjectDatabase: SubjectDatabase = new SubjectDatabase(this)
 
   lazy val courseDatabase: CourseDatabase = new CourseDatabase
 
@@ -22,7 +22,7 @@ class AppDatabase extends Serializable {
 
   def removeSubject(s: Subject): Unit = {
     eventDatabase.removeEvents(s.events)
-    subjectDatabase.removeSubject2(s)
+    subjectDatabase.removeSubject(s)
   }
 
   def removeSubjects(subjects: Iterable[Subject]): Unit =
@@ -34,7 +34,7 @@ class AppDatabase extends Serializable {
     courseDatabase.createCourse()
 
   def removeCourse(c: Course, hardDelete: Boolean): (Iterable[Subject], Iterable[Event]) = {
-    val affectedSubjects = subjectDatabase.getFinishedSubjects.filter(sb => sb.course.contains(c))
+    val affectedSubjects = subjectDatabase.subjects.filter(sb => sb.course.contains(c))
     lazy val otherAffectedEvents = eventDatabase.events.filter(e=> e.subject.isEmpty && e.course.contains(c))
 
     if(hardDelete) {

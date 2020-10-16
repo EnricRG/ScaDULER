@@ -1,47 +1,47 @@
 package service
 
-import app.MainApp
-import model.Subject
+import model.blueprint.SubjectBlueprint
+import model.descriptor.SubjectDescriptor
+import model.{Course, Event, Subject}
 
-class SubjectDatabase extends Database[Subject] {
+class SubjectDatabase(appDatabase: AppDatabase) extends DatabaseImpl[Subject] {
 
-  private lazy val eventDatabase = MainApp.getDatabase.eventDatabase
+  private val eventDatabase: EventDatabase = appDatabase.eventDatabase
 
-  def subjects: Iterable[Subject] = getElements
-
-  def removeSubject2(s: Subject): Unit =
-    removeElement(s) //TODO adapt to new single delete mode database
-
-  def removeSubjects(subjects: Iterable[Subject]): Unit = {
-    subjects.foreach(removeSubject2)
-  }
-
-
-  //TODO remove ID from public interfaces. Only for internal uses.
   def createSubject: (ID, Subject) = {
-      val id = reserveNextId
-      val subject = new Subject(id)
-      addElement(id, subject)
+    val id = reserveNextId()
+    val subject = new Subject(id)
+    addElement(id, subject)
   }
 
-  def removeSubject(sid: ID): Unit = getElement(sid) match{
-      case Some(s) =>
-          s.events.map(_.id).foreach(eventDatabase.removeEvent)
-          removeElement(sid)
-      case _ =>
+  def createSubjectFromDescriptor(sd: SubjectDescriptor[Course, _], events: Iterable[Event]): (ID, Subject) = {
+    val entry = createSubject
+    Subject.setSubjectFromDescriptor(entry._2, sd, events)
+    entry
   }
-  def removeSubject(s: Subject): Unit = removeSubject(s.getID)
 
+  def createSubjectFromDescriptor(sd: SubjectDescriptor[Course, _]): (ID, Subject) =
+    createSubjectFromDescriptor(sd, Nil)
 
-
-  def deleteSubject(sid: ID): Unit = getElement(sid) match {
-      case Some(s) =>
-          s.events.map(_.id).foreach(eventDatabase.removeEvent)
-          deleteElement(sid)
-      case _ =>
+  def createResourceFromBlueprint(sb: SubjectBlueprint): (ID, Subject) = {
+    val entry = createSubject
+    Subject.setSubjectFromBlueprint(entry._2, sb)
+    entry
   }
-  def deleteSubject(s: Subject): Unit = deleteSubject(s.getID)
 
-  def getFinishedSubjectsIDs: Iterable[Long] = getIDs.filter(isFinished)
-  def getFinishedSubjects: Iterable[Subject] = getFinishedSubjectsIDs.map(getElement(_).get)
+  def removeSubject(id: ID): Unit = getElement(id) match {
+    case Some(s) =>
+      s.events.foreach(eventDatabase.removeEvent)
+      removeElement(id)
+    case _ =>
+  }
+
+  def removeSubject(s: Subject): Unit =
+    removeSubject(s.id)
+
+  def removeSubjects(subjects: Iterable[Subject]): Unit =
+    subjects.foreach(removeSubject)
+
+  def subjects: Iterable[Subject] =
+    getElements
 }

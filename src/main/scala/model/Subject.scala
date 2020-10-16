@@ -1,11 +1,12 @@
 package model
 
 import javafx.scene.paint
+import model.blueprint.SubjectBlueprint
 import model.descriptor.SubjectDescriptor
-import service.{ID, Identifiable}
+import service.{ID, Identifiable2}
 
 @SerialVersionUID(1L)
-class Subject(id: ID) extends Identifiable(id) with SubjectLikeImpl[Subject, Course, Resource, Event]{
+class Subject(val id: ID) extends Identifiable2 with SubjectLikeImpl[Subject, Course, Resource, Event]{
 
   @deprecated
   def getEventSummary: String =
@@ -28,7 +29,17 @@ object Subject{
     s.quarter = sd.quarter
 
     sd.additionalFields.foreach(entry => s.updateAdditionalField(entry._1,entry._2))
-    events.foreach(e => s.events_+=(e))
+    events.foreach(e => {
+      s.events_+=(e)
+      e.subject = s
+    })
     s.eventTypeIncompatibilities_++=(sd.eventTypeIncompatibilities)
+  }
+
+  def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint): Unit = {
+    s.name = sb.name
+    s.shortName = sb.shortName
+    s.quarter = sb.quarter
+    sb.additionalFields.foreach(pair => s.updateAdditionalField(pair._1, pair._2))
   }
 }

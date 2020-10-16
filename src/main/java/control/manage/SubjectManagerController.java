@@ -47,7 +47,7 @@ public class SubjectManagerController extends EntityManagerController<Subject> {
     protected void setupTable() {
         addColumns();
         configureColumns();
-        fillTable(JavaConverters.asJavaCollection(subjectDatabase.getFinishedSubjects()));
+        fillTable(JavaConverters.asJavaCollection(subjectDatabase.subjects()));
     }
 
     private void addColumns(){

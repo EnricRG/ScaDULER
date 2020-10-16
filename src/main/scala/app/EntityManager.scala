@@ -3,7 +3,7 @@ package app
 import control.MainController
 import file.imprt.ImportJob
 import model._
-import model.blueprint.{CourseBlueprint, EventBlueprint, ResourceBlueprint, SubjectBlueprint}
+import model.blueprint.{CourseBlueprint, ResourceBlueprint, SubjectBlueprint}
 import service._
 
 import scala.collection.mutable
@@ -47,8 +47,8 @@ object EntityManager {
     importJob.subjects.foreach(sb => {
       val subject = subjectDatabase.createSubject._2
       val subjectCourse = if(sb.course.nonEmpty) Some(courseMapper(sb.course.get)) else None
-      setSubjectFromBlueprint(subject, sb, subjectCourse)
-      subjectDatabase.setAsFinished(subject.getID)
+      Subject.setSubjectFromBlueprint(subject, sb)
+      subject.course = subjectCourse
       subjectMapper.put(sb, subject)
     })
 
@@ -57,40 +57,15 @@ object EntityManager {
     importJob.events.foreach(eb =>{
       val event = eventDatabase.createEvent._2
 
-      setEventFromBlueprint(event, eb,
-        subjectMapper(eb.subject.orNull),
-        courseMapper(eb.course.orNull),
-        resourceMapper.get(eb.neededResource.orNull)
-      )
+      Event.setEventFromBlueprint(event, eb)
+
+      if(eb.course.nonEmpty) event.course = courseMapper.get(eb.course.get)
+      if(eb.subject.nonEmpty) event.subject = subjectMapper.get(eb.subject.get)
+      if(eb.neededResource.nonEmpty) event.neededResource = resourceMapper.get(eb.neededResource.get)
 
       eventsByType(event.eventType) += event
       mc.addUnassignedEvent(event)
     })
-  }
-
-  //TODO remove this and use Subject methods
-  @deprecated
-  private def setSubjectFromBlueprint(s: Subject, sb: SubjectBlueprint, c: Option[Course]): Unit = {
-    s.name = sb.name
-    s.shortName = sb.shortName
-    s.course = c
-    s.quarter = sb.quarter
-    sb.additionalFields.foreach(pair => s.updateAdditionalField(pair._1, pair._2))
-  }
-
-  //TODO remove this and use Event methods
-  @deprecated
-  private def setEventFromBlueprint(e: Event, eb: EventBlueprint, s: Subject, c: Course, r: Option[Resource]): Unit = {
-    e.name = eb.name
-    e.shortName = eb.shortName
-    e.eventType = eb.eventType
-    e.duration = eb.duration
-    //e.subject_=(s)
-    //throw new UnsupportedOperationException("e.subject_=(s) expects Subject2 but received Subject")
-    if(r.nonEmpty) e.neededResource = r.get
-    e.periodicity = eb.periodicity
-    e.course = c
-    e.quarter = eb.quarter
   }
 }
 

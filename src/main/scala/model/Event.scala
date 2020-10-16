@@ -3,6 +3,7 @@ package model
 import app.AppSettings
 import javafx.scene.paint
 import model.Weeks.Week
+import model.blueprint.EventBlueprint
 import model.descriptor.EventDescriptor
 import service.{ID, Identifiable2}
 
@@ -106,5 +107,14 @@ object Event{
     event.neededResource = descriptor.neededResource
 
     descriptor.incompatibilities.foreach(event.addIncompatibility)
+  }
+
+  def setEventFromBlueprint(e: Event, eb: EventBlueprint): Unit = {
+    e.name = eb.name
+    e.shortName = eb.shortName
+    e.eventType = eb.eventType
+    e.duration = eb.duration
+    e.periodicity = eb.periodicity
+    e.quarter = eb.quarter
   }
 }

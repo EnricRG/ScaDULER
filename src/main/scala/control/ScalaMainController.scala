@@ -32,6 +32,8 @@ object ScalaMainController {
         val descriptorMap = sd.events.map((_,MainApp.getDatabase.eventDatabase.createEvent._2)).toMap
 
         descriptorMap.foreach { case (ed, e) =>
+          //FIXME Redundant job at assigning subject on fromSubjectFormEventDescriptor call.
+          //Subject will be added at setSubjectFromDescriptor call
           Event.setEventFromDescriptor(e, fromSubjectFormEventDescriptor(Some(subject), ed, descriptorMap))
         }
 
@@ -46,7 +48,6 @@ object ScalaMainController {
             e1.addIncompatibility(e2))))
 
       Subject.setSubjectFromDescriptor(subject,sd,events)
-      MainApp.getDatabase.subjectDatabase.setAsFinished(sid)
       events.foreach(mc.addUnassignedEvent)
     }
   }
@@ -79,7 +80,7 @@ object ScalaMainController {
 
   def promptEventForm(mainController: MainController): Unit = {
     val eventForm = new CreateEventFormController(
-      MainApp.getDatabase.subjectDatabase.getFinishedSubjects,
+      MainApp.getDatabase.subjectDatabase.subjects,
       MainApp.getDatabase.courseDatabase.courses,
       MainApp.getDatabase.resourceDatabase.resources,
       MainApp.getDatabase.eventDatabase.events)
