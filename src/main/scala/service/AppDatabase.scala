@@ -1,16 +1,19 @@
 package service
 
+import model.descriptor.{CourseDescriptor, EventDescriptor, ResourceDescriptor}
 import model.{Course, Event, Resource, Subject}
 
 class AppDatabase extends Serializable {
 
-  lazy val eventDatabase: EventDatabase = new EventDatabase
+  type ED = EventDescriptor[Subject, Course, Resource, Event]
 
-  lazy val subjectDatabase: SubjectDatabase = new SubjectDatabase(this)
+  private val subjectDatabase: SubjectDatabase = new SubjectDatabase(this)
 
-  lazy val courseDatabase: CourseDatabase = new CourseDatabase
+  private val courseDatabase: CourseDatabase = new CourseDatabase
 
-  lazy val resourceDatabase: ResourceDatabase = new ResourceDatabase
+  private val resourceDatabase: ResourceDatabase = new ResourceDatabase
+
+  private val eventDatabase: EventDatabase = new EventDatabase
 
   /** Subjects */
 
@@ -33,8 +36,14 @@ class AppDatabase extends Serializable {
   def courses: Iterable[Course] =
     courseDatabase.courses
 
+  def getCourseByName(name: String): Option[Course] =
+    courseDatabase.getCourseByName(name)
+
   def createCourse(): (ID, Course) =
     courseDatabase.createCourse()
+
+  def createCourseFromDescriptor(descriptor: CourseDescriptor): (ID, Course) =
+    courseDatabase.createCourseFromDescriptor(descriptor)
 
   def removeCourse(c: Course, hardDelete: Boolean): (Iterable[Subject], Iterable[Event]) = {
     val affectedSubjects = subjectDatabase.subjects.filter(sb => sb.course.contains(c))
@@ -69,8 +78,14 @@ class AppDatabase extends Serializable {
   def resources: Iterable[Resource] =
     resourceDatabase.resources
 
+  def getResourceByName(name: String): Option[Resource] =
+    resourceDatabase.getResourceByName(name)
+
   def createResource(): (ID, Resource) =
     resourceDatabase.createResource
+
+  def createResourceFromDescriptor(descriptor: ResourceDescriptor): (ID, Resource) =
+    resourceDatabase.createResourceFromDescriptor(descriptor)
 
   def removeResource(r: Resource): Unit = {
     //TODO optimize with new data model relations.
@@ -86,8 +101,17 @@ class AppDatabase extends Serializable {
   def events: Iterable[Event] =
     eventDatabase.events
 
+  def unassignedEvents: Iterable[Event] =
+    events.filter(_.isUnassigned)
+
+  def getEvent(id: ID): Option[Event] =
+    eventDatabase.getEvent(id)
+
   def createEvent(): (ID, Event) =
     eventDatabase.createEvent
+
+  def createEventFromDescriptor(descriptor: ED): (ID, Event) =
+    eventDatabase.createEventFromDescriptor(descriptor)
 
   def removeEvent(e: Event): Unit = {
     eventDatabase.removeEvent(e)

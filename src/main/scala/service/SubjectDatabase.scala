@@ -6,8 +6,6 @@ import model.{Course, Event, Subject}
 
 class SubjectDatabase(appDatabase: AppDatabase) extends DatabaseImpl[Subject] {
 
-  private val eventDatabase: EventDatabase = appDatabase.eventDatabase
-
   def createSubject: (ID, Subject) = {
     val id = reserveNextId()
     val subject = new Subject(id)
@@ -31,7 +29,7 @@ class SubjectDatabase(appDatabase: AppDatabase) extends DatabaseImpl[Subject] {
 
   def removeSubject(id: ID): Unit = getElement(id) match {
     case Some(s) =>
-      s.events.foreach(eventDatabase.removeEvent)
+      s.events.foreach(appDatabase.removeEvent)
       removeElement(id)
     case _ =>
   }

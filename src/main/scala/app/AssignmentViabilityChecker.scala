@@ -6,8 +6,6 @@ import model.{Course, Event, QuarterData, Weeks}
 
 class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWeek: Int, interval: Int, event: Event) {
 
-    private val courseDatabase = MainApp.getDatabase.courseDatabase
-
     private val eventWeek = if(event.periodicity == Weekly) EveryWeek
                             else if(droppedWeek == AWeek.toWeekNumber) AWeek
                             else BWeek
@@ -26,8 +24,8 @@ class AssignmentViabilityChecker(course: Course, quarter: QuarterData, droppedWe
     def getWarning: Warning = warning.orNull
 
     def getQuarterEvents(course: Course, quarter: QuarterData): Iterable[Event] = {
-        if (quarter == course.firstQuarterData) courseDatabase.courses.map(_.firstQuarterData).flatMap(_.getSchedule.getEvents)
-        else courseDatabase.courses.map(_.secondQuarterData).flatMap(_.getSchedule.getEvents)
+        if (quarter == course.firstQuarterData) MainApp.getDatabase.courses.map(_.firstQuarterData).flatMap(_.getSchedule.getEvents)
+        else MainApp.getDatabase.courses.map(_.secondQuarterData).flatMap(_.getSchedule.getEvents)
     }
 
     def checkEventIncompatibilities(course: Course, quarter: QuarterData, event: Event, targetWeek: Week, interval: Int): Option[Warning] = {

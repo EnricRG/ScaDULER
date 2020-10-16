@@ -44,12 +44,14 @@ object MainApp extends App {
     }
 
     def solve(timeout: Double): Unit = {
-        val assignableEvents = database.eventDatabase.events.filter(_.isAssignable)
+        val assignableEvents = database.events.filter(_.isAssignable)
+        val resources = database.resources
+
         val instanceData = InstanceData(
             AppSettings.days,
             AppSettings.timeSlotsPerDay,
-            database.resourceDatabase.resources.size,
-            database.resourceDatabase.resources.toList,
+            resources.size,
+            resources.toList,
             assignableEvents.size,
             assignableEvents.toList.sortBy(_.id)
         )
@@ -93,7 +95,7 @@ object MainApp extends App {
 
                 val realAssignments = assignments.take(instanceData.nEvents)
                     .filter(x => {
-                        val e = database.eventDatabase.getEvent(x.eventID)
+                        val e = database.getEvent(x.eventID)
                         e.isDefined && !e.get.isAssigned
                     })
 

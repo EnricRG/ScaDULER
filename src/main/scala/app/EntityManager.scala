@@ -12,10 +12,6 @@ import scala.collection.mutable.ArrayBuffer
 object EntityManager {
 
   private val database: AppDatabase = MainApp.getDatabase
-  private val courseDatabase: CourseDatabase = database.courseDatabase
-  private val resourceDatabase: ResourceDatabase = database.resourceDatabase
-  private val subjectDatabase: SubjectDatabase = database.subjectDatabase
-  private val eventDatabase: EventDatabase = database.eventDatabase
 
   //progress stage initialized
   def importEntities(importJob: ImportJob, mc: MainController): Unit = {
@@ -24,9 +20,9 @@ object EntityManager {
     val subjectMapper = new mutable.HashMap[SubjectBlueprint, Subject]
 
     importJob.courses.foreach(cb => {
-      val existingCourse = courseDatabase.getCourseByName(cb.name)
+      val existingCourse = database.getCourseByName(cb.name)
       if(existingCourse.isEmpty) {
-        val course = courseDatabase.createCourse()._2
+        val course = database.createCourse()._2
         Course.setCourseFromBlueprint(course, cb)
         courseMapper.put(cb, course)
         mc.addCourseTab(course, false)
@@ -35,9 +31,9 @@ object EntityManager {
     })
 
     importJob.resources.foreach(rb => {
-      val existingResource = resourceDatabase.getResourceByName(rb.name)
+      val existingResource = database.getResourceByName(rb.name)
       if(existingResource.isEmpty) {
-        val resource = resourceDatabase.createResource._2
+        val resource = database.createResource()._2
         Resource.setResourceFromBlueprint(resource, rb)
         resourceMapper.put(rb, resource)
       }
@@ -45,7 +41,7 @@ object EntityManager {
     })
 
     importJob.subjects.foreach(sb => {
-      val subject = subjectDatabase.createSubject._2
+      val subject = database.createSubject()._2
       val subjectCourse = if(sb.course.nonEmpty) Some(courseMapper(sb.course.get)) else None
       Subject.setSubjectFromBlueprint(subject, sb)
       subject.course = subjectCourse
@@ -55,7 +51,7 @@ object EntityManager {
     val eventsByType = new mutable.HashMap[EventType, ArrayBuffer[Event]]
     EventTypes.commonEventTypes.foreach(et => eventsByType.put(et, new ArrayBuffer))
     importJob.events.foreach(eb =>{
-      val event = eventDatabase.createEvent._2
+      val event = database.createEvent()._2
 
       Event.setEventFromBlueprint(event, eb)
 

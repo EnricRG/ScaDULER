@@ -12,8 +12,8 @@ import util.Utils
 object ScalaMainController {
   def promptSubjectForm(mc: MainController): Unit = {
     val subjectForm = new CreateSubjectLikeFormController(
-      MainApp.getDatabase.courseDatabase.courses,
-      MainApp.getDatabase.resourceDatabase.resources)
+      MainApp.getDatabase.courses,
+      MainApp.getDatabase.resources)
 
     subjectForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItem("subjectForm_windowTitle"),
@@ -27,9 +27,9 @@ object ScalaMainController {
     if (osd.nonEmpty){
       val sd = osd.get
 
-      val (sid,subject) = MainApp.getDatabase.subjectDatabase.createSubject
+      val (sid,subject) = MainApp.getDatabase.createSubject()
       val events = {
-        val descriptorMap = sd.events.map((_,MainApp.getDatabase.eventDatabase.createEvent._2)).toMap
+        val descriptorMap = sd.events.map((_,MainApp.getDatabase.createEvent()._2)).toMap
 
         descriptorMap.foreach { case (ed, e) =>
           //FIXME Redundant job at assigning subject on fromSubjectFormEventDescriptor call.
@@ -80,10 +80,10 @@ object ScalaMainController {
 
   def promptEventForm(mainController: MainController): Unit = {
     val eventForm = new CreateEventFormController(
-      MainApp.getDatabase.subjectDatabase.subjects,
-      MainApp.getDatabase.courseDatabase.courses,
-      MainApp.getDatabase.resourceDatabase.resources,
-      MainApp.getDatabase.eventDatabase.events)
+      MainApp.getDatabase.subjects,
+      MainApp.getDatabase.courses,
+      MainApp.getDatabase.resources,
+      MainApp.getDatabase.events)
 
     eventForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItemOrElse(
@@ -100,11 +100,9 @@ object ScalaMainController {
     if(oed.nonEmpty){
       val ed = oed.get
 
-      val event = MainApp.getDatabase.eventDatabase.createEventFromDescriptor(ed)._2
+      val event = MainApp.getDatabase.createEventFromDescriptor(ed)._2
 
-      if(ed.subject.nonEmpty){
-        ed.subject.get.events_$plus$eq(event)
-      }
+      if(ed.subject.nonEmpty) ed.subject.get.events_+=(event)
 
       mainController.addUnassignedEvent(event)
     }
@@ -117,7 +115,7 @@ object ScalaMainController {
       Modality.WINDOW_MODAL,
       new ViewFactory(FXMLPaths.EntityManagerPanel),
       new CourseManagerController2(
-        MainApp.getDatabase.courseDatabase.courses,
+        MainApp.getDatabase.courses,
         mainController,
         MainApp.getDatabase)
     ).showAndWait()

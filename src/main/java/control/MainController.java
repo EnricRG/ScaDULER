@@ -32,7 +32,6 @@ import scala.collection.Iterable;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.List;
 import service.AppDatabase;
-import service.CourseDatabase;
 import solver.EventAssignment;
 import util.Utils;
 
@@ -172,25 +171,27 @@ public class MainController extends StageController {
 
     public void processEventAssignments(Collection<EventAssignment> eventAssignments){
         for(EventAssignment ea : eventAssignments){
-            Event event = MainApp.getDatabase().eventDatabase().getEventOrElse(ea.eventID(), null);
+            Option<Event> event = MainApp.getDatabase().getEvent(ea.eventID());
 
-            CourseScheduleController courseScheduleController = getEventCourseController(event);
-            QuarterScheduleController quarterScheduleController =
-                    courseScheduleController.getQuarterController(event.quarter().getOrElse(null));
-            ScheduleIntervalController intervalController =
-                    quarterScheduleController.getIntervalControllerAt(ea.week().toWeekNumber(), ea.interval());
+            if(event.nonEmpty()){
+                CourseScheduleController courseScheduleController = getEventCourseController(event.get());
+                QuarterScheduleController quarterScheduleController =
+                        courseScheduleController.getQuarterController(event.get().quarter().getOrElse(null));
+                ScheduleIntervalController intervalController =
+                        quarterScheduleController.getIntervalControllerAt(ea.week().toWeekNumber(), ea.interval());
 
-            startEventDrag(
-                    event,
+                startEventDrag(
+                    event.get(),
                     EventDrag.FROM_UNASSIGNED,
                     unassignedEventsMap.get(ea.eventID()),
                     intervalController);
 
-            processEventAssignment(
+                processEventAssignment(
                     courseScheduleController,
                     quarterScheduleController,
                     intervalController,
                     -1);
+            }
         }
     }
 
@@ -276,8 +277,6 @@ public class MainController extends StageController {
     private File userProjectFile = null;
     private boolean userMadeChanges = false; //TODO update when user made changes
     private boolean debug = true;
-
-    private CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
 
 
     @Override
@@ -606,7 +605,6 @@ public class MainController extends StageController {
     private void projectLoaded() {
         closeOpenCourseTabs();
         clearEventList();
-        reloadDatabase();
         openNewCourseTabs();
         addAddTab();
         addUnassignedEvents();
@@ -641,7 +639,7 @@ public class MainController extends StageController {
     }
 
     private void addUnassignedEvents() {
-        ArrayList<Event> unassignedEvents = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().eventDatabase().unassignedEvents()));
+        ArrayList<Event> unassignedEvents = new ArrayList<>(JavaConverters.asJavaCollection(MainApp.getDatabase().unassignedEvents()));
         for(Event e : unassignedEvents) addUnassignedEvent(e);
     }
 
@@ -657,12 +655,8 @@ public class MainController extends StageController {
         rightPane_VBox.getChildren().removeAll(rightPane_VBox.getChildren());
     }
 
-    private void reloadDatabase() {
-        courseDatabase = MainApp.getDatabase().courseDatabase();
-    }
-
     private void openNewCourseTabs() {
-        for(Course c : JavaConverters.asJavaCollection(courseDatabase.getElements())){
+        for(Course c : JavaConverters.asJavaCollection(MainApp.getDatabase().courses())){
             addCourseTab(c, true);
         }
         courseTabs.getSelectionModel().select(0);
@@ -720,7 +714,7 @@ public class MainController extends StageController {
         Option<CourseDescriptor> cd = courseForm.waitFormResult();
 
         if(cd.nonEmpty()) {
-            Course c = courseDatabase.createCourseFromDescriptor(cd.get())._2;
+            Course c = MainApp.getDatabase().createCourseFromDescriptor(cd.get())._2;
             addCourseTab(c, false);
         }
     }
@@ -737,18 +731,11 @@ public class MainController extends StageController {
 
     private void promptCourseManager(){
         ScalaMainController.promptCourseManager(this);
-        /*Utils.promptBoundWindow(
-                AppSettings.language().getItem("courseManager_windowTitle"),
-                manageButtons_courses.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.EntityManagerPanel()),
-                new CourseManagerController(this)
-        ).show();*/
     }
 
     public void promptResourceManager(Window owner) {
         ResourceManagerController<Resource> controller =
-            new ResourceManagerController<>(MainApp.getDatabase().resourceDatabase().getElements());
+            new ResourceManagerController<>(MainApp.getDatabase().resources());
 
         controller.setStage(Utils.promptBoundWindow(
             AppSettings.language().getItem("manageResources_windowTitle"),
@@ -765,10 +752,10 @@ public class MainController extends StageController {
             Iterable<Resource> removedResources = formResult.get()._2;
 
             for(ResourceDescriptor rd : JavaConverters.asJavaCollection(addedResources))
-                MainApp.getDatabase().resourceDatabase().createResourceFromDescriptor(rd);
+                MainApp.getDatabase().createResourceFromDescriptor(rd);
 
             for(Resource r : JavaConverters.asJavaCollection(removedResources))
-                MainApp.getDatabase().resourceDatabase().removeResource(r);
+                MainApp.getDatabase().removeResource(r);
         }
     }
 
@@ -809,7 +796,7 @@ public class MainController extends StageController {
 
     //TODO: remove this method, it has only debugging purposes.
     public void addCourseTab(){
-        Course c = courseDatabase.createCourse()._2;
+        Course c = MainApp.getDatabase().createCourse()._2;
         c.name_$eq("Default");
         addCourseTab(c, false);
     }
@@ -881,7 +868,7 @@ public class MainController extends StageController {
             courseTabMap.remove(c.id());
             tabCourseMap.remove(tab);
             courseTabs.getTabs().remove(tab);
-            courseDatabase.removeCourse(c);
+            MainApp.getDatabase().removeCourse(c, false);
 
             if(courseTabs.getTabs().size() < 3){ //If there's only one tab left (not including creation tab).
                 disableTabClosing();

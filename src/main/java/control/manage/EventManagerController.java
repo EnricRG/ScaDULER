@@ -15,11 +15,8 @@ import model.Subject;
 import model.Weeks;
 import scala.Option;
 import scala.collection.JavaConverters;
-import service.EventDatabase;
 
 public class EventManagerController extends EntityManagerController<Event> {
-
-    private final EventDatabase eventDatabase = MainApp.getDatabase().eventDatabase();
 
     public TableColumn<Event, String> nameColumn = new TableColumn<>();
     public TableColumn<Event, String> shortNameColumn = new TableColumn<>();
@@ -59,7 +56,7 @@ public class EventManagerController extends EntityManagerController<Event> {
     protected void setupTable() {
         addColumns();
         configureColumns();
-        fillTable(JavaConverters.asJavaCollection(eventDatabase.getElements()));
+        fillTable(JavaConverters.asJavaCollection(MainApp.getDatabase().events()));
     }
 
     private void addColumns(){
@@ -127,7 +124,7 @@ public class EventManagerController extends EntityManagerController<Event> {
 
             removeRow(event);
             getMainController().removeEvent(event);
-            eventDatabase.removeElement(event);
+            MainApp.getDatabase().removeEvent(event);
         }
     }
 

@@ -10,11 +10,8 @@ import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 import model.Course;
 import scala.collection.JavaConverters;
-import service.CourseDatabase;
 
 public class CourseManagerController extends EntityManagerController<Course> {
-
-    private final CourseDatabase courseDatabase = MainApp.getDatabase().courseDatabase();
 
     private TableColumn<Course, String> nameColumn = new TableColumn<>();
     private TableColumn<Course, String> descriptionColumn = new TableColumn<>();
@@ -42,7 +39,7 @@ public class CourseManagerController extends EntityManagerController<Course> {
     protected void setupTable() {
         addColumns();
         configureColumns();
-        fillTable(JavaConverters.asJavaCollection(courseDatabase.getElements()));
+        fillTable(JavaConverters.asJavaCollection(MainApp.getDatabase().courses()));
     }
 
     private void addColumns(){
@@ -70,7 +67,7 @@ public class CourseManagerController extends EntityManagerController<Course> {
         Course course = table.getSelectionModel().getSelectedItem();
 
         if(course != null){
-            courseDatabase.removeElement(course);
+            MainApp.getDatabase().removeCourse(course, false);
             removeRow(course);
             getMainController().closeCourseTab(course);
         }

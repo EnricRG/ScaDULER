@@ -52,7 +52,7 @@ class Course(val id: ID) extends Identifiable2 with CourseLikeImpl with Serializ
   def events: Iterable[Event] = firstQuarterEvents ++ secondQuarterEvents
   //FIXME this is a workaround while we wait for the new data model which will relate courses, subjects and events directly
   def subjects: Iterable[Subject] =
-    MainApp.getDatabase.subjectDatabase.subjects.filter(_.course.contains(this))
+    MainApp.getDatabase.subjects.filter(_.course.contains(this))
 }
 
 object Course{

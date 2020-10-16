@@ -11,11 +11,8 @@ import javafx.stage.Stage;
 import model.Event;
 import model.Subject;
 import scala.collection.JavaConverters;
-import service.SubjectDatabase;
 
 public class SubjectManagerController extends EntityManagerController<Subject> {
-
-    private SubjectDatabase subjectDatabase = MainApp.getDatabase().subjectDatabase();
 
     public TableColumn<Subject, String> nameColumn = new TableColumn<>();
     public TableColumn<Subject, String> shortNameColumn = new TableColumn<>();
@@ -47,7 +44,7 @@ public class SubjectManagerController extends EntityManagerController<Subject> {
     protected void setupTable() {
         addColumns();
         configureColumns();
-        fillTable(JavaConverters.asJavaCollection(subjectDatabase.subjects()));
+        fillTable(JavaConverters.asJavaCollection(MainApp.getDatabase().subjects()));
     }
 
     private void addColumns(){
@@ -83,7 +80,7 @@ public class SubjectManagerController extends EntityManagerController<Subject> {
             removeRow(subject);
             for(Event ev : JavaConverters.asJavaCollection(subject.events()))
                 getMainController().removeEvent(ev);
-            subjectDatabase.removeSubject(subject);
+            MainApp.getDatabase().removeSubject(subject);
         }
     }
 }
