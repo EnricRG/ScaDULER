@@ -30,12 +30,17 @@ class AppDatabase extends Serializable {
 
   /** Courses */
 
+  def courses: Iterable[Course] =
+    courseDatabase.courses
+
   def createCourse(): (ID, Course) =
     courseDatabase.createCourse()
 
   def removeCourse(c: Course, hardDelete: Boolean): (Iterable[Subject], Iterable[Event]) = {
     val affectedSubjects = subjectDatabase.subjects.filter(sb => sb.course.contains(c))
     lazy val otherAffectedEvents = eventDatabase.events.filter(e=> e.subject.isEmpty && e.course.contains(c))
+
+    courseDatabase.removeCourse(c)
 
     if(hardDelete) {
       //store subject events before deleting them
@@ -68,8 +73,13 @@ class AppDatabase extends Serializable {
     resourceDatabase.createResource
 
   def removeResource(r: Resource): Unit = {
+    //TODO optimize with new data model relations.
+    events.filter(_.neededResource.contains(r)).foreach(_.neededResource = None)
     resourceDatabase.removeResource(r)
   }
+
+  def removeResources(resources: Iterable[Resource]): Unit =
+    resources.foreach(removeResource)
 
   /** Events */
 
@@ -82,4 +92,7 @@ class AppDatabase extends Serializable {
   def removeEvent(e: Event): Unit = {
     eventDatabase.removeEvent(e)
   }
+
+  def removeEvents(events: Iterable[Event]): Unit =
+    events.foreach(removeEvent)
 }

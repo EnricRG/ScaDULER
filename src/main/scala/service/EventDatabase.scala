@@ -24,7 +24,7 @@ class EventDatabase extends DatabaseImpl[Event] {
 
   def removeEvent(e: Event): Unit = {
     e.incompatibilities.foreach(e.removeIncompatibility)
-    e.subject.foreach(_.events_-=(e))
+    if(e.subject.nonEmpty) e.subject.get.events_-=(e)
     removeElement(e)
   }
 
