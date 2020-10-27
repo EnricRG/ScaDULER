@@ -862,7 +862,7 @@ public class MainController extends StageController {
     //called when the tab is closed from the main interface, so it has to be deleted from db
     public void closeCourseTab(Course c, Tab tab){
         if(tab != null) {
-            for(Event e : JavaConverters.asJavaCollection(c.events()))
+            for(Event e : JavaConverters.asJavaCollection(c.assignedEvents()))
                 addUnassignedEvent(e);
 
             courseTabMap.remove(c.id());

@@ -23,6 +23,7 @@ object FXMLPaths {
 
   val BasicAlert: String = "fxml/alert/basic_alert.fxml"
   val ChoiceAlert: String = "fxml/alert/choice_alert.fxml"
+  val RemoveModePrompt: String = "fxml/alert/remove_mode_prompt.fxml"
 
   val ModifyImportJob: String = "fxml/import/modify_import_job_main_frame.fxml"
   val ImportEntityManagerView: String = "fxml/import/import_entity_manager.fxml"

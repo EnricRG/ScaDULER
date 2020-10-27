@@ -1,14 +1,15 @@
 package control.manage
 
 import app.{AppSettings, FXMLPaths}
-import control.MainController
 import control.form.{CreateCourseLikeFormController, EditCourseLikeFormController}
+import control.misc.{HardRemove, NameListPrompt, RemoveMode, RemoveModePrompt}
+import control.{MainController, StageSettings}
 import factory.ViewFactory
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.control.{Hyperlink, Label, TableCell, TableColumn}
+import javafx.scene.control._
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Region.USE_COMPUTED_SIZE
 import javafx.stage.Modality
@@ -17,7 +18,7 @@ import model.{Course, Event, Subject}
 import service.AppDatabase
 import util.Utils
 
-class CourseManagerController2(
+class CourseManagerController(
   courses: Iterable[Course],
   mainController: MainController,
   appDatabase: AppDatabase
@@ -27,6 +28,7 @@ class CourseManagerController2(
   @FXML protected var descriptionColumn: TableColumn[Course, String] = new TableColumn
   @FXML protected var subjectsColumn: TableColumn[Course, Int] = new TableColumn
   @FXML protected var eventsColumn: TableColumn[Course, Int] = new TableColumn
+  @FXML protected var assignedEventsColumn: TableColumn[Course, Int] = new TableColumn
 
   def this(mainController: MainController, appDatabase: AppDatabase) =
     this(Nil, mainController, appDatabase)
@@ -52,6 +54,10 @@ class CourseManagerController2(
       "courseManager_eventsColumnHeader",
       "Events"))
 
+    assignedEventsColumn.setText(AppSettings.language.getItemOrElse(
+      "courseManager_assignedEventsColumnHeader",
+      "Assigned events"))
+
     addButton.setText(AppSettings.language.getItemOrElse(
       "courseManager_addCourseButton",
       "Create Course"))
@@ -76,6 +82,7 @@ class CourseManagerController2(
     addColumn(descriptionColumn)
     addColumn(subjectsColumn)
     addColumn(eventsColumn)
+    addColumn(assignedEventsColumn)
   }
 
   private def configureColumns(): Unit = {
@@ -102,7 +109,25 @@ class CourseManagerController2(
         super.updateItem(item, empty)
         if (!empty) {
           val events = getTableView.getItems.get(getIndex).events
-          setGraphic(generateEventsHyperlink(events))
+          setGraphic(generateEventsHyperlink(events, AppSettings.language.getItemOrElse(
+            "courseManager_eventListPromp",
+            "Events")))
+        }
+        else {
+          setGraphic(null)
+          setText(null)
+        }
+      }
+    })
+
+    assignedEventsColumn.setCellFactory(column => new TableCell[Course, Int] {
+      override protected def updateItem(item: Int, empty: Boolean): Unit = {
+        super.updateItem(item, empty)
+        if (!empty) {
+          val events = getTableView.getItems.get(getIndex).assignedEvents
+          setGraphic(generateEventsHyperlink(events, AppSettings.language.getItemOrElse(
+            "courseManager_assignedEventListPromp",
+            "Assigned events")))
         }
         else {
           setGraphic(null)
@@ -116,7 +141,10 @@ class CourseManagerController2(
     val hyperlink = new Hyperlink(subjects.size.toString)
     hyperlink.setOnAction(actionEvent => showSubjectList(subjects))
 
-    //TODO add tooltip to hyperlink
+    val tooltip = new Tooltip(AppSettings.language.getItemOrElse(
+      "courseManager_subjectHyperlinkTooltip",
+      "Click to see the complete list of this course's subjects"))
+    hyperlink.setTooltip(tooltip)
 
     val hBox: HBox = generateHyperlinkHBox
     hBox.getChildren.add(hyperlink)
@@ -124,11 +152,14 @@ class CourseManagerController2(
     hBox
   }
 
-  private def generateEventsHyperlink(events: Iterable[Event]): Node = {
+  private def generateEventsHyperlink(events: Iterable[Event], windowTitle: String): Node = {
     val hyperlink = new Hyperlink(events.size.toString)
-    hyperlink.setOnAction(actionEvent => showEventList(events))
+    hyperlink.setOnAction(actionEvent => showEventList(events, windowTitle))
 
-    //TODO add tooltip to hyperlink
+    val tooltip = new Tooltip(AppSettings.language.getItemOrElse(
+      "courseManager_eventHyperlinkTooltip",
+      "Click to see the complete list of this course's events"))
+    hyperlink.setTooltip(tooltip)
 
     val hBox: HBox = generateHyperlinkHBox
     hBox.getChildren.add(hyperlink)
@@ -147,11 +178,27 @@ class CourseManagerController2(
   }
 
   private def showSubjectList(subjects: Iterable[Subject]): Unit = {
-    //TODO prompt subject list
+    val prompt = new NameListPrompt(
+      subjects.map(_.shortName),
+      AppSettings.language.getItemOrElse("courseManager_subjectListPlaceholder", "No subjects"),
+      StageSettings(
+        AppSettings.language.getItemOrElse("courseManager_subjectListPromp", "Subjects"),
+        Some(stage),
+        Modality.WINDOW_MODAL))
+
+    prompt.showAndWait()
   }
 
-  private def showEventList(events: Iterable[Event]): Unit = {
-    //TODO prompt event list
+  private def showEventList(events: Iterable[Event], windowTitle: String): Unit = {
+    val prompt = new NameListPrompt(
+      events.map(_.shortName),
+      AppSettings.language.getItemOrElse("courseManager_eventListPlaceholder", "No events"),
+      StageSettings(
+        windowTitle,
+        Some(stage),
+        Modality.WINDOW_MODAL))
+
+    prompt.showAndWait()
   }
 
   override protected def newEntity: Option[Course] = {
@@ -177,15 +224,19 @@ class CourseManagerController2(
   }
 
   private def createCourseFromDescriptor(courseDescriptor: CourseDescriptor): Course = {
-    val course = appDatabase.createCourse()._2
+    val course = appDatabase.createCourseFromDescriptor(courseDescriptor)._2
 
-    Course.setCourseFromDescriptor(course,courseDescriptor)
+    //TODO mainController.notifyCourseCreation(course)
 
     course
   }
 
   override protected def editEntity(entity: Course): Option[Course] = {
-    promptEditForm(entity)
+    val editedCourse = promptEditForm(entity)
+
+    //TODO if(editedCourse.nonEmpty) mainController.notifyCourseEdition(editedCourse.get)
+
+    editedCourse
   }
 
   private def promptEditForm(course: Course): Option[Course] = {
@@ -203,21 +254,30 @@ class CourseManagerController2(
     courseForm.waitFormResult //execution thread stops here.
   }
 
-  override protected def removeEntity(entity: Course): Unit = {
-    val hardDelete = promptDeleteModeDialog
-    val deletedEvents = appDatabase.removeCourse(entity, hardDelete)._2
+  override protected def removeEntity(entity: Course, removeMode: RemoveMode): Unit = {
+    if(removeMode == HardRemove) {
+      val deletedEvents = appDatabase.removeCourse(entity, hardDelete = true)._2
+      //TODO mainController.notifyEventsDeletion(deletedEvents)
+    }
+    else {
+      appDatabase.removeCourse(entity, hardDelete = false)
+    }
     //TODO mainController.notifyCourseDeletion(entity)
-    //TODO mainController.notifyEventsDeletion(deletedEvents)
   }
 
-  private def promptDeleteModeDialog: Boolean = {
-    //TODO
-
-    sealed trait DeleteMode
-    object HardMode extends DeleteMode
-    object SoftMode extends DeleteMode
-
-    false
+  override protected def askRemoveMode: Option[RemoveMode] = {
+    new RemoveModePrompt(
+      AppSettings.language.getItemOrElse(
+        "courseManager_removeCoursePrompt_explanation",
+        "Deleting a course could leave some subjects and events dangling around.\n" +
+          "Would you like to keep them, or also remove them?"),
+      AppSettings.language.getItemOrElse(
+        "courseManager_removeCoursePrompt_softRemove",
+        "Keep"),
+      AppSettings.language.getItemOrElse(
+        "courseManager_removeCoursePrompt_hardRemove",
+        "Remove"),
+      StageSettings("removeMode", Some(stage), Modality.WINDOW_MODAL)).waitChoice()
   }
 
   override protected def notifySingleSelection(): Unit = {

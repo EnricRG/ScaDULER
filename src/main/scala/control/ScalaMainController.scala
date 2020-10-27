@@ -2,7 +2,7 @@ package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
 import control.form.{CreateEventFormController, CreateSubjectLikeFormController, SubjectLikeForm}
-import control.manage.CourseManagerController2
+import control.manage.CourseManagerController
 import factory.ViewFactory
 import javafx.stage.Modality
 import model.descriptor.EventDescriptor
@@ -114,7 +114,7 @@ object ScalaMainController {
       mainController.manageButtons_courses.getScene.getWindow,
       Modality.WINDOW_MODAL,
       new ViewFactory(FXMLPaths.EntityManagerPanel),
-      new CourseManagerController2(
+      new CourseManagerController(
         MainApp.getDatabase.courses,
         mainController,
         MainApp.getDatabase)

@@ -3,10 +3,11 @@ package control.manage
 import java.net.URL
 import java.util.ResourceBundle
 
+import control.misc.RemoveMode
 import control.{ChildStageController, MainController}
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, SelectionMode, TableColumn, TableView}
+import javafx.scene.control._
 import javafx.stage.Stage
 
 import scala.collection.JavaConverters
@@ -36,28 +37,35 @@ abstract class EntityManagerController2[E](mainController: MainController)
 
   protected def setupTable(): Unit = {
     table.getSelectionModel.setSelectionMode(SelectionMode.MULTIPLE)
-    table.getSelectionModel.selectedItemProperty.addListener(observable => {
-      val nSelectedItems = table.getSelectionModel.getSelectedItems.size
 
-      if (nSelectedItems > 1) {
-        editButton.setDisable(true)
-        removeButton.setDisable(false)
-        notifyMultipleSelection()
-      }
-      else if(nSelectedItems == 1){
-        editButton.setDisable(false)
-        removeButton.setDisable(false)
-        notifySingleSelection()
-      }
-      else { //nSelectedItems == 0
-        editButton.setDisable(true)
-        removeButton.setDisable(true)
-      }
+    table.setRowFactory(tableView => new TableRow[E] {
+      setOnMouseClicked(mouseEvent => {
+        updateSelection()
+      })
     })
 
     table.setStyle("-fx-selection-bar: lightblue;")
 
     additionalTableSetup()
+  }
+
+  private def updateSelection(): Unit = {
+    val nSelectedItems = table.getSelectionModel.getSelectedItems.size
+
+    if (nSelectedItems > 1) {
+      editButton.setDisable(true)
+      removeButton.setDisable(false)
+      notifyMultipleSelection()
+    }
+    else if(nSelectedItems == 1) {
+      editButton.setDisable(false)
+      removeButton.setDisable(false)
+      notifySingleSelection()
+    }
+    else { //nSelectedItems == 0
+      editButton.setDisable(true)
+      removeButton.setDisable(true)
+    }
   }
 
   /** Should be used to initialize additional entity table settings. */
@@ -84,7 +92,7 @@ abstract class EntityManagerController2[E](mainController: MainController)
     removeButton.setDisable(true)
   }
 
-  private def addButtonAction(): Unit = {
+  protected def addButtonAction(): Unit = {
     val entity = newEntity
 
     if (entity.nonEmpty) {
@@ -94,7 +102,7 @@ abstract class EntityManagerController2[E](mainController: MainController)
     }
   }
 
-  private def editButtonAction(): Unit = {
+  protected def editButtonAction(): Unit = {
     val editTarget = selectedEntity
 
     if (editTarget.nonEmpty){
@@ -110,13 +118,19 @@ abstract class EntityManagerController2[E](mainController: MainController)
     }
   }
 
-  private def removeButtonAction(): Unit = {
-    val selectedEntities = table.getSelectionModel.getSelectedItems
+  protected def removeButtonAction(): Unit = {
+    val removeMode = askRemoveMode
 
-    selectedEntities.forEach(removeEntity(_))
+    if (removeMode.nonEmpty) {
+      val selectedEntities = table.getSelectionModel.getSelectedItems
 
-    table.getItems.removeAll(selectedEntities)
+      selectedEntities.forEach(removeEntity(_, removeMode.get))
+
+      table.getItems.removeAll(selectedEntities)
+    }
   }
+
+  protected def askRemoveMode: Option[RemoveMode]
 
   private def selectEntity(entity: E): Unit = {
     table.getSelectionModel.clearSelection()
@@ -145,7 +159,7 @@ abstract class EntityManagerController2[E](mainController: MainController)
 
   protected def editEntity(entity: E): Option[E]
 
-  protected def removeEntity(entity: E): Unit
+  protected def removeEntity(entity: E, removeMode: RemoveMode): Unit
 
   protected def notifySingleSelection(): Unit
 
