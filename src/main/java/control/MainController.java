@@ -892,4 +892,8 @@ public class MainController extends StageController {
             eventViewMap.put(event.id(), eventView);
         }
     }
+
+    public Window getWindow() {
+        return mainStackPane.getScene().getWindow();
+    }
 }

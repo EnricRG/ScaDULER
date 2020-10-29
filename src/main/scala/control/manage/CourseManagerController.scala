@@ -3,7 +3,7 @@ package control.manage
 import app.{AppSettings, FXMLPaths}
 import control.form.{CreateCourseLikeFormController, EditCourseLikeFormController}
 import control.misc.{HardRemove, NameListPrompt, RemoveMode, RemoveModePrompt}
-import control.{MainController, StageSettings}
+import control.{MainController, SelfInitializedStageController, StageSettings}
 import factory.ViewFactory
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
@@ -22,16 +22,25 @@ class CourseManagerController(
   courses: Iterable[Course],
   mainController: MainController,
   appDatabase: AppDatabase
-) extends EntityManagerController2[Course](mainController) {
+) extends EntityManagerController2[Course]
+  with SelfInitializedStageController {
 
-  @FXML protected var nameColumn: TableColumn[Course, String] = new TableColumn
-  @FXML protected var descriptionColumn: TableColumn[Course, String] = new TableColumn
-  @FXML protected var subjectsColumn: TableColumn[Course, Int] = new TableColumn
-  @FXML protected var eventsColumn: TableColumn[Course, Int] = new TableColumn
-  @FXML protected var assignedEventsColumn: TableColumn[Course, Int] = new TableColumn
+  @FXML protected var nameColumn: TableColumn[Course, String] = _
+  @FXML protected var descriptionColumn: TableColumn[Course, String] = _
+  @FXML protected var subjectsColumn: TableColumn[Course, Int] = _
+  @FXML protected var eventsColumn: TableColumn[Course, Int] = _
+  @FXML protected var assignedEventsColumn: TableColumn[Course, Int] = _
 
   def this(mainController: MainController, appDatabase: AppDatabase) =
     this(Nil, mainController, appDatabase)
+
+  override def selfInitialize(): Unit =
+    initializeWith(
+      StageSettings(
+        AppSettings.language.getItemOrElse("courseManager_windowTitle", "Manage Courses"),
+        Some(mainController.getWindow),
+        Modality.WINDOW_MODAL),
+      FXMLPaths.EntityManagerPanel)
 
   override protected def initializeContentLanguage(): Unit = {
     table.setPlaceholder(new Label(AppSettings.language.getItemOrElse(
@@ -78,6 +87,12 @@ class CourseManagerController(
   }
 
   private def addColumns(): Unit = {
+    nameColumn = new TableColumn
+    descriptionColumn = new TableColumn
+    subjectsColumn = new TableColumn
+    eventsColumn = new TableColumn
+    assignedEventsColumn = new TableColumn
+
     addColumn(nameColumn)
     addColumn(descriptionColumn)
     addColumn(subjectsColumn)

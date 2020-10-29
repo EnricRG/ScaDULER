@@ -109,16 +109,10 @@ object ScalaMainController {
   }
 
   def promptCourseManager(mainController: MainController): Unit = {
-    Utils.promptBoundWindow(
-      AppSettings.language.getItemOrElse("courseManager_windowTitle", "Manage Courses"),
-      mainController.manageButtons_courses.getScene.getWindow,
-      Modality.WINDOW_MODAL,
-      new ViewFactory(FXMLPaths.EntityManagerPanel),
-      new CourseManagerController(
-        MainApp.getDatabase.courses,
-        mainController,
-        MainApp.getDatabase)
-    ).showAndWait()
+    new CourseManagerController(
+      MainApp.getDatabase.courses,
+      mainController,
+      MainApp.getDatabase).showAndWait()
   }
 
 }

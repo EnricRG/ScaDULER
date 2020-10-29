@@ -25,7 +25,8 @@ class RemoveModePrompt(text: String,
 
   private var selectedMode: Option[RemoveMode] = None
 
-  selfInitialize(settings, FXMLPaths.RemoveModePrompt)
+  override def selfInitialize(): Unit =
+    initializeWith(settings, FXMLPaths.RemoveModePrompt)
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     textLabel.setText(text)

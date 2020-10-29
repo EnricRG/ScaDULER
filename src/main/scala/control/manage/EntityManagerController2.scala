@@ -3,8 +3,8 @@ package control.manage
 import java.net.URL
 import java.util.ResourceBundle
 
+import control.StageController
 import control.misc.RemoveMode
-import control.{ChildStageController, MainController}
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control._
@@ -12,8 +12,8 @@ import javafx.stage.Stage
 
 import scala.collection.JavaConverters
 
-abstract class EntityManagerController2[E](mainController: MainController)
-  extends ChildStageController(mainController) {
+//TODO change to trait
+abstract class EntityManagerController2[E] extends StageController {
 
   @FXML var table: TableView[E] = _
 
@@ -21,15 +21,15 @@ abstract class EntityManagerController2[E](mainController: MainController)
   @FXML var editButton: Button = _
   @FXML var removeButton: Button = _
 
-  def this(stage: Stage, mainController: MainController) = {
-    this(mainController)
+  def this(stage: Stage) = {
+    this()
     setStage(stage)
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    initializeContentLanguage()
     setupTable()
     bindActions()
+    initializeContentLanguage()
   }
 
   /** Should be used to initialize static text fields that depend on the application language. */
@@ -38,10 +38,8 @@ abstract class EntityManagerController2[E](mainController: MainController)
   protected def setupTable(): Unit = {
     table.getSelectionModel.setSelectionMode(SelectionMode.MULTIPLE)
 
-    table.setRowFactory(tableView => new TableRow[E] {
-      setOnMouseClicked(mouseEvent => {
-        updateSelection()
-      })
+    table.setRowFactory(_ => new TableRow[E] {
+      setOnMouseClicked(_ => updateSelection())
     })
 
     table.setStyle("-fx-selection-bar: lightblue;")
