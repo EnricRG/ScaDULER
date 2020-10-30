@@ -5,7 +5,6 @@ import control.form.CreateCourseLikeFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
 import control.imprt.mcf.MCFImportErrorViewerController;
-import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
 import control.schedule.*;
@@ -340,7 +339,7 @@ public class MainController extends StageController {
     }
 
     private void configureCoursePane() {
-        addCourseTab();
+        addDefaultCourseTab();
 
         //courseTabs.getSelectionModel().select(courseTabs_addTab);
 
@@ -795,7 +794,7 @@ public class MainController extends StageController {
     }
 
     //TODO: remove this method, it has only debugging purposes.
-    public void addCourseTab(){
+    public void addDefaultCourseTab(){
         Course c = MainApp.getDatabase().createCourse()._2;
         c.name_$eq("Default");
         addCourseTab(c, false);
@@ -868,7 +867,6 @@ public class MainController extends StageController {
             courseTabMap.remove(c.id());
             tabCourseMap.remove(tab);
             courseTabs.getTabs().remove(tab);
-            MainApp.getDatabase().removeCourse(c, false);
 
             if(courseTabs.getTabs().size() < 3){ //If there's only one tab left (not including creation tab).
                 disableTabClosing();
@@ -888,9 +886,35 @@ public class MainController extends StageController {
 
         if (eventView != null){
             unassignedEventsMap.put(event.id(), controller);
-            rightPane_VBox.getChildren().add(eventView); //TODO: improve this with a method that updates the list.
+            rightPane_VBox.getChildren().add(eventView);
             eventViewMap.put(event.id(), eventView);
         }
+    }
+
+    public void notifyCourseCreation(Course course) {
+        addCourseTab(course, false);
+    }
+
+    public void notifyCourseEdition(Course course) {
+        Tab courseTab = courseTabMap.get(course.id());
+
+        if(courseTab != null) courseTab.setText(course.name());
+    }
+
+    public void notifyCourseDeletion(Course course) {
+        closeCourseTab(course);
+    }
+
+    public void notifyEventCreation(Event event) {
+        addUnassignedEvent(event);
+    }
+
+    public void notifyEventDeletion(Event event) {
+        removeEvent(event);
+    }
+
+    public void notifyEventsDeletion(Iterable<Event> events) {
+        JavaConverters.asJavaCollection(events).forEach(this::notifyEventDeletion);
     }
 
     public Window getWindow() {

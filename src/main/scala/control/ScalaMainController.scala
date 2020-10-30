@@ -2,7 +2,7 @@ package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
 import control.form.{CreateEventFormController, CreateSubjectLikeFormController, SubjectLikeForm}
-import control.manage.CourseManagerController
+import control.manage.{CourseManagerController, EventManagerController2}
 import factory.ViewFactory
 import javafx.stage.Modality
 import model.descriptor.EventDescriptor

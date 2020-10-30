@@ -128,8 +128,6 @@ abstract class EntityManagerController2[E] extends StageController {
     }
   }
 
-  protected def askRemoveMode: Option[RemoveMode]
-
   private def selectEntity(entity: E): Unit = {
     table.getSelectionModel.clearSelection()
     table.scrollTo(entity)
@@ -158,6 +156,8 @@ abstract class EntityManagerController2[E] extends StageController {
   protected def editEntity(entity: E): Option[E]
 
   protected def removeEntity(entity: E, removeMode: RemoveMode): Unit
+
+  protected def askRemoveMode: Option[RemoveMode]
 
   protected def notifySingleSelection(): Unit
 

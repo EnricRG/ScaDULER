@@ -45,7 +45,7 @@ class CourseManagerController(
   override protected def initializeContentLanguage(): Unit = {
     table.setPlaceholder(new Label(AppSettings.language.getItemOrElse(
       "courseTable_placeholder",
-      "No Courses")))
+      "No courses")))
 
     nameColumn.setText(AppSettings.language.getItemOrElse(
       "courseManager_nameColumnHeader",
@@ -241,7 +241,7 @@ class CourseManagerController(
   private def createCourseFromDescriptor(courseDescriptor: CourseDescriptor): Course = {
     val course = appDatabase.createCourseFromDescriptor(courseDescriptor)._2
 
-    //TODO mainController.notifyCourseCreation(course)
+    mainController.notifyCourseCreation(course)
 
     course
   }
@@ -249,7 +249,8 @@ class CourseManagerController(
   override protected def editEntity(entity: Course): Option[Course] = {
     val editedCourse = promptEditForm(entity)
 
-    //TODO if(editedCourse.nonEmpty) mainController.notifyCourseEdition(editedCourse.get)
+    if(editedCourse.nonEmpty)
+      mainController.notifyCourseEdition(editedCourse.get)
 
     editedCourse
   }
@@ -259,7 +260,7 @@ class CourseManagerController(
 
     courseForm.setStage(Utils.promptBoundWindow(
       AppSettings.language.getItemOrElse("courseForm_edit_windowTitle", "Edit Course"),
-      editButton.getScene.getWindow,
+      stage,
       Modality.WINDOW_MODAL,
       new ViewFactory(FXMLPaths.CourseForm),
       courseForm))
@@ -272,12 +273,13 @@ class CourseManagerController(
   override protected def removeEntity(entity: Course, removeMode: RemoveMode): Unit = {
     if(removeMode == HardRemove) {
       val deletedEvents = appDatabase.removeCourse(entity, hardDelete = true)._2
-      //TODO mainController.notifyEventsDeletion(deletedEvents)
+      mainController.notifyEventsDeletion(deletedEvents)
     }
     else {
       appDatabase.removeCourse(entity, hardDelete = false)
     }
-    //TODO mainController.notifyCourseDeletion(entity)
+
+    mainController.notifyCourseDeletion(entity)
   }
 
   override protected def askRemoveMode: Option[RemoveMode] = {
