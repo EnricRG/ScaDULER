@@ -63,4 +63,6 @@ public abstract class EventViewController implements Initializable {
     public Node getNode() {
         return mainBox;
     }
+
+    public abstract void notifyEventEdition(Event event);
 }

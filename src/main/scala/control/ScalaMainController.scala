@@ -1,7 +1,7 @@
 package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
-import control.form.{CreateEventFormController, CreateSubjectLikeFormController, SubjectLikeForm}
+import control.form.{CreateEventLikeFormController, CreateSubjectLikeFormController, SubjectLikeForm}
 import control.manage.{CourseManagerController, EventManagerController2}
 import factory.ViewFactory
 import javafx.stage.Modality
@@ -79,7 +79,7 @@ object ScalaMainController {
   }
 
   def promptEventForm(mainController: MainController): Unit = {
-    val eventForm = new CreateEventFormController(
+    val eventForm = new CreateEventLikeFormController(
       MainApp.getDatabase.subjects,
       MainApp.getDatabase.courses,
       MainApp.getDatabase.resources,
@@ -115,4 +115,10 @@ object ScalaMainController {
       MainApp.getDatabase).showAndWait()
   }
 
+  def promptEventManager(mainController: MainController): Unit = {
+    new EventManagerController2(
+      MainApp.getDatabase.events,
+      mainController,
+      MainApp.getDatabase).showAndWait()
+  }
 }

@@ -3,12 +3,13 @@ package control.form
 import java.net.URL
 import java.util.ResourceBundle
 
-import app.AppSettings
-import control.StageController
+import app.{AppSettings, FXMLPaths}
+import control.{SelfInitializedStageController, StageSettings}
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.fxml.FXML
 import javafx.scene.control._
+import javafx.stage.{Modality, Window}
 import model.EventLike
 
 import scala.collection.{JavaConverters, mutable}
@@ -16,8 +17,9 @@ import scala.collection.{JavaConverters, mutable}
 //constructor pre: `events` contains all `incompatibilities` elements.
 class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   incompatibilities: Iterable[E],
-  events: Iterable[E])
-  extends StageController {
+  events: Iterable[E],
+  owner: Option[Window])
+  extends SelfInitializedStageController {
 
   @FXML var assignedIncompatibilitiesTag: Label = _
   @FXML var incompatibilityTable: TableView[E] = _
@@ -33,21 +35,13 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   @FXML var generalEventTable_nameColumn: TableColumn[E, String] = _
   @FXML var selectAllUnassigned: Button = _
 
-  private val _incompatibilities: mutable.HashSet[E] = {
-    val hashSet = new mutable.HashSet[E]
-
-    hashSet ++= incompatibilities
-
-    hashSet
-  }
-
-  private val _newIncompatibilities: mutable.HashSet[E] =
+  private lazy val _newIncompatibilities: mutable.HashSet[E] =
     new mutable.HashSet[E]
 
-  private val _removedIncompatibilities: mutable.HashSet[E] =
+  private lazy val _removedIncompatibilities: mutable.HashSet[E] =
     new mutable.HashSet[E]
 
-  private val _allEvents: mutable.HashSet[E] = {
+  private lazy val _allEvents: mutable.HashSet[E] = {
     val hashSet = new mutable.HashSet[E]
 
     hashSet ++= events
@@ -57,6 +51,19 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   }
 
   private var _edited: Boolean = false
+
+  override protected def selfInitialize(): Unit = {
+    initializeWith(
+      StageSettings(
+        AppSettings.language.getItemOrElse(
+          "eventForm_manageIncompatibilities_windowTitle",
+          "Manage Incompatibilities"),
+        owner,
+        Modality.WINDOW_MODAL
+      ),
+      FXMLPaths.EventIncompatibilityFrom
+    )
+  }
 
   override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
     initializeContentLanguage()
@@ -138,23 +145,27 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   }
 
   private def bindActions(): Unit = {
-    selectAllAssigned.setOnAction( actionEvent => {
+    selectAllAssigned.setOnAction(actionEvent => {
       incompatibilityTable.getSelectionModel.selectAll()
       actionEvent.consume()
     })
-    selectAllUnassigned.setOnAction( actionEvent => {
+
+    selectAllUnassigned.setOnAction(actionEvent => {
       generalEventTable.getSelectionModel.selectAll()
       actionEvent.consume()
     })
-    eventSearchBox.textProperty.addListener( (observable, oldValue, newValue) => {
-      filterGeneralEventTable(eventSearchBox.getText.trim)
+
+    eventSearchBox.textProperty.addListener((_, _, newValue) => {
+      filterGeneralEventTable(newValue.trim)
     })
-    addButton.setOnAction( actionEvent => {
+
+    addButton.setOnAction(actionEvent => {
       addSelectedIncompatibilities()
       _edited = true
       actionEvent.consume()
     })
-    removeButton.setOnAction( actionEvent => {
+
+    removeButton.setOnAction(actionEvent => {
       removeSelectedIncompatibilities()
       _edited = true
       actionEvent.consume()
@@ -190,5 +201,22 @@ class EventIncompatibilityFormController[E <: EventLike[_,_,_,_]](
   //second element contains the removed ones (present at form start and not present on form finish).
   def incompatibilities: (Iterable[E], Iterable[E]) =
     (_newIncompatibilities -- incompatibilities, _removedIncompatibilities -- incompatibilities)
+}
+
+class ShowEventIncompatibilityController[E <: EventLike[_,_,_,_]](
+  incompatibilities: Iterable[E],
+  events: Iterable[E],
+  owner: Option[Window]
+) extends EventIncompatibilityFormController[E](incompatibilities, events, owner) {
+
+  override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
+    super.initialize(url, resourceBundle)
+    lockButtons()
+  }
+
+  private def lockButtons(): Unit = {
+    addButton.setDisable(true)
+    removeButton.setDisable(true)
+  }
 }
 

@@ -2,7 +2,7 @@ package control.imprt
 
 import app.{AppSettings, FXMLPaths}
 import control.StageController
-import control.form.{CreateEventFormController, EditEventLikeFormController}
+import control.form.{CreateEventLikeFormController, EditEventLikeFormController}
 import factory.ViewFactory
 import file.imprt.MutableImportJob
 import javafx.beans.property.{SimpleIntegerProperty, SimpleStringProperty}
@@ -151,7 +151,7 @@ class ImportEventsManagerController( importJobEditorController: ImportJobEditorC
   }
 
   private def promptNewEventForm: Option[EventBlueprint] = {
-    val eventForm = new CreateEventFormController(
+    val eventForm = new CreateEventLikeFormController(
       editableImportJob.subjects,
       editableImportJob.courses,
       editableImportJob.resources,

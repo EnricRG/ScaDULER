@@ -20,4 +20,9 @@ public class UnassignedEventViewController extends EventViewController {
             event.consume();
         });
     }
+
+    @Override
+    public void notifyEventEdition(Event event) {
+        initializeEventView();
+    }
 }

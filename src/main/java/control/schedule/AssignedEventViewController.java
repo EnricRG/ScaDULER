@@ -89,6 +89,11 @@ public class AssignedEventViewController extends EventViewController {
     }
 
     @Override
+    public void notifyEventEdition(Event event) {
+        initializeEventView();
+    }
+
+    @Override
     public Node getNode() {
         return hourPane;
     }

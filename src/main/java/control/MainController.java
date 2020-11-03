@@ -769,13 +769,7 @@ public class MainController extends StageController {
     }
 
     private void promptEventManager() {
-        Utils.promptBoundWindow(
-                AppSettings.language().getItem("eventManager_windowTitle"),
-                manageButtons_events.getScene().getWindow(),
-                Modality.WINDOW_MODAL,
-                new ViewFactory<>(FXMLPaths.EntityManagerPanel()),
-                new EventManagerController(this)
-        ).show();
+        ScalaMainController.promptEventManager(this);
     }
 
     public void selectQuarterTabs(Quarter quarter){
@@ -874,6 +868,16 @@ public class MainController extends StageController {
         }
     }
 
+    public void unassignEvent(Event event) {
+        QuarterScheduleController quarterController = eventQuartersMap.get(event.id());
+
+        if(quarterController != null) {
+            quarterController.unassignEvent(event);
+            eventQuartersMap.remove(event.id());
+            addUnassignedEvent(event);
+        }
+    }
+
     public void addUnassignedEvent(Event event){
         Node eventView = null;
         UnassignedEventViewController controller = new UnassignedEventViewController(this, event);
@@ -907,6 +911,51 @@ public class MainController extends StageController {
 
     public void notifyEventCreation(Event event) {
         addUnassignedEvent(event);
+    }
+
+    public void notifyEventEdition(Event event) {
+        /*
+            IF (event was not assigned)
+                modify unassigned event view
+            ELSE
+                check if event can be assigned into same place.
+                IF cannot be assigned
+                    ask user if he wants to leave it wrongly assigned, unassign event and manually assign later or
+                    try to reassign it automatically to where it should be
+                    IF user chooses to leave it wrongly assigned
+                        get event hint
+                        unassign event
+                        reassign it there with viability = false
+                    ELSE IF user chooses unassign
+                        unassignEvent
+                        modify unassigned event view
+                    ELSE
+                        check assignment viability
+                        IF viable
+                            unassign event
+                            assign event to that place
+                        ELSE
+                            unassign event
+                            IF softViabilityChecking
+                                assign it there with viability = false
+                            ELSE
+                                prompt user a window telling him/her that event could not be assigned there
+                ELSE
+                    modify assigned event view (or reassign it there with hint)
+         */
+
+        if(event.isUnassigned()) {
+            unassignedEventsMap.get(event.id()).notifyEventEdition(event);
+        }
+        else {
+            unassignEvent(event);
+
+            /*QuarterScheduleController quarterController = eventQuartersMap.get(event.id());
+
+            if(quarterController != null){
+
+            }*/
+        }
     }
 
     public void notifyEventDeletion(Event event) {

@@ -123,6 +123,8 @@ public class ScheduleIntervalController {
 
     public QuarterScheduleController getQuarterScheduleController() { return quarterScheduleController; }
 
-
+    public int getEventHint(Event event) {
+        return getBoundingBox().getChildren().indexOf(eventViewControllers.get(event.id()).getNode());
+    }
 
 }

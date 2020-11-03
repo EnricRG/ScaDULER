@@ -3,20 +3,18 @@ package control.form
 import java.net.URL
 import java.util.ResourceBundle
 
-import app.{AppSettings, FXMLPaths}
-import factory.ViewFactory
+import app.AppSettings
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control._
-import javafx.stage.{Modality, Stage}
+import javafx.stage.Stage
 import javafx.util.StringConverter
 import misc.{Duration, Warning}
 import model.Weeks.Periodicity
 import model._
 import model.descriptor.EventDescriptor
-import util.Utils
 
-import scala.collection.{JavaConverters, mutable}
+import scala.collection.JavaConverters
 
 case class EventLikeFormInitializer[
   S <: SubjectLike[S,C,R,E],
@@ -137,27 +135,14 @@ abstract class EventLikeFormController[
   /** Local form variables. Store information beyond simple fields */
 
   protected lazy val incompatibilityManagerController: EventIncompatibilityFormController[E] = {
-    val initialIncompatibilities: mutable.Set[E] = {
-      val hashSet = new mutable.HashSet[E]
-
+    val initialIncompatibilities = {
       if(formInitializer.nonEmpty && formInitializer.get.incompatibilities.nonEmpty)
-        hashSet ++= formInitializer.get.incompatibilities.get
-
-      hashSet
+        formInitializer.get.incompatibilities.get
+      else
+        Nil
     }
 
-    val controller = new EventIncompatibilityFormController(initialIncompatibilities, events)
-
-    controller.setStage(Utils.promptBoundWindow(
-      AppSettings.language.getItemOrElse(
-        "eventForm_manageIncompatibilities_windowTitle",
-        "Manage Incompatibilities"),
-      manageIncompatibilitiesButton.getScene.getWindow,
-      Modality.WINDOW_MODAL,
-      new ViewFactory[EventIncompatibilityFormController[E]](FXMLPaths.EventIncompatibilityFrom),
-      controller))
-
-    controller
+    initializeIncompatibilityManagerController(initialIncompatibilities, events)
   }
 
   /** Constructors and Initializers */
@@ -253,7 +238,7 @@ abstract class EventLikeFormController[
     courseBox.setItems(FXCollections.observableArrayList(
       JavaConverters.asJavaCollection(courses)))
 
-    courseBox.setCellFactory(param => new ListCell[C] {
+    courseBox.setCellFactory(_ => new ListCell[C] {
       override protected def updateItem(item: C, empty: Boolean): Unit = {
         super.updateItem(item, empty)
         if (empty || item == null) setGraphic(null)
@@ -315,6 +300,12 @@ abstract class EventLikeFormController[
     })
   }
 
+  protected def initializeIncompatibilityManagerController(
+    incompatibilities: Iterable[E],
+    events: Iterable[E]
+  ): EventIncompatibilityFormController[E] =
+    new EventIncompatibilityFormController(incompatibilities, events, Some(stage))
+
   //inheritable method to enable child classes to extend and
   //use more information about `incompatibilityManagerController`
   protected def manageIncompatibilities(): Unit = {
@@ -356,7 +347,7 @@ abstract class EventLikeFormController[
       None
 }
 
-class CreateEventFormController[
+class CreateEventLikeFormController[
   S >: Null <: SubjectLike[S,C,R,E],
   C <: CourseLike,
   R >: Null <: ResourceLike,
@@ -412,6 +403,67 @@ class CreateEventFormController[
 
     ed
   }
+}
+
+class ShowEventLikeInformationController[
+  S >: Null <: SubjectLike[S,C,R,E],
+  C <: CourseLike,
+  R >: Null <: ResourceLike,
+  E <: EventLike[S,C,R,E]](eventLike: E)
+  extends EventLikeFormController[Nothing, S, C, R, E](
+    if(eventLike.subject.nonEmpty) List(eventLike.subject.get) else Nil,
+    if(eventLike.course.nonEmpty) List(eventLike.course.get) else Nil,
+    if(eventLike.neededResource.nonEmpty) List(eventLike.neededResource.get) else Nil,
+    Nil,
+    Some(EventLikeFormInitializer.fromEventLike(eventLike))) {
+
+  override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
+    super.initialize(url, resourceBundle)
+    lockFields()
+  }
+
+  private def lockFields(): Unit = {
+    nameField.setEditable(false)
+    shortNameField.setEditable(false)
+    descriptionField.setEditable(false)
+    courseBox.getItems.retainAll(courseBox.getSelectionModel.getSelectedItem)
+    quarterBox.getItems.retainAll(quarterBox.getSelectionModel.getSelectedItem)
+    subjectBox.getItems.retainAll(subjectBox.getSelectionModel.getSelectedItem)
+    unselectSubjectButton.setDisable(true)
+    durationBox.getItems.retainAll(durationBox.getSelectionModel.getSelectedItem)
+    eventTypeBox.getItems.retainAll(eventTypeBox.getSelectionModel.getSelectedItem)
+    periodicityBox.getItems.retainAll(periodicityBox.getSelectionModel.getSelectedItem)
+    resourceBox.getItems.retainAll(resourceBox.getSelectionModel.getSelectedItem)
+    unselectResourceButton.setDisable(true)
+  }
+
+  override def initializeContentLanguage(): Unit = {
+    super.initializeContentLanguage()
+
+    manageIncompatibilitiesButton.setText(AppSettings.language.getItemOrElse(
+      "eventForm_viewIncompatibilitiesButton",
+      "View incompatibilities"
+    ))
+
+    finishFormButton.setText(AppSettings.language.getItemOrElse(
+      "eventForm_closeWindowButton",
+      "Close window"))
+  }
+
+  override protected def bindActions(): Unit = {
+    super.bindActions()
+
+    finishFormButton.setOnAction(actionEvent => {
+      close()
+      actionEvent.consume()
+    })
+  }
+
+  override protected def initializeIncompatibilityManagerController(
+    incompatibilities: Iterable[E],
+    events: Iterable[E]
+  ): EventIncompatibilityFormController[E] =
+    new ShowEventIncompatibilityController[E](incompatibilities, events, Some(stage))
 }
 
 class EditEventLikeFormController[
@@ -485,43 +537,43 @@ class EditEventLikeFormController[
   }
 
   private def bindChangeReporters(): Unit = {
-    nameField.textProperty().addListener((observable, oldValue, newValue) => {
+    nameField.textProperty().addListener(_ => {
       EditInformation.nameFieldChanged = true
     })
 
-    shortNameField.textProperty().addListener((observable, oldValue, newValue) => {
+    shortNameField.textProperty().addListener(_ => {
       EditInformation.shortNameFieldChanged = true
     })
 
-    descriptionField.textProperty().addListener((observable, oldValue, newValue) => {
+    descriptionField.textProperty().addListener(_ => {
       EditInformation.descriptionFieldChanged = true
     })
 
-    courseBox.getSelectionModel.selectedItemProperty().addListener(changeListener => {
+    courseBox.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.courseBoxSelectionChanged = true
     })
 
-    quarterBox.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
+    quarterBox.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.quarterBoxSelectionChanged = true
     })
 
-    subjectBox.getSelectionModel.selectedItemProperty().addListener(changeListener => {
+    subjectBox.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.subjectBoxSelectionChanged = true
     })
 
-    durationBox.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
+    durationBox.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.durationBoxSelectionChanged = true
     })
 
-    eventTypeBox.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
+    eventTypeBox.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.eventTypeBoxSelectionChanged = true
     })
 
-    periodicityBox.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
+    periodicityBox.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.periodicityBoxSelectionChanged = true
     })
 
-    resourceBox.getSelectionModel.selectedItemProperty().addListener(changeListener => {
+    resourceBox.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.resourceBoxSelectionChanged = true
     })
   }
@@ -538,17 +590,35 @@ class EditEventLikeFormController[
   private def modifyEvent(e: EE): Option[EE] = {
 
     if (EditInformation.changed) {
-      if (EditInformation.nameFieldChanged)                e.name = nameField.getText.trim
-      if (EditInformation.shortNameFieldChanged)           e.shortName = shortNameField.getText.trim
-      if (EditInformation.descriptionFieldChanged)         e.description = descriptionField.getText.trim
-      if (EditInformation.courseBoxSelectionChanged)       e.course = Some(courseBox.getValue)
-      if (EditInformation.quarterBoxSelectionChanged)      e.quarter = Some(quarterBox.getValue)
-      if (EditInformation.durationBoxSelectionChanged)     e.duration = durationBox.getValue.toInt
-      if (EditInformation.eventTypeBoxSelectionChanged)    e.eventType = eventTypeBox.getValue
-      if (EditInformation.periodicityBoxSelectionChanged)  e.periodicity = periodicityBox.getValue
+      if (EditInformation.nameFieldChanged)
+        e.name = nameField.getText.trim
 
-      if (EditInformation.subjectBoxSelectionChanged)      e.subject = Some(subjectBox.getValue)
-      if (EditInformation.resourceBoxSelectionChanged)     e.neededResource = Some(resourceBox.getValue)
+      if (EditInformation.shortNameFieldChanged)
+        e.shortName = shortNameField.getText.trim
+
+      if (EditInformation.descriptionFieldChanged)
+        e.description = descriptionField.getText.trim
+
+      if (EditInformation.courseBoxSelectionChanged)
+        e.course = Some(courseBox.getValue)
+
+      if (EditInformation.quarterBoxSelectionChanged)
+        e.quarter = Some(quarterBox.getValue)
+
+      if (EditInformation.durationBoxSelectionChanged)
+        e.duration = durationBox.getValue.toInt
+
+      if (EditInformation.eventTypeBoxSelectionChanged)
+        e.eventType = eventTypeBox.getValue
+
+      if (EditInformation.periodicityBoxSelectionChanged)
+        e.periodicity = periodicityBox.getValue
+
+      if (EditInformation.subjectBoxSelectionChanged)
+        e.subject = Option(subjectBox.getValue)
+
+      if (EditInformation.resourceBoxSelectionChanged)
+        e.neededResource = Option(resourceBox.getValue)
 
       if (EditInformation.incompatibilitiesChanged){
         val (newIncompatibilities, removedIncompatibilities) =
