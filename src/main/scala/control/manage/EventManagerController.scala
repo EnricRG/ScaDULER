@@ -19,7 +19,7 @@ import model.{Course, Event, Resource, Subject}
 import service.AppDatabase
 import util.Utils
 
-class EventManagerController2(
+class EventManagerController(
   events: Iterable[Event],
   mainController: MainController,
   appDatabase: AppDatabase

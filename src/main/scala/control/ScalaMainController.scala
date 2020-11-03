@@ -2,7 +2,7 @@ package control
 
 import app.{AppSettings, FXMLPaths, MainApp}
 import control.form.{CreateEventLikeFormController, CreateSubjectLikeFormController, SubjectLikeForm}
-import control.manage.{CourseManagerController, EventManagerController2}
+import control.manage.{CourseManagerController, EventManagerController}
 import factory.ViewFactory
 import javafx.stage.Modality
 import model.descriptor.EventDescriptor
@@ -116,7 +116,7 @@ object ScalaMainController {
   }
 
   def promptEventManager(mainController: MainController): Unit = {
-    new EventManagerController2(
+    new EventManagerController(
       MainApp.getDatabase.events,
       mainController,
       MainApp.getDatabase).showAndWait()
