@@ -1,7 +1,7 @@
 package control.manage
 
 import app.{AppSettings, FXMLPaths}
-import control.form.{CreateCourseLikeFormController, EditCourseLikeFormController}
+import control.form.{CreateCourseLikeFormController, EditCourseLikeFormController, ShowCourseLikeInformationController}
 import control.misc.{HardRemove, NameListPrompt, RemoveMode, RemoveModePrompt}
 import control.{MainController, SelfInitializedStageController, StageSettings}
 import factory.ViewFactory
@@ -26,10 +26,10 @@ class CourseManagerController(
   with SelfInitializedStageController {
 
   @FXML protected var nameColumn: TableColumn[Course, String] = _
-  @FXML protected var descriptionColumn: TableColumn[Course, String] = _
   @FXML protected var subjectsColumn: TableColumn[Course, Int] = _
   @FXML protected var eventsColumn: TableColumn[Course, Int] = _
   @FXML protected var assignedEventsColumn: TableColumn[Course, Int] = _
+  @FXML protected var detailsColumn: TableColumn[Course, Null] = _
 
   def this(mainController: MainController, appDatabase: AppDatabase) =
     this(Nil, mainController, appDatabase)
@@ -51,10 +51,6 @@ class CourseManagerController(
       "courseManager_nameColumnHeader",
       "Name"))
 
-    descriptionColumn.setText(AppSettings.language.getItemOrElse(
-      "courseManager_descriptionColumnHeader",
-      "Description"))
-
     subjectsColumn.setText(AppSettings.language.getItemOrElse(
       "courseManager_subjectsColumnHeader",
       "Subjects"))
@@ -66,6 +62,10 @@ class CourseManagerController(
     assignedEventsColumn.setText(AppSettings.language.getItemOrElse(
       "courseManager_assignedEventsColumnHeader",
       "Assigned events"))
+
+    detailsColumn.setText(AppSettings.language.getItemOrElse(
+      "courseManager_detailsColumnHeader",
+      "Details"))
 
     addButton.setText(AppSettings.language.getItemOrElse(
       "courseManager_addCourseButton",
@@ -88,24 +88,22 @@ class CourseManagerController(
 
   private def addColumns(): Unit = {
     nameColumn = new TableColumn
-    descriptionColumn = new TableColumn
     subjectsColumn = new TableColumn
     eventsColumn = new TableColumn
     assignedEventsColumn = new TableColumn
+    detailsColumn = new TableColumn
 
     addColumn(nameColumn)
-    addColumn(descriptionColumn)
     addColumn(subjectsColumn)
     addColumn(eventsColumn)
     addColumn(assignedEventsColumn)
+    addColumn(detailsColumn)
   }
 
   private def configureColumns(): Unit = {
     nameColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue.name))
 
-    descriptionColumn.setCellValueFactory(cell => new SimpleStringProperty(cell.getValue.description))
-
-    subjectsColumn.setCellFactory(column => new TableCell[Course, Int] {
+    subjectsColumn.setCellFactory(_ => new TableCell[Course, Int] {
       override protected def updateItem(item: Int, empty: Boolean): Unit = {
         super.updateItem(item, empty)
         if (!empty) {
@@ -119,7 +117,7 @@ class CourseManagerController(
       }
     })
 
-    eventsColumn.setCellFactory(column => new TableCell[Course, Int] {
+    eventsColumn.setCellFactory(_ => new TableCell[Course, Int] {
       override protected def updateItem(item: Int, empty: Boolean): Unit = {
         super.updateItem(item, empty)
         if (!empty) {
@@ -135,7 +133,7 @@ class CourseManagerController(
       }
     })
 
-    assignedEventsColumn.setCellFactory(column => new TableCell[Course, Int] {
+    assignedEventsColumn.setCellFactory(_ => new TableCell[Course, Int] {
       override protected def updateItem(item: Int, empty: Boolean): Unit = {
         super.updateItem(item, empty)
         if (!empty) {
@@ -150,11 +148,25 @@ class CourseManagerController(
         }
       }
     })
+
+    detailsColumn.setCellFactory(_ => new TableCell[Course, Null] {
+      override protected def updateItem(item: Null, empty: Boolean): Unit = {
+        super.updateItem(item, empty)
+        if (!empty) {
+          setGraphic(generateDetailsButton(getTableView.getItems.get(getIndex)))
+        }
+        else {
+          setGraphic(null)
+          setText(null)
+        }
+      }
+    })
+    detailsColumn.setMinWidth(55)
   }
 
   private def generateSubjectsHyperlink(subjects: Iterable[Subject]): Node = {
     val hyperlink = new Hyperlink(subjects.size.toString)
-    hyperlink.setOnAction(actionEvent => showSubjectList(subjects))
+    hyperlink.setOnAction(_ => showSubjectList(subjects))
 
     val tooltip = new Tooltip(AppSettings.language.getItemOrElse(
       "courseManager_subjectHyperlinkTooltip",
@@ -188,6 +200,23 @@ class CourseManagerController(
     hBox.setAlignment(Pos.CENTER)
     hBox.setMaxWidth(USE_COMPUTED_SIZE)
     hBox.setMaxHeight(USE_COMPUTED_SIZE)
+
+    hBox
+  }
+
+  private def generateDetailsButton(course: Course): HBox = {
+    val hBox = generateHyperlinkHBox
+
+    val button = new Button(AppSettings.language.getItemOrElse(
+      "courseManager_detailsButton",
+      "show more..."))
+    button.setOnAction(actionEvent => {
+      promptCourseInformation(course)
+      actionEvent.consume()
+    })
+    button.setMaxWidth(USE_COMPUTED_SIZE)
+
+    hBox.getChildren.add(button)
 
     hBox
   }
@@ -295,6 +324,10 @@ class CourseManagerController(
         "courseManager_removeCoursePrompt_hardRemove",
         "Remove"),
       StageSettings("removeMode", Some(stage), Modality.WINDOW_MODAL)).waitChoice()
+  }
+
+  protected def promptCourseInformation(course: Course): Unit = {
+    new ShowCourseLikeInformationController(course, stage).showAndWait()
   }
 
   override protected def notifySingleSelection(): Unit = {

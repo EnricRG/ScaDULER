@@ -3,10 +3,11 @@ package control.form
 import java.net.URL
 import java.util.ResourceBundle
 
-import app.AppSettings
+import app.{AppSettings, FXMLPaths}
+import control.{SelfInitializedStageController, StageSettings}
 import javafx.fxml.FXML
 import javafx.scene.control._
-import javafx.stage.Stage
+import javafx.stage.{Modality, Stage, Window}
 import misc.Warning
 import model.CourseLike
 import model.descriptor.CourseDescriptor
@@ -150,6 +151,51 @@ class CreateCourseLikeFormController(formInitializer: Option[CourseFormInitializ
     cd
   }
 
+}
+
+class ShowCourseLikeInformationController(courseLike: CourseLike, owner: Option[Window])
+  extends CourseLikeFormController[Nothing](Some(CourseFormInitializer.fromCourseLike(courseLike)))
+  with SelfInitializedStageController {
+
+  def this(courseLike: CourseLike, owner: Window) =
+    this(courseLike, Some(owner))
+
+  override protected def selfInitialize(): Unit = {
+    initializeWith(
+      StageSettings(
+        AppSettings.language.getItemOrElse("courseForm_show_windowTitle", "Course details"),
+        owner,
+        Modality.WINDOW_MODAL),
+      FXMLPaths.CourseForm
+    )
+  }
+
+  override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
+    super.initialize(url, resourceBundle)
+    lockFields()
+  }
+
+  private def lockFields(): Unit = {
+    nameField.setEditable(false)
+    descriptionField.setEditable(false)
+  }
+
+  override def initializeContentLanguage(): Unit = {
+    super.initializeContentLanguage()
+
+    finishFormButton.setText(AppSettings.language.getItemOrElse(
+      "courseForm_closeWindowButton",
+      "Close window"))
+  }
+
+  override protected def bindActions(): Unit = {
+    super.bindActions()
+
+    finishFormButton.setOnAction(actionEvent => {
+      close()
+      actionEvent.consume()
+    })
+  }
 }
 
 class EditCourseLikeFormController[C <: CourseLike](course: C)
