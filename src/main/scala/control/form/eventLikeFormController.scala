@@ -1,8 +1,5 @@
 package control.form
 
-import java.net.URL
-import java.util.ResourceBundle
-
 import app.AppSettings
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
@@ -14,6 +11,8 @@ import model.Weeks.Periodicity
 import model._
 import model.descriptor.EventDescriptor
 
+import java.net.URL
+import java.util.ResourceBundle
 import scala.collection.JavaConverters
 
 case class EventLikeFormInitializer[
@@ -426,14 +425,11 @@ class ShowEventLikeInformationController[
     nameField.setEditable(false)
     shortNameField.setEditable(false)
     descriptionField.setEditable(false)
-    courseBox.getItems.retainAll(courseBox.getSelectionModel.getSelectedItem)
     quarterBox.getItems.retainAll(quarterBox.getSelectionModel.getSelectedItem)
-    subjectBox.getItems.retainAll(subjectBox.getSelectionModel.getSelectedItem)
     unselectSubjectButton.setDisable(true)
     durationBox.getItems.retainAll(durationBox.getSelectionModel.getSelectedItem)
     eventTypeBox.getItems.retainAll(eventTypeBox.getSelectionModel.getSelectedItem)
     periodicityBox.getItems.retainAll(periodicityBox.getSelectionModel.getSelectedItem)
-    resourceBox.getItems.retainAll(resourceBox.getSelectionModel.getSelectedItem)
     unselectResourceButton.setDisable(true)
   }
 

@@ -1,8 +1,5 @@
 package control.form
 
-import java.net.URL
-import java.util.ResourceBundle
-
 import app.{AppSettings, FXMLPaths}
 import control.{SelfInitializedStageController, StageSettings}
 import javafx.fxml.FXML
@@ -11,6 +8,9 @@ import javafx.stage.{Modality, Stage, Window}
 import misc.Warning
 import model.CourseLike
 import model.descriptor.CourseDescriptor
+
+import java.net.URL
+import java.util.ResourceBundle
 
 case class CourseFormInitializer( name: Option[String],
                                   description: Option[String] ) {
@@ -236,11 +236,11 @@ class EditCourseLikeFormController[C <: CourseLike](course: C)
   }
 
   private def bindChangeReporters(): Unit = {
-    nameField.textProperty().addListener((observable, oldValue, newValue) => {
+    nameField.textProperty().addListener(_ => {
       EditInformation.nameFieldChanged = true
     })
 
-    descriptionField.textProperty().addListener((observable, oldValue, newValue) => {
+    descriptionField.textProperty().addListener(_ => {
       EditInformation.descriptionFieldChanged = true
     })
   }

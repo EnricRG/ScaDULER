@@ -1,27 +1,28 @@
 package control.form
 
-import java.net.URL
-
 import app.{AppSettings, FXMLPaths}
-import control.StageController
+import control.{SelfInitializedStageController, StageController, StageSettings}
 import factory.ViewFactory
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control._
-import javafx.stage.{Modality, Stage}
+import javafx.stage.{Modality, Stage, Window}
+import javafx.util.StringConverter
 import misc.{Duration, EventTypeIncompatibility, Warning}
 import model.Weeks.Periodicity
 import model._
+import model.descriptor.{EventDescriptor, SubjectDescriptor}
 import util.Utils
+
+import java.net.URL
 import java.util
 import java.util.ResourceBundle
-
-import javafx.util.StringConverter
-import model.descriptor.{EventDescriptor, SubjectDescriptor}
-
 import scala.collection.{JavaConverters, mutable}
 
+/*TODO refactor to take EventLike definitions. It's not a good design that you have to specify
+* the ResourceLike type because has nothing to do with SubjectLike definition but with EventLike
+* definition. */
 trait SubjectLikeForm[C <: CourseLike, R <: ResourceLike] {
   type ED = SubjectLikeFormEventDescriptor[C,R]
   type SD = SubjectDescriptor[C,ED]
@@ -57,7 +58,7 @@ object SubjectLikeFormInitializer {
 
 abstract class SubjectLikeFormController[
   FR,
-  C >: Null <: CourseLike,
+  C <: CourseLike,
   R <: ResourceLike,
   E <: EventLike[_,C,R,_]
 ]( courses: Iterable[C],
@@ -283,13 +284,16 @@ abstract class SubjectLikeFormController[
   }
 
   override protected def setupViews(): Unit = {
-    subjectCoursePicker.setItems(FXCollections.observableArrayList(
-      JavaConverters.asJavaCollection(courses)))
-    subjectCoursePicker.setCellFactory(param => new ListCell[C] {
+    subjectCoursePicker.setCellFactory(_ => new ListCell[C] {
       override protected def updateItem(item: C, empty: Boolean): Unit = {
         super.updateItem(item, empty)
-        if (empty || item == null) setGraphic(null)
-        else setText(item.name)
+        if (empty || item == null) {
+          setGraphic(null)
+          setText(null)
+        }
+        else {
+          setText(item.name)
+        }
       }
     })
     subjectCoursePicker.setConverter(new StringConverter[C]() {
@@ -297,8 +301,10 @@ abstract class SubjectLikeFormController[
         if (`object` == null) null
         else `object`.name
 
-      override def fromString(string: String): C = null
+      override def fromString(string: String): C = null.asInstanceOf[C]
     })
+    subjectCoursePicker.setItems(FXCollections.observableArrayList(
+      JavaConverters.asJavaCollection(courses)))
 
     subjectQuarterPicker.setItems(FXCollections.observableArrayList(
       JavaConverters.asJavaCollection(Quarters.quarters)))
@@ -309,7 +315,7 @@ abstract class SubjectLikeFormController[
     generateEvents_durationSelector.setItems(FXCollections.observableArrayList(
       JavaConverters.asJavaCollection(Duration.getDurations)))
 
-    generateEvents_durationSelector.setCellFactory(param => new ListCell[Duration] {
+    generateEvents_durationSelector.setCellFactory(_ => new ListCell[Duration] {
       override protected def updateItem(item: Duration, empty: Boolean): Unit = {
         super.updateItem(item, empty)
         if (empty || item == null) setGraphic(null)
@@ -321,7 +327,7 @@ abstract class SubjectLikeFormController[
       JavaConverters.asJavaCollection(Weeks.periodicityList)))
 
     selectResourceListView.getSelectionModel.setSelectionMode(SelectionMode.SINGLE)
-    selectResourceListView.setCellFactory(param => new ListCell[R] {
+    selectResourceListView.setCellFactory(_ => new ListCell[R] {
       override protected def updateItem(resource: R, empty: Boolean): Unit = {
         super.updateItem(resource, empty)
         if (empty || resource == null) setText(null)
@@ -333,13 +339,13 @@ abstract class SubjectLikeFormController[
       JavaConverters.asJavaCollection(resources)))
 
     eventTable.getSelectionModel.setSelectionMode(SelectionMode.MULTIPLE)
-    eventTable_nameColumn.setCellValueFactory((cell: TableColumn.CellDataFeatures[Either[ED,E], String]) =>
+    eventTable_nameColumn.setCellValueFactory(cell =>
       if (cell.getValue.isLeft) //ED
         new SimpleStringProperty(cell.getValue.left.get.name)
       else //E
         new SimpleStringProperty(cell.getValue.right.get.name)
     )
-    eventTable_resourceColumn.setCellValueFactory((cell: TableColumn.CellDataFeatures[Either[ED,E], String]) =>
+    eventTable_resourceColumn.setCellValueFactory(cell =>
       if (cell.getValue.isLeft && cell.getValue.left.get.neededResource.nonEmpty) { //ED.
         new SimpleStringProperty(cell.getValue.left.get.neededResource.get.name)
       }
@@ -352,7 +358,7 @@ abstract class SubjectLikeFormController[
   }
 
   override protected def bindActions(): Unit = {
-    subjectNameField.textProperty.addListener((observable, oldValue, newValue) => {
+    subjectNameField.textProperty.addListener(_ => {
       computeBasicGenerationExample()
     })
 
@@ -371,7 +377,7 @@ abstract class SubjectLikeFormController[
       actionEvent.consume()
     })
 
-    selectResourceSearchBar.textProperty.addListener((observable, oldValue, newValue) => {
+    selectResourceSearchBar.textProperty.addListener(_ => {
       filterResourceList(selectResourceSearchBar.getText)
     })
 
@@ -489,7 +495,7 @@ abstract class SubjectLikeFormController[
       try
         textField.getText.toInt
       catch {
-        case npe: NumberFormatException =>
+        case _: NumberFormatException =>
           -1
       }
     }
@@ -602,7 +608,7 @@ abstract class SubjectLikeFormController[
 
 
 class CreateSubjectLikeFormController[
-  C >: Null <: CourseLike,
+  C <: CourseLike,
   R <: ResourceLike,
 ]( courses: Iterable[C],
    resources: Iterable[R],
@@ -660,6 +666,7 @@ class CreateSubjectLikeFormController[
     val actualEventTypeIncompatibilities = actualTypeIncompatibilities
     subjectDescriptor.eventTypeIncompatibilities ++= actualEventTypeIncompatibilities
 
+    //TODO remove this
     actualEventTypeIncompatibilities.foreach(eti => {
       eventsByType(eti.getFirstType).foreach(e1 => {
         eventsByType(eti.getSecondType).foreach(e2 => {
@@ -682,9 +689,69 @@ class CreateSubjectLikeFormController[
     }
 }
 
+class ShowSubjectLikeInformationController[
+  S <: SubjectLike[S,C,R,E],
+  C <: CourseLike,
+  R <: ResourceLike,
+  E <: EventLike[S,C,R,E]
+](subjectLike: S,
+  owner: Option[Window]
+) extends SubjectLikeFormController[Nothing, C, R, E](
+  if(subjectLike.course.nonEmpty) List(subjectLike.course.get) else Nil,
+  Nil,
+  Some(SubjectLikeFormInitializer.fromSubjectLike(subjectLike)))
+    with SelfInitializedStageController {
+
+  def this(subjectLike: S, owner: Window) =
+    this(subjectLike, Some(owner))
+
+  override protected def selfInitialize(): Unit = {
+    initializeWith(
+      StageSettings(
+        AppSettings.language.getItemOrElse("subjectForm_show_windowTitle", "Subject details"),
+        owner,
+        Modality.WINDOW_MODAL),
+      FXMLPaths.SubjectForm
+    )
+  }
+
+  override def initialize(url: URL, resourceBundle: ResourceBundle): Unit = {
+    super.initialize(url, resourceBundle)
+    lockFields()
+  }
+
+  private def lockFields(): Unit = {
+    subjectNameField.setEditable(false)
+    subjectShortNameField.setEditable(false)
+    subjectDescriptionField.setEditable(false)
+    subjectColorPicker.setEditable(false)
+    subjectQuarterPicker.getItems.retainAll(subjectQuarterPicker.getSelectionModel.getSelectedItem)
+    manageEventTypeIncompatibilitiesButton.setDisable(true)
+    deleteSelectedEventsButton.setDisable(true)
+    deleteAllEventsButton.setDisable(true)
+  }
+
+  override def initializeContentLanguage(): Unit = {
+    super.initializeContentLanguage()
+
+    finishFormButton.setText(AppSettings.language.getItemOrElse(
+      "subjectForm_closeWindowButton",
+      "Close window"))
+  }
+
+  override protected def bindActions(): Unit = {
+    super.bindActions()
+
+    finishFormButton.setOnAction(actionEvent => {
+      close()
+      actionEvent.consume()
+    })
+  }
+}
+
 class EditSubjectLikeFormController[
   S <: SubjectLike[S,C,R,E],
-  C >: Null <: CourseLike,
+  C <: CourseLike,
   R <: ResourceLike,
   E <: EventLike[S,C,R,E]
 ](
@@ -740,27 +807,27 @@ class EditSubjectLikeFormController[
   }
 
   private def bindChangeReporters(): Unit = {
-    subjectNameField.textProperty().addListener((observable, oldValue, newValue) => {
+    subjectNameField.textProperty().addListener(_ => {
       EditInformation.nameFieldChanged = true
     })
 
-    subjectShortNameField.textProperty().addListener((observable, oldValue, newValue) => {
+    subjectShortNameField.textProperty().addListener(_ => {
       EditInformation.shortNameFieldChanged = true
     })
 
-    subjectDescriptionField.textProperty().addListener((observable, oldValue, newValue) => {
+    subjectDescriptionField.textProperty().addListener(_ => {
       EditInformation.descriptionFieldChanged = true
     })
 
-    subjectColorPicker.valueProperty().addListener((observable, oldValue, newValue) => {
+    subjectColorPicker.valueProperty().addListener(_ => {
       EditInformation.colorPickerSelectionChanged = true
     })
 
-    subjectCoursePicker.getSelectionModel.selectedItemProperty().addListener(changeListener => {
+    subjectCoursePicker.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.coursePickerSelectionChanged = true
     })
 
-    subjectQuarterPicker.getSelectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) => {
+    subjectQuarterPicker.getSelectionModel.selectedItemProperty().addListener(_ => {
       EditInformation.coursePickerSelectionChanged = true
     })
 
@@ -774,6 +841,8 @@ class EditSubjectLikeFormController[
           preRemIncompCount != removedEventTypeIncompatibilities.size) {
         EditInformation.eventTypeIncompatibilitiesChanged = true
       }
+
+      actionEvent.consume()
     })
 
     //Addition and removal of events is handled by overriding method behavior and not by binding listeners.

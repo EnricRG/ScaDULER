@@ -966,6 +966,10 @@ public class MainController extends StageController {
         JavaConverters.asJavaCollection(events).forEach(this::notifyEventDeletion);
     }
 
+    public void notifySubjectCreation(Subject subject) {
+        //TODO
+    }
+
     public Window getWindow() {
         return mainStackPane.getScene().getWindow();
     }

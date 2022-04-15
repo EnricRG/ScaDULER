@@ -1,6 +1,6 @@
 package service
 
-import model.descriptor.{CourseDescriptor, EventDescriptor, ResourceDescriptor}
+import model.descriptor.{CourseDescriptor, EventDescriptor, ResourceDescriptor, SubjectDescriptor}
 import model.{Course, Event, Resource, Subject}
 
 class AppDatabase extends Serializable {
@@ -22,6 +22,14 @@ class AppDatabase extends Serializable {
 
   def createSubject(): (ID, Subject) =
     subjectDatabase.createSubject
+
+  def createSubjectFromDescriptor(descriptor: SubjectDescriptor[Course, ED]): (ID, Subject) = {
+    //TODO add new intermediate SubjectDescriptor without Subject type definition to fix type issues.
+    val (id, subject) = subjectDatabase.createSubjectFromDescriptor(descriptor)
+    val events = descriptor.events.map(createEventFromDescriptor(_)._2)
+
+    (id, subject)
+  }
 
   def removeSubject(s: Subject): Unit = {
     eventDatabase.removeEvents(s.events)

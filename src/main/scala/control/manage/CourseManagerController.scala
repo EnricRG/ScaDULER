@@ -181,7 +181,7 @@ class CourseManagerController(
 
   private def generateEventsHyperlink(events: Iterable[Event], windowTitle: String): Node = {
     val hyperlink = new Hyperlink(events.size.toString)
-    hyperlink.setOnAction(actionEvent => showEventList(events, windowTitle))
+    hyperlink.setOnAction(_ => showEventList(events, windowTitle))
 
     val tooltip = new Tooltip(AppSettings.language.getItemOrElse(
       "courseManager_eventHyperlinkTooltip",
@@ -326,9 +326,9 @@ class CourseManagerController(
       StageSettings("removeMode", Some(stage), Modality.WINDOW_MODAL)).waitChoice()
   }
 
-  protected def promptCourseInformation(course: Course): Unit = {
+  protected def promptCourseInformation(course: Course): Unit =
     new ShowCourseLikeInformationController(course, stage).showAndWait()
-  }
+
 
   override protected def notifySingleSelection(): Unit = {
     removeButton.setText(AppSettings.language.getItemOrElse(
