@@ -1,13 +1,12 @@
 package actors
 
-import java.io.{File, PrintWriter}
-
 import actors.Messages.MiniZincMessages.MiniZincSolveRequest
 import actors.Messages.{NoSolution, Solution}
 import akka.actor.Actor
 import model.Weeks.Week
 import solver.{EventAssignment, MiniZincConstants, MiniZincInstance}
 
+import java.io.{File, PrintWriter}
 import scala.sys.process.Process
 
 case class MiniZincEventAssignment(eventID: Int, week: Week, interval: Int)
@@ -16,7 +15,6 @@ class MiniZincInstanceSolver extends Actor{
 
     private def generateMiniZincCall(dataFilePath: String): String = {
         MiniZincConstants.MiniZincPath + " " +
-        MiniZincConstants.CommandLineStatisticsOption + " " +
         MiniZincConstants.ChuffedSolver + " " +
         MiniZincConstants.MiniZincModel + " " +
         dataFilePath
@@ -47,6 +45,8 @@ class MiniZincInstanceSolver extends Actor{
                 minizinc_process = Process(minizinc_call)
             } catch {
                 case e: Exception => {
+                    System.out.println("Error occurred during MiniZinc execution: " + e.getMessage + "\n")
+                    e.printStackTrace()
                     success = false
                     sender ! None
                 }
@@ -76,9 +76,18 @@ class MiniZincInstanceSolver extends Actor{
 
     def parseMiniZincOutput(lineStream: Stream[String]): Option[List[MiniZincEventAssignment]] = {
         lineStream.head match{
-            case line if line.contains("UNSATISFIABLE") => None //no solution
-            case line if line.contains("---") => None //unexpected minizinc output
-            case line if line.trim.isEmpty => None //no minizinc output
+            case line if line.contains("UNSATISFIABLE") => { //no solution
+              System.out.println("'UNSATISFIABLE' returned from MiniZinc")
+              None
+            }
+            case line if line.contains("---") => { //unexpected minizinc output
+              System.out.println("Unexpected output from MiniZinc: " + line)
+              None
+            }
+            case line if line.trim.isEmpty => { //no minizinc output
+              System.out.println("No output from MiniZinc")
+              None
+            }
             case line if line.contains("SOLUTION") =>
                 val solution = lineStream.takeWhile(!_.contains("ENDSOLUTION")).drop(2) //drop 'SOLUTION' and length lines
                 val assignments = solution.map(line => line.slice(1, line.length-1).split(","))
@@ -90,7 +99,10 @@ class MiniZincInstanceSolver extends Actor{
                   ).toList
 
                 Some(assignments)
-            case _ => None //unknown error
+            case x => { //unknown error
+              System.out.println(x)
+              None
+            }
         }
     }
 }
