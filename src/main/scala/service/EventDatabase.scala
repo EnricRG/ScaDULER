@@ -10,6 +10,11 @@ class EventDatabase extends Database[Event] {
 
     def this(initializer: EventDatabase#Initializer) = this
 
+    def this(events: java.util.Collection[Event]) = {
+      this
+      events.forEach(e => this.addElement(e.getID, e))
+    }
+
     def createEvent: (ID, Event) = {
         val id = reserveNextId
         val event = new Event(id)

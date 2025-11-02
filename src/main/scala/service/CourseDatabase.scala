@@ -14,6 +14,11 @@ class CourseDatabase extends Database[Course] {
 
   def this(initializer: CourseDatabase#Initializer) = this
 
+  def this(events: java.util.Collection[Course]) = {
+    this
+    events.forEach(c => this.addElement(c.getID, c))
+  }
+
   private val indexByName: mutable.Map[String, Course] = new mutable.HashMap
 
   def index(c: Course): Unit = {

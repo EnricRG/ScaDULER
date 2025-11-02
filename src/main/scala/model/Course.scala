@@ -39,8 +39,8 @@ class QuarterData(quarter: Quarter = FirstQuarter, schedule: EventSchedule = new
 
 @SerialVersionUID(1L)
 class Course(id: ID) extends Identifiable(id) with CourseLikeImpl with Serializable {
-  private val _firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
-  private val _secondQuarterData: QuarterData = new QuarterData(SecondQuarter)
+  private var _firstQuarterData: QuarterData = new QuarterData(FirstQuarter)
+  private var _secondQuarterData: QuarterData = new QuarterData(SecondQuarter)
 
   def firstQuarterData: QuarterData = _firstQuarterData
   def secondQuarterData: QuarterData = _secondQuarterData

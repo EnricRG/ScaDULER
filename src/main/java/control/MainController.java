@@ -1,6 +1,7 @@
 package control;
 
 import app.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import control.form.CreateCourseLikeFormController;
 import control.imprt.ImportJobEditorController;
 import control.imprt.mcf.FinishImportPromptController;
@@ -10,6 +11,7 @@ import control.manage.EventManagerController;
 import control.manage.ResourceManagerController;
 import control.manage.SubjectManagerController;
 import control.schedule.*;
+import export.ExportedDatabase;
 import factory.CourseScheduleViewFactory;
 import factory.ViewFactory;
 import file.imprt.*;
@@ -39,6 +41,7 @@ import util.Utils;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class MainController extends StageController {
@@ -463,11 +466,12 @@ public class MainController extends StageController {
         if(f != null){
             userProjectFile = f;
             //TODO simplify try catch blocks
-            ObjectInputStream oin = null;
+//            ObjectInputStream oin = null;
             try{
                 FileInputStream fin = new FileInputStream(f);
-                oin = new ObjectInputStream(fin);
-                MainApp.setDatabase((AppDatabase) oin.readObject());
+                ObjectMapper om = new ObjectMapper();
+                //oin = new ObjectInputStream(fin);
+                MainApp.setDatabase(om.readValue(fin, AppDatabase.class));
                 projectLoaded();
                 fin.close();
             } catch (InvalidClassException ice){
@@ -477,10 +481,10 @@ public class MainController extends StageController {
                         AppSettings.language().getItem("unknownFileFormat_explanation")
                 );
             }
-            catch (IOException | ClassNotFoundException e){
+            catch (IOException e){
                 e.printStackTrace();
             } finally {
-                try { if(oin != null) oin.close(); } catch (IOException ioe){ ioe.printStackTrace(); }
+//                try { if(oin != null) oin.close(); } catch (IOException ioe){ ioe.printStackTrace(); }
             }
         }
     }
@@ -683,20 +687,19 @@ public class MainController extends StageController {
         if(userProjectFile != null) {
             if(userMadeChanges || debug){
                 FileOutputStream fout = null;
-                ObjectOutputStream oout = null;
 
                 //TODO simplify try catch blocks
                 try{
                     new FileWriter(userProjectFile).close(); //clean file's previous content
+                    ExportedDatabase exported = new ExportedDatabase(MainApp.getDatabase());
+                    String json = new ObjectMapper().writeValueAsString(exported);
                     fout = new FileOutputStream(userProjectFile);
-                    oout = new ObjectOutputStream(fout);
-                    oout.writeObject(MainApp.getDatabase());
+                    fout.write(json.getBytes(StandardCharsets.UTF_8));
                 } catch (IOException ioe){
                     ioe.printStackTrace();
                     //TODO better exception handling
                 } finally {
                     try {if(fout != null) fout.close(); } catch(IOException ioe2){ ioe2.printStackTrace();}
-                    try {if(oout != null) oout.close(); } catch(IOException ioe3){ ioe3.printStackTrace();}
                 }
 
             }

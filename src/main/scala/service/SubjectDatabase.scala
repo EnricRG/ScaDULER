@@ -13,6 +13,11 @@ class SubjectDatabase extends Database[Subject] {
 
     def this(initializer: SubjectDatabase#Initializer) = this
 
+    def this(events: java.util.Collection[Subject]) = {
+      this
+      events.forEach(s => this.addElement(s.getID, s))
+    }
+
     def createSubject: (ID, Subject) = {
         val id = reserveNextId
         val subject = new Subject(id)

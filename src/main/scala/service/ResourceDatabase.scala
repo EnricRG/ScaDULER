@@ -14,6 +14,11 @@ class ResourceDatabase extends Database[Resource]{
 
     def this(initializer: ResourceDatabase#Initializer) = this
 
+    def this(events: java.util.Collection[Resource]) = {
+      this
+      events.forEach(r => this.addElement(r.getID, r))
+    }
+
     private val indexByName: mutable.Map[String, Resource] = new mutable.HashMap
 
     def index(r: Resource): Unit = {

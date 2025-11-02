@@ -6,7 +6,7 @@ import scala.collection.mutable
 
 @SerialVersionUID(1L)
 //TODO improve this class performance and structures
-class EventSchedule(intervalsPerWeek: Int) extends Schedule[mutable.Set[Event]](intervalsPerWeek){
+class EventSchedule(val intervalsPerWeek: Int) extends Schedule[mutable.Set[Event]](intervalsPerWeek){
 
   //private def getEventsAtInterval(interval: Int): Option[mutable.Set[Event]] =
   //  getValueAtInterval(interval)

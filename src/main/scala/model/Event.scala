@@ -60,6 +60,7 @@ class Event(id: ID) extends Identifiable(id)
   private var _week: Option[Week] = None
 
   def getStartInterval: Int = _startInterval
+  def setStartInterval(interval: Int): Unit = _startInterval = interval
   def assign(week: Week, interval: Int): Unit = {
     _startInterval = interval
     this._week = Some(week)
